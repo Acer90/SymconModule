@@ -21,9 +21,14 @@
             $this->RegisterPropertyString("SNMPAuthenticationPassword", ""); 
             $this->RegisterPropertyString("SNMPPrivacyProtocol", "AES256"); 
             $this->RegisterPropertyString("SNMPPrivacyPassword", ""); 
+
             //$this->RegisterPropertyString("SNMPEngineID", "0"); 
             //$this->RegisterPropertyString("SNMPContextName", ""); 
             //$this->RegisterPropertyString("SNMPContextEngine", "0");
+
+            //{ "type": "NumberSpinner", "name": "SNMPEngineID", "caption": "Engine ID", "hex": true},
+            //{ "type": "ValidationTextBox", "name": "SNMPContextName", "caption": "Context Name" },
+            //{ "type": "NumberSpinner", "name": "SNMPContextEngine", "caption": "Context Engine", "hex": true},
         }
 
         public function ApplyChanges() {
