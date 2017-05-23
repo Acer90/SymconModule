@@ -52,7 +52,7 @@
                 "add": 0
             }, {
                 "label": "Name",
-                "name": "Name",
+                "name": "name",
                 "width": "auto",
                 "add": "",
                 "edit": {
@@ -88,6 +88,7 @@
     ],
     "actions":
     [
+        { "type": "Button", "label": "An", "onClick": "echo $id;" }
     ],
     "status":
     [
