@@ -92,7 +92,7 @@
 
         public function SyncData(){
             $DevicesString = $this->ReadPropertyString("Devices");
-            $Devices = json_decode($DevicesString);
+            $Devices = json_decode($DevicesStrin, true);
             print_r($Devices);
             foreach ($Devices as &$Device) {
                 $instanceID = $Device["instanceID"];
