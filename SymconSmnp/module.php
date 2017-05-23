@@ -37,7 +37,6 @@
         }
 
         public function ReadSNMP($oid) {
-            parent::ReadSNMP();
             $Filedir = dirname(__FILE__). "\\bin\\". "SnmpGet.exe";
             $re = '/(?<typ>.+)=(?<value>.+)/m';
 
@@ -88,16 +87,19 @@
             print_r($rdata);
         }
         public function WriteSNMP($oid) {
-            parent::WriteSNMP();
 
         }
 
         public function SyncData(){
-            parent::SyncData();
             $DevicesString = $this->ReadPropertyString("Devices");
             $Devices = json_decode($DevicesString);
 
             foreach($Devices as $Device) {
+                $instanceID = $Device["instanceID"];
+                $name = $Device["name"];
+                $oid = $Device["oid"];
+                $typ = $Device["typ"];
+
                 print_r($Device);
             }
         }
