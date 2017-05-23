@@ -45,8 +45,8 @@
                 "edit": {
                     "type": "Select",
                     "options": [
-                    { "label": "read", "value": 0 },
-                    { "label": "write", "value": 1 }]
+                    { "label": "read", "value": "read" },
+                    { "label": "write", "value": "read/write" }]
                 }
             }]
         }
