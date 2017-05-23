@@ -69,7 +69,8 @@
                     { "label": "read", "value": "read" },
                     { "label": "read/write", "value": "read/write" }]
                 }
-            }]
+            }],
+            "values": []
         }
     ],
     "actions":
