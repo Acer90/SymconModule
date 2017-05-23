@@ -13,7 +13,7 @@
         { "type": "Label", "label": "SNMP V1/V2 Settings" },
         { "type": "ValidationTextBox", "name": "SNMPCommunity", "caption": "Community" },
         { "type": "Label", "label": "SNMP V3 Settings" },
-        { "type": "ValidationTextBox", "name": "SNMPSecurityName", "caption": "Security Name "},
+        { "type": "ValidationTextBox", "name": "SNMPSecurityName", "caption": "Security Name"},
         { "type": "Select", "name": "SNMPAuthenticationProtocol", "caption": "Authentication Protocol",
             "options": [
                 { "label": "MD5", "value": "MD5" },

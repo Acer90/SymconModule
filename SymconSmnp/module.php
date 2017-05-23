@@ -16,7 +16,7 @@
 
             $this->RegisterPropertyString("SNMPCommunity", "public"); 
 
-            //$this->RegisterPropertyString("SNMPSecurityName", "SomeName");
+            $this->RegisterPropertyString("SNMPSecurityName", "SomeName");
             //$this->RegisterPropertyString("SNMPAuthenticationProtocol", "SHA"); 
             //$this->RegisterPropertyString("SNMPAuthenticationPassword", "SomeAuthPass"); 
             //$this->RegisterPropertyString("SNMPPrivacyProtocol", "DES"); 
