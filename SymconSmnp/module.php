@@ -38,6 +38,7 @@
 
         public function Test() {
             // Selbsterstellter Code
+            echo dirname(__FILE__);
         }
     }
 ?>
