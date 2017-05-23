@@ -88,7 +88,7 @@
     ],
     "actions":
     [
-        { "type": "Button", "label": "An", "onClick": "echo $id;" }
+        { "type": "Button", "label": "An", "onClick": "Test();" }
     ],
     "status":
     [
