@@ -22,13 +22,12 @@
             $this->RegisterPropertyString("SNMPPrivacyProtocol", "DES"); 
             $this->RegisterPropertyString("SNMPPrivacyPassword", "SomePrivPass"); 
 
-            //$this->RegisterPropertyInteger("SNMPEngineID", "0"); 
-            //$this->RegisterPropertyString("SNMPContextName", ""); 
-            //$this->RegisterPropertyInteger("SNMPContextEngine", "0");
+            $this->RegisterPropertyInteger("SNMPEngineID", "0"); 
+            $this->RegisterPropertyString("SNMPContextName", ""); 
+            $this->RegisterPropertyInteger("SNMPContextEngine", "0");
 
-            //{ "type": "NumberSpinner", "name": "SNMPEngineID", "caption": "Engine ID", "hex": true},
-            //{ "type": "ValidationTextBox", "name": "SNMPContextName", "caption": "Context Name" },
-            //{ "type": "NumberSpinner", "name": "SNMPContextEngine", "caption": "Context Engine", "hex": true},
+            $this->RegisterPropertyString("Devices", ""); 
+            
         }
 
         public function ApplyChanges() {
