@@ -174,8 +174,7 @@
                         $Device["var"] = $vartyp;
                         $instanceID = $varid;
                     }
-                    if(GetValue($instanceID) == $rdata["Value"]) SetValue($instanceID, $rdata["Value"]);
-
+                    if(GetValue($instanceID) != $rdata["Value"]) SetValue($instanceID, $rdata["Value"]);
                 }
 
                 IPS_SetProperty($id, "Devices", json_encode($Devices)); 
