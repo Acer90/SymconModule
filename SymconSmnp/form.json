@@ -2,8 +2,8 @@
     "elements":
     [
         { "type": "ValidationTextBox", "name": "SNMPIPAddress", "caption": "Host", "value": "100.1.2.2" },
-        { "type": "NumberSpinner", "name": "SNMPPort", "caption": "Port", "value": "161" },
-        { "type": "NumberSpinner", "name": "SNMPTimeout", "caption": "Timeout", "value": "1" },
+        { "type": "NumberSpinner", "name": "SNMPPort", "caption": "Port" },
+        { "type": "NumberSpinner", "name": "SNMPTimeout", "caption": "Timeout"},
         { "type": "Select", "name": "SNMPVersion", "caption": "Version",
             "options": [
                 { "label": "Version 1", "value": 1 },
@@ -11,11 +11,12 @@
                 { "label": "Version 3", "value": 3 }
         ]},
         { "type": "Label", "label": "SNMP V1/V2 Settings" },
-        { "type": "ValidationTextBox", "name": "SNMPCommunity", "caption": "Community", "value": "public" },
+        { "type": "ValidationTextBox", "name": "SNMPCommunity", "caption": "Community" },
         { "type": "Label", "label": "SNMP V3 Settings" },
+        { "type": "ValidationTextBox", "name": "SNMPCommunity", "caption": "Community"},
         {
             "type": "List",
-            "name": "SNMPDevices",
+            "name": "Devices",
             "caption": "Devices",
             "rowCount": 10,
             "add": true,
