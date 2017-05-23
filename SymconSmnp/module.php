@@ -23,7 +23,7 @@
             $this->RegisterPropertyString("SNMPPrivacyPassword", ""); 
             $this->RegisterPropertyString("SNMPEngineID", ""); 
             $this->RegisterPropertyString("SNMPContextName", ""); 
-            $this->RegisterPropertyString("SNMPContextEngine", ""); 
+            $this->RegisterPropertyString("SNMPContextEngine", "");
         }
 
         public function ApplyChanges() {
