@@ -107,7 +107,7 @@
 
                 if(!empty($name) && !empty($oid)){
                     $rdata = IPSWINSNMP_ReadSNMP($id, $oid);
-                    print_r($rdata);
+
                     if(!is_array($rdata)) continue;
                     if(!IPS_VariableExists($instanceID)){
                         $vartyp = "";
@@ -174,7 +174,7 @@
                         $Device["typ"] = $vartyp;
                         $instanceID = $varid;
                     }
-
+                    echo $instanceID . "|" . $rdata["Value"];
                     switch (IPS_GetVariable($instanceID)["VariableType"]){
                         case 1:
                             if(GetValueInteger($instanceID) == $rdata["Value"]) SetValueInteger($instanceID, $rdata["Value"]);
