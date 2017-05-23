@@ -74,7 +74,7 @@
                     $this->SetStatus(202);
                     break;
                 default:
-                    $out = preg_match('/(?P<name>\w+): (?P<zahl>\d+)/', $str, $treffer);
+                    preg_match('/(?P<name>\w+): (?P<zahl>\d+)/', $out, $out);
                     break;
             }
             print_r($out);
