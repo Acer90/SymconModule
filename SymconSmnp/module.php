@@ -61,16 +61,22 @@
             }
             switch (true){
                 case stristr($out,'%Invalid parameter'):
-                    return 'error';
+                    return '';
+                    $this->SetStatus(201);
                     break;
                 case stristr($out,'%Failed to get value of SNMP variable. Timeout.'):
-                    return 'timeout';
+                    return '';
+                    $this->SetStatus(102);
+                    break;
+                case stristr($out,'Variable does not exist'):
+                    return '';
+                    $this->SetStatus(202);
                     break;
                 default:
                     $out = preg_match('/(?P<name>\w+): (?P<zahl>\d+)/', $str, $treffer);
                     break;
             }
-            echo $out;
+            print_r($out);
         }
     }
 ?>
