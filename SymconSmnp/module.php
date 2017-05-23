@@ -36,7 +36,7 @@
             //$this->RequireParent("{1A75660D-48AE-4B89-B351-957CAEBEF22D}");
         }
 
-        public function readSNMP($oid) {
+        public function ReadSNMP($oid) {
             $Filedir = dirname(__FILE__). "\\bin\\". "SnmpGet.exe";
             $re = '/(?<typ>.+)=(?<value>.+)/m';
 
@@ -86,14 +86,14 @@
             return $rdata = array("Type" => $out["value"][1], "Value" => $out["value"][2]);
             print_r($rdata);
         }
-        public function writeSNMP($oid) {
+        public function WriteSNMP($oid) {
 
         }
 
-        public function syncData(){
+        public function SyncData(){
             $DevicesString = $this->ReadPropertyString("Devices");
             $Devices = json_decode($DevicesString);
-            
+
             foreach($Devices as $Device) {
                 print_r($Device);
             }

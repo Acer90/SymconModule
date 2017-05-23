@@ -88,8 +88,8 @@
     ],
     "actions":
     [
-        { "type": "Button", "label": "Test", "onClick": "IPSWINSNMP_readSNMP($id, '.1.3.6.1.2.1.1.3.0');" },
-        { "type": "Button", "label": "Sync", "onClick": "IPSWINSNMP_syncData($id);" }
+        { "type": "Button", "label": "Test", "onClick": "IPSWINSNMP_ReadSNMP($id, '.1.3.6.1.2.1.1.3.0');" },
+        { "type": "Button", "label": "Sync", "onClick": "IPSWINSNMP_SyncData($id);" }
         
     ],
     "status":
