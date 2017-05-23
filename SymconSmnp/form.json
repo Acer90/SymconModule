@@ -1,8 +1,8 @@
 {
     "elements":
     [
-        { "type": "ValidationTextBox", "name": "IPAddress", "caption": "Host" },
-        { "type": "NumberSpinner", "name": "Port", "caption": "Port" },
+        { "type": "ValidationTextBox", "name": "IPAddress", "caption": "Host", "value": "100.1.2.2" },
+        { "type": "NumberSpinner", "name": "Port", "caption": "Port", "value": "161" },
         {
             "type": "List",
             "name": "Devices",
