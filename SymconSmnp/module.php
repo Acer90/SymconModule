@@ -171,7 +171,7 @@
                         IPS_SetParent($varid, $id);
 
                         $Device["instanceID"] = $varid;
-                        $Device["typ"] = $vartyp;
+                        $Device["var"] = $vartyp;
                         $instanceID = $varid;
                     }
                     echo IPS_GetVariable($instanceID)["VariableType"]."|". $instanceID . "|" . $rdata["Value"];
