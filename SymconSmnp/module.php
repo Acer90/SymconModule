@@ -174,7 +174,7 @@
                         $Device["typ"] = $vartyp;
                         $instanceID = $varid;
                     }
-                    echo IPS_GetVariable($instanceID)."|". $instanceID . "|" . $rdata["Value"];
+                    echo IPS_GetVariable($instanceID)["VariableType"]."|". $instanceID . "|" . $rdata["Value"];
                     switch (IPS_GetVariable($instanceID)["VariableType"]){
                         case 1:
                             if(GetValueInteger($instanceID) == $rdata["Value"]) SetValueInteger($instanceID, $rdata["Value"]);
