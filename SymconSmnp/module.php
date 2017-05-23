@@ -27,6 +27,9 @@
             $this->RegisterPropertyInteger("SNMPContextEngine", "0");
 
             $this->RegisterPropertyString("Devices", ""); 
+
+            //event erstellen
+            $this->RegisterTimer("SyncData", 10, 'IPSWINSNMP_SyncData($_IPS[\'TARGET\']);');
             
         }
 
@@ -90,8 +93,8 @@
 
         }
 
-        public function SyncData($id = 0){
-            echo $this->InstanceID;
+        public function SyncData(){
+            $this->InstanceID;
             $DevicesString = $this->ReadPropertyString("Devices");
             $Devices = json_decode($DevicesString, true);
             foreach ($Devices as &$Device) {
