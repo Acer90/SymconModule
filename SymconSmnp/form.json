@@ -71,7 +71,7 @@
                 }
             }, {
             "label": "Typ",
-                "name": "oid",
+                "name": "var",
                 "width": "auto",
                 "add": "Var",
                 "edit": {
