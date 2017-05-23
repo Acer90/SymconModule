@@ -56,7 +56,7 @@
             }, {
                 "label": "Name",
                 "name": "name",
-                "width": "auto",
+                "width": "100px",
                 "add": "",
                 "edit": {
                     "type": "ValidationTextBox"
@@ -73,7 +73,7 @@
             "label": "Typ",
                 "name": "var",
                 "width": "auto",
-                "add": "Var",
+                "add": "str",
                 "edit": {
                     "type": "Select",
                     "options": [
@@ -87,13 +87,13 @@
             }, {
                 "label": "Type",
                 "name": "typ",
-                "width": "50px",
+                "width": "30px",
                 "add": "read",
                 "edit": {
                     "type": "Select",
                     "options": [
-                    { "label": "read", "value": "read" },
-                    { "label": "read/write", "value": "read/write" }]
+                    { "label": "r", "value": "r" },
+                    { "label": "rw", "value": "rw" }]
                 }
             }]
         }
