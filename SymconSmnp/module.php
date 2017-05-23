@@ -1,6 +1,10 @@
 <?
     // Klassendefinition
     class IPSWINSNMP extends IPSModule {
+        public function __construct($InstanceID) {
+            parent::__construct($InstanceID);
+        }
+        
         public function Create() {
             parent::Create();
 
@@ -10,6 +14,11 @@
             $this->RegisterPropertyInteger("SNMPTimeout", 1);
             $this->RegisterPropertyInteger("SNMPVersion", 2);
             $this->RegisterPropertyString("SNMPCommunity", "public"); 
+        }
+
+        public function ApplyChanges() {
+            // Diese Zeile nicht löschen
+            parent::ApplyChanges();
         }
 
         public function MeineErsteEigeneFunktion() {

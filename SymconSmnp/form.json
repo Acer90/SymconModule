@@ -46,7 +46,7 @@
                     "type": "Select",
                     "options": [
                     { "label": "read", "value": "read" },
-                    { "label": "write", "value": "read/write" }]
+                    { "label": "read/write", "value": "read/write" }]
                 }
             }]
         }
