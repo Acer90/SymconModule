@@ -109,61 +109,64 @@
                     if(!IPS_VariableExists($instanceID)){
                         echo $typ;
                         $vartyp = "";
+                        $varid = 0;
 
                         switch (true){
                             case stristr($typ,'NsapAddress'):
                                 //Boolean anlegen
-                                $var = IPS_CreateVariable(3);
+                                $varid = IPS_CreateVariable(3);
                                 $vartyp = "str";
                                 break;
                             case stristr($typ,'IpAddress'):
                                 //Boolean anlegen
-                                $var = IPS_CreateVariable(3);
+                                $varid = IPS_CreateVariable(3);
                                 $vartyp = "ip";
                                 break;
                             case stristr($typ,'Bit String'):
                                 //Boolean anlegen
-                                $var = IPS_CreateVariable(3);
+                                $varid = IPS_CreateVariable(3);
                                 $vartyp = "hex";
                                 break;
                             case stristr($typ,'Integer') && !stristr($typ,'UInteger'):
                                 //Integer anlegen
-                                $var = IPS_CreateVariable(1);
+                                $varid = IPS_CreateVariable(1);
                                 $vartyp = "int";
                                 break;
                             case stristr($typ,'Gauge'):
                                 //Integer anlegen
-                                $var = IPS_CreateVariable(1);
+                                $varid = IPS_CreateVariable(1);
                                 $vartyp = "uint";
                                 break;
                             case stristr($typ,'Counter'):
                                 //Integer anlegen
-                                $var = IPS_CreateVariable(1);
+                                $varid = IPS_CreateVariable(1);
                                 $vartyp = "int";
                                 break;
                             case stristr($typ,'UInteger'):
                                 //Integer anlegen
-                                $var = IPS_CreateVariable(1);
+                                $varid = IPS_CreateVariable(1);
                                 $vartyp = "uint";
                                 break;
                             case stristr($typ,'Object Identifier'):
                                 //Integer anlegen
-                                $var = IPS_CreateVariable(1);
+                                $varid = IPS_CreateVariable(1);
                                 $vartyp = "oid";
                                 break;
                             case stristr($typ,'TimeTicks'):
                                 //Float anlegen
-                                $var = IPS_CreateVariable(3);
+                                $varid = IPS_CreateVariable(3);
                                 $vartyp = "uint";
                                 break;
                             case stristr($typ,'Octet String'):
                                 //Float anlegen
-                                $var = IPS_CreateVariable(3);
+                                $varid = IPS_CreateVariable(3);
                                 $vartyp = "str";
                                 break;
                         }
 
-                        if(empty($vartyp)) continue;
+                        if(empty($vartyp) || $varid == 0) continue;
+                        IPS_SetName($varid, $name); 
+                        IPS_SetParent($varid, $id); 
 
                     }else{
 
