@@ -179,6 +179,7 @@
                         case 1:
                             if(GetValueInteger($instanceID) == $rdata["Value"]) SetValueInteger($instanceID, $rdata["Value"]);
                             echo " ".IPS_GetVariable($instanceID)["VariableType"]."|". $instanceID . "|" . $rdata["Value"];
+                            SetValue($instanceID, $rdata["Value"]);
                             break;
                         case 3:
                             if(GetValueString($instanceID) == (string)$rdata["Value"]) SetValueString($instanceID, (string)$rdata["Value"]);
