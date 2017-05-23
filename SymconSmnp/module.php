@@ -100,7 +100,7 @@
                 $typ = $Device["typ"];
 
                 if(!empty($name) && !empty($oid)){
-                    $rdata = IPSWINSNMP_ReadSNMP($oid);
+                    $rdata = IPSWINSNMP_ReadSNMP($this, $oid);
                     if(is_array($rdata)){
                         if(!IPS_VariableExists($instanceID)){
                             echo $typ;
