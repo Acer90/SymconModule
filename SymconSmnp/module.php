@@ -1,6 +1,6 @@
 <?
     // Klassendefinition
-    class IPSWINSNMP extends IPSModule {
+    class IPSSNMP extends IPSModule {
         public function __construct($InstanceID) {
             parent::__construct($InstanceID);
         }
