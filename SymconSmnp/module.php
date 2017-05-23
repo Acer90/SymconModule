@@ -99,9 +99,8 @@
             $id = $this->InstanceID;
             $DevicesString = $this->ReadPropertyString("Devices");
             $Devices = json_decode($DevicesString, true);
-            print_r($Devices[1]);
             foreach ($Devices as &$Device) {
-                echo $instanceID = $Device["instanceID"];
+                $instanceID = $Device["instanceID"];
                 $name = $Device["name"];
                 $oid = $Device["oid"];
                 $typ = $Device["typ"];
@@ -174,8 +173,7 @@
                         $Device["typ"] = $vartyp;
                         $instanceID = $varid;
                     }
-
-                    switch (IPS_GetVariable($instanceID["VariableType"])){
+                    switch (IPS_GetVariable($instanceID)["VariableType"]){
                         case 1:
                             SetValueInteger($instanceID, $rdata["Value"]);
                             break;
