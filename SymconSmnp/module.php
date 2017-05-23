@@ -36,10 +36,30 @@
             //$this->RequireParent("{1A75660D-48AE-4B89-B351-957CAEBEF22D}");
         }
 
-        public function Test() {
-            // Selbsterstellter Code
-            $Filedir = dirname(__FILE__). "\\bin\\";
-            echo IPS_Execute($Filedir. "SnmpGet.exe", "", FALSE, TRUE);
+        public function ReadSNMP($oid) {
+            $Filedir = dirname(__FILE__). "\\bin\\". "SnmpGet.exe";
+
+            $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
+            $SNMPPort = $this->ReadPropertyInteger("SNMPPort");
+            $SNMPTimeout = $this->ReadPropertyInteger("SNMPTimeout");
+            $SNMPVersion = $this->ReadPropertyString("SNMPVersion");
+
+            if($SNMPVersion == "3") {
+                $SNMPSecurityName = $this->ReadPropertyString("SNMPSecurityName");
+                $SNMPAuthenticationProtocol = $this->ReadPropertyString("SNMPAuthenticationProtocol");
+                $SNMPAuthenticationPassword = $this->ReadPropertyString("SNMPAuthenticationPassword");
+                $SNMPPrivacyProtocol = $this->ReadPropertyString("SNMPPrivacyProtocol");
+                $SNMPPrivacyPassword = $this->ReadPropertyString("SNMPPrivacyPassword");
+                $SNMPEngineID = $this->ReadPropertyInteger("SNMPEngineID");
+                $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
+                $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
+            }else{
+                $SNMPCommunity = $this->ReadPropertyString("SNMPCommunity");
+
+                $Parameters = '-r:' . $SNMPIPAddress.' -p:'.$SNMPPort.' -t:'.$SNMPTimeout.' -c:"'.$SNMPCommunity.'"' .' -o:' . $oid;
+                $out = IPS_Execute($Filedir , $Parameters, FALSE, TRUE);
+            }
+            echo $out;
         }
     }
 ?>
