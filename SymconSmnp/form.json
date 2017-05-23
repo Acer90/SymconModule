@@ -18,20 +18,15 @@
                 "label": "InstanceID",
                 "name": "instanceID", 
                 "width": "75px",
-                "add": 0,
-                "edit": {
-                    "type": "SelectInstance"
-                }
+                "add": 0
             }, {
                 "label": "Name",
                 "name": "Name",
                 "width": "auto",
-                "add": ""
-            }, {
-                "label": "State",
-                "name": "State",
-                "width": "40px",
-                "add": "New!"
+                "add": "",
+                "edit": {
+                    "type": "ValidationTextBox"
+                }
             }, {
                 "label": "Temperature",
                 "name": "Temperature",
@@ -41,13 +36,6 @@
                     "type": "NumberSpinner",
                     "digits": 2
                 }
-            }],
-            "values": [{
-                "instanceID": 12435,
-                "name": "ABCD",
-                "state": "OK!",
-                "temperature": 23.31,
-                "rowColor": "#ff0000" //rot
             }]
         }
     ],
