@@ -74,7 +74,7 @@
                     $this->SetStatus(202);
                     break;
                 default:
-                    preg_match("/\A(.*)=(.*)\z/", $out, $out);
+                    preg_match_all('^((?P<name>\w+))=(.*(?P<value>\w+))$', $out, $out);
                     break;
             }
             print_r($out);
