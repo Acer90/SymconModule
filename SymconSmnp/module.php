@@ -26,10 +26,10 @@
             $this->RegisterPropertyString("SNMPContextName", ""); 
             $this->RegisterPropertyInteger("SNMPContextEngine", "0");
 
-            $this->RegisterPropertyString("Devices", ""); 
-
             //event erstellen
             $this->RegisterTimer("SyncData", 10, 'IPSWINSNMP_SyncData($_IPS[\'TARGET\']);');
+
+            $this->RegisterPropertyString("Devices", ""); 
             
         }
 
@@ -37,6 +37,7 @@
             // Diese Zeile nicht löschen
             parent::ApplyChanges();
             //$this->RequireParent("{1A75660D-48AE-4B89-B351-957CAEBEF22D}");
+            $this->RegisterTimer("SyncData", 10, 'IPSWINSNMP_SyncData($_IPS[\'TARGET\']);');
         }
 
         public function ReadSNMP($oid) {

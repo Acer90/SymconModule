@@ -88,7 +88,7 @@
                 "label": "Type",
                 "name": "typ",
                 "width": "30px",
-                "add": "read",
+                "add": "r",
                 "edit": {
                     "type": "Select",
                     "options": [
