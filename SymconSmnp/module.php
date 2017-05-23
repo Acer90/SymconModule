@@ -57,7 +57,7 @@
             }else{
                 $SNMPCommunity = $this->ReadPropertyString("SNMPCommunity");
 
-                $Parameters = '-r:' . $SNMPIPAddress.' -p:'.$SNMPPort.' -t:'.$SNMPTimeout.' -c:"'.$SNMPCommunity.'"' .' -o:' . $oid;
+                $Parameters = '-r:' . $SNMPIPAddress.' -p:'.$SNMPPort.' -t:'.$SNMPTimeout.' -c:"'.$SNMPCommunity.'"' .' -o:.' . $oid;
                 $out = IPS_Execute($Filedir , $Parameters, FALSE, TRUE);
             }
 
@@ -93,15 +93,14 @@
         public function SyncData(){
             $DevicesString = $this->ReadPropertyString("Devices");
             $Devices = json_decode($DevicesString);
-            print_r($Devices);
-            //foreach ($Devices as &$Device) {
-                //$instanceID = $Device["instanceID"];
-                //$name = $Device["name"];
-                //$oid = $Device["oid"];
-                //$typ = $Device["typ"];
+            foreach ($Devices as &$Device) {
+                $instanceID = $Device["instanceID"];
+                $name = $Device["name"];
+                $oid = $Device["oid"];
+                $typ = $Device["typ"];
 
-                //print_r($Device);
-            //}
+                print_r($Device);
+            }
         }
     }
 ?>
