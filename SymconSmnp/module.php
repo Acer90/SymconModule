@@ -39,10 +39,8 @@
         public function Test() {
             // Selbsterstellter Code
             $Filedir = dirname(__FILE__). "\\bin\\";
-            $out = fopen('php://output', 'w');
             IPS_Execute($Filedir. "SnmpGet.exe", "", FALSE, TRUE);
-            fclose($out); //closing handler
-            echo $out;
+            print_r(STDOUT);
         }
     }
 ?>
