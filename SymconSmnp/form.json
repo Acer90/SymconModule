@@ -71,7 +71,7 @@
                     "type": "ValidationTextBox"
                 }
             }, {
-            "label": "Typ",
+            "label": "Var",
                 "name": "var",
                 "width": "auto",
                 "add": "str",
