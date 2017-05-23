@@ -59,6 +59,17 @@
                 $Parameters = '-r:' . $SNMPIPAddress.' -p:'.$SNMPPort.' -t:'.$SNMPTimeout.' -c:"'.$SNMPCommunity.'"' .' -o:' . $oid;
                 $out = IPS_Execute($Filedir , $Parameters, FALSE, TRUE);
             }
+            switch (true){
+                case stristr($out,'%Invalid parameter'):
+                    return 'error';
+                    break;
+                case stristr($out,'%Failed to get value of SNMP variable. Timeout.'):
+                    return 'timeout';
+                    break;
+                default:
+                    $out = preg_match('/(?P<name>\w+): (?P<zahl>\d+)/', $str, $treffer);
+                    break;
+            }
             echo $out;
         }
     }
