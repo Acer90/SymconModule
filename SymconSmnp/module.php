@@ -38,7 +38,8 @@
 
         public function Test() {
             // Selbsterstellter Code
-            echo dirname(__FILE__);
+            $Filedir = dirname(__FILE__). "\\bin\\";
+            echo exec($Filedir. "SnmpGet.exe");
         }
     }
 ?>
