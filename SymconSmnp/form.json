@@ -30,9 +30,9 @@
                 { "label": "3DES", "value": "3DES" }
         ]},
         { "type": "PasswordTextBox", "name": "SNMPPrivacyPassword", "caption": "Privacy Password" },
-        { "type": "NumberSpinner", "name": "SNMPEngineID", "caption": "Engine ID", "hex": true},
-        { "type": "ValidationTextBox", "name": "SNMPContextName", "caption": "Context Name" },
-        { "type": "NumberSpinner", "name": "SNMPContextEngine", "caption": "Context Engine", "hex": true},
+        # { "type": "NumberSpinner", "name": "SNMPEngineID", "caption": "Engine ID", "hex": true},
+        # { "type": "ValidationTextBox", "name": "SNMPContextName", "caption": "Context Name" },
+        # { "type": "NumberSpinner", "name": "SNMPContextEngine", "caption": "Context Engine", "hex": true},
         { "type": "Label", "label": "Devices" },
         {
             "type": "List",

@@ -21,9 +21,9 @@
             $this->RegisterPropertyString("SNMPAuthenticationPassword", ""); 
             $this->RegisterPropertyString("SNMPPrivacyProtocol", "AES256"); 
             $this->RegisterPropertyString("SNMPPrivacyPassword", ""); 
-            $this->RegisterPropertyString("SNMPEngineID", ""); 
-            $this->RegisterPropertyString("SNMPContextName", ""); 
-            $this->RegisterPropertyString("SNMPContextEngine", "");
+            //$this->RegisterPropertyString("SNMPEngineID", "0"); 
+            //$this->RegisterPropertyString("SNMPContextName", ""); 
+            //$this->RegisterPropertyString("SNMPContextEngine", "0");
         }
 
         public function ApplyChanges() {
