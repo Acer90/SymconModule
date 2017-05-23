@@ -1,24 +1,13 @@
 {
     "elements":
     [
-        { "type": "ValidationTextBox", "name": "Username", "caption": "Username" },
-        { "type": "ValidationTextBox", "name": "Password", "caption": "Password" },
-        { "type": "NumberSpinner", "name": "APIID", "caption": "APIID" },
-        { "type": "ValidationTextBox", "name": "Sender", "caption": "Sender" }
-        { "type": "Select", "name": "SMSType", "caption": "Type",
-            "options": [
-                { "label": "SMS", "value": 0 },
-                { "label": "Combi-SMS", "value": 1 },
-                { "label": "MMS", "value": 2 }
-        ]
+        { "type": "ValidationTextBox", "name": "Username", "caption": "Username" }
     ],
     "actions":
     [
     ],
     "status":
     [
-        { "code": 102, "icon": "active", "caption": "Login information valid" },
-        { "code": 201, "icon": "error", "caption": "Authentication failed" },
         { "code": 202, "icon": "error", "caption": "No credits left" }
     ]
 }
