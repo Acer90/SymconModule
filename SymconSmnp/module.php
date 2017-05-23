@@ -40,9 +40,7 @@
             // Selbsterstellter Code
             $Filedir = dirname(__FILE__). "\\bin\\";
             IPS_Execute($Filedir. "SnmpGet.exe", "", FALSE, TRUE);
-            $output = "";
-            fwrite(STDOUT, $output);
-            echo exec($output);
+            echo exec(STDOUT);
         }
     }
 ?>
