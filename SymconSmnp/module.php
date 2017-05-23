@@ -101,7 +101,7 @@
             $Devices = json_decode($DevicesString, true);
             print_r($Devices[1]);
             foreach ($Devices as &$Device) {
-                $instanceID = $Device["instanceID"];
+                echo $instanceID = $Device["instanceID"];
                 $name = $Device["name"];
                 $oid = $Device["oid"];
                 $typ = $Device["typ"];
@@ -173,8 +173,6 @@
                         $Device["instanceID"] = $varid;
                         $Device["typ"] = $vartyp;
                         $instanceID = $varid;
-                    }else{
-
                     }
 
                     switch (IPS_GetVariable($instanceID["VariableType"])){
