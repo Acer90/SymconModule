@@ -1,6 +1,8 @@
 {
     "elements":
     [
+        { "type": "ValidationTextBox", "name": "IPAddress", "caption": "Host" },
+        { "type": "ValidationTextBox", "name": "Number", "caption": "Port" },
         {
             "type": "List",
             "name": "Devices",
