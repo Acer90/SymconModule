@@ -3,6 +3,16 @@
     [
         { "type": "ValidationTextBox", "name": "IPAddress", "caption": "Host", "value": "100.1.2.2" },
         { "type": "NumberSpinner", "name": "Port", "caption": "Port", "value": "161" },
+        { "type": "Timeout", "name": "Timeout", "caption": "Timeout", "value": "1" },
+        { "type": "Select", "name": "Version", "caption": "Version",
+            "options": [
+                { "label": "Version 1", "value": 1 },
+                { "label": "Version 2c", "value": 2 },
+                { "label": "Version 3", "value": 3 }
+        ]},
+        { "type": "Label", "label": "SNMP V1/V2 Settings" },
+        { "type": "ValidationTextBox", "name": "Community", "caption": "Community", "value": "public" },
+        { "type": "Label", "label": "SNMP V3 Settings" },
         {
             "type": "List",
             "name": "Devices",
