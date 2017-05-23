@@ -99,6 +99,7 @@
             $id = $this->InstanceID;
             $DevicesString = $this->ReadPropertyString("Devices");
             $Devices = json_decode($DevicesString, true);
+            print_r($Devices);
             foreach ($Devices as &$Device) {
                 $instanceID = $Device["instanceID"];
                 $name = $Device["name"];
