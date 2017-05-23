@@ -56,6 +56,14 @@
                     "type": "ValidationTextBox"
                 }
             }, {
+                "label": "OID",
+                "name": "OID",
+                "width": "auto",
+                "add": "",
+                "edit": {
+                    "type": "ValidationTextBox"
+                }
+            }, {
                 "label": "Type",
                 "name": "Type",
                 "width": "75px",
