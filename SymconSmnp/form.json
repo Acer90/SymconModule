@@ -70,6 +70,21 @@
                     "type": "ValidationTextBox"
                 }
             }, {
+            "label": "Typ",
+                "name": "oid",
+                "width": "auto",
+                "add": "Var",
+                "edit": {
+                    "type": "Select",
+                    "options": [
+                        { "label": "str", "value": "str" },
+                        { "label": "int", "value": "int" },
+                        { "label": "uint", "value": "uint" },
+                        { "label": "hex", "value": "hex" },
+                        { "label": "oid", "value": "oid" },
+                        { "label": "ip", "value": "ip" }]
+                }
+            }, {
                 "label": "Type",
                 "name": "typ",
                 "width": "50px",
