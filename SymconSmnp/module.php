@@ -77,8 +77,14 @@
                 default:
                     preg_match_all($re, $out, $out);
                     break;
+            } 
+
+            if(!array_key_exists("value", $out) && count($out["value"]) != 3) {
+                $this->SetStatus(203);
+                return "";
             }
-            print_r($out);
+            $rdata = array("Type" => $out["value"][1], "Value" => $out["value"][2]);
+            print_r($rdata);
         }
     }
 ?>

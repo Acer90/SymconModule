@@ -94,6 +94,7 @@
     [
         { "code": 102, "icon": "inactive", "caption": "Timeout!" },
         { "code": 201, "icon": "error", "caption": "Error Invalid parameter" },
-        { "code": 202, "icon": "error", "caption": "Variable does not exist!" }
+        { "code": 202, "icon": "error", "caption": "Variable does not exist!" },
+        { "code": 202, "icon": "error", "caption": "Internal Error!" }
     ]
 }
