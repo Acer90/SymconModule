@@ -4,6 +4,7 @@
         { "type": "ValidationTextBox", "name": "SNMPIPAddress", "caption": "Host" },
         { "type": "NumberSpinner", "name": "SNMPPort", "caption": "Port" },
         { "type": "NumberSpinner", "name": "SNMPTimeout", "caption": "Timeout"},
+        { "type": "IntervalBox", "name": "SNMPInterval", "caption": "Sekunden" },
         { "type": "Select", "name": "SNMPVersion", "caption": "Version",
             "options": [
                 { "label": "Version 1", "value": "1" },

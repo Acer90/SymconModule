@@ -12,6 +12,7 @@
             $this->RegisterPropertyString("SNMPIPAddress", "192.168.178.1"); 
             $this->RegisterPropertyInteger("SNMPPort", 161);
             $this->RegisterPropertyInteger("SNMPTimeout", 1);
+            $this->RegisterPropertyInteger("SNMPInterval", 10);
             $this->RegisterPropertyString("SNMPVersion", "2c");
 
             $this->RegisterPropertyString("SNMPCommunity", "public"); 
@@ -26,17 +27,18 @@
             $this->RegisterPropertyString("SNMPContextName", ""); 
             $this->RegisterPropertyInteger("SNMPContextEngine", "0");
 
-            //event erstellen
-            $this->RegisterTimer("SyncData", 10, 'IPSWINSNMP_SyncData($_IPS[\'TARGET\']);');
-
             $this->RegisterPropertyString("Devices", ""); 
-            
+
+            //event erstellen
+            $this->RegisterTimer("SyncData", $this->ReadPropertyInteger("SNMPInterval"), 'IPSWINSNMP_SyncData($_IPS[\'TARGET\']);');
         }
 
         public function ApplyChanges() {
             // Diese Zeile nicht löschen
             parent::ApplyChanges();
             //$this->RequireParent("{1A75660D-48AE-4B89-B351-957CAEBEF22D}");
+
+            $this->SetTimerInterval("SyncData", $this->ReadPropertyInteger("SNMPInterval")*1000);
         }
 
         public function ReadSNMP($oid) {
@@ -107,57 +109,56 @@
                     $rdata = IPSWINSNMP_ReadSNMP($id, $oid);
                     if(!is_array($rdata)) continue;
                     if(!IPS_VariableExists($instanceID)){
-                        echo $typ;
                         $vartyp = "";
                         $varid = 0;
 
                         switch (true){
-                            case stristr($typ,'NsapAddress'):
+                            case stristr($rdata["Type"],'NsapAddress'):
                                 //Boolean anlegen
                                 $varid = IPS_CreateVariable(3);
                                 $vartyp = "str";
                                 break;
-                            case stristr($typ,'IpAddress'):
+                            case stristr($rdata["Type"],'IpAddress'):
                                 //Boolean anlegen
                                 $varid = IPS_CreateVariable(3);
                                 $vartyp = "ip";
                                 break;
-                            case stristr($typ,'Bit String'):
+                            case stristr($rdata["Type"],'Bit String'):
                                 //Boolean anlegen
                                 $varid = IPS_CreateVariable(3);
                                 $vartyp = "hex";
                                 break;
-                            case stristr($typ,'Integer') && !stristr($typ,'UInteger'):
+                            case stristr($rdata["Type"],'Integer') && !stristr($typ,'UInteger'):
                                 //Integer anlegen
                                 $varid = IPS_CreateVariable(1);
                                 $vartyp = "int";
                                 break;
-                            case stristr($typ,'Gauge'):
+                            case stristr($rdata["Type"],'Gauge'):
                                 //Integer anlegen
                                 $varid = IPS_CreateVariable(1);
                                 $vartyp = "uint";
                                 break;
-                            case stristr($typ,'Counter'):
+                            case stristr($rdata["Type"],'Counter'):
                                 //Integer anlegen
                                 $varid = IPS_CreateVariable(1);
                                 $vartyp = "int";
                                 break;
-                            case stristr($typ,'UInteger'):
+                            case stristr($rdata["Type"],'UInteger'):
                                 //Integer anlegen
                                 $varid = IPS_CreateVariable(1);
                                 $vartyp = "uint";
                                 break;
-                            case stristr($typ,'Object Identifier'):
+                            case stristr($rdata["Type"],'Object Identifier'):
                                 //Integer anlegen
                                 $varid = IPS_CreateVariable(1);
                                 $vartyp = "oid";
                                 break;
-                            case stristr($typ,'TimeTicks'):
+                            case stristr($rdata["Type"],'TimeTicks'):
                                 //Float anlegen
                                 $varid = IPS_CreateVariable(3);
                                 $vartyp = "uint";
                                 break;
-                            case stristr($typ,'Octet String'):
+                            case stristr($rdata["Type"],'Octet String'):
                                 //Float anlegen
                                 $varid = IPS_CreateVariable(3);
                                 $vartyp = "str";
@@ -166,12 +167,21 @@
 
                         if(empty($vartyp) || $varid == 0) continue;
                         IPS_SetName($varid, $name); 
-                        IPS_SetParent($varid, $id); 
+                        IPS_SetParent($varid, $id);
+
+                        $Device["instanceID"] = $varid;
+                        $Device["typ"] = $vartyp;
+
+                        //IPS_GetVariable($varid)
+
 
                     }else{
 
                     }
                 }
+
+                IPS_SetProperty($id, "Devices", json_encode($Devices)); 
+                IPS_ApplyChanges($id);
             }
         }
     }
