@@ -172,13 +172,20 @@
 
                         $Device["instanceID"] = $varid;
                         $Device["typ"] = $vartyp;
-
-                        //IPS_GetVariable($varid)
-
-
+                        $instanceID = $varid;
                     }else{
 
                     }
+
+                    switch (IPS_GetVariable($instanceID["VariableType"])){
+                        case 1:
+                            SetValueInteger($instanceID, $rdata["Value"]);
+                            break;
+                        case 3:
+                            SetValueString($instanceID, $rdata["Value"]);
+                            break;
+                    }
+
                 }
 
                 IPS_SetProperty($id, "Devices", json_encode($Devices)); 
