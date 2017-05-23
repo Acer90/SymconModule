@@ -94,14 +94,14 @@
             $DevicesString = $this->ReadPropertyString("Devices");
             $Devices = json_decode($DevicesString);
             print_r($Devices);
-            foreach ($Devices as &$Device) {
-                $instanceID = $Device["instanceID"];
-                $name = $Device["name"];
-                $oid = $Device["oid"];
-                $typ = $Device["typ"];
+            //foreach ($Devices as &$Device) {
+                //$instanceID = $Device["instanceID"];
+                //$name = $Device["name"];
+                //$oid = $Device["oid"];
+                //$typ = $Device["typ"];
 
-                print_r($Device);
-            }
+                //print_r($Device);
+            //}
         }
     }
 ?>
