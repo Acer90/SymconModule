@@ -19,8 +19,8 @@
             $this->RegisterPropertyString("SNMPSecurityName", "SomeName");
             //$this->RegisterPropertyString("SNMPAuthenticationProtocol", "SHA"); 
             //$this->RegisterPropertyString("SNMPAuthenticationPassword", "SomeAuthPass"); 
-            $this->RegisterPropertyString("SNMPPrivacyProtocol", "DES"); 
-            $this->RegisterPropertyString("SNMPPrivacyPassword", "SomePrivPass"); 
+            //$this->RegisterPropertyString("SNMPPrivacyProtocol", "DES"); 
+            //$this->RegisterPropertyString("SNMPPrivacyPassword", "SomePrivPass"); 
 
             //$this->RegisterPropertyString("SNMPEngineID", "0"); 
             //$this->RegisterPropertyString("SNMPContextName", ""); 
@@ -37,7 +37,7 @@
             $this->RequireParent("{1A75660D-48AE-4B89-B351-957CAEBEF22D}");
         }
 
-        public function MeineErsteEigeneFunktion() {
+        public function Test() {
             // Selbsterstellter Code
         }
     }
