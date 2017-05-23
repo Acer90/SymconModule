@@ -100,10 +100,28 @@
                 $typ = $Device["typ"];
 
                 if(!empty($name) && !empty($oid)){
-                    $rdata = ReadSNMP($oid);
+                    $rdata = IPSWINSNMP_ReadSNMP($oid);
                     if(is_array($rdata)){
                         if(!IPS_VariableExists($instanceID)){
                             echo $typ;
+
+                            switch (true){
+                                case stristr($typ,'%Invalid parameter'):
+                                    //Boolean anlegen
+                                    $var = IPS_CreateVariable(0);
+                                    break;
+                                case stristr($typ,'Integer') || stristr($typ,'Gauge') || stristr($typ,'Counter'):
+                                    //Integer anlegen
+                                    $var = IPS_CreateVariable(1);
+                                    break;
+                                case stristr($typ,'Variable does not exist'):
+                                    //Float
+                                    $var = IPS_CreateVariable(2);
+                                    break;
+                                default:
+                                    $var = IPS_CreateVariable(3);
+                                    break;
+                            }
 
                         }else{
 
