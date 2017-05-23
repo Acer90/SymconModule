@@ -17,7 +17,7 @@
             "type": "List",
             "name": "SNMPDevices",
             "caption": "Devices",
-            "rowCount": 20,
+            "rowCount": 10,
             "add": true,
             "delete": true,
             "sort": {
@@ -38,13 +38,15 @@
                     "type": "ValidationTextBox"
                 }
             }, {
-                "label": "Temperature",
-                "name": "Temperature",
+                "label": "Type",
+                "name": "Type",
                 "width": "75px",
-                "add": 20.0,
+                "add": "read",
                 "edit": {
-                    "type": "NumberSpinner",
-                    "digits": 2
+                    "type": "Select",
+                    "options": [
+                    { "label": "read", "value": 0 },
+                    { "label": "write", "value": 1 }]
                 }
             }]
         }
