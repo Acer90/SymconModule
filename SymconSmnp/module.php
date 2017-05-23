@@ -1,12 +1,9 @@
 <?
     // Klassendefinition
     class IPSWINSNMP extends IPSModule {
-
         public function Create() {
-         
-            // Diese Zeile nicht entfernen
-            parent::Create();
-         
+            //parent::Create();
+
             // Modul-Eigenschaftserstellung
             $this->RegisterPropertyString("SNMPIPAddress", "192.168.178.1"); 
             $this->RegisterPropertyInteger("SNMPPort", 161);
