@@ -94,7 +94,7 @@
         }
 
         public function SyncData(){
-            echo $id = $this->InstanceID;
+            $id = $this->InstanceID;
             $DevicesString = $this->ReadPropertyString("Devices");
             $Devices = json_decode($DevicesString, true);
             foreach ($Devices as &$Device) {
@@ -104,8 +104,8 @@
                 $typ = $Device["typ"];
 
                 if(!empty($name) && !empty($oid)){
-                    echo $rdata = IPSWINSNMP_ReadSNMP($id, $oid);
-                    if(is_array($rdata)) continue;
+                    $rdata = IPSWINSNMP_ReadSNMP($id, $oid);
+                    if(!is_array($rdata)) continue;
                     if(!IPS_VariableExists($instanceID)){
                         echo $typ;
                         $vartyp = "";
