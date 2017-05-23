@@ -38,6 +38,7 @@
 
         public function ReadSNMP($oid) {
             $Filedir = dirname(__FILE__). "\\bin\\". "SnmpGet.exe";
+            $re = '/(?<typ>.+)=(?<value>.+)/m';
 
             $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
             $SNMPPort = $this->ReadPropertyInteger("SNMPPort");
@@ -74,7 +75,7 @@
                     $this->SetStatus(202);
                     break;
                 default:
-                    preg_match_all('^((?P<name>\w+))=(.*(?P<value>\w+))$', $out, $out);
+                    preg_match_all($re, $out, $out);
                     break;
             }
             print_r($out);
