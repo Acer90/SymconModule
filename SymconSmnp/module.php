@@ -60,7 +60,7 @@
                 $Parameters = '-r:' . $SNMPIPAddress.' -p:'.$SNMPPort.' -t:'.$SNMPTimeout.' -c:"'.$SNMPCommunity.'"' .' -o:' . $oid;
                 $out = IPS_Execute($Filedir , $Parameters, FALSE, TRUE);
             }
-            echo $out;
+
             switch (true){
                 case stristr($out,'%Invalid parameter'):
                     return '';
@@ -94,7 +94,7 @@
             $DevicesString = $this->ReadPropertyString("Devices");
             $Devices = json_decode($DevicesString);
 
-            foreach($Devices as $Device) {
+            foreach ($Devices as &$Device) {
                 $instanceID = $Device["instanceID"];
                 $name = $Device["name"];
                 $oid = $Device["oid"];
