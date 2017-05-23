@@ -3,7 +3,7 @@
     [
         { "type": "ValidationTextBox", "name": "SNMPIPAddress", "caption": "Host", "value": "100.1.2.2" },
         { "type": "NumberSpinner", "name": "SNMPPort", "caption": "Port", "value": "161" },
-        { "type": "Timeout", "name": "SNMPTimeout", "caption": "Timeout", "value": "1" },
+        { "type": "NumberSpinner", "name": "SNMPTimeout", "caption": "Timeout", "value": "1" },
         { "type": "Select", "name": "SNMPVersion", "caption": "Version",
             "options": [
                 { "label": "Version 1", "value": 1 },
