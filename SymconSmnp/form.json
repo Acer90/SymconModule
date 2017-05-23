@@ -17,7 +17,7 @@
         { "type": "Select", "name": "SNMPAuthenticationProtocol", "caption": "Authentication Protocol",
             "options": [
                 { "label": "MD5", "value": "MD5" },
-                { "label": "SHA (SNMPv3)", "value": "SHA" }
+                { "label": "SHA", "value": "SHA" }
         ]},
         { "type": "PasswordTextBox", "name": "SNMPAuthenticationPassword", "caption": "Authentication Password" },
         { "type": "Select", "name": "SNMPPrivacyProtocol", "caption": "Privacy Protocol",
@@ -27,7 +27,7 @@
                 { "label": "AES128", "value": "AES128" },
                 { "label": "AES192", "value": "AES192" },
                 { "label": "AES256", "value": "AES256" },
-                { "label": "3DES (SNMPv3)", "value": "3DES" }
+                { "label": "3DES", "value": "3DES" }
         ]},
         { "type": "PasswordTextBox", "name": "SNMPPrivacyPassword", "caption": "Privacy Password" },
         { "type": "NumberSpinner", "name": "SNMPEngineID", "caption": "Engine ID", "hex": true},
