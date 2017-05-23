@@ -36,7 +36,7 @@
             //$this->RequireParent("{1A75660D-48AE-4B89-B351-957CAEBEF22D}");
         }
 
-        public function ReadSNMP($oid = ".1.3.6.1.2.1.1.4.0") {
+        public function ReadSNMP($oid) {
             $Filedir = dirname(__FILE__). "\\bin\\". "SnmpGet.exe";
 
             $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
