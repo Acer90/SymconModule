@@ -39,8 +39,7 @@
         public function Test() {
             // Selbsterstellter Code
             $Filedir = dirname(__FILE__). "\\bin\\";
-            IPS_Execute($Filedir. "SnmpGet.exe", "", FALSE, TRUE);
-            print_r(stdout);
+            echo IPS_Execute($Filedir. "SnmpGet.exe", "", FALSE, TRUE);
         }
     }
 ?>
