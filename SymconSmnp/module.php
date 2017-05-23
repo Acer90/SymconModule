@@ -180,7 +180,7 @@
                             if(GetValueInteger($instanceID) == $rdata["Value"]) SetValueInteger($instanceID, $rdata["Value"]);
                             break;
                         case 3:
-                            if(GetValueString($instanceID) == $rdata["Value"]) SetValueString($instanceID, $rdata["Value"]);
+                            if(GetValueString($instanceID) == (string)$rdata["Value"]) SetValueString($instanceID, (string)$rdata["Value"]);
                             break;
                     }
 
