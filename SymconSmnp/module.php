@@ -16,7 +16,7 @@
 
             $this->RegisterPropertyString("SNMPCommunity", "public"); 
 
-            $this->RegisterPropertyString("SNMPSecurityName", "SomeName");
+            //$this->RegisterPropertyString("SNMPSecurityName", "SomeName");
             //$this->RegisterPropertyString("SNMPAuthenticationProtocol", "SHA"); 
             //$this->RegisterPropertyString("SNMPAuthenticationPassword", "SomeAuthPass"); 
             //$this->RegisterPropertyString("SNMPPrivacyProtocol", "DES"); 
@@ -34,7 +34,7 @@
         public function ApplyChanges() {
             // Diese Zeile nicht löschen
             parent::ApplyChanges();
-            $this->RequireParent("{1A75660D-48AE-4B89-B351-957CAEBEF22D}");
+            //$this->RequireParent("{1A75660D-48AE-4B89-B351-957CAEBEF22D}");
         }
 
         public function Test() {
