@@ -80,12 +80,6 @@
                     { "label": "read", "value": "read" },
                     { "label": "read/write", "value": "read/write" }]
                 }
-            }],
-            "values": [{
-                "instanceID": 0,
-                "name": "Uptime",
-                "oid": ".1.3.6.1.2.1.1.4.0",
-                "typ": "read"
             }]
         }
     ],
