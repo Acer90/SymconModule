@@ -12,15 +12,15 @@
             $this->RegisterPropertyString("SNMPIPAddress", "192.168.178.1"); 
             $this->RegisterPropertyInteger("SNMPPort", 161);
             $this->RegisterPropertyInteger("SNMPTimeout", 1);
-            $this->RegisterPropertyInteger("SNMPVersion", 2);
+            $this->RegisterPropertyString("SNMPVersion", "2c");
 
             $this->RegisterPropertyString("SNMPCommunity", "public"); 
 
-            $this->RegisterPropertyString("SNMPSecurityName", "");
-            $this->RegisterPropertyString("SNMPAuthenticationProtocol", "SHA"); 
-            $this->RegisterPropertyString("SNMPAuthenticationPassword", ""); 
-            $this->RegisterPropertyString("SNMPPrivacyProtocol", "AES256"); 
-            $this->RegisterPropertyString("SNMPPrivacyPassword", ""); 
+            $this->RegisterPropertyString("SNMPSecurityName", "SomeName");
+            //$this->RegisterPropertyString("SNMPAuthenticationProtocol", "SHA"); 
+            //$this->RegisterPropertyString("SNMPAuthenticationPassword", "SomeAuthPass"); 
+            $this->RegisterPropertyString("SNMPPrivacyProtocol", "DES"); 
+            $this->RegisterPropertyString("SNMPPrivacyPassword", "SomePrivPass"); 
 
             //$this->RegisterPropertyString("SNMPEngineID", "0"); 
             //$this->RegisterPropertyString("SNMPContextName", ""); 

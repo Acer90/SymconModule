@@ -6,9 +6,9 @@
         { "type": "NumberSpinner", "name": "SNMPTimeout", "caption": "Timeout"},
         { "type": "Select", "name": "SNMPVersion", "caption": "Version",
             "options": [
-                { "label": "Version 1", "value": 1 },
-                { "label": "Version 2c", "value": 2 },
-                { "label": "Version 3", "value": 3 }
+                { "label": "Version 1", "value": "1" },
+                { "label": "Version 2c", "value": "2c" },
+                { "label": "Version 3", "value": "3" }
         ]},
         { "type": "Label", "label": "SNMP V1/V2 Settings" },
         { "type": "ValidationTextBox", "name": "SNMPCommunity", "caption": "Community" },
