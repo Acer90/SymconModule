@@ -74,7 +74,7 @@
                     $this->SetStatus(202);
                     break;
                 default:
-                    preg_match('/(?P<name>\w+)=(?P<zahl>\d+)/', $out, $out);
+                    preg_match_all('/(?P<name>\w+)=(?P<zahl>\d+)/', $out, $out);
                     break;
             }
             print_r($out);
