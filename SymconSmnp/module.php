@@ -39,7 +39,7 @@
         public function ReadSNMP($oid) {
             $Filedir = dirname(__FILE__). "\\bin\\". "SnmpGet.exe";
 
-            echo $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
+            $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
             $SNMPPort = $this->ReadPropertyInteger("SNMPPort");
             $SNMPTimeout = $this->ReadPropertyInteger("SNMPTimeout");
             $SNMPVersion = $this->ReadPropertyString("SNMPVersion");
@@ -59,6 +59,7 @@
                 $Parameters = '-r:' . $SNMPIPAddress.' -p:'.$SNMPPort.' -t:'.$SNMPTimeout.' -c:"'.$SNMPCommunity.'"' .' -o:' . $oid;
                 $out = IPS_Execute($Filedir , $Parameters, FALSE, TRUE);
             }
+            echo $out;
             switch (true){
                 case stristr($out,'%Invalid parameter'):
                     return '';
