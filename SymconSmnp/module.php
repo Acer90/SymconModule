@@ -17,14 +17,14 @@
             $this->RegisterPropertyString("SNMPCommunity", "public"); 
 
             $this->RegisterPropertyString("SNMPSecurityName", "SomeName");
-            //$this->RegisterPropertyString("SNMPAuthenticationProtocol", "SHA"); 
-            //$this->RegisterPropertyString("SNMPAuthenticationPassword", "SomeAuthPass"); 
-            //$this->RegisterPropertyString("SNMPPrivacyProtocol", "DES"); 
-            //$this->RegisterPropertyString("SNMPPrivacyPassword", "SomePrivPass"); 
+            $this->RegisterPropertyString("SNMPAuthenticationProtocol", "SHA"); 
+            $this->RegisterPropertyString("SNMPAuthenticationPassword", "SomeAuthPass"); 
+            $this->RegisterPropertyString("SNMPPrivacyProtocol", "DES"); 
+            $this->RegisterPropertyString("SNMPPrivacyPassword", "SomePrivPass"); 
 
-            //$this->RegisterPropertyString("SNMPEngineID", "0"); 
+            //$this->RegisterPropertyInteger("SNMPEngineID", "0"); 
             //$this->RegisterPropertyString("SNMPContextName", ""); 
-            //$this->RegisterPropertyString("SNMPContextEngine", "0");
+            //$this->RegisterPropertyInteger("SNMPContextEngine", "0");
 
             //{ "type": "NumberSpinner", "name": "SNMPEngineID", "caption": "Engine ID", "hex": true},
             //{ "type": "ValidationTextBox", "name": "SNMPContextName", "caption": "Context Name" },
