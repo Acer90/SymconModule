@@ -224,12 +224,11 @@
                         if(count($strarr)>= 2) continue;
                         $port_id = $strarr[1];
                         if(!is_numeric($port_id)) continue;
-                        echo $port_id;
 
                         if(!IPS_VariableExists($instanceID)){
                             switch($oid){
                                 case stristr($oid,'PortStatus100'):
-                                        $varid = IPS_CreateVariable(1);
+                                        echo $varid = IPS_CreateVariable(1);
                                         $vartyp = "int";
                                         IPS_SetName($varid, $name); 
                                         IPS_SetParent($varid, $id);
