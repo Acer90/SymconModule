@@ -110,115 +110,111 @@
             echo $ArchivId = $this->ReadPropertyInteger("ArchivID");
             $Devices = json_decode($DevicesString, true);
             //print_r($Devices);
-            try{
-                foreach ($Devices as &$Device) {
-                    $instanceID = $Device["instanceID"];
-                    $name = $Device["name"];
-                    $oid = $Device["oid"];
-                    $typ = $Device["typ"];
+            foreach ($Devices as &$Device) {
+                $instanceID = $Device["instanceID"];
+                $name = $Device["name"];
+                $oid = $Device["oid"];
+                $typ = $Device["typ"];
 
-                    if(!empty($name) && !empty($oid)){
-                        $rdata = IPSWINSNMP_ReadSNMP($id, $oid);
+                if(!empty($name) && !empty($oid)){
+                    $rdata = IPSWINSNMP_ReadSNMP($id, $oid);
 
-                        if(!is_array($rdata)) continue;
-                        if(!IPS_VariableExists($instanceID)){
-                            $vartyp = "";
-                            $varid = 0;
-                            $change = true;
-                            
-                            switch (true){
-                                case stristr($rdata["Type"],'NsapAddress'):
-                                    //Boolean anlegen
-                                    $varid = IPS_CreateVariable(3);
-                                    $vartyp = "str";
+                    if(!is_array($rdata)) continue;
+                    if(!IPS_VariableExists($instanceID)){
+                        $vartyp = "";
+                        $varid = 0;
+                        $change = true;
+                        
+                        switch (true){
+                            case stristr($rdata["Type"],'NsapAddress'):
+                                //Boolean anlegen
+                                $varid = IPS_CreateVariable(3);
+                                $vartyp = "str";
+                                break;
+                            case stristr($rdata["Type"],'IpAddress'):
+                                //Boolean anlegen
+                                $varid = IPS_CreateVariable(3);
+                                $vartyp = "ip";
+                                break;
+                            case stristr($rdata["Type"],'Bit String'):
+                                //Boolean anlegen
+                                $varid = IPS_CreateVariable(3);
+                                $vartyp = "hex";
+                                break;
+                            case stristr($rdata["Type"],'Integer') && !stristr($typ,'UInteger'):
+                                //Integer anlegen
+                                switch($typ){
+                                    case "mWtoW":
+                                        $varid = IPS_CreateVariable(2);
+                                        IPS_SetVariableCustomProfile($varid, "SNMP_Watt");
+                                        if(IPS_VariableExists($ArchivId)) AC_SetLoggingStatus($ArchivId, $varid, true);
                                     break;
-                                case stristr($rdata["Type"],'IpAddress'):
-                                    //Boolean anlegen
-                                    $varid = IPS_CreateVariable(3);
-                                    $vartyp = "ip";
+                                    default:
+                                        $varid = IPS_CreateVariable(1);
                                     break;
-                                case stristr($rdata["Type"],'Bit String'):
-                                    //Boolean anlegen
-                                    $varid = IPS_CreateVariable(3);
-                                    $vartyp = "hex";
-                                    break;
-                                case stristr($rdata["Type"],'Integer') && !stristr($typ,'UInteger'):
-                                    //Integer anlegen
-                                    switch($typ){
-                                        case "mWtoW":
-                                            $varid = IPS_CreateVariable(2);
-                                            IPS_SetVariableCustomProfile($varid, "SNMP_Watt");
-                                            if(IPS_VariableExists($ArchivId)) AC_SetLoggingStatus($ArchivId, $varid, true);
-                                        break;
-                                        default:
-                                            $varid = IPS_CreateVariable(1);
-                                        break;
-                                    }
-                                    $vartyp = "int";
-                                    break;
-                                case stristr($rdata["Type"],'Gauge'):
-                                    //Integer anlegen
-                                    $varid = IPS_CreateVariable(1);
-                                    $vartyp = "uint";
-                                    break;
-                                case stristr($rdata["Type"],'Counter'):
-                                    //Integer anlegen
-                                    $varid = IPS_CreateVariable(1);
-                                    $vartyp = "int";
-                                    break;
-                                case stristr($rdata["Type"],'UInteger'):
-                                    //Integer anlegen
-                                    $varid = IPS_CreateVariable(1);
-                                    $vartyp = "uint";
-                                    break;
-                                case stristr($rdata["Type"],'Object Identifier'):
-                                    //Integer anlegen
-                                    $varid = IPS_CreateVariable(1);
-                                    $vartyp = "oid";
-                                    break;
-                                case stristr($rdata["Type"],'TimeTicks'):
-                                    //Float anlegen
-                                    $varid = IPS_CreateVariable(3);
-                                    $vartyp = "uint";
-                                    break;
-                                case stristr($rdata["Type"],'Octet String'):
-                                    //Float anlegen
-                                    $varid = IPS_CreateVariable(3);
-                                    $vartyp = "str";
-                                    break;
-                            }
-
-                            if(empty($vartyp) || $varid == 0) continue;
-                            IPS_SetName($varid, $name); 
-                            IPS_SetParent($varid, $id);
-
-                            $Device["instanceID"] = $varid;
-                            $Device["var"] = $vartyp;
-                            $instanceID = $varid;
-                        }
-                        switch($typ){
-                            case "mWtoW":
-                                $value = $rdata["Value"] / 1000;
-                                if(is_numeric($rdata["Value"])) {
-                                    SetValue($instanceID, $value);
-
-                                    if($value == 0) IPS_SetHidden($instanceID, true); else IPS_SetHidden($instanceID, false);
                                 }
-                            break;
-                            default:
-                                if(GetValue($instanceID) != $rdata["Value"]) SetValue($instanceID, $rdata["Value"]);
-                            break;
+                                $vartyp = "int";
+                                break;
+                            case stristr($rdata["Type"],'Gauge'):
+                                //Integer anlegen
+                                $varid = IPS_CreateVariable(1);
+                                $vartyp = "uint";
+                                break;
+                            case stristr($rdata["Type"],'Counter'):
+                                //Integer anlegen
+                                $varid = IPS_CreateVariable(1);
+                                $vartyp = "int";
+                                break;
+                            case stristr($rdata["Type"],'UInteger'):
+                                //Integer anlegen
+                                $varid = IPS_CreateVariable(1);
+                                $vartyp = "uint";
+                                break;
+                            case stristr($rdata["Type"],'Object Identifier'):
+                                //Integer anlegen
+                                $varid = IPS_CreateVariable(1);
+                                $vartyp = "oid";
+                                break;
+                            case stristr($rdata["Type"],'TimeTicks'):
+                                //Float anlegen
+                                $varid = IPS_CreateVariable(3);
+                                $vartyp = "uint";
+                                break;
+                            case stristr($rdata["Type"],'Octet String'):
+                                //Float anlegen
+                                $varid = IPS_CreateVariable(3);
+                                $vartyp = "str";
+                                break;
                         }
-                    }
 
-                    if($change){
-                        IPS_SetProperty($id, "Devices", json_encode($Devices));
-                        IPS_ApplyChanges($id);
-                    } 
+                        if(empty($vartyp) || $varid == 0) continue;
+                        IPS_SetName($varid, $name); 
+                        IPS_SetParent($varid, $id);
+
+                        $Device["instanceID"] = $varid;
+                        $Device["var"] = $vartyp;
+                        $instanceID = $varid;
+                    }
+                    switch($typ){
+                        case "mWtoW":
+                            $value = $rdata["Value"] / 1000;
+                            if(is_numeric($rdata["Value"])) {
+                                SetValue($instanceID, $value);
+
+                                if($value == 0) IPS_SetHidden($instanceID, true); else IPS_SetHidden($instanceID, false);
+                            }
+                        break;
+                        default:
+                            if(GetValue($instanceID) != $rdata["Value"]) SetValue($instanceID, $rdata["Value"]);
+                        break;
+                    }
                 }
-            }catch (Exception $e) {
-                IPS_LogMessage($id, $e->getMessage());
-            }          
+
+                if($change){
+                    IPS_SetProperty($id, "Devices", json_encode($Devices));
+                    IPS_ApplyChanges($id);
+                } 
+            }       
         }
     }
 ?>
