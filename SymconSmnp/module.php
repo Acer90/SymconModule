@@ -63,7 +63,7 @@
                 IPS_SetVariableProfileAssociation("SNMP_PortStatus_100", -1, "Offline", "", 0xff0000);
                 IPS_SetVariableProfileAssociation("SNMP_PortStatus_100", 0, "Waiting", "", -1);
                 IPS_SetVariableProfileAssociation("SNMP_PortStatus_100", 10, "10 Mbit", "", 0xffff00);
-                IPS_SetVariableProfileAssociation("SNMP_PortStatus_100", 100, "100 Mbit", "", 0xff0000);
+                IPS_SetVariableProfileAssociation("SNMP_PortStatus_100", 100, "100 Mbit", "", 0x00cc00);
             }
             if (!IPS_VariableProfileExists("SNMP_PortStatus_1000")){
                 IPS_CreateVariableProfile("SNMP_PortStatus_1000", 1);
@@ -250,6 +250,7 @@
                                     continue;
                             }
                         }
+                        echo $oid;
                         switch($oid){
                             case stristr($oid,'PortStatus100'):
                                     $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.7" .$port_id); //read is Port Online
