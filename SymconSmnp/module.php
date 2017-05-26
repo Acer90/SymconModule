@@ -248,7 +248,9 @@
                                 default:
                                     continue;
                             }
-
+                            $Device["instanceID"] = $varid;
+                            $Device["var"] = $vartyp;
+                            
                             IPS_SetProperty($id, "Devices", json_encode($Devices));
                             IPS_ApplyChanges($id);
                         }
