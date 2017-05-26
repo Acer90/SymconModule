@@ -147,22 +147,20 @@
             $id = $this->InstanceID;
 
             $key = array_search($instance, array_column($Devices, 'instanceID'));
-            echo $key;
-            print_r($Devices);
             if(is_null($key)) return FALSE;
 
-            switch ($Devices["typ"]){
+            switch ($Devices[$key]["typ"]){
                 case "switch":
                     if($value) $value = 1; else $value = 0;
-                    return IPSWINSNMP_WriteSNMP($id, $Devices["oid"], $value, $Devices["var"]);
+                    return IPSWINSNMP_WriteSNMP($id, $Devices[$key]["oid"], $value, $Devices[$key]["var"]);
                 case "switch12":
                     if($value) $value = 1; else $value = 2;
-                    return IPSWINSNMP_WriteSNMP($id, $Devices["oid"], $value, $Devices["var"]);
+                    return IPSWINSNMP_WriteSNMP($id, $Devices[$key]["oid"], $value, $Devices[$key]["var"]);
                 case "mWtoW":
                     $value = (Int)($value * 1000);
-                    return IPSWINSNMP_WriteSNMP($id, $Devices["oid"], $value, $Devices["var"]);
+                    return IPSWINSNMP_WriteSNMP($id, $Devices[$key]["oid"], $value, $Devices[$key]["var"]);
                 default:
-                    return IPSWINSNMP_WriteSNMP($id, $Devices["oid"], $value, $Devices["var"]);
+                    return IPSWINSNMP_WriteSNMP($id, $Devices[$key]["oid"], $value, $Devices[$key]["var"]);
             }
         }
 
