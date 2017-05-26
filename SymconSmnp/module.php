@@ -131,7 +131,14 @@
                                 break;
                             case stristr($rdata["Type"],'Integer') && !stristr($typ,'UInteger'):
                                 //Integer anlegen
-                                $varid = IPS_CreateVariable(1);
+                                switch($typ){
+                                    case "mWtoW":
+                                        $varid = IPS_CreateVariable(2);
+                                    break;
+                                    default:
+                                        $varid = IPS_CreateVariable(1);
+                                    break;
+                                }
                                 $vartyp = "int";
                                 break;
                             case stristr($rdata["Type"],'Gauge'):

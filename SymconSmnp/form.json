@@ -89,12 +89,12 @@
                 "label": "Type",
                 "name": "typ",
                 "width": "30px",
-                "add": "r",
+                "add": "",
                 "edit": {
                     "type": "Select",
                     "options": [
-                    { "label": "r", "value": "r" },
-                    { "label": "rw", "value": "rw" }]
+                    { "label": "", "value": "" },
+                    { "label": "mWtoW", "value": "mWtoW" }]
                 }
             }]
         }
