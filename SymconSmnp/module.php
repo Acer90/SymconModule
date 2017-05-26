@@ -146,7 +146,7 @@
                                         case "mWtoW":
                                             $varid = IPS_CreateVariable(2);
                                             IPS_SetVariableCustomProfile($varid, "SNMP_Watt");
-                                            AC_SetLoggingStatus($id, $varid, true);
+                                            echo $id . "|". $varid. "|" . AC_SetLoggingStatus($id, $varid, true);
                                         break;
                                         default:
                                             $varid = IPS_CreateVariable(1);
