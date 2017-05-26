@@ -107,7 +107,7 @@
             $id = $this->InstanceID;
             $change = false;
             $DevicesString = $this->ReadPropertyString("Devices");
-            echo $ArchivId = $this->ReadPropertyInteger("ArchivID");
+            $ArchivId = $this->ReadPropertyInteger("ArchivID");
             $Devices = json_decode($DevicesString, true);
             //print_r($Devices);
             foreach ($Devices as &$Device) {
@@ -147,7 +147,10 @@
                                     case "mWtoW":
                                         $varid = IPS_CreateVariable(2);
                                         IPS_SetVariableCustomProfile($varid, "SNMP_Watt");
-                                        if(IPS_VariableExists($ArchivId)) AC_SetLoggingStatus($ArchivId, $varid, true);
+                                        if(IPS_VariableExists($ArchivId)){
+                                            AC_SetLoggingStatus($ArchivId, $varid, true);
+                                            IPS_ApplyChanges($ArchivId);
+                                        } 
                                     break;
                                     default:
                                         $varid = IPS_CreateVariable(1);
