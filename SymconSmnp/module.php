@@ -131,7 +131,7 @@
                     $this->SetStatus(202);
                     return FALSE;
                 case stristr($out,'Failed to set value to SNMP variable. Bad value'):
-                    $this->SetStatus(203);
+                    $this->SetStatus(204);
                     return FALSE;
                 case stristr($out,'OK'):
                     $this->SetStatus(102);
