@@ -148,8 +148,10 @@
                                         $varid = IPS_CreateVariable(2);
                                         IPS_SetVariableCustomProfile($varid, "SNMP_Watt");
                                         if(IPS_VariableExists($ArchivId)){
-                                            AC_SetLoggingStatus($ArchivId, $varid, true);
-                                            IPS_ApplyChanges($ArchivId);
+                                            echo AC_SetLoggingStatus($ArchivId, $varid, true);
+                                            echo AC_SetAggregationType($ArchivId, $varid, 0);
+                                            echo AC_SetGraphStatus($ArchivId, $varid, true);
+                                            echo IPS_ApplyChanges($ArchivId);
                                         } 
                                     break;
                                     default:
