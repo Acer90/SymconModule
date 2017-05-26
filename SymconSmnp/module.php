@@ -105,7 +105,7 @@
                 $SNMPCommunity = $this->ReadPropertyString("SNMPCommunity");
 
                 $Parameters = '-r:' . $SNMPIPAddress.' -p:'.$SNMPPort.' -t:'.$SNMPTimeout.' -c:"'.$SNMPCommunity.'"' .' -o:.' . $oid;
-                echo $out = IPS_Execute($Filedir , $Parameters, FALSE, TRUE);
+                $out = IPS_Execute($Filedir , $Parameters, FALSE, TRUE);
             }
 
             switch (true){
