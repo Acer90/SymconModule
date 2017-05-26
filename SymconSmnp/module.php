@@ -187,7 +187,7 @@
             $change = false;
             $DevicesString = $this->ReadPropertyString("Devices");
             $ArchivId = $this->ReadPropertyInteger("ArchivID");
-            $ScriptID = $this->ReadPropertyString("SkriptID");
+            $ScriptID = $this->ReadPropertyInteger("SkriptID");
             $Devices = json_decode($DevicesString, true);
             //print_r($Devices);
             foreach ($Devices as &$Device) {
