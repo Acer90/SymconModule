@@ -25,7 +25,8 @@
 
             $this->RegisterPropertyInteger("SNMPEngineID", "0"); 
             $this->RegisterPropertyString("SNMPContextName", ""); 
-            $this->RegisterPropertyInteger("SNMPContextEngine", "0");
+            
+            $this->RegisterPropertyInteger("ArchivID", "0");
 
             $this->RegisterPropertyString("Devices", ""); 
 
