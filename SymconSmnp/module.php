@@ -29,13 +29,19 @@
             $this->RegisterPropertyInteger("ArchivID", "0");
 
             //create Skript
-            $ScriptID = IPS_CreateScript(0);
-            IPS_SetName($ScriptID, "Action Script");
-            $data = file_get_contents(dirname(__FILE__). "\\action.php");
-            IPS_SetScriptContent($ScriptID, $data);
-            IPS_SetDisabled($ScriptID, true);
-            IPS_SetHidden($ScriptID, true);
-            IPS_SetParent($ScriptID, $this->InstanceID);
+            $script_found = IPS_GetScriptIDByName("Action Script", $this->InstanceID);
+            if($script_found == FALSE){
+                $ScriptID = IPS_CreateScript(0);
+                IPS_SetName($ScriptID, "Action Script");
+                $data = file_get_contents(dirname(__FILE__). "\\action.php");
+                IPS_SetScriptContent($ScriptID, $data);
+                IPS_SetDisabled($ScriptID, true);
+                IPS_SetHidden($ScriptID, true);
+                IPS_SetParent($ScriptID, $this->InstanceID);
+            }else{
+                $ScriptID = $script_found;
+            }
+            
 
             $this->RegisterPropertyInteger("SkriptID", $ScriptID);
 
