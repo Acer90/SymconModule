@@ -149,10 +149,12 @@
                                         IPS_SetVariableCustomProfile($varid, "SNMP_Watt");
                                         if(IPS_InstanceExists($ArchivId)){
                                             AC_SetLoggingStatus($ArchivId, $varid, true);
-                                            //AC_SetAggregationType($ArchivId, $varid, 0);
-                                            //AC_SetGraphStatus($ArchivId, $varid, true);
                                             IPS_ApplyChanges($ArchivId);
                                         } 
+                                    break;
+                                    case "switch":
+                                        $varid = IPS_CreateVariable(0);
+                                        IPS_SetVariableCustomProfile($varid, "~Switch");
                                     break;
                                     default:
                                         $varid = IPS_CreateVariable(1);
@@ -208,6 +210,9 @@
 
                                 if($value == 0) IPS_SetHidden($instanceID, true); else IPS_SetHidden($instanceID, false);
                             }
+                        break;
+                        case "switch":
+                            if(is_numeric($rdata["Value"]) && $rdata["Value"] == 1) SetValue($instanceID, true); else SetValue($instanceID, false);
                         break;
                         default:
                             if(GetValue($instanceID) != $rdata["Value"]) SetValue($instanceID, $rdata["Value"]);

@@ -96,7 +96,8 @@
                     "type": "Select",
                     "options": [
                     { "label": "", "value": "" },
-                    { "label": "mWtoW", "value": "mWtoW" }]
+                    { "label": "mWtoW", "value": "mWtoW" },
+                    { "label": "Switch", "value": "switch" }]
                 }
             }]
         }
