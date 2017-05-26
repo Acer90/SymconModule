@@ -220,9 +220,7 @@
                     if(stristr($oid,'|')){
                         
                         $strarr = explode("|", $oid);
-                        print_r($strarr);
-                        if(count($strarr)>= 2) continue;
-                        echo $port_id = $strarr[1];
+                        if(count($strarr) < 2) continue;
                         if(!is_numeric($port_id)) continue;
 
                         if(!IPS_VariableExists($instanceID)){
