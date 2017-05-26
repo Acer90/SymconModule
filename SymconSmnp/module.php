@@ -227,7 +227,7 @@
                         if(!IPS_VariableExists($instanceID)){
                             switch($oid){
                                 case stristr($oid,'PortStatus100'):
-                                        echo $varid = IPS_CreateVariable(1);
+                                        $varid = IPS_CreateVariable(1);
                                         $vartyp = "int";
                                         IPS_SetName($varid, $name); 
                                         IPS_SetParent($varid, $id);
@@ -254,18 +254,21 @@
                         switch($oid){
                             case stristr($oid,'PortStatus100'):
                                     $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.7" .$port_id); //read is Port Online
+                                    print_r($rdata);
                                     if(!is_array($rdata)) continue;  
                                     if($rdata["Value"] == 2){
                                         SetValue($instanceID, -1);
                                         continue;
                                     }
                                     $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.8" .$port_id); //read is Port Used
+                                    print_r($rdata);
                                     if(!is_array($rdata)) continue;  
                                     if($rdata["Value"] == 2){
                                         SetValue($instanceID, 0);
                                         continue;
                                     }
                                     $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.5" .$port_id); //read is Port Speed
+                                    print_r($rdata);
                                     if(!is_array($rdata)) continue;
                                     switch($rdata["Value"]){
                                         case 10000000:
