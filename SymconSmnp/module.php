@@ -217,12 +217,14 @@
                 $typ = $Device["typ"];
 
                 if(!empty($name) && !empty($oid)){
+                    echo $oid;
                     if(stristr($oid,'|')){
-
+                        
                         $strarr = explode("|", $oid);
                         if(count($strarr)>= 2) continue;
                         $port_id = $strarr[1];
                         if(!is_numeric($port_id)) continue;
+                        echo $port_id;
 
                         if(!IPS_VariableExists($instanceID)){
                             switch($oid){
@@ -278,7 +280,7 @@
                                             SetValue($instanceID, -1);
                                     }  
                                 break;
-                                case stristr($oid,'PortStatus100'):
+                                case stristr($oid,'PortStatus1000'):
                                     $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.7" .$port_id); //read is Port Online
                                     if(!is_array($rdata)) continue;  
                                     if($rdata["Value"] == 2){
