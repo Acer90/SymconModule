@@ -107,7 +107,7 @@
             $change = false;
             $DevicesString = $this->ReadPropertyString("Devices");
             $Devices = json_decode($DevicesString, true);
-            print_r($Devices);
+            //print_r($Devices);
             try{
                 foreach ($Devices as &$Device) {
                     $instanceID = $Device["instanceID"];
