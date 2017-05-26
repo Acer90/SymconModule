@@ -250,10 +250,12 @@
                                     continue;
                             }
                         }
-                        echo $oid;
+                        
                         switch($oid){
                             case stristr($oid,'PortStatus100'):
+                                    echo $oid;
                                     $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.7" .$port_id); //read is Port Online
+                                    print_r($rdata);
                                     if(!is_array($rdata)) continue;  
                                     if($rdata["Value"] == 2){
                                         SetValue($instanceID, -1);
