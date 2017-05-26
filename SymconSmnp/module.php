@@ -107,7 +107,7 @@
             $id = $this->InstanceID;
             $change = false;
             $DevicesString = $this->ReadPropertyString("Devices");
-            $ArchivId = $this->ReadPropertyInteger("ArchivID");
+            echo $ArchivId = $this->ReadPropertyInteger("ArchivID");
             $Devices = json_decode($DevicesString, true);
             //print_r($Devices);
             try{
