@@ -25,7 +25,7 @@
 
             $this->RegisterPropertyInteger("SNMPEngineID", "0"); 
             $this->RegisterPropertyString("SNMPContextName", ""); 
-            
+
             $this->RegisterPropertyInteger("ArchivID", "0");
 
             $this->RegisterPropertyString("Devices", ""); 
@@ -147,7 +147,7 @@
                                         case "mWtoW":
                                             $varid = IPS_CreateVariable(2);
                                             IPS_SetVariableCustomProfile($varid, "SNMP_Watt");
-                                            AC_SetLoggingStatus($this->ReadPropertyString("ArchivID"), $varid, true);
+                                            if(!empty($this->ReadPropertyString("ArchivID"))) AC_SetLoggingStatus($this->ReadPropertyString("ArchivID"), $varid, true);
                                         break;
                                         default:
                                             $varid = IPS_CreateVariable(1);
