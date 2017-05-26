@@ -76,17 +76,14 @@
 
             switch (true){
                 case stristr($out,'%Invalid parameter'):
-                    return '';
                     $this->SetStatus(201);
-                    break;
+                    return '';
                 case stristr($out,'%Failed to get value of SNMP variable. Timeout.'):
+                    $this->SetStatus(103);
                     return '';
-                    $this->SetStatus(102);
-                    break;
                 case stristr($out,'Variable does not exist'):
-                    return '';
                     $this->SetStatus(202);
-                    break;
+                    return '';
                 default:
                     preg_match_all($re, $out, $out);
                     break;
@@ -99,12 +96,78 @@
             return $rdata = array("Type" => $out["value"][1], "Value" => $out["value"][2]);
             print_r($rdata);
         }
-        public function WriteSNMP($oid) {
+        public function WriteSNMP($oid, $value, $type = "str") {
+            $Filedir = dirname(__FILE__). "\\bin\\". "SnmpSet.exe";
 
+            $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
+            $SNMPPort = $this->ReadPropertyInteger("SNMPPort");
+            $SNMPTimeout = $this->ReadPropertyInteger("SNMPTimeout");
+            $SNMPVersion = $this->ReadPropertyString("SNMPVersion");
+
+            if($SNMPVersion == "3") {
+                $SNMPSecurityName = $this->ReadPropertyString("SNMPSecurityName");
+                $SNMPAuthenticationProtocol = $this->ReadPropertyString("SNMPAuthenticationProtocol");
+                $SNMPAuthenticationPassword = $this->ReadPropertyString("SNMPAuthenticationPassword");
+                $SNMPPrivacyProtocol = $this->ReadPropertyString("SNMPPrivacyProtocol");
+                $SNMPPrivacyPassword = $this->ReadPropertyString("SNMPPrivacyPassword");
+                $SNMPEngineID = $this->ReadPropertyInteger("SNMPEngineID");
+                $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
+                $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
+            }else{
+                $SNMPCommunity = $this->ReadPropertyString("SNMPCommunity");
+
+                $Parameters = '-r:' . $SNMPIPAddress.' -p:'.$SNMPPort.' -t:'.$SNMPTimeout.' -c:"'.$SNMPCommunity.'"' .' -o:.' . $oid.' -val:'.$value.' -tp:'.$type;
+                $out = IPS_Execute($Filedir , $Parameters, FALSE, TRUE);
+            }
+
+            switch (true){
+                case stristr($out,'%Invalid parameter'):
+                    $this->SetStatus(201);
+                    return FALSE;
+                case stristr($out,'%Failed to get value of SNMP variable. Timeout.'):
+                    $this->SetStatus(103);
+                    return FALSE;
+                case stristr($out,'Variable does not exist'):
+                    $this->SetStatus(202);
+                    return FALSE;
+                case stristr($out,'Failed to set value to SNMP variable. Bad value'):
+                    $this->SetStatus(203);
+                    return FALSE;
+                case stristr($out,'OK'):
+                    $this->SetStatus(102);
+                    return TRUE;    
+                default:
+                    return FALSE;
+            } 
+        }
+
+        public function ChangeValue($instance, $value){
+            $DevicesString = $this->ReadPropertyString("Devices");
+            $Devices = json_decode($DevicesString, true);
+            $id = $this->InstanceID;
+
+            $key = array_search($instance, array_column($Devices, 'instanceID'));
+
+            if(is_null($key)) return FALSE;
+
+            switch ($Devices["typ"]){
+                case "switch":
+                    if($value) $value = 1; else $value = 0;
+                    return IPSWINSNMP_WriteSNMP($id, $Devices["oid"], $value, $Devices["var"]);
+                case "switch12":
+                    if($value) $value = 1; else $value = 2;
+                    return IPSWINSNMP_WriteSNMP($id, $Devices["oid"], $value, $Devices["var"]);
+                case "mWtoW":
+                    $value = (Int)($value * 1000);
+                    return IPSWINSNMP_WriteSNMP($id, $Devices["oid"], $value, $Devices["var"]);
+                default:
+                    return IPSWINSNMP_WriteSNMP($id, $Devices["oid"], $value, $Devices["var"]);
+            }
         }
 
         public function SyncData(){
             $id = $this->InstanceID;
+            $this->SetStatus(102);
             $change = false;
             $DevicesString = $this->ReadPropertyString("Devices");
             $ArchivId = $this->ReadPropertyInteger("ArchivID");
@@ -152,7 +215,7 @@
                                             IPS_ApplyChanges($ArchivId);
                                         } 
                                     break;
-                                    case "switch":
+                                    case "switch"  || "switch12":
                                         $varid = IPS_CreateVariable(0);
                                         IPS_SetVariableCustomProfile($varid, "~Switch");
                                     break;
@@ -211,7 +274,7 @@
                                 if($value == 0) IPS_SetHidden($instanceID, true); else IPS_SetHidden($instanceID, false);
                             }
                         break;
-                        case "switch":
+                        case "switch" || "switch12":
                             if(is_numeric($rdata["Value"]) && $rdata["Value"] == 1) SetValue($instanceID, true); else SetValue($instanceID, false);
                         break;
                         default:

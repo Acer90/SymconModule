@@ -97,7 +97,8 @@
                     "options": [
                     { "label": "", "value": "" },
                     { "label": "mWtoW", "value": "mWtoW" },
-                    { "label": "Switch", "value": "switch" }]
+                    { "label": "Switch", "value": "switch" },
+                    { "label": "Switch12", "value": "switch12" }]
                 }
             }]
         }
@@ -110,9 +111,11 @@
     ],
     "status":
     [
-        { "code": 102, "icon": "inactive", "caption": "Timeout!" },
+        { "code": 102, "icon": "active", "caption": "Connection Success!" },
+        { "code": 103, "icon": "inactive", "caption": "Timeout!" },
         { "code": 201, "icon": "error", "caption": "Error Invalid parameter" },
         { "code": 202, "icon": "error", "caption": "Variable does not exist!" },
-        { "code": 202, "icon": "error", "caption": "Internal Error!" }
+        { "code": 203, "icon": "error", "caption": "Internal Error!" },
+        { "code": 204, "icon": "error", "caption": "Bad Value!" }
     ]
 }
