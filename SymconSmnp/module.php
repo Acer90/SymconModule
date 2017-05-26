@@ -147,11 +147,11 @@
                                     case "mWtoW":
                                         $varid = IPS_CreateVariable(2);
                                         IPS_SetVariableCustomProfile($varid, "SNMP_Watt");
-                                        if(IPS_VariableExists($ArchivId)){
-                                            echo AC_SetLoggingStatus($ArchivId, $varid, true);
-                                            echo AC_SetAggregationType($ArchivId, $varid, 0);
-                                            echo AC_SetGraphStatus($ArchivId, $varid, true);
-                                            echo IPS_ApplyChanges($ArchivId);
+                                        if(IPS_InstanceExists($ArchivId)){
+                                            AC_SetLoggingStatus($ArchivId, $varid, true);
+                                            //AC_SetAggregationType($ArchivId, $varid, 0);
+                                            //AC_SetGraphStatus($ArchivId, $varid, true);
+                                            IPS_ApplyChanges($ArchivId);
                                         } 
                                     break;
                                     default:
