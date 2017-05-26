@@ -194,7 +194,11 @@
                     switch($typ){
                         case "mWtoW":
                             $value = $rdata["Value"] / 1000;
-                            if(is_numeric($rdata["Value"])) SetValue($instanceID, $value);
+                            if(is_numeric($rdata["Value"])) {
+                                SetValue($instanceID, $value);
+
+                                if($value == 0) IPS_SetHidden($instanceID, true); else IPS_SetHidden($instanceID, false);
+                            }
                         break;
                         default:
                             if(GetValue($instanceID) != $rdata["Value"]) SetValue($instanceID, $rdata["Value"]);
