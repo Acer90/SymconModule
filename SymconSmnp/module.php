@@ -113,7 +113,7 @@
                     $this->SetStatus(201);
                     return '';
                 case stristr($out,'%Failed to get value of SNMP variable. Timeout.'):
-                    $this->SetStatus(103);
+                    $this->SetStatus(205);
                     return '';
                 case stristr($out,'Variable does not exist'):
                     $this->SetStatus(202);
@@ -217,7 +217,6 @@
                 $typ = $Device["typ"];
 
                 if(!empty($name) && !empty($oid)){
-                    echo $oid;
                     if(stristr($oid,'|')){
                         
                         $strarr = explode("|", $oid);

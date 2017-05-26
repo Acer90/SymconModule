@@ -114,10 +114,10 @@
     "status":
     [
         { "code": 102, "icon": "active", "caption": "Connection Success!" },
-        { "code": 103, "icon": "inactive", "caption": "Timeout!" },
         { "code": 201, "icon": "error", "caption": "Error Invalid parameter" },
         { "code": 202, "icon": "error", "caption": "Variable does not exist!" },
         { "code": 203, "icon": "error", "caption": "Internal Error!" },
-        { "code": 204, "icon": "error", "caption": "Bad Value!" }
+        { "code": 204, "icon": "error", "caption": "Bad Value!" },
+        { "code": 205, "icon": "inactive", "caption": "Timeout!" }
     ]
 }
