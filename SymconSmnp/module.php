@@ -30,7 +30,7 @@
 
             //create Skript
             $script_found = IPS_GetScriptIDByName("Action Script", $this->InstanceID);
-            if($script_found == FALSE){
+            if($script_found === FALSE){
                 $ScriptID = IPS_CreateScript(0);
                 IPS_SetName($ScriptID, "Action Script");
                 $data = file_get_contents(dirname(__FILE__). "\\action.php");
