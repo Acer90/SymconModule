@@ -222,7 +222,7 @@
                         $strarr = explode("|", $oid);
                         print_r($strarr);
                         if(count($strarr)>= 2) continue;
-                        $port_id = $strarr[1];
+                        echo $port_id = $strarr[1];
                         if(!is_numeric($port_id)) continue;
 
                         if(!IPS_VariableExists($instanceID)){
