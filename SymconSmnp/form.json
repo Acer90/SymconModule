@@ -36,6 +36,8 @@
         { "type": "NumberSpinner", "name": "SNMPContextEngine", "caption": "Context Engine", "hex": true},
         { "type": "Label", "label": "Logging" },
         { "type": "SelectInstance", "name": "ArchivID", "caption": "Archiv" },
+        { "type": "Label", "label": "Logging" },
+        { "type": "SelectScript", "name": "SkriptID", "caption": "Action Skript" },
         { "type": "Label", "label": "Devices" },
         {
             "type": "List",

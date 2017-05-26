@@ -28,6 +28,15 @@
 
             $this->RegisterPropertyInteger("ArchivID", "0");
 
+            //create Skript
+            $ScriptID = IPS_CreateScript(0);
+            IPS_SetName($ScriptID, "Action Script");
+            IPS_SetScriptFile($ScriptID, dirname(__FILE__). "\\action.php");
+            IPS_SetDisabled($ScriptID, true);
+            IPS_SetHidden($ScriptID, true);
+
+            $this->RegisterPropertyInteger("SkriptID", $ScriptID);
+
             $this->RegisterPropertyString("Devices", ""); 
 
             //event erstellen
@@ -116,7 +125,7 @@
             }else{
                 $SNMPCommunity = $this->ReadPropertyString("SNMPCommunity");
 
-                echo $Parameters = '-r:' . $SNMPIPAddress.' -p:'.$SNMPPort.' -t:'.$SNMPTimeout.' -c:"'.$SNMPCommunity.'"' .' -o:.' . $oid.' -val:'.$value.' -tp:'.$type;
+                $Parameters = '-r:' . $SNMPIPAddress.' -p:'.$SNMPPort.' -t:'.$SNMPTimeout.' -c:"'.$SNMPCommunity.'"' .' -o:.' . $oid.' -val:'.$value.' -tp:'.$type;
                 $out = IPS_Execute($Filedir , $Parameters, FALSE, TRUE);
             }
 
@@ -186,6 +195,7 @@
                         $vartyp = "";
                         $varid = 0;
                         $change = true;
+                        $allow_use = false;
                         
                         switch (true){
                             case stristr($rdata["Type"],'NsapAddress'):
@@ -217,6 +227,7 @@
                                     case "switch"  || "switch12":
                                         $varid = IPS_CreateVariable(0);
                                         IPS_SetVariableCustomProfile($varid, "~Switch");
+                                        $allow_use = true;
                                     break;
                                     default:
                                         $varid = IPS_CreateVariable(1);
@@ -259,6 +270,7 @@
                         if(empty($vartyp) || $varid == 0) continue;
                         IPS_SetName($varid, $name); 
                         IPS_SetParent($varid, $id);
+                        IPS_SetDisabled($varid, $allow_use);
 
                         $Device["instanceID"] = $varid;
                         $Device["var"] = $vartyp;
