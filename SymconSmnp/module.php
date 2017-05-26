@@ -105,7 +105,7 @@
                 $SNMPCommunity = $this->ReadPropertyString("SNMPCommunity");
 
                 $Parameters = '-r:' . $SNMPIPAddress.' -p:'.$SNMPPort.' -t:'.$SNMPTimeout.' -c:"'.$SNMPCommunity.'"' .' -o:.' . $oid;
-                $out = IPS_Execute($Filedir , $Parameters, FALSE, TRUE);
+                echo $out = IPS_Execute($Filedir , $Parameters, FALSE, TRUE);
             }
 
             switch (true){
@@ -220,6 +220,7 @@
                     if(stristr($oid,'|')){
                         
                         $strarr = explode("|", $oid);
+                        print_r($strarr);
                         if(count($strarr)>= 2) continue;
                         $port_id = $strarr[1];
                         if(!is_numeric($port_id)) continue;
