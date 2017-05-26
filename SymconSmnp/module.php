@@ -116,7 +116,7 @@
             }else{
                 $SNMPCommunity = $this->ReadPropertyString("SNMPCommunity");
 
-                $Parameters = '-r:' . $SNMPIPAddress.' -p:'.$SNMPPort.' -t:'.$SNMPTimeout.' -c:"'.$SNMPCommunity.'"' .' -o:.' . $oid.' -val:'.$value.' -tp:'.$type;
+                echo $Parameters = '-r:' . $SNMPIPAddress.' -p:'.$SNMPPort.' -t:'.$SNMPTimeout.' -c:"'.$SNMPCommunity.'"' .' -o:.' . $oid.' -val:'.$value.' -tp:'.$type;
                 $out = IPS_Execute($Filedir , $Parameters, FALSE, TRUE);
             }
 
