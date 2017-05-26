@@ -250,7 +250,7 @@
                             }
                             $Device["instanceID"] = $varid;
                             $Device["var"] = $vartyp;
-                            
+
                             IPS_SetProperty($id, "Devices", json_encode($Devices));
                             IPS_ApplyChanges($id);
                         }
@@ -304,7 +304,7 @@
                                         case 100000000:
                                             SetValue($instanceID, 100);
                                             break;
-                                        case 100000000:
+                                        case 1000000000:
                                             SetValue($instanceID, 1000);
                                             break;
                                         default:
