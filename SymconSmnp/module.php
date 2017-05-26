@@ -60,18 +60,18 @@
             //Profile erstellen
             if (!IPS_VariableProfileExists("SNMP_PortStatus_100")){
                 IPS_CreateVariableProfile("SNMP_PortStatus_100", 1);
-                IPS_SetVariableProfileAssociation("SNMP_PortStatus", 1, "Offline", "", 0xff0000);
-                IPS_SetVariableProfileAssociation("SNMP_PortStatus", 0, "Waiting", "", -1);
-                IPS_SetVariableProfileAssociation("SNMP_PortStatus", 10, "10 Mbit", "", 0xffff00);
-                IPS_SetVariableProfileAssociation("SNMP_PortStatus", 100, "100 Mbit", "", 0xff0000);
+                IPS_SetVariableProfileAssociation("SNMP_PortStatus_100", 1, "Offline", "", 0xff0000);
+                IPS_SetVariableProfileAssociation("SNMP_PortStatus_100", 0, "Waiting", "", -1);
+                IPS_SetVariableProfileAssociation("SNMP_PortStatus_100", 10, "10 Mbit", "", 0xffff00);
+                IPS_SetVariableProfileAssociation("SNMP_PortStatus_100", 100, "100 Mbit", "", 0xff0000);
             }
             if (!IPS_VariableProfileExists("SNMP_PortStatus_1000")){
                 IPS_CreateVariableProfile("SNMP_PortStatus_1000", 1);
-                IPS_SetVariableProfileAssociation("SNMP_PortStatus", 1, "Offline", "", 0xff0000);
-                IPS_SetVariableProfileAssociation("SNMP_PortStatus", 0, "Waiting", "", -1);
-                IPS_SetVariableProfileAssociation("SNMP_PortStatus", 10, "10 Mbit", "", 0xffff00);
-                IPS_SetVariableProfileAssociation("SNMP_PortStatus", 100, "100 Mbit", "", 0x00cc00);
-                IPS_SetVariableProfileAssociation("SNMP_PortStatus", 1000, "1 Gbit", "", 0x0000cc);
+                IPS_SetVariableProfileAssociation("SNMP_PortStatus_1000", 1, "Offline", "", 0xff0000);
+                IPS_SetVariableProfileAssociation("SNMP_PortStatus_1000", 0, "Waiting", "", -1);
+                IPS_SetVariableProfileAssociation("SNMP_PortStatus_1000", 10, "10 Mbit", "", 0xffff00);
+                IPS_SetVariableProfileAssociation("SNMP_PortStatus_1000", 100, "100 Mbit", "", 0x00cc00);
+                IPS_SetVariableProfileAssociation("SNMP_PortStatus_1000", 1000, "1 Gbit", "", 0x0000cc);
             }
         }
 
@@ -231,7 +231,7 @@
                                         $vartyp = "int";
                                         IPS_SetName($varid, $name); 
                                         IPS_SetParent($varid, $id);
-                                        IPS_SetVariableCustomProfile($varid, "SNMP_PortStatus100");
+                                        IPS_SetVariableCustomProfile($varid, "SNMP_PortStatus_100");
                                         if(IPS_ScriptExists($ScriptID)) IPS_SetVariableCustomAction($varid, $ScriptID);
 
                                         $instanceID = $varid;
@@ -241,7 +241,7 @@
                                         $vartyp = "int";
                                         IPS_SetName($varid, $name); 
                                         IPS_SetParent($varid, $id);
-                                        IPS_SetVariableCustomProfile($varid, "SNMP_PortStatus1000");
+                                        IPS_SetVariableCustomProfile($varid, "SNMP_PortStatus_1000");
                                         if(IPS_ScriptExists($ScriptID)) IPS_SetVariableCustomAction($varid, $ScriptID);
 
                                         $instanceID = $varid;
@@ -250,7 +250,7 @@
                                     continue;
                             }
                         }
-
+                        echo $instanceID;
                         switch($oid){
                             case stristr($oid,'PortStatus100'):
                                     $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.7" .$port_id); //read is Port Online
