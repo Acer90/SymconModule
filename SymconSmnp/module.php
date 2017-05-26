@@ -146,7 +146,7 @@
                                         case "mWtoW":
                                             $varid = IPS_CreateVariable(2);
                                             IPS_SetVariableCustomProfile($varid, "SNMP_Watt");
-                                            echo $id . "|". $varid. "|" . AC_SetLoggingStatus($id, $varid, true);
+                                            AC_SetLoggingStatus($this->ReadPropertyString("ArchivID"), $varid, true);
                                         break;
                                         default:
                                             $varid = IPS_CreateVariable(1);
