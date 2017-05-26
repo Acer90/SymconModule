@@ -147,7 +147,8 @@
             $id = $this->InstanceID;
 
             $key = array_search($instance, array_column($Devices, 'instanceID'));
-
+            echo $key;
+            print_r($Devices);
             if(is_null($key)) return FALSE;
 
             switch ($Devices["typ"]){
