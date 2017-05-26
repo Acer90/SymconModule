@@ -56,6 +56,23 @@
                 IPS_SetVariableProfileDigits("SNMP_Watt", 1);
                 IPS_SetVariableProfileText("SNMP_Watt", "", "W");
             }
+
+            //Profile erstellen
+            if (!IPS_VariableProfileExists("SNMP_PortStatus_100")){
+                IPS_CreateVariableProfile("SNMP_PortStatus_100", 1);
+                IPS_SetVariableProfileAssociation("SNMP_PortStatus", 1, "Offline", "", 0xff0000);
+                IPS_SetVariableProfileAssociation("SNMP_PortStatus", 0, "Waiting", "", -1);
+                IPS_SetVariableProfileAssociation("SNMP_PortStatus", 10, "10 Mbit", "", 0xffff00);
+                IPS_SetVariableProfileAssociation("SNMP_PortStatus", 100, "100 Mbit", "", 0xff0000);
+            }
+            if (!IPS_VariableProfileExists("SNMP_PortStatus_1000")){
+                IPS_CreateVariableProfile("SNMP_PortStatus_1000", 1);
+                IPS_SetVariableProfileAssociation("SNMP_PortStatus", 1, "Offline", "", 0xff0000);
+                IPS_SetVariableProfileAssociation("SNMP_PortStatus", 0, "Waiting", "", -1);
+                IPS_SetVariableProfileAssociation("SNMP_PortStatus", 10, "10 Mbit", "", 0xffff00);
+                IPS_SetVariableProfileAssociation("SNMP_PortStatus", 100, "100 Mbit", "", 0x00cc00);
+                IPS_SetVariableProfileAssociation("SNMP_PortStatus", 1000, "1 Gbit", "", 0x0000cc);
+            }
         }
 
         public function ApplyChanges() {
@@ -165,19 +182,22 @@
 
             $key = array_search($instance, array_column($Devices, 'instanceID'));
             if(is_null($key)) return FALSE;
+            if(stristr($oid,':')){
 
-            switch ($Devices[$key]["typ"]){
-                case "switch":
-                    if($value) $value = 1; else $value = 0;
-                    return IPSWINSNMP_WriteSNMP($id, $Devices[$key]["oid"], $value, $Devices[$key]["var"]);
-                case "switch12":
-                    if($value) $value = 1; else $value = 2;
-                    return IPSWINSNMP_WriteSNMP($id, $Devices[$key]["oid"], $value, $Devices[$key]["var"]);
-                case "mWtoW":
-                    $value = (Int)($value * 1000);
-                    return IPSWINSNMP_WriteSNMP($id, $Devices[$key]["oid"], $value, $Devices[$key]["var"]);
-                default:
-                    return IPSWINSNMP_WriteSNMP($id, $Devices[$key]["oid"], $value, $Devices[$key]["var"]);
+            }else{
+                switch ($Devices[$key]["typ"]){
+                    case "switch":
+                        if($value) $value = 1; else $value = 0;
+                        return IPSWINSNMP_WriteSNMP($id, $Devices[$key]["oid"], $value, $Devices[$key]["var"]);
+                    case "switch12":
+                        if($value) $value = 1; else $value = 2;
+                        return IPSWINSNMP_WriteSNMP($id, $Devices[$key]["oid"], $value, $Devices[$key]["var"]);
+                    case "mWtoW":
+                        $value = (Int)($value * 1000);
+                        return IPSWINSNMP_WriteSNMP($id, $Devices[$key]["oid"], $value, $Devices[$key]["var"]);
+                    default:
+                        return IPSWINSNMP_WriteSNMP($id, $Devices[$key]["oid"], $value, $Devices[$key]["var"]);
+                }
             }
         }
 
@@ -197,120 +217,215 @@
                 $typ = $Device["typ"];
 
                 if(!empty($name) && !empty($oid)){
-                    $rdata = IPSWINSNMP_ReadSNMP($id, $oid);
+                    if(stristr($oid,':')){
 
-                    if(!is_array($rdata)) continue;
-                    if(!IPS_VariableExists($instanceID)){
-                        $vartyp = "";
-                        $varid = 0;
-                        $change = true;
-                        $allow_use = false;
-                        $use_action = false;
-                        
-                        switch (true){
-                            case stristr($rdata["Type"],'NsapAddress'):
-                                //Boolean anlegen
-                                $varid = IPS_CreateVariable(3);
-                                $vartyp = "str";
-                                break;
-                            case stristr($rdata["Type"],'IpAddress'):
-                                //Boolean anlegen
-                                $varid = IPS_CreateVariable(3);
-                                $vartyp = "ip";
-                                break;
-                            case stristr($rdata["Type"],'Bit String'):
-                                //Boolean anlegen
-                                $varid = IPS_CreateVariable(3);
-                                $vartyp = "hex";
-                                break;
-                            case stristr($rdata["Type"],'Integer') && !stristr($typ,'UInteger'):
-                                //Integer anlegen
-                                switch($typ){
-                                    case "mWtoW":
-                                        $varid = IPS_CreateVariable(2);
-                                        IPS_SetVariableCustomProfile($varid, "SNMP_Watt");
-                                        if(IPS_InstanceExists($ArchivId)){
-                                            AC_SetLoggingStatus($ArchivId, $varid, true);
-                                            IPS_ApplyChanges($ArchivId);
-                                        } 
-                                    break;
-                                    case "switch"  || "switch12":
-                                        $varid = IPS_CreateVariable(0);
-                                        IPS_SetVariableCustomProfile($varid, "~Switch");
-                                        $allow_use = true;
-                                        $use_action = true;
-                                    break;
-                                    default:
+                        $strarr = explode(":", $oid);
+                        if(count($strarr)>= 2) continue;
+                        $port_id = $strarr[1];
+                        if(!is_numeric($port_id)) continue;
+
+                        if(!IPS_VariableExists($instanceID)){
+                            switch($oid){
+                                case stristr($oid,'PortStatus100'):
                                         $varid = IPS_CreateVariable(1);
+                                        $vartyp = "int";
+                                        IPS_SetName($varid, $name); 
+                                        IPS_SetParent($varid, $id);
+                                        IPS_SetVariableCustomProfile($varid, "SNMP_PortStatus100");
+                                        if(IPS_ScriptExists($ScriptID)) IPS_SetVariableCustomAction($varid, $ScriptID);
+
+                                        $instanceID = $varid;
                                     break;
-                                }
-                                $vartyp = "int";
-                                break;
-                            case stristr($rdata["Type"],'Gauge'):
-                                //Integer anlegen
-                                $varid = IPS_CreateVariable(1);
-                                $vartyp = "uint";
-                                break;
-                            case stristr($rdata["Type"],'Counter'):
-                                //Integer anlegen
-                                $varid = IPS_CreateVariable(1);
-                                $vartyp = "int";
-                                break;
-                            case stristr($rdata["Type"],'UInteger'):
-                                //Integer anlegen
-                                $varid = IPS_CreateVariable(1);
-                                $vartyp = "uint";
-                                break;
-                            case stristr($rdata["Type"],'Object Identifier'):
-                                //Integer anlegen
-                                $varid = IPS_CreateVariable(1);
-                                $vartyp = "oid";
-                                break;
-                            case stristr($rdata["Type"],'TimeTicks'):
-                                //Float anlegen
-                                $varid = IPS_CreateVariable(3);
-                                $vartyp = "uint";
-                                break;
-                            case stristr($rdata["Type"],'Octet String'):
-                                //Float anlegen
-                                $varid = IPS_CreateVariable(3);
-                                $vartyp = "str";
-                                break;
+                                case stristr($oid,'PortStatus1000'):
+                                        $varid = IPS_CreateVariable(1);
+                                        $vartyp = "int";
+                                        IPS_SetName($varid, $name); 
+                                        IPS_SetParent($varid, $id);
+                                        IPS_SetVariableCustomProfile($varid, "SNMP_PortStatus1000");
+                                        if(IPS_ScriptExists($ScriptID)) IPS_SetVariableCustomAction($varid, $ScriptID);
+
+                                        $instanceID = $varid;
+                                    break;
+                                default:
+                                    continue;
+                            }
                         }
 
-                        if(empty($vartyp) || $varid == 0) continue;
-                        IPS_SetName($varid, $name); 
-                        IPS_SetParent($varid, $id);
-                        IPS_SetDisabled($varid, $allow_use);
-                        if($use_action && IPS_ScriptExists($ScriptID)) IPS_SetVariableCustomAction($varid, $ScriptID);
+                        switch($oid){
+                            case stristr($oid,'PortStatus100'):
+                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.7" .$port_id); //read is Port Online
+                                    if(!is_array($rdata)) continue;  
+                                    if($rdata["Value"] == 2){
+                                        SetValue($instanceID, -1);
+                                        continue;
+                                    }
+                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.8" .$port_id); //read is Port Used
+                                    if(!is_array($rdata)) continue;  
+                                    if($rdata["Value"] == 2){
+                                        SetValue($instanceID, 0);
+                                        continue;
+                                    }
+                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.5" .$port_id); //read is Port Speed
+                                    if(!is_array($rdata)) continue;
+                                    switch($rdata["Value"]){
+                                        case 10000000:
+                                            SetValue($instanceID, 10);
+                                            break;
+                                        case 100000000:
+                                            SetValue($instanceID, 100);
+                                            break;
+                                        default:
+                                            SetValue($instanceID, -1);
+                                    }  
+                                break;
+                                case stristr($oid,'PortStatus100'):
+                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.7" .$port_id); //read is Port Online
+                                    if(!is_array($rdata)) continue;  
+                                    if($rdata["Value"] == 2){
+                                        SetValue($instanceID, -1);
+                                        continue;
+                                    }
+                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.8" .$port_id); //read is Port Used
+                                    if(!is_array($rdata)) continue;  
+                                    if($rdata["Value"] == 2){
+                                        SetValue($instanceID, 0);
+                                        continue;
+                                    }
+                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.5" .$port_id); //read is Port Speed
+                                    if(!is_array($rdata)) continue;
+                                    switch($rdata["Value"]){
+                                        case 10000000:
+                                            SetValue($instanceID, 10);
+                                            break;
+                                        case 100000000:
+                                            SetValue($instanceID, 100);
+                                            break;
+                                        case 100000000:
+                                            SetValue($instanceID, 1000);
+                                            break;
+                                        default:
+                                            SetValue($instanceID, -1);
+                                    }  
+                                break;
+                            default:
+                                continue;
+                        }
+                    }else{
+                        $rdata = IPSWINSNMP_ReadSNMP($id, $oid);
 
-                        $Device["instanceID"] = $varid;
-                        $Device["var"] = $vartyp;
-                        $instanceID = $varid;
-                    }
-                    switch($typ){
-                        case "mWtoW":
-                            $value = $rdata["Value"] / 1000;
-                            if(is_numeric($rdata["Value"])) {
-                                SetValue($instanceID, $value);
-
-                                if($value == 0) IPS_SetHidden($instanceID, true); else IPS_SetHidden($instanceID, false);
+                        if(!is_array($rdata)) continue;
+                        if(!IPS_VariableExists($instanceID)){
+                            $vartyp = "";
+                            $varid = 0;
+                            $change = true;
+                            $allow_use = false;
+                            $use_action = false;
+                            
+                            switch (true){
+                                case stristr($rdata["Type"],'NsapAddress'):
+                                    //Boolean anlegen
+                                    $varid = IPS_CreateVariable(3);
+                                    $vartyp = "str";
+                                    break;
+                                case stristr($rdata["Type"],'IpAddress'):
+                                    //Boolean anlegen
+                                    $varid = IPS_CreateVariable(3);
+                                    $vartyp = "ip";
+                                    break;
+                                case stristr($rdata["Type"],'Bit String'):
+                                    //Boolean anlegen
+                                    $varid = IPS_CreateVariable(3);
+                                    $vartyp = "hex";
+                                    break;
+                                case stristr($rdata["Type"],'Integer') && !stristr($typ,'UInteger'):
+                                    //Integer anlegen
+                                    switch($typ){
+                                        case "mWtoW":
+                                            $varid = IPS_CreateVariable(2);
+                                            IPS_SetVariableCustomProfile($varid, "SNMP_Watt");
+                                            if(IPS_InstanceExists($ArchivId)){
+                                                AC_SetLoggingStatus($ArchivId, $varid, true);
+                                                IPS_ApplyChanges($ArchivId);
+                                            } 
+                                        break;
+                                        case "switch"  || "switch12":
+                                            $varid = IPS_CreateVariable(0);
+                                            IPS_SetVariableCustomProfile($varid, "~Switch");
+                                            $allow_use = true;
+                                            $use_action = true;
+                                        break;
+                                        default:
+                                            $varid = IPS_CreateVariable(1);
+                                        break;
+                                    }
+                                    $vartyp = "int";
+                                    break;
+                                case stristr($rdata["Type"],'Gauge'):
+                                    //Integer anlegen
+                                    $varid = IPS_CreateVariable(1);
+                                    $vartyp = "uint";
+                                    break;
+                                case stristr($rdata["Type"],'Counter'):
+                                    //Integer anlegen
+                                    $varid = IPS_CreateVariable(1);
+                                    $vartyp = "int";
+                                    break;
+                                case stristr($rdata["Type"],'UInteger'):
+                                    //Integer anlegen
+                                    $varid = IPS_CreateVariable(1);
+                                    $vartyp = "uint";
+                                    break;
+                                case stristr($rdata["Type"],'Object Identifier'):
+                                    //Integer anlegen
+                                    $varid = IPS_CreateVariable(1);
+                                    $vartyp = "oid";
+                                    break;
+                                case stristr($rdata["Type"],'TimeTicks'):
+                                    //Float anlegen
+                                    $varid = IPS_CreateVariable(3);
+                                    $vartyp = "uint";
+                                    break;
+                                case stristr($rdata["Type"],'Octet String'):
+                                    //Float anlegen
+                                    $varid = IPS_CreateVariable(3);
+                                    $vartyp = "str";
+                                    break;
                             }
-                        break;
-                        case "switch" || "switch12":
-                            if(is_numeric($rdata["Value"]) && $rdata["Value"] == 1) SetValue($instanceID, true); else SetValue($instanceID, false);
-                        break;
-                        default:
-                            if(GetValue($instanceID) != $rdata["Value"]) SetValue($instanceID, $rdata["Value"]);
-                        break;
+
+                            if(empty($vartyp) || $varid == 0) continue;
+                            IPS_SetName($varid, $name); 
+                            IPS_SetParent($varid, $id);
+                            IPS_SetDisabled($varid, $allow_use);
+                            if($use_action && IPS_ScriptExists($ScriptID)) IPS_SetVariableCustomAction($varid, $ScriptID);
+
+                            $Device["instanceID"] = $varid;
+                            $Device["var"] = $vartyp;
+                            $instanceID = $varid;
+                        }
+                        switch($typ){
+                            case "mWtoW":
+                                $value = $rdata["Value"] / 1000;
+                                if(is_numeric($rdata["Value"])) {
+                                    SetValue($instanceID, $value);
+
+                                    if($value == 0) IPS_SetHidden($instanceID, true); else IPS_SetHidden($instanceID, false);
+                                }
+                            break;
+                            case "switch" || "switch12":
+                                if(is_numeric($rdata["Value"]) && $rdata["Value"] == 1) SetValue($instanceID, true); else SetValue($instanceID, false);
+                            break;
+                            default:
+                                if(GetValue($instanceID) != $rdata["Value"]) SetValue($instanceID, $rdata["Value"]);
+                            break;
+                        }
                     }
                 }
+            }  
 
-                if($change){
-                    IPS_SetProperty($id, "Devices", json_encode($Devices));
-                    IPS_ApplyChanges($id);
-                } 
-            }       
+            if($change){
+                IPS_SetProperty($id, "Devices", json_encode($Devices));
+                IPS_ApplyChanges($id);
+            }      
         }
     }
 ?>
