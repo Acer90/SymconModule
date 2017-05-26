@@ -31,9 +31,11 @@
             //create Skript
             $ScriptID = IPS_CreateScript(0);
             IPS_SetName($ScriptID, "Action Script");
-            IPS_SetScriptFile($ScriptID, dirname(__FILE__). "\\action.php");
+            $data = file_get_contents(dirname(__FILE__). "\\action.php");
+            IPS_SetScriptContent($ScriptID, $data);
             IPS_SetDisabled($ScriptID, true);
             IPS_SetHidden($ScriptID, true);
+            IPS_SetParent($ScriptID, $this->InstanceID);
 
             $this->RegisterPropertyInteger("SkriptID", $ScriptID);
 
