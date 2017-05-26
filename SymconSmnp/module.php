@@ -217,9 +217,9 @@
                 $typ = $Device["typ"];
 
                 if(!empty($name) && !empty($oid)){
-                    if(stristr($oid,':')){
+                    if(stristr($oid,'|')){
 
-                        $strarr = explode(":", $oid);
+                        $strarr = explode("|", $oid);
                         if(count($strarr)>= 2) continue;
                         $port_id = $strarr[1];
                         if(!is_numeric($port_id)) continue;
