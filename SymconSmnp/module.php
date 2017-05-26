@@ -204,7 +204,6 @@
         public function SyncData(){
             $id = $this->InstanceID;
             $this->SetStatus(102);
-            $change = false;
             $DevicesString = $this->ReadPropertyString("Devices");
             $ArchivId = $this->ReadPropertyInteger("ArchivID");
             $ScriptID = $this->ReadPropertyInteger("SkriptID");
@@ -249,6 +248,9 @@
                                 default:
                                     continue;
                             }
+
+                            IPS_SetProperty($id, "Devices", json_encode($Devices));
+                            IPS_ApplyChanges($id);
                         }
                         
                         switch($oid){
@@ -317,7 +319,6 @@
                         if(!IPS_VariableExists($instanceID)){
                             $vartyp = "";
                             $varid = 0;
-                            $change = true;
                             $allow_use = false;
                             $use_action = false;
                             
@@ -401,6 +402,9 @@
                             $Device["instanceID"] = $varid;
                             $Device["var"] = $vartyp;
                             $instanceID = $varid;
+
+                            IPS_SetProperty($id, "Devices", json_encode($Devices));
+                            IPS_ApplyChanges($id);
                         }
                         switch($typ){
                             case "mWtoW":
@@ -420,12 +424,7 @@
                         }
                     }
                 }
-            }  
-
-            if($change){
-                IPS_SetProperty($id, "Devices", json_encode($Devices));
-                IPS_ApplyChanges($id);
-            }      
+            }    
         }
     }
 ?>
