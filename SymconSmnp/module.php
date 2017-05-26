@@ -103,7 +103,7 @@
                 $instanceID = $Device["instanceID"];
                 $name = $Device["name"];
                 $oid = $Device["oid"];
-                $typ = $Device["typ"];
+                echo $typ = $Device["typ"];
 
                 if(!empty($name) && !empty($oid)){
                     $rdata = IPSWINSNMP_ReadSNMP($id, $oid);
@@ -112,7 +112,7 @@
                     if(!IPS_VariableExists($instanceID)){
                         $vartyp = "";
                         $varid = 0;
-
+                        
                         switch (true){
                             case stristr($rdata["Type"],'NsapAddress'):
                                 //Boolean anlegen
