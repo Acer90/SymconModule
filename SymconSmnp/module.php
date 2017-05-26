@@ -177,6 +177,7 @@
 
         public function SyncData(){
             $id = $this->InstanceID;
+            $ScriptID = $this->SkriptID;
             $this->SetStatus(102);
             $change = false;
             $DevicesString = $this->ReadPropertyString("Devices");
@@ -198,6 +199,7 @@
                         $varid = 0;
                         $change = true;
                         $allow_use = false;
+                        $use_action = false;
                         
                         switch (true){
                             case stristr($rdata["Type"],'NsapAddress'):
@@ -230,6 +232,7 @@
                                         $varid = IPS_CreateVariable(0);
                                         IPS_SetVariableCustomProfile($varid, "~Switch");
                                         $allow_use = true;
+                                        $use_action = true;
                                     break;
                                     default:
                                         $varid = IPS_CreateVariable(1);
@@ -273,6 +276,7 @@
                         IPS_SetName($varid, $name); 
                         IPS_SetParent($varid, $id);
                         IPS_SetDisabled($varid, $allow_use);
+                        if($use_action && IPS_ScriptExists($ScriptID)) IPS_SetVariableCustomAction($varid, $ScriptID);
 
                         $Device["instanceID"] = $varid;
                         $Device["var"] = $vartyp;
