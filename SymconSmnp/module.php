@@ -183,11 +183,11 @@
 
         public function SyncData(){
             $id = $this->InstanceID;
-            $ScriptID = $this->SkriptID;
             $this->SetStatus(102);
             $change = false;
             $DevicesString = $this->ReadPropertyString("Devices");
             $ArchivId = $this->ReadPropertyInteger("ArchivID");
+            $ScriptID = $this->ReadPropertyString("SkriptID");
             $Devices = json_decode($DevicesString, true);
             //print_r($Devices);
             foreach ($Devices as &$Device) {
