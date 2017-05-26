@@ -31,6 +31,13 @@
 
             //event erstellen
             $this->RegisterTimer("SyncData", $this->ReadPropertyInteger("SNMPInterval"), 'IPSWINSNMP_SyncData($_IPS[\'TARGET\']);');
+
+            //Profile erstellen
+            if (!IPS_VariableProfileExists("SNMP_Watt")){
+                IPS_CreateVariableProfile("SNMP_Watt", 2);
+                IPS_SetVariableProfileDigits("SNMP_Watt", 1);
+                IPS_SetVariableProfileText("SNMP_Watt", "", "W");
+            }
         }
 
         public function ApplyChanges() {
@@ -97,13 +104,14 @@
 
         public function SyncData(){
             $id = $this->InstanceID;
+            $change = false;
             $DevicesString = $this->ReadPropertyString("Devices");
             $Devices = json_decode($DevicesString, true);
             foreach ($Devices as &$Device) {
                 $instanceID = $Device["instanceID"];
                 $name = $Device["name"];
                 $oid = $Device["oid"];
-                echo $typ = $Device["typ"];
+                $typ = $Device["typ"];
 
                 if(!empty($name) && !empty($oid)){
                     $rdata = IPSWINSNMP_ReadSNMP($id, $oid);
@@ -112,6 +120,7 @@
                     if(!IPS_VariableExists($instanceID)){
                         $vartyp = "";
                         $varid = 0;
+                        $change = true;
                         
                         switch (true){
                             case stristr($rdata["Type"],'NsapAddress'):
@@ -134,6 +143,7 @@
                                 switch($typ){
                                     case "mWtoW":
                                         $varid = IPS_CreateVariable(2);
+                                        IPS_SetVariableCustomProfile($varid, "SNMP_Watt");
                                     break;
                                     default:
                                         $varid = IPS_CreateVariable(1);
@@ -181,11 +191,21 @@
                         $Device["var"] = $vartyp;
                         $instanceID = $varid;
                     }
-                    if(GetValue($instanceID) != $rdata["Value"]) SetValue($instanceID, $rdata["Value"]);
+                    switch($typ){
+                        case "mWtoW":
+                            $value = $rdata["Value"] / 1000;
+                            if(is_numeric($rdata["Value"])) SetValue($instanceID, $value);
+                        break;
+                        default:
+                            if(GetValue($instanceID) != $rdata["Value"]) SetValue($instanceID, $rdata["Value"]);
+                        break;
+                    }
                 }
 
-                IPS_SetProperty($id, "Devices", json_encode($Devices)); 
-                IPS_ApplyChanges($id);
+                if($change){
+                    IPS_SetProperty($id, "Devices", json_encode($Devices));
+                    IPS_ApplyChanges($id);
+                } 
             }
         }
     }
