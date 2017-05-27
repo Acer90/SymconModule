@@ -191,7 +191,7 @@
                 switch($Devices[$key]["oid"]){
                     case stristr($Devices[$key]["oid"],'PortStatus100') || stristr($Devices[$key]["oid"],'PortStatus1000'):
                         if(!is_array($rdata)) return FALSE;
-                            if($rdata["Value"] == -1){
+                            if($value == -1){
                                 return IPSWINSNMP_WriteSNMP($id, "1.3.6.1.2.1.2.2.1.7." .$port_id, 2, $Devices[$key]["var"]);
                             }else{
                                 return IPSWINSNMP_WriteSNMP($id, "1.3.6.1.2.1.2.2.1.7." .$port_id, 1, $Devices[$key]["var"]);
