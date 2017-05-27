@@ -182,8 +182,22 @@
 
             $key = array_search($instance, array_column($Devices, 'instanceID'));
             if(is_null($key)) return FALSE;
-            if(stristr($oid,':')){
+            if(stristr($oid,'|')){
+                $strarr = explode("|", $oid);
+                if(count($strarr) < 2) return FALSE;
+                $port_id = $strarr[1];
+                if(!is_numeric($port_id)) return FALSE;
 
+                switch($Devices[$key]["oid"]){
+                    case stristr($oid,'PortStatus100') || stristr($oid,'PortStatus1000'):
+                        if(!is_array($rdata)) return FALSE;
+                            if($rdata["Value"] == -1){
+                                return IPSWINSNMP_WriteSNMP($id, "1.3.6.1.2.1.2.2.1.7." .$port_id, 2, $Devices[$key]["var"]);
+                            }else{
+                                return IPSWINSNMP_WriteSNMP($id, "1.3.6.1.2.1.2.2.1.7." .$port_id, 1, $Devices[$key]["var"]);
+                            }
+                        break;
+                }
             }else{
                 switch ($Devices[$key]["typ"]){
                     case "switch":
