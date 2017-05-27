@@ -28,6 +28,9 @@
 
             $this->RegisterPropertyInteger("ArchivID", "0");
 
+            $this->RegisterPropertyString("status", false); 
+            $this->RegisterPropertyString("utilization", false); 
+
             //create Skript
             $script_found = IPS_GetScriptIDByName("Action Script", $this->InstanceID);
             if($script_found === FALSE){
@@ -440,6 +443,10 @@
                     }
                 }
             }    
+        }
+
+        private function GetPorts($status = false, $util = false){
+
         }
     }
 ?>

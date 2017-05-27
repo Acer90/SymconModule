@@ -102,13 +102,28 @@
                     { "label": "Switch", "value": "switch" },
                     { "label": "Switch12", "value": "switch12" }]
                 }
-            }]
+            }, {
+                "label": "Last Change",
+                "name": "lastchange",
+                "width": "100px",
+                "add": ""
+            }, {
+                "label": "Last Value",
+                "name": "Last Value",
+                "width": "100px",
+                "add": ""
+            }
+            ]
         }
     ],
     "actions":
     [
-        { "type": "Button", "label": "Test", "onClick": "IPSWINSNMP_ReadSNMP($id, '.1.3.6.1.2.1.1.3.0');" },
-        { "type": "Button", "label": "Sync", "onClick": "IPSWINSNMP_SyncData($id);" }
+        { "type": "Button", "label": "Test", "onClick": "echo IPSWINSNMP_ReadSNMP($id, '.1.3.6.1.2.1.1.3.0');" },
+        { "type": "Button", "label": "Sync", "onClick": "IPSWINSNMP_SyncData($id);" },
+        { "type": "Label", "label": "GetPorts" },
+        { "type": "CheckBox", "name": "status", "caption": "Load Status" },
+        { "type": "CheckBox", "name": "utilization", "caption": "Load utilization" },
+        { "type": "Button", "label": "Load Ports", "onClick": "IPSWINSNMP_GetPorts($id, $Number, $Message);" }
         
     ],
     "status":
