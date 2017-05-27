@@ -182,8 +182,8 @@
 
             $key = array_search($instance, array_column($Devices, 'instanceID'));
             if(is_null($key)) return FALSE;
-            if(stristr($oid,'|')){
-                $strarr = explode("|", $oid);
+            if(stristr($Devices[$key]["oid"],'|')){
+                $strarr = explode("|", $Devices[$key]["oid"]);
                 if(count($strarr) < 2) return FALSE;
                 $port_id = $strarr[1];
                 if(!is_numeric($port_id)) return FALSE;
