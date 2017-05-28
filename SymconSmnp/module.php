@@ -612,6 +612,7 @@
 
             for ($i=1; $i <= $value; $i++){
                 $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.2.".$i); //ifDescr
+                print_r($rdata);
                 if(!is_array($rdata)) continue; 
                 if(!is_numeric($rdata["Value"])) continue;
                 $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.5.".$i); //ifDescr
@@ -625,8 +626,8 @@
                 if($i < 10) $name = "0".$i; else $name = $i;
                 
                 if($status){
-                    echo $key1 = array_search("PortStatus100|".$i, array_column($Devices, 'oid'));
-                    echo $key2 = array_search("PortStatus1000|".$i, array_column($Devices, 'oid'));
+                    $key1 = array_search("PortStatus100|".$i, array_column($Devices, 'oid'));
+                    $key2 = array_search("PortStatus1000|".$i, array_column($Devices, 'oid'));
                     if(is_null($key1) && is_null($key1)){
                         if($speed = 100) $oid = "PortStatus100|".$i; else $oid = "PortStatus1000|".$i;
                         echo $oid;
