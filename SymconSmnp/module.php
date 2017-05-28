@@ -348,6 +348,9 @@
                                     if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
                                         $Device["lastvalue"] = $rdata["Value"];
                                         $Device["lastchange"] = time();
+
+                                        IPS_SetProperty($id, "Devices", json_encode($Devices));
+                                        IPS_ApplyChanges($id);
                                         continue; 
                                     } 
                                 break;
