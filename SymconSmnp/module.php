@@ -601,7 +601,7 @@
 
         public function GetPorts($status = false, $util = false, $utyp = ""){
             if(!$status && !$util) return "NO Mode selected!";
-            if($util && empty($utpy)) return "Please Select Util Typ!";
+            if($util == true && empty($utyp)) return "Please Select Util Typ!";
 
             $id = $this->InstanceID;
             $DevicesString = $this->ReadPropertyString("Devices");
