@@ -28,8 +28,9 @@
 
             $this->RegisterPropertyInteger("ArchivID", "0");
 
-            $this->RegisterPropertyString("status", false); 
-            $this->RegisterPropertyString("utilization", false); 
+            $this->RegisterPropertyBoolean("status", false); 
+            $this->RegisterPropertyBoolean("utilization", false);
+            $this->RegisterPropertyString("utilizationtyp", ""); 
 
             //create Skript
             $script_found = IPS_GetScriptIDByName("Action Script", $this->InstanceID);
