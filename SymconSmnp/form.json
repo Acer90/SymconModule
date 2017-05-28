@@ -131,7 +131,7 @@
         { "type": "Label", "label": "GetPorts" },
         { "type": "CheckBox", "name": "status", "caption": "Load Status" },
         { "type": "CheckBox", "name": "utilization", "caption": "Load utilization" },
-        { "type": "Button", "label": "Load Ports", "onClick": "echo IPSWINSNMP_GetPorts($id, $Number, $Message);" }
+        { "type": "Button", "label": "Load Ports", "onClick": "echo IPSWINSNMP_GetPorts($id, $status, $utilization);" }
         
     ],
     "status":
