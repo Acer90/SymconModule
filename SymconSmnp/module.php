@@ -362,7 +362,7 @@
                                     $spanvalue;
                                     $spantime = time() - $lastchange;
 
-                                    $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000))) * 100;
+                                    $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
                                     SetValue($instanceID, round($util,1));
 
                                     $Device["lastvalue"] = $rdata["Value"];
