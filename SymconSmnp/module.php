@@ -611,8 +611,8 @@
             $value = $rdata["Value"];
 
             for ($i=1; $i <= $value; $i++){
-                echo $i;
                 $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.2".$i); //ifDescr
+                print_r($rdata);
                 if(!is_array($rdata)) continue; 
                 if(!is_numeric($rdata["Value"])) continue;
                 $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.5".$i); //ifDescr
