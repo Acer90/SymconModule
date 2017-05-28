@@ -643,10 +643,12 @@
                         array_push($Devices, $add);
                     }
                 }
-
-                IPS_SetProperty($id, "Devices", json_encode($Devices));
-                IPS_ApplyChanges($id);
             }
+
+            IPS_SetProperty($id, "Devices", json_encode($Devices));
+            IPS_ApplyChanges($id);
+
+            return "Load Complete! Please restart the Instance-Menu";
         }
     }
 ?>
