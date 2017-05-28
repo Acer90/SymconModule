@@ -608,10 +608,11 @@
 
             $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.1.0"); //ifNumber
             if(!is_array($rdata)) return "OID Not found!"; 
-            $value = $rdata["Value"];
+            echo $value = $rdata["Value"];
 
             for ($i=1; $i <= $value; $i++){
                 $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.2".$i); //ifDescr
+                if(!is_array($rdata)) continue; 
                 if(!is_numeric($rdata["Value"])) continue;
                 $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.5".$i); //ifDescr
             
