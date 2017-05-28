@@ -615,7 +615,7 @@
                 //if(!is_array($rdata)) continue; 
                 //if(!is_numeric($rdata["Value"]) || $rdata["Value"] >= 100) continue; //
                 $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.5.".$i); //ifspeed
-                if(!is_array($rdata)) continue; 
+                if(!is_array($rdata)) continue;
                 if(!is_numeric($rdata["Value"]) || $rdata["Value"] == 0){
                     $speed = 100;
                 }else{
@@ -623,7 +623,7 @@
                 }
 
                 if($i < 10) $name = "0".$i; else $name = $i;
-                
+                echo "scheiß teil";
                 if($status){
                     $key1 = array_search("PortStatus100|".$i, array_column($Devices, 'oid'));
                     $key2 = array_search("PortStatus1000|".$i, array_column($Devices, 'oid'));
