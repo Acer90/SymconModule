@@ -613,7 +613,7 @@
             for ($i=1; $i <= $value; $i++){
                 $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.1.".$i); //ifindex
                 if(!is_array($rdata)) continue; 
-                if(!is_numeric($rdata["Value"]) ) continue; //|| $rdata["Value"] >= 100
+                //if(!is_numeric($rdata["Value"]) || $rdata["Value"] >= 100) continue; //
                 $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.5.".$i); //ifspeed
             
                 if(!is_numeric($rdata["Value"]) || $rdata["Value"] == 0){
