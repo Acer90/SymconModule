@@ -233,8 +233,8 @@
                 $name = $Device["name"];
                 $oid = $Device["oid"];
                 $typ = $Device["typ"];
-                $lastvalue = $Device["lastvalue"];
-                $lastchange = $Device["lastchange"];
+                if(isset($Device["lastvalue"])) $lastvalue = $Device["lastvalue"]; else $lastvalue = 0;
+                if(isset($Device["lastchange"])) $lastchange = $Device["lastchange"]; else $lastchange = 0;
 
                 if(!empty($name) && !empty($oid)){
                     if(stristr($oid,'|')){
