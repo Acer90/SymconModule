@@ -629,7 +629,7 @@
                     $key2 = array_search("PortStatus1000|".$i, array_column($Devices, 'oid'));
                     if(is_null($key1) && is_null($key1)){
                         if($speed = 100) $oid = "PortStatus100|".$i; else $oid = "PortStatus1000|".$i;
-
+                        echo $oid;
                         $add = array("instanceID" => 0,"name" => "Port-".$name."|Status", "oid" => $oid, "var" => "", "typ" => "", "speed" => $speed);
                         array_push($Devices, $add);
                     }
@@ -639,6 +639,7 @@
                     $key1 = array_search($utyp."|".$i, array_column($Devices, 'oid'));
                     if(is_null($key1)){
                         $oid = $utyp . "|" . $i;
+                        echo $oid;
                         $add = array("instanceID" => 0,"name" => "Port-".$name."|Status", "oid" => $oid, "var" => "", "typ" => "", "speed" => $speed);
                         array_push($Devices, $add);
                     }
@@ -648,7 +649,7 @@
             IPS_SetProperty($id, "Devices", json_encode($Devices));
             IPS_ApplyChanges($id);
 
-            return "Load Complete! Please restart the Instance-Menu";
+            return "Load Complete! Please restart the Instance-Menu.";
         }
     }
 ?>
