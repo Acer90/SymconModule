@@ -371,6 +371,34 @@
                                     IPS_SetProperty($id, "Devices", json_encode($Devices));
                                     IPS_ApplyChanges($id);
                                 break;
+                                case stristr($oid,'PortUtilizationTX'):
+                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.16." .$port_id); //ifInOctets
+                                    if(!is_array($rdata)) continue;  
+                                    if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
+                                        $Device["lastvalue"] = $rdata["Value"];
+                                        $Device["lastchange"] = time();
+
+                                        IPS_SetProperty($id, "Devices", json_encode($Devices));
+                                        IPS_ApplyChanges($id);
+                                        continue; 
+                                    } 
+                                    if($rdata["Value"] < $lastvalue){
+                                        $spanvalue = (4294967295 - $lastvalue) + $rdata["Value"];
+                                    }else{
+                                        $spanvalue = $rdata["Value"] - $lastvalue;
+                                    }
+                                    $spanvalue;
+                                    $spantime = time() - $lastchange;
+
+                                    $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
+                                    SetValue($instanceID, round($util,1));
+
+                                    $Device["lastvalue"] = $rdata["Value"];
+                                    $Device["lastchange"] = time();
+
+                                    IPS_SetProperty($id, "Devices", json_encode($Devices));
+                                    IPS_ApplyChanges($id);
+                                break;
                             default:
                                 continue;
                         }
