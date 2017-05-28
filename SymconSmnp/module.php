@@ -599,7 +599,8 @@
         }
 
         private function GetPorts($status = false, $util = false){
-
+            echo $status . "|" . $util;
+            if($status && $util) return "NO Mode selected!";
         }
     }
 ?>
