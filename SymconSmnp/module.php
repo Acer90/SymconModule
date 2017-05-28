@@ -59,8 +59,6 @@
                 IPS_SetVariableProfileDigits("SNMP_Watt", 1);
                 IPS_SetVariableProfileText("SNMP_Watt", "", "W");
             }
-
-            //Profile erstellen
             if (!IPS_VariableProfileExists("SNMP_PortStatus_100")){
                 IPS_CreateVariableProfile("SNMP_PortStatus_100", 1);
                 IPS_SetVariableProfileAssociation("SNMP_PortStatus_100", -1, "Offline", "", 0xff0000);
@@ -75,6 +73,11 @@
                 IPS_SetVariableProfileAssociation("SNMP_PortStatus_1000", 10, "10 Mbit", "", 0xffff00);
                 IPS_SetVariableProfileAssociation("SNMP_PortStatus_1000", 100, "100 Mbit", "", 0x00cc00);
                 IPS_SetVariableProfileAssociation("SNMP_PortStatus_1000", 1000, "1 Gbit", "", 0x0000cc);
+            }
+            if (!IPS_VariableProfileExists("SNMP_PortUtilization")){
+                IPS_CreateVariableProfile("SNMP_PortUtilization", 2);
+                IPS_SetVariableProfileDigits("SNMP_PortUtilization", 1);
+                IPS_SetVariableProfileText("SNMP_PortUtilization", "", "%");
             }
         }
 
@@ -230,6 +233,8 @@
                 $name = $Device["name"];
                 $oid = $Device["oid"];
                 $typ = $Device["typ"];
+                $lastvalue = $Device["lastvalue"];
+                $lastchange = $Device["lastchange"];
 
                 if(!empty($name) && !empty($oid)){
                     if(stristr($oid,'|')){
@@ -258,6 +263,16 @@
                                         IPS_SetParent($varid, $id);
                                         IPS_SetVariableCustomProfile($varid, "SNMP_PortStatus_1000");
                                         if(IPS_ScriptExists($ScriptID)) IPS_SetVariableCustomAction($varid, $ScriptID);
+
+                                        $instanceID = $varid;
+                                    break;
+                                case stristr($oid,'PortUtilizationRX') || stristr($oid,'PortUtilizationTX') || stristr($oid,'PortUtilizationTRX'):
+                                        $varid = IPS_CreateVariable(2);
+                                        $vartyp = "int";
+                                        IPS_SetName($varid, $name); 
+                                        IPS_SetParent($varid, $id);
+                                        IPS_SetVariableCustomProfile($varid, "SNMP_PortUtilization");
+                                        IPS_SetDisabled($varid, true);
 
                                         $instanceID = $varid;
                                     break;
@@ -326,6 +341,15 @@
                                         default:
                                             SetValue($instanceID, -1);
                                     }  
+                                break;
+                                case stristr($oid,'PortUtilizationRX'):
+                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.10." .$port_id); //read is Port Online
+                                    if(!is_array($rdata)) continue;  
+                                    if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
+                                        $Device["lastvalue"] = $rdata["Value"];
+                                        $Device["lastchange"] = time();
+                                        continue; 
+                                    } 
                                 break;
                             default:
                                 continue;

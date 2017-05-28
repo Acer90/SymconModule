@@ -109,7 +109,7 @@
                 "add": ""
             }, {
                 "label": "Last Value",
-                "name": "Last Value",
+                "name": "lastvalue",
                 "width": "100px",
                 "add": ""
             }
