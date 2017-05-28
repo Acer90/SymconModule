@@ -131,7 +131,14 @@
         { "type": "Label", "label": "GetPorts" },
         { "type": "CheckBox", "name": "status", "caption": "Load Status" },
         { "type": "CheckBox", "name": "utilization", "caption": "Load utilization" },
-        { "type": "Button", "label": "Load Ports", "onClick": "echo IPSWINSNMP_GetPorts($id, $status, $utilization);" }
+        { "type": "Select", "name": "utilizationtyp", "caption": "Utilization Typ",
+            "options": [
+                { "label": "PortUtilizationRX", "value": "PortUtilizationRX" },
+                { "label": "PortUtilizationTX", "value": "PortUtilizationTX" },
+                { "label": "PortUtilizationTRX", "value": "PortUtilizationTRX" },
+                { "label": "PortUtilizationFD-TRX", "value": "PortUtilizationFD-TRX" }
+        ]},
+        { "type": "Button", "label": "Load Ports", "onClick": "echo IPSWINSNMP_GetPorts($id, $status, $utilization, $utilizationtyp);" }
         
     ],
     "status":

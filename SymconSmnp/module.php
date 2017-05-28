@@ -598,9 +598,54 @@
             }    
         }
 
-        public function GetPorts($status = false, $util = false){
-            echo $status . "|" . $util;
-            if($status && $util) return "NO Mode selected!";
+        public function GetPorts($status = false, $util = false, $utyp = ""){
+            if(!$status && !$util) return "NO Mode selected!";
+            if($util && empty($utpy)) return "Please Select Util Typ!";
+
+            $id = $this->InstanceID;
+            $DevicesString = $this->ReadPropertyString("Devices");
+            $Devices = json_decode($DevicesString, true);
+
+            $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.1.0"); //ifNumber
+            if(!is_array($rdata)) return "OID Not found!"; 
+            $value = $rdata["Value"];
+
+            for ($i=1; $i <= $value; $i++){
+                $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.2".$i); //ifDescr
+                if(!is_numeric($rdata["Value"])) continue;
+                $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.5".$i); //ifDescr
+            
+                if(!is_numeric($rdata["Value"]) || $rdata["Value"] == 0){
+                    $speed = 100;
+                }else{
+                    $speed = $rdata["Value"] / 1000000;
+                }
+
+                if($i < 10) $name = "0".$i; else $name = $i;
+                
+                if($status){
+                    $key1 = array_search("PortStatus100|".$i, array_column($Devices, 'oid'));
+                    $key2 = array_search("PortStatus1000|".$i, array_column($Devices, 'oid'));
+                    if(is_null($key1) && is_null($key1)){
+                        if($speed = 100) $oid = "PortStatus100|".$i; else $oid = "PortStatus1000|".$i;
+
+                        $add = array("instanceID" => 0,"name" => "Port-".$name."|Status", "oid" => $oid, "var" => "", "typ" => "", "speed" => $speed);
+                        array_push($Devices, $add);
+                    }
+                }
+
+                if($util){
+                    $key1 = array_search($utyp."|".$i, array_column($Devices, 'oid'));
+                    if(is_null($key1)){
+                        $oid = $utyp . "|" . $i;
+                        $add = array("instanceID" => 0,"name" => "Port-".$name."|Status", "oid" => $oid, "var" => "", "typ" => "", "speed" => $speed);
+                        array_push($Devices, $add);
+                    }
+                }
+
+                IPS_SetProperty($id, "Devices", json_encode($Devices));
+                IPS_ApplyChanges($id);
+            }
         }
     }
 ?>
