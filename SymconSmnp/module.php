@@ -235,6 +235,7 @@
                 $typ = $Device["typ"];
                 if(isset($Device["lastvalue"])) $lastvalue = $Device["lastvalue"]; else $lastvalue = 0;
                 if(isset($Device["lastchange"])) $lastchange = $Device["lastchange"]; else $lastchange = 0;
+                if(isset($Device["speed"])) $speed = $Device["speed"]; else $speed = 100;
 
                 if(!empty($name) && !empty($oid)){
                     if(stristr($oid,'|')){
@@ -343,7 +344,7 @@
                                     }  
                                 break;
                                 case stristr($oid,'PortUtilizationRX'):
-                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.10." .$port_id); //read is Port Online
+                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.10." .$port_id); //ifInOctets
                                     if(!is_array($rdata)) continue;  
                                     if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
                                         $Device["lastvalue"] = $rdata["Value"];
@@ -353,9 +354,22 @@
                                         IPS_ApplyChanges($id);
                                         continue; 
                                     } 
-                                    echo $spanvalue = $rdata["Value"] - $lastvalue;
-                                    echo "|";
-                                    echo $spantime = time() - $lastchange;
+                                    if($rdata["Value"] < $lastvalue){
+                                        $spanvalue = (4294967295 - $lastvalue) + $rdata["Value"];
+                                    }else{
+                                        $spanvalue = $rdata["Value"] - $lastvalue;
+                                    }
+                                    $spanvalue;
+                                    $spantime = time() - $lastchange;
+
+                                    $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000))) * 100;
+                                    SetValue($instanceID, round($util,1));
+
+                                    $Device["lastvalue"] = $rdata["Value"];
+                                    $Device["lastchange"] = time();
+
+                                    IPS_SetProperty($id, "Devices", json_encode($Devices));
+                                    IPS_ApplyChanges($id);
                                 break;
                             default:
                                 continue;
