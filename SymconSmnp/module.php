@@ -353,6 +353,9 @@
                                         IPS_ApplyChanges($id);
                                         continue; 
                                     } 
+                                    echo $spanvalue = $rdata["Value"] - $lastvalue;
+                                    echo "|";
+                                    echo $spantime = time() - $lastchange;
                                 break;
                             default:
                                 continue;
