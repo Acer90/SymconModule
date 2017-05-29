@@ -636,7 +636,7 @@
                 }
 
                 if($util == true){
-                    $key1 = array_search($utyp."|".$i, array_column($Devices, 'oid'));
+                    $key1 = array_search(($utyp."|".$i), array_column($Devices, 'oid'));
                     if(empty($key1)){
                         $oid = $utyp . "|" . $i;
                         $add = array("instanceID" => 0,"name" => "Port-".$name."|".$utyp, "oid" => $oid, "var" => "", "typ" => "", "speed" => $speed);
