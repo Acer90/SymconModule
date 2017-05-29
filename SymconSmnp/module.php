@@ -93,7 +93,7 @@
         public function ReadSNMP($oid) {
             $Filedir = dirname(__FILE__). "\\bin\\". "SnmpGet.exe";
             $re = '/(?<typ>.+)=(?<value>.+)/m';
-
+            
             $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
             $SNMPPort = $this->ReadPropertyInteger("SNMPPort");
             $SNMPTimeout = $this->ReadPropertyInteger("SNMPTimeout");
