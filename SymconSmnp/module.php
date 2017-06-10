@@ -23,8 +23,12 @@
             $this->RegisterPropertyString("SNMPPrivacyProtocol", "DES"); 
             $this->RegisterPropertyString("SNMPPrivacyPassword", "SomePrivPass"); 
 
-            $this->RegisterPropertyInteger("SNMPEngineID", "0"); 
-            $this->RegisterPropertyString("SNMPContextName", ""); 
+            //$this->RegisterPropertyInteger("SNMPEngineID", "0"); 
+            //$this->RegisterPropertyString("SNMPContextName", ""); 
+
+            //{ "type": "NumberSpinner", "name": "SNMPEngineID", "caption": "Engine ID", "hex": true},
+            //{ "type": "ValidationTextBox", "name": "SNMPContextName", "caption": "Context Name" },
+            //{ "type": "NumberSpinner", "name": "SNMPContextEngine", "caption": "Context Engine", "hex": true},
 
             $this->RegisterPropertyInteger("ArchivID", "0");
 
