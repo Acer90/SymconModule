@@ -30,6 +30,8 @@
             //{ "type": "ValidationTextBox", "name": "SNMPContextName", "caption": "Context Name" },
             //{ "type": "NumberSpinner", "name": "SNMPContextEngine", "caption": "Context Engine", "hex": true},
 
+            $this->RegisterPropertyInteger("SNMPSpeedModify", "1"); 
+
             $this->RegisterPropertyInteger("ArchivID", "0");
 
             $this->RegisterPropertyBoolean("status", false); 
@@ -313,7 +315,8 @@
                                     }
                                     $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.5." .$port_id); //read is Port Speed
                                     if(!is_array($rdata)) continue;
-                                    switch($rdata["Value"]){
+                                    $value = $rdata["Value"] * $this->ReadPropertyInteger("SNMPSpeedModify");
+                                    switch($value){
                                         case 10000000:
                                             SetValue($instanceID, 10);
                                             break;
@@ -339,7 +342,8 @@
                                     }
                                     $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.5." .$port_id); //read is Port Speed
                                     if(!is_array($rdata)) continue;
-                                    switch($rdata["Value"]){
+                                    $value = $rdata["Value"] * $this->ReadPropertyInteger("SNMPSpeedModify");
+                                    switch($value){
                                         case 10000000:
                                             SetValue($instanceID, 10);
                                             break;
@@ -624,7 +628,7 @@
                 if(!is_numeric($rdata["Value"]) || $rdata["Value"] == 0){
                     $speed = 1000;
                 }else{
-                    $speed = $rdata["Value"] / 1000000;
+                    $speed = $rdata["Value"] / 1000000 * $this->ReadPropertyInteger("SNMPSpeedModify");
                 }
 
                 if($i < 10) $name = "0".$i; else $name = $i;
