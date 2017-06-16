@@ -212,10 +212,10 @@
                 }
             }else{
                 switch ($Devices[$key]["typ"]){
-                    case "Switch":
+                    case "switch":
                         if($value) $value = 1; else $value = 0;
                         return IPSWINSNMP_WriteSNMP($id, $Devices[$key]["oid"], $value, $Devices[$key]["var"]);
-                    case "Switch12":
+                    case "switch12":
                         if($value) $value = 1; else $value = 2;
                         return IPSWINSNMP_WriteSNMP($id, $Devices[$key]["oid"], $value, $Devices[$key]["var"]);
                     case "mWtoW":
