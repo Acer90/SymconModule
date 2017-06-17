@@ -129,6 +129,7 @@
                     $this->SetStatus(205);
                     return '';
                 case stristr($out,'Variable does not exist'):
+                    IPS_LogMessage($_IPS['SELF'], "Variable does not exist:  OID -> ". $oid);
                     $this->SetStatus(202);
                     return '';
                 default:
@@ -182,6 +183,7 @@
                     $this->SetStatus(204);
                     return FALSE;
                 case stristr($out,'OK'):
+                    IPS_LogMessage($_IPS['SELF'], "Change:  ".$oid." -> ". $value. "(".$type.")");
                     $this->SetStatus(102);
                     return TRUE;    
                 default:
