@@ -176,6 +176,7 @@
                     return FALSE;
                 case stristr($out,'Variable does not exist'):
                     $this->SetStatus(202);
+                    IPS_LogMessage($_IPS['SELF'], "Variable does not exist:  OID -> ". $oid);
                     return FALSE;
                 case stristr($out,'Failed to set value to SNMP variable. Bad value'):
                     $this->SetStatus(204);
