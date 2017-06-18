@@ -109,16 +109,6 @@
                 "edit": {
                     "type": "NumberSpinner"
                 }
-            }, {
-                "label": "Last Change",
-                "name": "lastchange",
-                "width": "100px",
-                "add": ""
-            }, {
-                "label": "Last Value",
-                "name": "lastvalue",
-                "width": "100px",
-                "add": ""
             }
             ]
         }
