@@ -361,7 +361,6 @@
                                     }  
                                 break;
                                 case stristr($oid,'PortUtilizationRX'):
-                                    IPS_LogMessage($_IPS['SELF'], "Test-".$oid." (".$instanceID.")");
                                     $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.10." .$port_id); //ifInOctets
                                     if(!is_array($rdata)) continue;  
                                     if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
