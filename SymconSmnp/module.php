@@ -237,7 +237,7 @@
             $ArchivId = $this->ReadPropertyInteger("ArchivID");
             $ScriptID = $this->ReadPropertyInteger("SkriptID");
             $Devices = json_decode($DevicesString, true);
-            $buf = RegVar_GetBuffer($id);
+            $buf = $this->GetBuffer("DataBuffer");
             //print_r($Devices);
             foreach ($Devices as &$Device) {
                 $instanceID = $Device["instanceID"];
@@ -585,8 +585,7 @@
                     }
                 }
             }   
-
-            RegVar_SetBuffer($id, $buf);  
+            $this->SetBuffer("DataBuffer", $buf);
         }
 
         public function GetPorts($status = false, $util = false, $utyp = ""){
