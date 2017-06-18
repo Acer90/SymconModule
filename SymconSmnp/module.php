@@ -247,7 +247,7 @@
                 if(IPS_VariableExists($instanceID) && !empty($this->GetBuffer($instanceID."-lastchange"))) $lastchange = $this->GetBuffer($instanceID."-lastchange"); else $lastchange = 0;
                 if(isset($Device["speed"])) $speed = $Device["speed"]; else $speed = 100;
 
-                IPS_LogMessage($_IPS['SELF'], "Test " . $lastvalue ."|". $lastchange);
+                if($lastvalue > 0)IPS_LogMessage($_IPS['SELF'], "Test (".$instanceID.")" . $lastvalue ."|". $lastchange);
 
                 if(!empty($name) && !empty($oid)){
                     if(stristr($oid,'|')){
