@@ -243,9 +243,8 @@
                 $name = $Device["name"];
                 $oid = $Device["oid"];
                 $typ = $Device["typ"];
-                //$instanceID
-                if(isset($Device["lastvalue"])) $lastvalue = $Device["lastvalue"]; else $lastvalue = 0;
-                if(isset($Device["lastchange"])) $lastchange = $Device["lastchange"]; else $lastchange = 0;
+                if(IPS_VariableExists($instanceID) && !empty($this->GetBuffer($instanceID."-lastvalue"))) $lastvalue = $this->GetBuffer($instanceID."-lastvalue"); else $lastvalue = 0; 
+                if(IPS_VariableExists($instanceID) && !empty($this->GetBuffer($instanceID."-lastchange"))) $lastchange = $this->GetBuffer($instanceID."-lastchange"); else $lastchange = 0;
                 if(isset($Device["speed"])) $speed = $Device["speed"]; else $speed = 100;
 
                 if(!empty($name) && !empty($oid)){
@@ -365,12 +364,8 @@
                                     $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.10." .$port_id); //ifInOctets
                                     if(!is_array($rdata)) continue;  
                                     if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
-                                        $Device["lastvalue"] = $rdata["Value"];
-                                        $Device["lastchange"] = time();
-                                        $this->SetBuffer("DataBuffer", "Hallo Welt");
-
-                                        IPS_SetProperty($id, "Devices", json_encode($Devices));
-                                        IPS_ApplyChanges($id);
+                                        $this->SetBuffer($Device["instanceID"]."-lastvalue", $rdata["Value"]);
+                                        $this->SetBuffer($Device["instanceID"]."-lastchange", time());
                                         continue; 
                                     } 
                                     if($rdata["Value"] < $lastvalue){
@@ -383,21 +378,15 @@
                                     $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
                                     SetValue($instanceID, round($util,1));
 
-                                    $Device["lastvalue"] = $rdata["Value"];
-                                    $Device["lastchange"] = time();
-
-                                    IPS_SetProperty($id, "Devices", json_encode($Devices));
-                                    IPS_ApplyChanges($id);
+                                    $this->SetBuffer($instanceID."-lastvalue", $rdata["Value"]);
+                                    $this->SetBuffer($instanceID."-lastchange", time());
                                 break;
                                 case stristr($oid,'PortUtilizationTX'):
                                     $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.16." .$port_id); //ifOutOctets
                                     if(!is_array($rdata)) continue;  
                                     if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
-                                        $Device["lastvalue"] = $rdata["Value"];
-                                        $Device["lastchange"] = time();
-
-                                        IPS_SetProperty($id, "Devices", json_encode($Devices));
-                                        IPS_ApplyChanges($id);
+                                        $this->SetBuffer($Device["instanceID"]."-lastvalue", $rdata["Value"]);
+                                        $this->SetBuffer($Device["instanceID"]."-lastchange", time());
                                         continue; 
                                     } 
                                     if($rdata["Value"] < $lastvalue){
@@ -410,11 +399,8 @@
                                     $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
                                     SetValue($instanceID, round($util,1));
 
-                                    $Device["lastvalue"] = $rdata["Value"];
-                                    $Device["lastchange"] = time();
-
-                                    IPS_SetProperty($id, "Devices", json_encode($Devices));
-                                    IPS_ApplyChanges($id);
+                                    $this->SetBuffer($instanceID."-lastvalue", $rdata["Value"]);
+                                    $this->SetBuffer($instanceID."-lastchange", time());
                                 break;
                                 case stristr($oid,'PortUtilizationTRX'):
                                     $rdata1 = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.10." .$port_id); //ifInOctets
@@ -422,12 +408,9 @@
                                     if(!is_array($rdata1)) continue;
                                     if(!is_array($rdata2)) continue;  
                                     if(empty($lastchange) || empty($lastvalue) || !stristr($lastvalue,'|')){
-                                        $Device["lastvalue"] = $rdata1["Value"] . "|" . $rdata2["Value"];
-                                        $Device["lastchange"] = time();
-
-                                        IPS_SetProperty($id, "Devices", json_encode($Devices));
-                                        IPS_ApplyChanges($id);
-                                        continue; 
+                                        $this->SetBuffer($Device["instanceID"]."-lastvalue", $rdata1["Value"] . "|" . $rdata2["Value"]);
+                                        $this->SetBuffer($Device["instanceID"]."-lastchange", time());
+                                        continue;
                                     } 
                                     $arrlastvalue = explode("|", $lastvalue);
                                     if(count($arrlastvalue) < 2) continue;
@@ -449,11 +432,8 @@
                                     $util = ((($spanvalue1 + $spanvalue2) * 8 * 100) / ($spantime * ($speed * 1000000)));
                                     SetValue($instanceID, round($util,1));
 
-                                    $Device["lastvalue"] = $rdata1["Value"] . "|" . $rdata2["Value"];
-                                    $Device["lastchange"] = time();
-
-                                    IPS_SetProperty($id, "Devices", json_encode($Devices));
-                                    IPS_ApplyChanges($id);
+                                    $this->SetBuffer($instanceID."-lastvalue",  $rdata1["Value"] . "|" . $rdata2["Value"]);
+                                    $this->SetBuffer($instanceID."-lastchange", time());
                                 break;
                                 case stristr($oid,'PortUtilizationFD-TRX'):
                                     $rdata1 = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.10." .$port_id); //ifInOctets
@@ -461,12 +441,9 @@
                                     if(!is_array($rdata1)) continue;
                                     if(!is_array($rdata2)) continue;  
                                     if(empty($lastchange) || empty($lastvalue) || !stristr($lastvalue,'|')){
-                                        $Device["lastvalue"] = $rdata1["Value"] . "|" . $rdata2["Value"];
-                                        $Device["lastchange"] = time();
-
-                                        IPS_SetProperty($id, "Devices", json_encode($Devices));
-                                        IPS_ApplyChanges($id);
-                                        continue; 
+                                        $this->SetBuffer($Device["instanceID"]."-lastvalue", $rdata1["Value"] . "|" . $rdata2["Value"]);
+                                        $this->SetBuffer($Device["instanceID"]."-lastchange", time());
+                                        continue;
                                     } 
                                     $arrlastvalue = explode("|", $lastvalue);
                                     if(count($arrlastvalue) < 2) continue;
@@ -488,11 +465,8 @@
                                     $util = ((max($spanvalue1, $spanvalue2) * 8 * 100) / ($spantime * ($speed * 1000000)));
                                     SetValue($instanceID, round($util,1));
 
-                                    $Device["lastvalue"] = $rdata1["Value"] . "|" . $rdata2["Value"];
-                                    $Device["lastchange"] = time();
-
-                                    IPS_SetProperty($id, "Devices", json_encode($Devices));
-                                    IPS_ApplyChanges($id);
+                                    $this->SetBuffer($instanceID."-lastvalue",  $rdata1["Value"] . "|" . $rdata2["Value"]);
+                                    $this->SetBuffer($instanceID."-lastchange", time());
                                 break;
                             default:
                                 continue;
