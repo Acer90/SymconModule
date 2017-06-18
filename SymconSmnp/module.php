@@ -246,7 +246,7 @@
                 if(IPS_VariableExists($instanceID) && !empty($this->GetBuffer($instanceID."-lastvalue"))) $lastvalue = $this->GetBuffer($instanceID."-lastvalue"); else $lastvalue = 0; 
                 if(IPS_VariableExists($instanceID) && !empty($this->GetBuffer($instanceID."-lastchange"))) $lastchange = $this->GetBuffer($instanceID."-lastchange"); else $lastchange = 0;
                 if(isset($Device["speed"])) $speed = $Device["speed"]; else $speed = 100;
-                IPS_LogMessage($_IPS['SELF'], "Change:  ".$oid." -> ". $lastvalue. "(".$lastchange.")");
+                
                 if(!empty($name) && !empty($oid)){
                     if(stristr($oid,'|')){
                         
@@ -379,7 +379,7 @@
                                     $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
                                     SetValue($instanceID, round($util,1));
 
-                                    IPS_LogMessage($_IPS['SELF'], "Test-".$oid." (".$instanceID.")".$rdata["Value"]."-". $lastvalue ."|".time()."-". $lastchange);
+                                    // IPS_LogMessage($_IPS['SELF'], "Test-".$oid." (".$instanceID.")".$rdata["Value"]."-". $lastvalue ."|".time()."-". $lastchange);
 
                                     $this->SetBuffer($instanceID."-lastvalue", $rdata["Value"]);
                                     $this->SetBuffer($instanceID."-lastchange", time());
@@ -402,7 +402,7 @@
                                     $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
                                     SetValue($instanceID, round($util,1));
                                     
-                                     IPS_LogMessage($_IPS['SELF'], "Test-".$oid." (".$instanceID.")".$rdata["Value"]."-". $lastvalue ."|".time()."-". $lastchange);
+                                    // IPS_LogMessage($_IPS['SELF'], "Test-".$oid." (".$instanceID.")".$rdata["Value"]."-". $lastvalue ."|".time()."-". $lastchange);
 
                                     $this->SetBuffer($instanceID."-lastvalue", $rdata["Value"]);
                                     $this->SetBuffer($instanceID."-lastchange", time());
