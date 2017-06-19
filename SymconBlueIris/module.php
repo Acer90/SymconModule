@@ -70,7 +70,7 @@
             };
         }
 
-        public function Logout(string $session){
+        public function Logout(string $session = null){
             $id = $this->InstanceID;
             $IPAddress = $this->ReadPropertyString("IPAddress");
             $Port = $this->ReadPropertyInteger("Port");
@@ -110,7 +110,15 @@
             };
         }
 
-        public function AlertList(string $session, string $camera = "index", integer $startdate = null, bool $reset = false){
+        public function AlertList(string $session = null, string $camera = null, integer $startdate = null, bool $reset = null){
+            if(is_null($session)){
+                $this->SetStatus(203);
+                return "ERROR";
+            } 
+            if(is_null($camera)) $camera = "index";
+            if(is_null($startdate)) $startdate = 0;
+            if(is_null($reset)) $reset = false;
+            
             $id = $this->InstanceID;
             $IPAddress = $this->ReadPropertyString("IPAddress");
             $Port = $this->ReadPropertyInteger("Port");
