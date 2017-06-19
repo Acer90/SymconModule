@@ -70,7 +70,7 @@
             };
         }
 
-        public function Logout($session){
+        public function Logout(string $session){
             $id = $this->InstanceID;
             $IPAddress = $this->ReadPropertyString("IPAddress");
             $Port = $this->ReadPropertyInteger("Port");
@@ -110,7 +110,7 @@
             };
         }
 
-        public function AlertList($session, $camera = "index", $startdate = 0, $reset = false){
+        public function AlertList(string $session, string $camera = "index", integer $startdate = null, bool $reset = false){
             $id = $this->InstanceID;
             $IPAddress = $this->ReadPropertyString("IPAddress");
             $Port = $this->ReadPropertyInteger("Port");
@@ -143,7 +143,7 @@
             curl_close($ch);
 
             $output = json_decode($result, true);
-            if($output["result"] == "success"){
+            if($output["result"] == "success"){ 
                 return $output;
             }else{
                 return [];
