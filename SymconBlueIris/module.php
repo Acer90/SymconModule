@@ -51,7 +51,7 @@
                 'Content-Type: application/json',                                                                                
                 'Content-Length: ' . strlen($data_string))                                                                       
             );     
-            echo $result = curl_exec($ch);
+            $result = curl_exec($ch);
 
             if(curl_errno($ch))
             {
@@ -61,7 +61,13 @@
 
             curl_close($ch);
 
-            return json_decode($result, true);
+            $output = json_decode($result, true);
+            if($output["result"] == "fail"){
+                $this->SetStatus(205);
+                return "ERROR";
+            }else{
+                return $output["session"];
+            };
         }
 
         public function SyncData(){
