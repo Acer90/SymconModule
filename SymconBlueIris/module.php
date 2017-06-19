@@ -70,6 +70,86 @@
             };
         }
 
+        public function Logout($session){
+            $id = $this->InstanceID;
+            $IPAddress = $this->ReadPropertyString("IPAddress");
+            $Port = $this->ReadPropertyInteger("Port");
+            $Timeout = $this->ReadPropertyInteger("Timeout");
+            $Username = $this->ReadPropertyString("Username");
+            $Password = $this->ReadPropertyString("Password");
+
+            $url = 'http://'.$IPAddress.":".$Port."/json";
+
+            $data = array("cmd" => "logout", "session" => $session);                                                                 
+            $data_string = json_encode($data);                                                                                   
+                                                                                                                                
+            $ch = curl_init($url);                                                                      
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
+            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);                                                                     
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
+                'Content-Type: application/json',                                                                                
+                'Content-Length: ' . strlen($data_string))                                                                       
+            );     
+            $result = curl_exec($ch);
+
+            if(curl_errno($ch))
+            {
+                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
+                return "ERROR";
+            }
+
+            curl_close($ch);
+
+            $output = json_decode($result, true);
+            if($output["result"] == "success"){
+                return True;
+            }else{
+                return False;
+            };
+        }
+
+        public function AlertList($session, $camera = "index", $startdate = 0, $reset = false){
+            $id = $this->InstanceID;
+            $IPAddress = $this->ReadPropertyString("IPAddress");
+            $Port = $this->ReadPropertyInteger("Port");
+            $Timeout = $this->ReadPropertyInteger("Timeout");
+            $Username = $this->ReadPropertyString("Username");
+            $Password = $this->ReadPropertyString("Password");
+
+            $url = 'http://'.$IPAddress.":".$Port."/json";
+
+            $data = array("cmd" => "alertlist", "session" => $session, "camera" => $camera , "startdate" => $startdate , "reset" => $reset); // , "" => $                                                          
+            $data_string = json_encode($data);                                                                                   
+                                                                                                                                
+            $ch = curl_init($url);                                                                      
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
+            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);                                                                     
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
+                'Content-Type: application/json',                                                                                
+                'Content-Length: ' . strlen($data_string))                                                                       
+            );     
+            $result = curl_exec($ch);
+
+            if(curl_errno($ch))
+            {
+                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
+                return "ERROR";
+            }
+
+            curl_close($ch);
+
+            $output = json_decode($result, true);
+            if($output["result"] == "success"){
+                return $output;
+            }else{
+                return [];
+            };
+        }
+
         public function SyncData(){
             
         }
