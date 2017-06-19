@@ -36,8 +36,8 @@
             $Username = $this->ReadPropertyString("Username");
             $Password = $this->ReadPropertyString("Password");
 
-            $url = 'http://'.$IPAddress.":".session_id().":".$Port."/json";
-            $response = md5($Username.":".$Password);
+            $url = 'http://'.$IPAddress.":".$Port."/json";
+            $response = md5($Username.":".session_id().":".$Password);
 
             $data = array("response" => $response);                                                                    
             $data_string = json_encode($data);                                                                                   
