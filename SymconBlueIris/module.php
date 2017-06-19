@@ -62,6 +62,8 @@
             curl_close($ch);
 
             $output = json_decode($result, true);
+
+            print_r($output);
             if($output["result"] == "fail"){
                 $this->SetStatus(205);
                 return "ERROR";
@@ -71,6 +73,11 @@
         }
 
         public function Logout(string $session = null){
+            if(is_null($session)){
+                $this->SetStatus(203);
+                return "ERROR";
+            } 
+
             $id = $this->InstanceID;
             $IPAddress = $this->ReadPropertyString("IPAddress");
             $Port = $this->ReadPropertyInteger("Port");
