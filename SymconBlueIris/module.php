@@ -39,7 +39,7 @@
             $url = 'http://'.$IPAddress.":".$Port."/json";
             $response = md5($Username.":".session_id().":".$Password);
 
-            $data = array("response" => $response, "session" => session_id());                                                                    
+            $data = array("cmd" => "login", "response" => $response);  //, "session" => session_id()                                                                  
             $data_string = json_encode($data);                                                                                   
                                                                                                                                 
             $ch = curl_init($url);                                                                      
@@ -50,13 +50,12 @@
             curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
                 'Content-Type: application/json',                                                                                
                 'Content-Length: ' . strlen($data_string))                                                                       
-            );    
-                                                                                                            
+            );     
             echo $result = curl_exec($ch);
 
             if(curl_errno($ch))
             {
-                if($ch == 28) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
+                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
                 return "ERROR";
             }
 
