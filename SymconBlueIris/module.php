@@ -1,6 +1,6 @@
 <?
     // Klassendefinition
-    class IPSWINSNMP extends IPSModule {
+    class BlueIris extends IPSModule {
         public function __construct($InstanceID) {
             parent::__construct($InstanceID);
         }
@@ -11,7 +11,7 @@
             // Modul-Eigenschaftserstellung
             $this->RegisterPropertyString("IPAddress", "192.168.178.1"); 
             $this->RegisterPropertyInteger("Port", 81);
-            $this->RegisterPropertyInteger("Timeout", 1);
+            $this->RegisterPropertyInteger("Timeout", 3);
             $this->RegisterPropertyInteger("Interval", 10);
             $this->RegisterPropertyString("Username", "admin");
             $this->RegisterPropertyString("Password", "");
@@ -26,6 +26,43 @@
             //$this->RequireParent("{1A75660D-48AE-4B89-B351-957CAEBEF22D}");
 
             $this->SetTimerInterval("SyncData", $this->ReadPropertyInteger("Interval")*1000);
+        }
+
+        public function Login(){
+            $id = $this->InstanceID;
+            $IPAddress = $this->ReadPropertyString("IPAddress");
+            $Port = $this->ReadPropertyInteger("Port");
+            $Timeout = $this->ReadPropertyInteger("Timeout");
+            $Username = $this->ReadPropertyString("Username");
+            $Password = $this->ReadPropertyString("Password");
+
+            $url = 'http://'.$IPAddress.":".$Port."/json";
+            $response = md5($Username.":".$Password);
+
+            $data = array("response" => $response);                                                                    
+            $data_string = json_encode($data);                                                                                   
+                                                                                                                                
+            $ch = curl_init($url);                                                                      
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
+            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);                                                                     
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
+                'Content-Type: application/json',                                                                                
+                'Content-Length: ' . strlen($data_string))                                                                       
+            );    
+                                                                                                            
+            echo $result = curl_exec($ch);
+
+            if(curl_errno($ch))
+            {
+                if($ch == 28) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
+                return "ERROR";
+            }
+
+            curl_close($ch);
+
+            return json_decode($result, true);
         }
 
         public function SyncData(){
