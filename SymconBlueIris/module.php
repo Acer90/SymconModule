@@ -36,7 +36,13 @@
             echo $Username = $this->ReadPropertyString("Username");
             echo $Password = $this->ReadPropertyString("Password");
             $url = 'http://'.$IPAddress.":".$Port."/json";
+
+            $data = array("cmd" => "login");                            
+            $data_string = json_encode($data);  
+
             $ch = curl_init($url);  
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);  
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
             curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);   
 
