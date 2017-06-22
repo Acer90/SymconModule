@@ -40,7 +40,7 @@
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
             curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);   
 
-            $result = curl_exec($ch);
+            echo $result = curl_exec($ch);
 
             if(curl_errno($ch))
             {
