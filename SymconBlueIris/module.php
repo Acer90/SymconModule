@@ -39,7 +39,7 @@
             $url = 'http://'.$IPAddress.":".$Port."/json";
             $response = md5($Username.":".session_id().":".$Password);
 
-            $data = array("cmd" => "login", "response" => $response);  //, "session" => session_id()                                                                  
+            $data = array("cmd" => "login", "session" => session_id(), "response" => $response);  //                                                 
             $data_string = json_encode($data);                                                                                   
                                                                                                                                 
             $ch = curl_init($url);                                                                      
