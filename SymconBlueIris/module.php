@@ -320,6 +320,7 @@
             curl_close($ch);
 
             $output = json_decode($result, true);
+            print_r($output);
             if($output["result"] == "success"){ 
                 return $output["data"];
             }else{
