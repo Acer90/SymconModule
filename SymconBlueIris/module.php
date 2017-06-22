@@ -37,9 +37,26 @@
             echo $Password = $this->ReadPropertyString("Password");
             echo session_id();
             $url = 'http://'.$IPAddress.":".$Port."/json";
-            $response = md5($Username.":".session_id().":".$Password);
+            $ch = curl_init($url);  
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
+            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);   
 
-            $data = array("cmd" => "login", "session" => session_id(), "response" => $response);  //                                                 
+            $result = curl_exec($ch);
+
+            if(curl_errno($ch))
+            {
+                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
+                return "ERROR";
+            }
+
+            curl_close($ch);
+            $output = json_decode($result, true);
+
+            $sid = $output["session"];
+
+            $response = md5($Username.":".$sid.":".$Password);
+
+            $data = array("cmd" => "login", "session" => $sid, "response" => $response);  //                                                 
             $data_string = json_encode($data);                                                                                   
                                                                                                                                 
             $ch = curl_init($url);                                                                      
