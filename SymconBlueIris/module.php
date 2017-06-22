@@ -188,7 +188,7 @@
             };
         }
 
-        public function CamConfig(string $session = null, string $camera = null){
+        public function CamConfig(string $session = null, string $camera = null, bool $reset = null, bool $enable = null, integer $pause = null, bool $motion = null, bool $schedule = null, bool $ptzcycle = null, bool $ptzevents = null, integer $alerts = null, integer $record = null){
             if(is_null($session)){
                 $this->SetStatus(203);
                 return "ERROR";
@@ -197,6 +197,7 @@
                 $this->SetStatus(203);
                 return "ERROR";
             }
+            
             
             $id = $this->InstanceID;
             $IPAddress = $this->ReadPropertyString("IPAddress");
@@ -207,7 +208,16 @@
 
             $url = 'http://'.$IPAddress.":".$Port."/json";
 
-            $data = array("cmd" => "camconfig", "session" => $session, "camera" => $camera); // , "" => $                                                          
+            $data = array("cmd" => "camconfig", "session" => $session, "camera" => $camera); // , "" => $    
+            if(!is_null($reset)) $data["reset"] = $reset;
+            if(!is_null($enable)) $data["enable"] = $enable; 
+            if(!is_null($pause)) $data["pause"] = $pause; 
+            if(!is_null($motion)) $data["motion"] = $motion; 
+            if(!is_null($schedule)) $data["schedule"] = $schedule; 
+            if(!is_null($ptzcycle)) $data["ptzcycle"] = $ptzcycle;   
+            if(!is_null($ptzevents)) $data["ptzevents"] = $ptzevents;  
+            if(!is_null($alerts)) $data["alerts"] = $alerts;  
+            if(!is_null($record)) $data["record"] = $record;                                                    
             $data_string = json_encode($data);                                                                                   
                                                                                                                                 
             $ch = curl_init($url);                                                                      
