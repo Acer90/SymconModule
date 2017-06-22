@@ -33,8 +33,8 @@
             $IPAddress = $this->ReadPropertyString("IPAddress");
             $Port = $this->ReadPropertyInteger("Port");
             $Timeout = $this->ReadPropertyInteger("Timeout");
-            echo $Username = $this->ReadPropertyString("Username");
-            echo $Password = $this->ReadPropertyString("Password");
+            $Username = $this->ReadPropertyString("Username");
+            $Password = $this->ReadPropertyString("Password");
             $url = 'http://'.$IPAddress.":".$Port."/json";
 
             $data = array("cmd" => "login");                            
@@ -57,7 +57,7 @@
 
             $output = json_decode($result, true);
 
-            echo $sid = $output["session"];
+            $sid = $output["session"];
 
             $response = md5($Username.":".$sid.":".$Password);
 
@@ -86,7 +86,7 @@
 
             $output = json_decode($result, true);
 
-            print_r($output);
+            //print_r($output);
             if($output["result"] == "fail"){
                 $this->SetStatus(205);
                 return "ERROR";
