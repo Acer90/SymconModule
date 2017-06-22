@@ -282,11 +282,15 @@
             };
         }
 
-        public function ClipList(string $session = null){
+        public function ClipList(string $session = null, string $camera = null, integer $startdate = null, integer $enddate = null, bool $tiles = null){
             if(is_null($session)){
                 $this->SetStatus(203);
                 return "ERROR";
             } 
+            if(is_null($camera)) $camera = "index";
+            if(is_null($startdate)) $startdate = 0;
+            if(is_null($startdate)) $startdate = time();
+            if(is_null($reset)) $tiles = false;
 
             $id = $this->InstanceID;
             $IPAddress = $this->ReadPropertyString("IPAddress");
