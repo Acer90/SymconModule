@@ -289,8 +289,8 @@
             } 
             if(is_null($camera)) $camera = "index";
             if(is_null($startdate)) $startdate = 0;
-            if(is_null($startdate)) $startdate = time();
-            if(is_null($reset)) $tiles = false;
+            if(is_null($enddate)) $enddate = time();
+            if(is_null($tiles)) $tiles = false;
 
             $id = $this->InstanceID;
             $IPAddress = $this->ReadPropertyString("IPAddress");
@@ -301,7 +301,7 @@
 
             $url = 'http://'.$IPAddress.":".$Port."/json";
 
-            $data = array("cmd" => "cliplist", "session" => $session);                                                                 
+            $data = array("cmd" => "cliplist", "session" => $session , "camera" => $camera, "startdate" => $startdate, "enddate" => $enddate, "tiles" =>$tiles);                                                                 
             $data_string = json_encode($data);                                                                                   
                                                                                                                                 
             $ch = curl_init($url);                                                                      
