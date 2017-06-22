@@ -46,13 +46,15 @@
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
             curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);   
 
-            echo $result = curl_exec($ch);
+            $result = curl_exec($ch);
 
             if(curl_errno($ch))
             {
                 if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
                 return "ERROR";
             }
+            curl_close($ch);
+
             $output = json_decode($result, true);
 
             echo $sid = $output["session"];
