@@ -611,12 +611,12 @@
                 if(in_array($val["optionValue"] , $clist)){
                     $key = array_search($val["optionValue"], $clist);
 
-                    $VarID = IPS_GetVariableIDByName("isOnline");
+                    $VarID = IPS_GetVariableIDByName("isOnline", $key);
                     if($VarID !== False){
                         if(!empty($val["isOnline"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
                     }
 
-                    $VarID = IPS_GetVariableIDByName("isRecording");
+                    $VarID = IPS_GetVariableIDByName("isRecording", $key);
                     if($VarID !== False){
                         if(!empty($val["isRecording"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
                     }
