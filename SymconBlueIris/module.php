@@ -628,12 +628,12 @@
                     IPS_SetProperty($InsID, "ShortName", $val["optionValue"]); // Ändere Eigenschaft "HomeCode"
                     IPS_ApplyChanges($InsID);
 
-                    $VarID = IPS_CreateVariable(2);
+                    $VarID = IPS_CreateVariable(0);
                     IPS_SetName($VarID, "isOnline"); // Variable benennen
                     IPS_SetParent($VarID, $InsID);
                     IPS_SetVariableCustomProfile($VarID, "~Switch");
 
-                    $VarID = IPS_CreateVariable(2);
+                    $VarID = IPS_CreateVariable(0);
                     IPS_SetName($VarID, "isRecording"); // Variable benennen
                     IPS_SetParent($VarID, $InsID);
                     IPS_SetVariableCustomProfile($VarID, "~Switch");
