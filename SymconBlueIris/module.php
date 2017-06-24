@@ -574,14 +574,72 @@
 
             $output = json_decode($result, true);
             if($output["result"] == "success"){ 
-                return $output["data"];
+                return $output;
             }else{
                 return [];
             };
         }
 
         public function SyncData(){
+            $id = $this->InstanceID;
+            $sid = BlueIris_Login($id);
+            if($sid == "ERROR") exit;
+
+            $ChildrenIDs = IPS_GetChildrenIDs($id);
+
+            //Create Checklist
+            $clist = array();
+            foreach ($ChildrenIDs as $val) {
+                $obj = IPS_GetObject($val);
+
+                if($obj["ObjectType"] == 1){
+                    $obj_conf_str = IPS_GetConfiguration($val);
+                    $obj_conf = json_decode($obj_conf_str, true);
+
+                    if(array_key_exists("ShortName", $obj_conf)){
+                        $clist[$val] = IPS_GetProperty($val, "ShortName");
+                    }
+                }
+            }
+            print_r($clist);
             
+            $data = BlueIris_CamList($id, $sid);
+            if($data == "ERROR") exit;
+            foreach ($data as $val) {
+                if(!array_key_exists("optionValue" ,$val) || strpos($val["optionValue"], 'index') !== false) continue;
+
+                if(in_array($val["optionValue"] , $clist)){
+                    $key = array_search($val["optionValue"], $clist);
+
+                    $VarID = IPS_GetVariableIDByName("isOnline");
+                    if($VarID !== False){
+                        if(!empty($val["isOnline"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
+                    }
+
+                    $VarID = IPS_GetVariableIDByName("isRecording");
+                    if($VarID !== False){
+                        if(!empty($val["isRecording"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
+                    }
+                }else{
+                    $InsID = IPS_CreateInstance("{5308D185-A3D2-42D0-B6CE-E9D3080CE184}");
+                    IPS_SetName($InsID, $val["optionDisplay"]); // Instanz benennen
+                    IPS_SetParent($InsID, $id); 
+
+                    IPS_SetProperty($InsID, "ShortName", $val["optionValue"]); // Ändere Eigenschaft "HomeCode"
+                    IPS_ApplyChanges($InsID);
+
+                    $VarID = IPS_CreateVariable(2);
+                    IPS_SetName($VarID, "isOnline"); // Variable benennen
+                    IPS_SetParent($VarID, $InsID);
+                    IPS_SetVariableCustomProfile($VarID, "~Switch");
+
+                    $VarID = IPS_CreateVariable(2);
+                    IPS_SetName($VarID, "isRecording"); // Variable benennen
+                    IPS_SetParent($VarID, $InsID);
+                    IPS_SetVariableCustomProfile($VarID, "~Switch");
+                }
+            }
+
         }
     }
 ?>
