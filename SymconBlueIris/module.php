@@ -645,7 +645,7 @@
                     IPS_SetParent($VarID, $InsID);
                     IPS_SetVariableCustomProfile($VarID, "~Switch");
 
-                    $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg//". $val["optionValue"]. "/video.mjpg";     // Image-Datei
+                    $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg";     // Image-Datei
                     $MediaID = IPS_CreateMedia(3);                  // Image im MedienPool anlegen
                     IPS_SetMediaFile($MediaID, $ImageFile, true);   // Image im MedienPool mit Image-Datei verbinden
                     IPS_SetName($MediaID, "Stream"); // Medienobjekt benennen
