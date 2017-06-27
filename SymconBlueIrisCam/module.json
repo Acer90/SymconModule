@@ -1,14 +1,14 @@
 {
-    "id": "{1A75660D-48AE-4B89-B351-957CAEBEF22D}",
-    "name": "IPS WINSNMP",
+    "id": "{5308D185-A3D2-42D0-B6CE-E9D3080CE184}",
+    "name": "BlueIrisCam",
     "type": 3,
 	"vendor": "",
 	"aliases": 
 	[
-		"IPS SNMP"
+		"BlueIrisCam"
 	],
     "parentRequirements": [],
     "childRequirements": [],
     "implemented": [],
-    "prefix": "IPSWINSNMP"
+    "prefix": "BlueIrisCam"
 }
