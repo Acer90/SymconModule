@@ -17,7 +17,7 @@
             $this->RegisterPropertyString("Password", "");
 
             //event erstellen
-            $this->RegisterTimer("SyncData", $this->ReadPropertyInteger("Interval"), 'IPSWINSNMP_SyncData($_IPS[\'TARGET\']);');
+            $this->RegisterTimer("SyncData", $this->ReadPropertyInteger("Interval"), 'BlueIris_SyncData($_IPS[\'TARGET\']);');
         }
 
         public function ApplyChanges() {
