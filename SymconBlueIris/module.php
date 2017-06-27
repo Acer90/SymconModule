@@ -582,6 +582,8 @@
 
         public function SyncData(){
             $id = $this->InstanceID;
+            $IPAddress = $this->ReadPropertyString("IPAddress");
+            $Port = $this->ReadPropertyInteger("Port");
             $sid = BlueIris_Login($id);
             if($sid == "ERROR") exit;
 
@@ -601,7 +603,7 @@
                     }
                 }
             }
-            print_r($clist);
+            //print_r($clist);
             
             $data = BlueIris_CamList($id, $sid);
             if($data == "ERROR") exit;
@@ -620,6 +622,11 @@
                     if($VarID !== False){
                         if(!empty($val["isRecording"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
                     }
+
+                    $VarID = IPS_GetVariableIDByName("FPS", $key);
+                    if($VarID !== False){
+                        if(!empty($val["FPS"])) SetValue($VarID,$val["FPS"]); else SetValue($VarID, 0);
+                    }
                 }else{
                     $InsID = IPS_CreateInstance("{5308D185-A3D2-42D0-B6CE-E9D3080CE184}");
                     IPS_SetName($InsID, $val["optionDisplay"]); // Instanz benennen
@@ -637,6 +644,16 @@
                     IPS_SetName($VarID, "isRecording"); // Variable benennen
                     IPS_SetParent($VarID, $InsID);
                     IPS_SetVariableCustomProfile($VarID, "~Switch");
+
+                    $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg//". $val["optionValue"]. "/video.mjpg";     // Image-Datei
+                    $MediaID = IPS_CreateMedia(3);                  // Image im MedienPool anlegen
+                    IPS_SetMediaFile($MediaID, $ImageFile, true);   // Image im MedienPool mit Image-Datei verbinden
+                    IPS_SetName($MediaID, "Stream"); // Medienobjekt benennen
+                    IPS_SetParent($MediaID, $InsID);
+
+                    $VarID = IPS_CreateVariable(2);
+                    IPS_SetName($VarID, "FPS"); // Variable benennen
+                    IPS_SetParent($VarID, $InsID);
                 }
             }
 
