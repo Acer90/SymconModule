@@ -609,9 +609,9 @@
             if($data == "ERROR") exit;
             foreach ($data as $val) {
                 if(!array_key_exists("optionValue" ,$val) || strpos($val["optionValue"], 'index') !== false) continue;
-
+                $key = array_search($val["optionValue"], $clist);
                 if(in_array($val["optionValue"] , $clist)){
-                    if($createVar == true){
+                    if($createVar){
                         if(@IPS_GetVariableIDByName("isOnline", $key) === False){
                             $VarID = IPS_CreateVariable(0);
                             IPS_SetName($VarID, "isOnline"); // Variable benennen
@@ -640,8 +640,6 @@
                             IPS_SetParent($VarID, $InsID);
                         }
                     }
-
-                    $key = array_search($val["optionValue"], $clist);
 
                     $VarID = @IPS_GetVariableIDByName("isOnline", $key);
                     if($VarID !== False){
