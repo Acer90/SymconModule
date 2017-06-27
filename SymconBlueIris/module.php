@@ -580,7 +580,7 @@
             };
         }
 
-        public function SyncData(bool $createVar = false){
+        public function SyncData(bool $createVar = null){
             $id = $this->InstanceID;
             $IPAddress = $this->ReadPropertyString("IPAddress");
             $Port = $this->ReadPropertyInteger("Port");
