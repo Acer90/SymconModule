@@ -89,6 +89,7 @@
             //print_r($output);
             if($output["result"] == "fail"){
                 $this->SetStatus(205);
+                print_r($output);
                 return "ERROR";
             }else{
                 return $output["session"];
@@ -586,6 +587,8 @@
             $Port = $this->ReadPropertyInteger("Port");
             $sid = BlueIris_Login($id);
             if($sid == "ERROR") exit;
+
+            if(!is_null($createVar)) echo "geht";
 
             $ChildrenIDs = IPS_GetChildrenIDs($id);
 
