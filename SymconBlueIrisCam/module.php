@@ -16,7 +16,7 @@
         public function ReceiveData($JSONString) {
 
             $data = json_decode($JSONString);
-            IPS_LogMessage("ReceiveData", utf8_decode($data->Buffer));
+            IPS_LogMessage("ReceiveData", utf8_decode($data->CreateVar));
 
             if($createVar){
                 if(@IPS_GetVariableIDByName("isOnline", $key) === False){

@@ -614,7 +614,6 @@
                 if(!array_key_exists("optionValue" ,$val) || strpos($val["optionValue"], 'index') !== false) continue;
                 $key = array_search($val["optionValue"], $clist);
                 if(in_array($val["optionValue"] , $clist)){
-
                     $this->SendDataToChildren(json_encode(Array("DataID" => "{5308D185-A3D2-42D0-B6CE-E9D3080CE184}", "CreateVar" => $createVar, "Buffer" => $data)));
                 }else{
                     $InsID = IPS_CreateInstance("{5308D185-A3D2-42D0-B6CE-E9D3080CE184}");
