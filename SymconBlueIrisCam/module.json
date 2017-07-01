@@ -7,7 +7,7 @@
 	[
 		"BlueIrisCam"
 	],
-    "parentRequirements": [],
+    "parentRequirements": ["{7E62F9B0-5474-426F-B91B-E25F4B25A824}"],
     "childRequirements": [],
     "implemented": [],
     "prefix": "BlueIrisCam"

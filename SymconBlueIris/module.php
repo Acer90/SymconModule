@@ -588,7 +588,7 @@
             $sid = BlueIris_Login($id);
             if($sid == "ERROR") exit;
 
-            if(!is_null($createVar)) echo "geht";
+            //if(!is_null($createVar)) echo "geht";
 
             $ChildrenIDs = IPS_GetChildrenIDs($id);
 
@@ -597,7 +597,7 @@
             foreach ($ChildrenIDs as $val) {
                 $obj = IPS_GetObject($val);
 
-                if($obj["ObjectType"] == 1){
+                if(IPS_InstanceExists($val) && $obj["ObjectType"] == 1){
                     $obj_conf_str = IPS_GetConfiguration($val);
                     $obj_conf = json_decode($obj_conf_str, true);
 
@@ -614,39 +614,101 @@
                 if(!array_key_exists("optionValue" ,$val) || strpos($val["optionValue"], 'index') !== false) continue;
                 $key = array_search($val["optionValue"], $clist);
                 if(in_array($val["optionValue"] , $clist)){
+                    //$this->SendDataToChildren(json_encode(Array("DataID" => "{5308D185-A3D2-42D0-B6CE-E9D3080CE184}", "CreateVar" => $createVar, "Buffer" => $data)));
+                
                     if($createVar){
                         if(@IPS_GetVariableIDByName("isOnline", $key) === False){
                             $VarID = IPS_CreateVariable(0);
                             IPS_SetName($VarID, "isOnline"); // Variable benennen
-                            IPS_SetParent($VarID, $InsID);
+                            IPS_SetParent($VarID, $key);
                             IPS_SetVariableCustomProfile($VarID, "~Switch");
                         }
 
                         if(@IPS_GetVariableIDByName("isRecording", $key) === False){
                             $VarID = IPS_CreateVariable(0);
                             IPS_SetName($VarID, "isRecording"); // Variable benennen
-                            IPS_SetParent($VarID, $InsID);
+                            IPS_SetParent($VarID, $key);
                             IPS_SetVariableCustomProfile($VarID, "~Switch");
                         }
 
-                        if(@IPS_GetVariableIDByName("Stream", $key) === False){
+                        if(@IPS_GetVariableIDByName("isPaused", $key) === False){
+                            $VarID = IPS_CreateVariable(0);
+                            IPS_SetName($VarID, "isPaused"); // Variable benennen
+                            IPS_SetParent($VarID, $key);
+                            IPS_SetVariableCustomProfile($VarID, "~Switch");
+                        }
+
+                        if(@IPS_GetVariableIDByName("isNoSignal", $key) === False){
+                            $VarID = IPS_CreateVariable(0);
+                            IPS_SetName($VarID, "isNoSignal"); // Variable benennen
+                            IPS_SetParent($VarID, $key);
+                            IPS_SetVariableCustomProfile($VarID, "~Switch");
+                        }
+
+                        if(@IPS_GetVariableIDByName("isMotion", $key) === False){
+                            $VarID = IPS_CreateVariable(0);
+                            IPS_SetName($VarID, "isMotion"); // Variable benennen
+                            IPS_SetParent($VarID, $key);
+                            IPS_SetVariableCustomProfile($VarID, "~Switch");
+                        }
+
+                        if(@IPS_GetVariableIDByName("isTriggered", $key) === False){
+                            $VarID = IPS_CreateVariable(0);
+                            IPS_SetName($VarID, "isTriggered"); // Variable benennen
+                            IPS_SetParent($VarID, $key);
+                            IPS_SetVariableCustomProfile($VarID, "~Switch");
+                        }
+
+                        if(@IPS_GetVariableIDByName("isAlerting", $key) === False){
+                            $VarID = IPS_CreateVariable(0);
+                            IPS_SetName($VarID, "isAlerting"); // Variable benennen
+                            IPS_SetParent($VarID, $key);
+                            IPS_SetVariableCustomProfile($VarID, "~Switch");
+                        }
+
+                        if(@IPS_GetMediaIDByName("Stream", $key) === False){
                             $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg";     // Image-Datei
                             $MediaID = IPS_CreateMedia(3);                  // Image im MedienPool anlegen
                             IPS_SetMediaFile($MediaID, $ImageFile, true);   // Image im MedienPool mit Image-Datei verbinden
                             IPS_SetName($MediaID, "Stream"); // Medienobjekt benennen
-                            IPS_SetParent($MediaID, $InsID);
+                            IPS_SetParent($MediaID, $key);
                         }
 
                         if(@IPS_GetVariableIDByName("FPS", $key) === False){
                             $VarID = IPS_CreateVariable(2);
                             IPS_SetName($VarID, "FPS"); // Variable benennen
-                            IPS_SetParent($VarID, $InsID);
+                            IPS_SetParent($VarID, $key);
                         }
                     }
 
                     $VarID = @IPS_GetVariableIDByName("isOnline", $key);
                     if($VarID !== False){
                         if(!empty($val["isOnline"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
+                    }
+
+                    $VarID = @IPS_GetVariableIDByName("isPaused", $key);
+                    if($VarID !== False){
+                        if(!empty($val["isPaused"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
+                    }
+
+                    $VarID = @IPS_GetVariableIDByName("isNoSignal", $key);
+                    if($VarID !== False){
+                        if(!empty($val["isNoSignal"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
+                    }
+
+                    $VarID = @IPS_GetVariableIDByName("isAlerting", $key);
+                    if($VarID !== False){
+                        if(!empty($val["isAlerting"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
+                    }
+
+                    $VarID = @IPS_GetVariableIDByName("isMotion", $key);
+                    if($VarID !== False){
+                        if(!empty($val["isMotion"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
+                    }
+
+                    $VarID = @IPS_GetVariableIDByName("isTriggered", $key);
+                    if($VarID !== False){
+                        if(!empty($val["isTriggered"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
                     }
 
                     $VarID = @IPS_GetVariableIDByName("isRecording", $key);
@@ -668,6 +730,31 @@
 
                     $VarID = IPS_CreateVariable(0);
                     IPS_SetName($VarID, "isOnline"); // Variable benennen
+                    IPS_SetParent($VarID, $InsID);
+                    IPS_SetVariableCustomProfile($VarID, "~Switch");
+
+                    $VarID = IPS_CreateVariable(0);
+                    IPS_SetName($VarID, "isPaused"); // Variable benennen
+                    IPS_SetParent($VarID, $InsID);
+                    IPS_SetVariableCustomProfile($VarID, "~Switch");
+
+                    $VarID = IPS_CreateVariable(0);
+                    IPS_SetName($VarID, "isNoSignal"); // Variable benennen
+                    IPS_SetParent($VarID, $InsID);
+                    IPS_SetVariableCustomProfile($VarID, "~Switch");
+
+                    $VarID = IPS_CreateVariable(0);
+                    IPS_SetName($VarID, "isAlerting"); // Variable benennen
+                    IPS_SetParent($VarID, $InsID);
+                    IPS_SetVariableCustomProfile($VarID, "~Switch");
+
+                    $VarID = IPS_CreateVariable(0);
+                    IPS_SetName($VarID, "isMotion"); // Variable benennen
+                    IPS_SetParent($VarID, $InsID);
+                    IPS_SetVariableCustomProfile($VarID, "~Switch");
+
+                    $VarID = IPS_CreateVariable(0);
+                    IPS_SetName($VarID, "isTriggered"); // Variable benennen
                     IPS_SetParent($VarID, $InsID);
                     IPS_SetVariableCustomProfile($VarID, "~Switch");
 
