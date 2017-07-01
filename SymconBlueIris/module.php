@@ -620,14 +620,14 @@
                         if(@IPS_GetVariableIDByName("isOnline", $key) === False){
                             $VarID = IPS_CreateVariable(0);
                             IPS_SetName($VarID, "isOnline"); // Variable benennen
-                            IPS_SetParent($VarID, $InsID);
+                            IPS_SetParent($VarID, $key);
                             IPS_SetVariableCustomProfile($VarID, "~Switch");
                         }
 
                         if(@IPS_GetVariableIDByName("isRecording", $key) === False){
                             $VarID = IPS_CreateVariable(0);
                             IPS_SetName($VarID, "isRecording"); // Variable benennen
-                            IPS_SetParent($VarID, $InsID);
+                            IPS_SetParent($VarID, $key);
                             IPS_SetVariableCustomProfile($VarID, "~Switch");
                         }
 
@@ -636,13 +636,13 @@
                             $MediaID = IPS_CreateMedia(3);                  // Image im MedienPool anlegen
                             IPS_SetMediaFile($MediaID, $ImageFile, true);   // Image im MedienPool mit Image-Datei verbinden
                             IPS_SetName($MediaID, "Stream"); // Medienobjekt benennen
-                            IPS_SetParent($MediaID, $InsID);
+                            IPS_SetParent($MediaID, $key);
                         }
 
                         if(@IPS_GetVariableIDByName("FPS", $key) === False){
                             $VarID = IPS_CreateVariable(2);
                             IPS_SetName($VarID, "FPS"); // Variable benennen
-                            IPS_SetParent($VarID, $InsID);
+                            IPS_SetParent($VarID, $key);
                         }
                     }
 
