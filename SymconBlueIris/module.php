@@ -18,6 +18,7 @@
 
             //event erstellen
             $this->RegisterTimer("SyncData", $this->ReadPropertyInteger("Interval"), 'BlueIris_SyncData($_IPS[\'TARGET\'], false);');
+            $this->SetStatus(102);
         }
 
         public function ApplyChanges() {
@@ -25,6 +26,7 @@
             parent::ApplyChanges();
             //$this->RequireParent("{1A75660D-48AE-4B89-B351-957CAEBEF22D}");
 
+            $this->SetStatus(102);
             $this->SetTimerInterval("SyncData", $this->ReadPropertyInteger("Interval")*1000);
         }
 
@@ -92,6 +94,7 @@
                 print_r($output);
                 return "ERROR";
             }else{
+                $this->SetStatus(102);
                 return $output["session"];
             };
         }

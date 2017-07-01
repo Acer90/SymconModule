@@ -1,0 +1,18 @@
+{
+    "elements":
+    [
+        { "type": "ValidationTextBox", "name": "ShortName", "caption": "Short Name" }
+    ],
+    "actions":
+    [
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Connection Success!" },
+        { "code": 201, "icon": "error", "caption": "Error Invalid parameter" },
+        { "code": 202, "icon": "error", "caption": "Variable does not exist!" },
+        { "code": 203, "icon": "error", "caption": "Internal Error!" },
+        { "code": 204, "icon": "error", "caption": "Timeout!" },
+        { "code": 205, "icon": "error", "caption": "Wrong Login!" }
+    ]
+}
