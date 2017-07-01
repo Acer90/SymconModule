@@ -597,7 +597,7 @@
             foreach ($ChildrenIDs as $val) {
                 $obj = IPS_GetObject($val);
 
-                if($obj["ObjectType"] == 1){
+                if(IPS_InstanceExists($val) && $obj["ObjectType"] == 1){
                     $obj_conf_str = IPS_GetConfiguration($val);
                     $obj_conf = json_decode($obj_conf_str, true);
 
@@ -615,7 +615,7 @@
                 $key = array_search($val["optionValue"], $clist);
                 if(in_array($val["optionValue"] , $clist)){
 
-                    $this->SendDataToChildren(json_encode(Array("DataID" => "{5308D185-A3D2-42D0-B6CE-E9D3080CE184}", "CreateVar" => $createVar, "Buffer" => $data)));
+                    $this->SendDataToChildren(json_encode(Array("DataID" => "{5308D185-A3D2-42D0-B6CE-E9D3080CE184}", "Buffer" => "test")));
                 }else{
                     $InsID = IPS_CreateInstance("{5308D185-A3D2-42D0-B6CE-E9D3080CE184}");
                     IPS_SetName($InsID, $val["optionDisplay"]); // Instanz benennen
