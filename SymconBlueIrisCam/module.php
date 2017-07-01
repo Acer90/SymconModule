@@ -18,7 +18,50 @@
             $data = json_decode($JSONString);
             IPS_LogMessage("ReceiveData", utf8_decode($data->Buffer));
 
-            
+            if($createVar){
+                if(@IPS_GetVariableIDByName("isOnline", $key) === False){
+                    $VarID = IPS_CreateVariable(0);
+                    IPS_SetName($VarID, "isOnline"); // Variable benennen
+                    IPS_SetParent($VarID, $InsID);
+                    IPS_SetVariableCustomProfile($VarID, "~Switch");
+                }
+
+                if(@IPS_GetVariableIDByName("isRecording", $key) === False){
+                    $VarID = IPS_CreateVariable(0);
+                    IPS_SetName($VarID, "isRecording"); // Variable benennen
+                    IPS_SetParent($VarID, $InsID);
+                    IPS_SetVariableCustomProfile($VarID, "~Switch");
+                }
+
+                if(@IPS_GetVariableIDByName("Stream", $key) === False){
+                    $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg";     // Image-Datei
+                    $MediaID = IPS_CreateMedia(3);                  // Image im MedienPool anlegen
+                    IPS_SetMediaFile($MediaID, $ImageFile, true);   // Image im MedienPool mit Image-Datei verbinden
+                    IPS_SetName($MediaID, "Stream"); // Medienobjekt benennen
+                    IPS_SetParent($MediaID, $InsID);
+                }
+
+                if(@IPS_GetVariableIDByName("FPS", $key) === False){
+                    $VarID = IPS_CreateVariable(2);
+                    IPS_SetName($VarID, "FPS"); // Variable benennen
+                    IPS_SetParent($VarID, $InsID);
+                }
+            }
+
+            $VarID = @IPS_GetVariableIDByName("isOnline", $key);
+            if($VarID !== False){
+                if(!empty($val["isOnline"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
+            }
+
+            $VarID = @IPS_GetVariableIDByName("isRecording", $key);
+            if($VarID !== False){
+                if(!empty($val["isRecording"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
+            }
+
+            $VarID = @IPS_GetVariableIDByName("FPS", $key);
+            if($VarID !== False){
+                if(!empty($val["FPS"])) SetValue($VarID,$val["FPS"]); else SetValue($VarID, 0);
+            }
         }
 
         public function AlertList(integer $startdate = null, bool $reset = null){
