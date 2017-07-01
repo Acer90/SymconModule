@@ -17,7 +17,7 @@
             $this->RegisterPropertyString("Password", "");
 
             //event erstellen
-            $this->RegisterTimer("SyncData", $this->ReadPropertyInteger("Interval"), 'BlueIris_SyncData($_IPS[\'TARGET\']);');
+            $this->RegisterTimer("SyncData", $this->ReadPropertyInteger("Interval"), 'BlueIris_SyncData($_IPS[\'TARGET\'], false);');
         }
 
         public function ApplyChanges() {
@@ -69,7 +69,7 @@
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
             curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);    
-            //curl_setopt($ch, CURLOPT_COOKIE, 'PHPSESSID='.$sid);                                                                 
+            curl_setopt($ch, CURLOPT_COOKIE, 'PHPSESSID='.$sid);                                                                 
             curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
                 'Content-Type: application/json',                                                                                
                 'Content-Length: ' . strlen($data_string))                                                                       
@@ -89,6 +89,7 @@
             //print_r($output);
             if($output["result"] == "fail"){
                 $this->SetStatus(205);
+                print_r($output);
                 return "ERROR";
             }else{
                 return $output["session"];
@@ -334,7 +335,7 @@
             curl_close($ch);
 
             $output = json_decode($result, true);
-            print_r($output);
+            //print_r($output);
             if($output["result"] == "success"){ 
                 return $output["data"];
             }else{
@@ -580,12 +581,14 @@
             };
         }
 
-        public function SyncData(){
+        public function SyncData(bool $createVar = null){
             $id = $this->InstanceID;
             $IPAddress = $this->ReadPropertyString("IPAddress");
             $Port = $this->ReadPropertyInteger("Port");
             $sid = BlueIris_Login($id);
             if($sid == "ERROR") exit;
+
+            if(!is_null($createVar)) echo "geht";
 
             $ChildrenIDs = IPS_GetChildrenIDs($id);
 
@@ -609,21 +612,49 @@
             if($data == "ERROR") exit;
             foreach ($data as $val) {
                 if(!array_key_exists("optionValue" ,$val) || strpos($val["optionValue"], 'index') !== false) continue;
-
+                $key = array_search($val["optionValue"], $clist);
                 if(in_array($val["optionValue"] , $clist)){
-                    $key = array_search($val["optionValue"], $clist);
+                    if($createVar){
+                        if(@IPS_GetVariableIDByName("isOnline", $key) === False){
+                            $VarID = IPS_CreateVariable(0);
+                            IPS_SetName($VarID, "isOnline"); // Variable benennen
+                            IPS_SetParent($VarID, $InsID);
+                            IPS_SetVariableCustomProfile($VarID, "~Switch");
+                        }
 
-                    $VarID = IPS_GetVariableIDByName("isOnline", $key);
+                        if(@IPS_GetVariableIDByName("isRecording", $key) === False){
+                            $VarID = IPS_CreateVariable(0);
+                            IPS_SetName($VarID, "isRecording"); // Variable benennen
+                            IPS_SetParent($VarID, $InsID);
+                            IPS_SetVariableCustomProfile($VarID, "~Switch");
+                        }
+
+                        if(@IPS_GetVariableIDByName("Stream", $key) === False){
+                            $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg";     // Image-Datei
+                            $MediaID = IPS_CreateMedia(3);                  // Image im MedienPool anlegen
+                            IPS_SetMediaFile($MediaID, $ImageFile, true);   // Image im MedienPool mit Image-Datei verbinden
+                            IPS_SetName($MediaID, "Stream"); // Medienobjekt benennen
+                            IPS_SetParent($MediaID, $InsID);
+                        }
+
+                        if(@IPS_GetVariableIDByName("FPS", $key) === False){
+                            $VarID = IPS_CreateVariable(2);
+                            IPS_SetName($VarID, "FPS"); // Variable benennen
+                            IPS_SetParent($VarID, $InsID);
+                        }
+                    }
+
+                    $VarID = @IPS_GetVariableIDByName("isOnline", $key);
                     if($VarID !== False){
                         if(!empty($val["isOnline"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
                     }
 
-                    $VarID = IPS_GetVariableIDByName("isRecording", $key);
+                    $VarID = @IPS_GetVariableIDByName("isRecording", $key);
                     if($VarID !== False){
                         if(!empty($val["isRecording"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
                     }
 
-                    $VarID = IPS_GetVariableIDByName("FPS", $key);
+                    $VarID = @IPS_GetVariableIDByName("FPS", $key);
                     if($VarID !== False){
                         if(!empty($val["FPS"])) SetValue($VarID,$val["FPS"]); else SetValue($VarID, 0);
                     }
