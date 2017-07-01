@@ -69,7 +69,7 @@
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
             curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);    
-            //curl_setopt($ch, CURLOPT_COOKIE, 'PHPSESSID='.$sid);                                                                 
+            curl_setopt($ch, CURLOPT_COOKIE, 'PHPSESSID='.$sid);                                                                 
             curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
                 'Content-Type: application/json',                                                                                
                 'Content-Length: ' . strlen($data_string))                                                                       
