@@ -10,7 +10,8 @@
     ],
     "actions":
     [
-        { "type": "Button", "label": "Sync Data", "onClick": "BlueIris_SyncData($id);" }
+        { "type": "Button", "label": "Sync Data", "onClick": "BlueIris_SyncData($id, false);" },
+        { "type": "Button", "label": "Get Variables", "onClick": "BlueIris_SyncData($id, true);" }
     ],
     "status":
     [
