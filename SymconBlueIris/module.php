@@ -615,7 +615,7 @@
                 $key = array_search($val["optionValue"], $clist);
                 if(in_array($val["optionValue"] , $clist)){
 
-                    $this->SendDataToChildren(json_encode(Array("DataID" => "{7E62F9B0-5474-426F-B91B-E25F4B25A824}", "CreateVar" => $createVar, "Buffer" => $data)));
+                    $this->SendDataToChildren(json_encode(Array("DataID" => "{5308D185-A3D2-42D0-B6CE-E9D3080CE184}", "CreateVar" => $createVar, "Buffer" => $data)));
                 }else{
                     $InsID = IPS_CreateInstance("{5308D185-A3D2-42D0-B6CE-E9D3080CE184}");
                     IPS_SetName($InsID, $val["optionDisplay"]); // Instanz benennen
