@@ -13,6 +13,14 @@
 
         }
 
+        public function ReceiveData($JSONString) {
+
+            $data = json_decode($JSONString);
+            IPS_LogMessage("ReceiveData", utf8_decode($data->Buffer));
+            
+            $this->SendDataToChildren(json_encode(Array("DataID" => "{7E62F9B0-5474-426F-B91B-E25F4B25A824}", "Buffer" => $data->Buffer)));
+        }
+
         public function AlertList(integer $startdate = null, bool $reset = null){
             if(is_null($startdate)) $startdate = 0;
             if(is_null($reset)) $reset = false;
