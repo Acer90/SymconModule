@@ -59,7 +59,7 @@
             $send_data = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$key.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
             
             $client = new WebsocketClient;
-            echo $client->connect($broadcast, 8001, '/api/v2/channels/samsung.remote.control');
+            $client->connect($broadcast, 8001, '/api/v2/channels/samsung.remote.control');
             $data = $client->sendData($send_data);
 
             // print_r($data);
@@ -71,9 +71,9 @@
                 $result = websocket_read($sp,$errstr);
                 $output = json_decode($result, true);
                 if ($output['event'] == 'ms.channel.connect') {
-                    echo $bytes_written = websocket_write($sp,$send_data);
+                    $bytes_written = websocket_write($sp,$send_data);
                     if($bytes_written){
-                        echo $data = websocket_read($sp,$errstr);
+                        $data = websocket_read($sp,$errstr);
                         //echo "Server responed with: " . $errstr ? $errstr : $data;
                         $this->SetStatus(102);
                         return true;

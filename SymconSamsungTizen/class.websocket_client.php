@@ -77,14 +77,13 @@ class WebsocketClient
 		$this->_Socket = fsockopen($host, $port, $errno, $errstr, 2);
 		socket_set_timeout($this->_Socket, 0, 10000);
 		@fwrite($this->_Socket, $header);
-		echo $response = @fread($this->_Socket, 1500);
+		$response = @fread($this->_Socket, 1500);
 
 		preg_match('#Sec-WebSocket-Accept:\s(.*)$#mU', $response, $matches);
 		if ($matches) {
-			echo $keyAccept = trim($matches[1]);
-			echo "\r\n";
+			$keyAccept = trim($matches[1]);
 			$expectedResponse = base64_encode(pack('H*', sha1($key . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11')));
-			echo $this->_connected = ($keyAccept === $expectedResponse) ? true : false;
+			$this->_connected = ($keyAccept === $expectedResponse) ? true : false;
 		}
 
 		return $this->_connected;
