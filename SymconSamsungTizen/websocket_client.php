@@ -170,9 +170,16 @@ function websocket_write($sp,$data,$final=true){
   for($i = 0; $i < strlen($data); $i++)
     $data[$i]=chr(ord($data[$i]) ^ ord($mask[$i % 4]));
   
-  echo $header.$data;
-  return fwrite($sp, hybi10Encode($data));    
-  //return fwrite($sp,$header.$data);   
+  fwrite($sp, hybi10Encode($data));   
+
+  $buffer = ' ';
+  while($buffer !== '')
+  {			
+    $buffer = fread($this->_Socket, 512);// drop?
+  }
+  echo $buffer; 
+  
+  return fwrite($sp,$header.$data);   
 }
 
 function hybi10Encode($payload, $type = 'text', $masked = true)
