@@ -53,7 +53,7 @@
         public function SendKey(string $key = null){
             $broadcast = $this->ReadPropertyString("IPAddress");
             $timeout = $this->ReadPropertyInteger("Timeout");
-            $headers = ["Cookie: SID=".session_id()];
+            //$headers = ["Cookie: SID=".session_id()];
             //echo $url = $broadcast . "/api/v2/channels/samsung.remote.control";
             $send_data = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$key.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
             
@@ -68,18 +68,18 @@
             if($sp){
                 if(is_null($key)) return true;
                 
-                echo $data = websocket_read($sp,$errstr);
-                echo "\r\n";
-                echo $bytes_written = websocket_write($sp,$send_data);
-                echo "\r\n";
-                echo $data = websocket_read($sp,$errstr);
-                if($bytes_written){
-                    //echo $data = websocket_read($sp,$errstr);
-                    //echo "Server responed with: " . $errstr ? $errstr : $data;
-                    $this->SetStatus(102);
-                    return true;
-                }else{
-                    return false;
+                $result = websocket_read($sp,$errstr);
+                $output = json_decode($result, true);
+                if ($output['event'] == 'ms.channel.connect') {
+                    echo $bytes_written = websocket_write($sp,$send_data);
+                    if($bytes_written){
+                        echo $data = websocket_read($sp,$errstr);
+                        //echo "Server responed with: " . $errstr ? $errstr : $data;
+                        $this->SetStatus(102);
+                        return true;
+                    }else{
+                        return false;
+                    }
                 }
             }else{
                 return false;
