@@ -59,7 +59,7 @@
             $send_data = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$key.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
             
             $client = new WebsocketClient;
-            $client->connect($broadcast, 8001, '/api/v2/channels/samsung.remote.control');
+            echo $client->connect($broadcast, 8001, '/api/v2/channels/samsung.remote.control');
             $data = $client->sendData($send_data);
 
             // print_r($data);
