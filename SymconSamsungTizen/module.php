@@ -71,8 +71,8 @@
                 $bytes_written = websocket_write($sp,$send_data);
                 echo $data = websocket_read($sp,$errstr);
                 if($bytes_written){
-                    echo $data = websocket_read($sp,$errstr);
-                    echo "Server responed with: " . $errstr ? $errstr : $data;
+                    //echo $data = websocket_read($sp,$errstr);
+                    //echo "Server responed with: " . $errstr ? $errstr : $data;
                     $this->SetStatus(102);
                     return true;
                 }else{
