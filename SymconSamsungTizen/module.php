@@ -68,7 +68,8 @@
             if($sp){
                 if(is_null($key)) return true;
                 
-                $bytes_written = websocket_write($sp,$send_data);
+                echo $bytes_written = websocket_write($sp,$send_data);
+                echo "\r\n";
                 echo $data = websocket_read($sp,$errstr);
                 if($bytes_written){
                     //echo $data = websocket_read($sp,$errstr);
