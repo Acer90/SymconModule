@@ -70,11 +70,12 @@
                 
                 echo $result = websocket_read($sp,$errstr);
                 echo "\r\n";
+                sleep(1);
                 $output = json_decode($result, true);
                 if ($output['event'] == 'ms.channel.connect') {
                     $bytes_written = websocket_write($sp,$send_data, false);
                     if(is_numeric($bytes_written)){
-                        echo "test";
+                        sleep(1);
                         echo $data = websocket_read($sp,$errstr);
                         echo "\r\n";
                         //echo "Server responed with: " . $errstr ? $errstr : $data;
