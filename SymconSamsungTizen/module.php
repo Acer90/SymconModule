@@ -71,9 +71,8 @@
                 echo $result = websocket_read($sp,$errstr);
                 echo "\r\n";
                 $output = json_decode($result, true);
-                echo $output['event'];
                 if ($output['event'] == 'ms.channel.connect') {
-                    $bytes_written = websocket_write($sp,$send_data, false);
+                    echo $bytes_written = websocket_write($sp,$send_data, false);
                     if($bytes_written > 0){
                         echo $data = websocket_read($sp,$errstr);
                         echo "\r\n";
