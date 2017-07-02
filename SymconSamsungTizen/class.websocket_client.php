@@ -49,9 +49,9 @@ class WebsocketClient
 		$buffer = ' ';
 		while($buffer !== '')
 		{			
-			echo $buffer = fread($this->_Socket, 512);// drop?
+			$buffer = fread($this->_Socket, 512);// drop?
 		}
-		
+		echo $buffer;
 		return true;
 	}
 
