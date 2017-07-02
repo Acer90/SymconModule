@@ -59,7 +59,7 @@
             $wsclient = new WebsocketClient;
 	        $wsclient->connect($broadcast, 8001, '/api/v2/channels/samsung.remote.control'); //, 'foo.lh'
 
-            $rdata = $wsclient->sendData($payload);
+            $rdata = $wsclient->sendData($key);
 
             print_r($rdata);
             return true;
