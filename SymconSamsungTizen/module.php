@@ -67,21 +67,21 @@
             $sp = websocket_open($broadcast,8001, "/api/v2/channels/samsung.remote.control", $headers,$errstr,$timeout);
             if($sp){
                 if(is_null($key)) return true;
-                echo "\r\n";
-                echo $result = websocket_read($sp,$errstr);
-                echo "\r\n";
+                $result = websocket_read($sp,$errstr);
                 $output = json_decode($result, true);
-                if ($output['event'] == 'ms.channel.connect') {
-                    $bytes_written = websocket_write($sp,$send_data, false);
-                    if(is_numeric($bytes_written)){
-                        sleep(1);
-                        echo $data = websocket_read($sp,$errstr);
-                        echo "\r\n";
-                        //echo "Server responed with: " . $errstr ? $errstr : $data;
-                        $this->SetStatus(102);
-                        return true;
-                    }else{
-                        return false;
+                while(true){
+                    if ($output['event'] == 'ms.channel.connect') {
+                        $bytes_written = websocket_write($sp,$send_data, false);
+                        if(is_numeric($bytes_written)){
+                            echo $data = websocket_read($sp,$errstr);
+                            echo "\r\n";
+                            //echo "Server responed with: " . $errstr ? $errstr : $data;
+                            $this->SetStatus(102);
+                            return true;
+                        }else{
+                            return false;
+                        }
+                        break;
                     }
                 }
             }else{
