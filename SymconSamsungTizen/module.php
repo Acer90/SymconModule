@@ -1,6 +1,6 @@
 <?
     include("websocket_client.php");
-    require_once 'class.websocket_client.php';
+
     
     // Klassendefinition
     class SamsungTizen extends IPSModule {
