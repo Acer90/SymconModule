@@ -84,6 +84,8 @@ function websocket_open($host='',$port=80, $path = '/',$headers='',&$error_strin
   $randomString = trim(implode('', $useChars));
   $randomString = substr($randomString, 0, 16);
   $key = base64_encode($randomString);	
+
+  $key=base64_encode(uniqid());
   
   $header = "GET " . $path . " HTTP/1.1\r\n"
     ."Host: ".$host.":".$port."\r\n"
