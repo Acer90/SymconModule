@@ -54,6 +54,7 @@
             $broadcast = $this->ReadPropertyString("IPAddress");
             $timeout = $this->ReadPropertyInteger("Timeout");
             //$headers = ["Cookie: SID=".session_id()];
+            $headers='';
             //echo $url = $broadcast . "/api/v2/channels/samsung.remote.control";
             $send_data = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$key.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
             
