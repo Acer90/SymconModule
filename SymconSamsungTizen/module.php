@@ -32,7 +32,7 @@
         public function WakeUp(){
             $broadcast = $this->ReadPropertyString("IPAddress");
             $mac_addr = $this->ReadPropertyString("MACAddress");
-            $timeout = $this->ReadPropertyString("Timeout");
+            $timeout = $this->ReadPropertyInteger("Timeout");
 
             if (!$fp = fsockopen('udp://' . $broadcast, 2304, $errno, $errstr, $timeout)) 
                 return false; 
@@ -51,7 +51,7 @@
 
         public function SendKey(string $key = null){
             $broadcast = $this->ReadPropertyString("IPAddress");
-            $timeout = $this->ReadPropertyString("Timeout");
+            $timeout = $this->ReadPropertyInteger("Timeout");
             $headers = ["Cookie: SID=".session_id()];
             $url = $broadcast . "/api/v2/channels/samsung.remote.control";
 
