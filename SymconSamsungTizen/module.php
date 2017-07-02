@@ -57,7 +57,7 @@
             //echo $url = $broadcast . "/api/v2/channels/samsung.remote.control";
 
             $wsclient = new WebsocketClient;
-	        $wsclient->connect($broadcast, 8001, '/api/v2/channels/', 'samsung.remote.control'); //, 'foo.lh'
+	        $wsclient->connect($broadcast, 8001, '/api/v2/channels/samsung.remote.control'); //, 'foo.lh'
 
             $rdata = $wsclient->sendData($key);
 
