@@ -170,7 +170,7 @@ function websocket_write($sp,$data,$final=true){
   for($i = 0; $i < strlen($data); $i++)
     $data[$i]=chr(ord($data[$i]) ^ ord($mask[$i % 4]));
   
-  fwrite($sp, hybi10Encode($data));   
+  fwrite($sp,$header.$data);
 
   $buffer = ' ';
   while($buffer !== '')
