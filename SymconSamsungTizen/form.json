@@ -1,10 +1,16 @@
 {
     "elements":
     [
-        { "type": "ValidationTextBox", "name": "ShortName", "caption": "Short Name" }
+        { "type": "ValidationTextBox", "name": "IPAddress", "caption": "Host" },
+        { "type": "ValidationTextBox", "name": "MACAddress", "caption": "Mac Adress" },
+        { "type": "NumberSpinner", "name": "Timeout", "caption": "Timeout"},
+        { "type": "IntervalBox", "name": "Interval", "caption": "Sekunden" }
     ],
     "actions":
     [
+        { "type": "Button", "label": "WakeUp", "onClick": "SamsungTizen_WakeUp($id);" },
+        { "type": "Button", "label": "WakeUp", "onClick": "SamsungTizen_SendKey($id, 'KEY_POWEROFF');" }
+        
     ],
     "status":
     [

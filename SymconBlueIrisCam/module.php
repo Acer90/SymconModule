@@ -10,7 +10,7 @@
 
             // Modul-Eigenschaftserstellung
             $this->RegisterPropertyString("ShortName", "cam1");
-
+            $this->SetStatus(102);
         }
 
         public function ReceiveData($JSONString) {

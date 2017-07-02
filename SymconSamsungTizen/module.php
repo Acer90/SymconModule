@@ -1,6 +1,8 @@
 <?
+    include("websocket_client.php");
+    
     // Klassendefinition
-    class BlueIrisCam extends IPSModule {
+    class SamsungTizen extends IPSModule {
         public function __construct($InstanceID) {
             parent::__construct($InstanceID);
         }
@@ -9,133 +11,79 @@
             parent::Create();
 
             // Modul-Eigenschaftserstellung
-            $this->RegisterPropertyString("ShortName", "cam1");
+            $this->RegisterPropertyString("IPAddress", "192.168.178.1"); 
+            $this->RegisterPropertyString("MACAddress", "aa:bb:cc:00:11:22"); 
+            $this->RegisterPropertyInteger("Timeout", 3);
+            $this->RegisterPropertyInteger("Interval", 10);
+
+            //event erstellen
+            $this->RegisterTimer("CheckOnline", $this->ReadPropertyInteger("Interval"), 'CheckOnline_SyncData($_IPS[\'TARGET\'], false);');
+            $this->SetStatus(102);
+        }
+
+        public function ApplyChanges() {
+            // Diese Zeile nicht löschen
+            parent::ApplyChanges();
+
+            $this->SetStatus(102);
+            $this->SetTimerInterval("CheckOnline", $this->ReadPropertyInteger("Interval")*1000);
+        }
+
+        public function WakeUp(){
+            $broadcast = $this->ReadPropertyString("IPAddress");
+            $mac_addr = $this->ReadPropertyString("MACAddress");
+            $timeout = $this->ReadPropertyString("Timeout");
+
+            if (!$fp = fsockopen('udp://' . $broadcast, 2304, $errno, $errstr, $timeout)) 
+                return false; 
+
+            $mac_hex = preg_replace('=[^a-f0-9]=i', '', $mac_addr); 
+
+            $mac_bin = pack('H12', $mac_hex); 
+
+            $data = str_repeat("\xFF", 6) . str_repeat($mac_bin, 16); 
+
+            fputs($fp, $data); 
+            fclose($fp); 
+            return true; 
 
         }
 
-        public function ReceiveData($JSONString) {
+        public function SendKey(string $key = null){
+            $broadcast = $this->ReadPropertyString("IPAddress");
+            $timeout = $this->ReadPropertyString("Timeout");
+            $headers = ["Cookie: SID=".session_id()];
+            $url = $broadcast . "/api/v2/channels/samsung.remote.control";
 
-            $data = json_decode($JSONString);
-            IPS_LogMessage("ReceiveData", utf8_decode($data->CreateVar));
-
-            if($createVar){
-                if(@IPS_GetVariableIDByName("isOnline", $key) === False){
-                    $VarID = IPS_CreateVariable(0);
-                    IPS_SetName($VarID, "isOnline"); // Variable benennen
-                    IPS_SetParent($VarID, $InsID);
-                    IPS_SetVariableCustomProfile($VarID, "~Switch");
+            $sp = websocket_open($url,8001,$headers,$errstr,$timeout);
+            if($sp){
+                if(is_null($key)) return true;
+                $bytes_written = websocket_write($sp,"hello server");
+                if($bytes_written){
+                    $data = websocket_read($sp,$errstr);
+                    echo "Server responed with: " . $errstr ? $errstr : $data;
+                    $this->SetStatus(102);
+                    return true;
+                }else{
+                    return false;
                 }
-
-                if(@IPS_GetVariableIDByName("isRecording", $key) === False){
-                    $VarID = IPS_CreateVariable(0);
-                    IPS_SetName($VarID, "isRecording"); // Variable benennen
-                    IPS_SetParent($VarID, $InsID);
-                    IPS_SetVariableCustomProfile($VarID, "~Switch");
-                }
-
-                if(@IPS_GetVariableIDByName("Stream", $key) === False){
-                    $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg";     // Image-Datei
-                    $MediaID = IPS_CreateMedia(3);                  // Image im MedienPool anlegen
-                    IPS_SetMediaFile($MediaID, $ImageFile, true);   // Image im MedienPool mit Image-Datei verbinden
-                    IPS_SetName($MediaID, "Stream"); // Medienobjekt benennen
-                    IPS_SetParent($MediaID, $InsID);
-                }
-
-                if(@IPS_GetVariableIDByName("FPS", $key) === False){
-                    $VarID = IPS_CreateVariable(2);
-                    IPS_SetName($VarID, "FPS"); // Variable benennen
-                    IPS_SetParent($VarID, $InsID);
-                }
+            }else{
+                return false;
             }
+        }
 
-            $VarID = @IPS_GetVariableIDByName("isOnline", $key);
+        public function CheckOnline(){
+            $Intid = $this->InstanceID;
+            if(@IPS_GetVariableIDByName("Online", $Intid) === False){
+                $VarID = IPS_CreateVariable(0);
+                IPS_SetName($VarID, "Online"); // Variable benennen
+                IPS_SetParent($VarID, $Intid);
+                IPS_SetVariableCustomProfile($VarID, "~Switch");
+            }
+            $VarID = @IPS_GetVariableIDByName("Online", $Intid);
             if($VarID !== False){
-                if(!empty($val["isOnline"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
+                SetValueBoolean($VarID, SamsungTizen_SendKey(null));
             }
-
-            $VarID = @IPS_GetVariableIDByName("isRecording", $key);
-            if($VarID !== False){
-                if(!empty($val["isRecording"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
-            }
-
-            $VarID = @IPS_GetVariableIDByName("FPS", $key);
-            if($VarID !== False){
-                if(!empty($val["FPS"])) SetValue($VarID,$val["FPS"]); else SetValue($VarID, 0);
-            }
-        }
-
-        public function AlertList(integer $startdate = null, bool $reset = null){
-            if(is_null($startdate)) $startdate = 0;
-            if(is_null($reset)) $reset = false;
-
-            $id = $this->InstanceID;
-            $pid = IPS_GetParent($id);
-            $camera = $this->ReadPropertyString("ShortName");
-
-            $sid = BlueIris_Login($pid);
-            if($sid != "ERROR")
-                return BlueIris_AlertList($pid,$sid, $camera,$startdate, $reset);
-            else
-                return  "ERROR";
-        }
-
-        public function CamConfig(bool $reset = null, bool $enable = null, integer $pause = null, bool $motion = null, bool $schedule = null, bool $ptzcycle = null, bool $ptzevents = null, integer $alerts = null, integer $record = null){
-            $id = $this->InstanceID;
-            $pid = IPS_GetParent($id);
-            $camera = $this->ReadPropertyString("ShortName");
-
-            $sid = BlueIris_Login($pid);
-            if($sid != "ERROR")
-                return BlueIris_CamConfig($pid, $sid, $camera, $reset, $enable, $pause, $motion, $schedule, $ptzcycle, $ptzevents, $alerts, $record);
-            else
-                return  "ERROR";
-        }
-
-        public function ClipList(integer $startdate = null, integer $enddate = null, bool $tiles = null){
-            if(is_null($startdate)) $startdate = 0;
-            if(is_null($enddate)) $enddate = time();
-            if(is_null($tiles)) $tiles = false;
-
-            $id = $this->InstanceID;
-            $pid = IPS_GetParent($id);
-            $camera = $this->ReadPropertyString("ShortName");
-
-            $sid = BlueIris_Login($pid);
-            if($sid != "ERROR")
-                return BlueIris_ClipList($pid, $sid, $camera, $startdate, $enddate, $tiles);
-            else
-                return  "ERROR";
-        }
-
-        public function PTZ(integer $button = null, integer $updown = null){
-            if(is_null($button)){
-                $this->SetStatus(203);
-                return "ERROR";
-            } 
-            if(is_null($updown)) $updown = 0;
-
-            $id = $this->InstanceID;
-            $pid = IPS_GetParent($id);
-            $camera = $this->ReadPropertyString("ShortName");
-
-            $sid = BlueIris_Login($pid);
-            if($sid != "ERROR")
-                return BlueIris_PTZ($pid, $sid, $camera, $button, $updown);
-            else
-                return "ERROR";
-        }
-
-        public function Trigger(){
-
-            $id = $this->InstanceID;
-            $pid = IPS_GetParent($id);
-            $camera = $this->ReadPropertyString("ShortName");
-
-            $sid = BlueIris_Login($pid);
-            if($sid != "ERROR")
-                return BlueIris_Trigger($pid, $sid, $camera);
-            else
-                return  "ERROR";
         }
     }
 ?>

@@ -1,14 +1,14 @@
 {
-    "id": "{5308D185-A3D2-42D0-B6CE-E9D3080CE184}",
-    "name": "BlueIrisCam",
+    "id": "{4BF95816-240B-441A-8897-E2BDBF342207}",
+    "name": "SamsungTizen",
     "type": 3,
 	"vendor": "",
 	"aliases": 
 	[
-		"BlueIrisCam"
+		"SamsungTizen"
 	],
-    "parentRequirements": ["{7E62F9B0-5474-426F-B91B-E25F4B25A824}"],
+    "parentRequirements": [],
     "childRequirements": [],
     "implemented": [],
-    "prefix": "BlueIrisCam"
+    "prefix": "SamsungTizen"
 }
