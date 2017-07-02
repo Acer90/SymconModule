@@ -57,27 +57,28 @@
             //echo $url = $broadcast . "/api/v2/channels/samsung.remote.control";
             $send_data = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$key.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
 
-            $client = new WebsocketClient;
-            $client->connect($broadcast, 8001, '/api/v2/channels/samsung.remote.control');
-            $data = $client->sendData($send_data);
+            // $client = new WebsocketClient;
+            // $client->connect($broadcast, 8001, '/api/v2/channels/samsung.remote.control');
+            // usleep(5000);
+            // $data = $client->sendData($send_data);
 
-            print_r($data);
+            // print_r($data);
 
-            // $sp = websocket_open($broadcast,8001, "/api/v2/channels/samsung.remote.control", $headers,$errstr,$timeout);
-            // if($sp){
-            //     if(is_null($key)) return true;
-            //     $bytes_written = websocket_write($sp,$send_data);
-            //     if($bytes_written){
-            //         $data = websocket_read($sp,$errstr);
-            //         echo "Server responed with: " . $errstr ? $errstr : $data;
-            //         $this->SetStatus(102);
-            //         return true;
-            //     }else{
-            //         return false;
-            //     }
-            // }else{
-            //     return false;
-            // }
+            $sp = websocket_open($broadcast,8001, "/api/v2/channels/samsung.remote.control", $headers,$errstr,$timeout);
+            if($sp){
+                if(is_null($key)) return true;
+                echo $bytes_written = websocket_write($sp,$send_data);
+                if($bytes_written){
+                    echo $data = websocket_read($sp,$errstr);
+                    echo "Server responed with: " . $errstr ? $errstr : $data;
+                    $this->SetStatus(102);
+                    return true;
+                }else{
+                    return false;
+                }
+            }else{
+                return false;
+            }
         }
 
         public function CheckOnline(){
