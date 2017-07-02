@@ -82,7 +82,7 @@ function websocket_open($host='',$port=80, $path = '/',$headers='',&$error_strin
 
   shuffle($useChars);
   $randomString = trim(implode('', $useChars));
-  $randomString = substr($randomString, 0, $length);
+  $randomString = substr($randomString, 0, 16);
   $key = base64_encode($randomString);	
   
   $header = "GET " . $path . " HTTP/1.1\r\n"
@@ -90,7 +90,7 @@ function websocket_open($host='',$port=80, $path = '/',$headers='',&$error_strin
     ."pragma: no-cache\r\n"
     ."Upgrade: WebSocket\r\n"
     ."Connection: Upgrade\r\n"
-    ."Sec-WebSocket-Key: $key\r\n"
+    ."Sec-WebSocket-Key: ".$key."\r\n"
     ."Sec-WebSocket-Version: 13\r\n";
 
   // Add extra headers 
