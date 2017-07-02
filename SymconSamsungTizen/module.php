@@ -1,10 +1,6 @@
 <?
     include("websocket_client.php");
     require_once 'class.websocket_client.php';
-
-    require_once 'src/WebSocketException.php';
-    require_once 'src/Base.php';
-    require_once 'src/Client.php';
     
     // Klassendefinition
     class SamsungTizen extends IPSModule {
@@ -60,12 +56,6 @@
             $headers = ["Cookie: SID=".session_id()];
             //echo $url = $broadcast . "/api/v2/channels/samsung.remote.control";
             $send_data = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$key.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
-
-            $client = new \vakata\websocket\Client('ws://'.$broadcast.':8001/api/v2/channels/samsung.remote.control');
-            $client->onMessage(function ($message, $client) {
-                echo $message . "\r\n";
-            });
-            $client->run();
             
             // $client = new WebsocketClient;
             // $client->connect($broadcast, 8001, '/api/v2/channels/samsung.remote.control');
@@ -74,23 +64,23 @@
 
             // print_r($data);
 
-            // $sp = websocket_open($broadcast,8001, "/api/v2/channels/samsung.remote.control", $headers,$errstr,$timeout);
-            // if($sp){
-            //     if(is_null($key)) return true;
+            $sp = websocket_open($broadcast,8001, "/api/v2/channels/samsung.remote.control", $headers,$errstr,$timeout);
+            if($sp){
+                if(is_null($key)) return true;
                 
-            //     $bytes_written = websocket_write($sp,$send_data);
-            //     echo $data = websocket_read($sp,$errstr);
-            //     if($bytes_written){
-            //         //echo $data = websocket_read($sp,$errstr);
-            //         //echo "Server responed with: " . $errstr ? $errstr : $data;
-            //         $this->SetStatus(102);
-            //         return true;
-            //     }else{
-            //         return false;
-            //     }
-            // }else{
-            //     return false;
-            // }
+                $bytes_written = websocket_write($sp,$send_data);
+                echo $data = websocket_read($sp,$errstr);
+                if($bytes_written){
+                    //echo $data = websocket_read($sp,$errstr);
+                    //echo "Server responed with: " . $errstr ? $errstr : $data;
+                    $this->SetStatus(102);
+                    return true;
+                }else{
+                    return false;
+                }
+            }else{
+                return false;
+            }
         }
 
         public function CheckOnline(){
