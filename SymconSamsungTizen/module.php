@@ -1,5 +1,6 @@
 <?
-    include("websocket_client.php");
+    //include("websocket_client.php");
+    include("class.websocket_client.php");
     
     // Klassendefinition
     class SamsungTizen extends IPSModule {
@@ -55,21 +56,13 @@
             $headers = ["Cookie: SID=".session_id()];
             //echo $url = $broadcast . "/api/v2/channels/samsung.remote.control";
 
-            $sp = websocket_open($broadcast,8001, "/api/v2/channels/samsung.remote.control", $headers,$errstr,$timeout);
-            if($sp){
-                if(is_null($key)) return true;
-                $bytes_written = websocket_write($sp,$key);
-                if($bytes_written){
-                    $data = websocket_read($sp,$errstr);
-                    echo "Server responed with: " . $errstr ? $errstr : $data;
-                    $this->SetStatus(102);
-                    return true;
-                }else{
-                    return false;
-                }
-            }else{
-                return false;
-            }
+            $wsclient = new WebsocketClient;
+	        $wsclient->connect($broadcast, 8001, '/api/v2/channels/samsung.remote.control'); //, 'foo.lh'
+
+            $rdata = $wsclient->sendData($payload);
+
+            print_r($rdata);
+            return true;
         }
 
         public function CheckOnline(){
