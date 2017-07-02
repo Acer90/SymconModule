@@ -68,7 +68,7 @@ function websocket_open($host='',$port=80, $path = '/',$headers='',&$error_strin
   $key=base64_encode(uniqid());
   
   $header = "GET " . $path . " HTTP/1.1\r\n"
-    ."Host: $host\r\n"
+    ."Host: ".$host.":".$port."\r\n"
     ."pragma: no-cache\r\n"
     ."Upgrade: WebSocket\r\n"
     ."Connection: Upgrade\r\n"
@@ -102,19 +102,28 @@ function websocket_open($host='',$port=80, $path = '/',$headers='',&$error_strin
   }
   
   // Read response into an assotiative array of headers. Fails if upgrade failes.
-  $reaponse_header=fread($sp, 1024);
+  $reaponse_header=fread($sp, 1500);
 
-  // status code 101 indicates that the WebSocket handshake has completed.
-  if(!strpos($reaponse_header," 101 ") 
-    || !strpos($reaponse_header,'Sec-WebSocket-Accept: ')){
-    $error_string = "Server did not accept to upgrade connection to websocket."
-      .$reaponse_header. E_USER_ERROR;
-    return false;
-  }
-  // The key we send is returned, concatenate with "258EAFA5-E914-47DA-95CA-
-  // C5AB0DC85B11" and then base64-encoded. one can verify if one feels the need...
+  // // status code 101 indicates that the WebSocket handshake has completed.
+  // if(!strpos($reaponse_header," 101 ") 
+  //   || !strpos($reaponse_header,'Sec-WebSocket-Accept: ')){
+  //   $error_string = "Server did not accept to upgrade connection to websocket."
+  //     .$reaponse_header. E_USER_ERROR;
+  //   return false;
+  // }
+  // // The key we send is returned, concatenate with "258EAFA5-E914-47DA-95CA-
+  // // C5AB0DC85B11" and then base64-encoded. one can verify if one feels the need...
   
-  return $sp;
+  // return $sp;
+  $rdata = false;
+  preg_match('#Sec-WebSocket-Accept:\s(.*)$#mU', $reaponse_header, $matches);
+  if ($matches) {
+			$keyAccept = trim($matches[1]);
+			$expectedResponse = base64_encode(pack('H*', sha1($key . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11')));
+			$rdata = ($keyAccept === $expectedResponse) ? true : false;
+	}
+
+	return $rdata;
 }
 
 /*============================================================================*\
