@@ -49,7 +49,7 @@ class WebsocketClient
 		$buffer = ' ';
 		while($buffer !== '')
 		{			
-			$buffer = fread($this->_Socket, 512);// drop?
+			echo $buffer = fread($this->_Socket, 512);// drop?
 		}
 		
 		return true;
@@ -84,7 +84,7 @@ class WebsocketClient
 			echo $keyAccept = trim($matches[1]);
 			echo "\r\n";
 			$expectedResponse = base64_encode(pack('H*', sha1($key . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11')));
-			$this->_connected = ($keyAccept === $expectedResponse) ? true : false;
+			echo $this->_connected = ($keyAccept === $expectedResponse) ? true : false;
 		}
 
 		return $this->_connected;
