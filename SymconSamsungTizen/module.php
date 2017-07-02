@@ -55,10 +55,10 @@
             $headers = ["Cookie: SID=".session_id()];
             //echo $url = $broadcast . "/api/v2/channels/samsung.remote.control";
 
-            $sp = websocket_open($broadcast,8001,$headers,$errstr,$timeout);
+            $sp = websocket_open($broadcast,8001, "/api/v2/channels/samsung.remote.control", $headers,$errstr,$timeout);
             if($sp){
                 if(is_null($key)) return true;
-                $bytes_written = websocket_write($sp,"hello server");
+                echo $bytes_written = websocket_write($sp,$key);
                 if($bytes_written){
                     $data = websocket_read($sp,$errstr);
                     echo "Server responed with: " . $errstr ? $errstr : $data;
