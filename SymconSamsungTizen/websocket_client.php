@@ -175,10 +175,10 @@ function websocket_write($sp,$data,$final=true){
   $buffer = ' ';
   while($buffer !== '')
   {			
-    $buffer = fread($this->_Socket, 512);// drop?
+    $buffer = fread($sp, 512);// drop?
   }
   echo $buffer; 
-  
+
   return fwrite($sp,$header.$data);   
 }
 
