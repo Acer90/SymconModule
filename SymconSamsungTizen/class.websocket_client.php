@@ -75,7 +75,7 @@ class WebsocketClient
 		$header.= "Sec-WebSocket-Version: 13\r\n\r\n";			
 		
 		$this->_Socket = fsockopen($host, $port, $errno, $errstr, 2);
-		socket_set_timeout($this->_Socket, 0, 10000);
+		socket_set_timeout($this->_Socket, 0, 2);
 		@fwrite($this->_Socket, $header);
 		$response = @fread($this->_Socket, 1500);
 
