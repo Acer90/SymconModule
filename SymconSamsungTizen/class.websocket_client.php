@@ -77,7 +77,7 @@ class WebsocketClient
 		$this->_Socket = fsockopen($host, $port, $errno, $errstr, 2);
 		socket_set_timeout($this->_Socket, 0, 2);
 		@fwrite($this->_Socket, $header);
-		$response = @fread($this->_Socket, 1500);
+		echo $response = @fread($this->_Socket, 1500);
 
 		preg_match('#Sec-WebSocket-Accept:\s(.*)$#mU', $response, $matches);
 
