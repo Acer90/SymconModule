@@ -57,12 +57,12 @@
             //echo $url = $broadcast . "/api/v2/channels/samsung.remote.control";
             $send_data = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$key.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
             
-            // $client = new WebsocketClient;
-            // $client->connect($broadcast, 8001, '/api/v2/channels/samsung.remote.control');
-            // usleep(5000);
-            // $data = $client->sendData($send_data);
+            $client = new WebsocketClient;
+            $client->connect($broadcast, 8001, '/api/v2/channels/samsung.remote.control');
+            usleep(5000);
+            $data = $client->sendData($send_data);
 
-            // print_r($data);
+            print_r($data);
 
             $sp = websocket_open($broadcast,8001, "/api/v2/channels/samsung.remote.control", $headers,$errstr,$timeout);
             if($sp){
