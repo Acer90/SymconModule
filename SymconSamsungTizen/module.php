@@ -53,9 +53,9 @@
             $broadcast = $this->ReadPropertyString("IPAddress");
             $timeout = $this->ReadPropertyInteger("Timeout");
             $headers = ["Cookie: SID=".session_id()];
-            echo $url = $broadcast . "/api/v2/channels/samsung.remote.control";
+            //echo $url = $broadcast . "/api/v2/channels/samsung.remote.control";
 
-            $sp = websocket_open($url,8001,$headers,$errstr,$timeout);
+            $sp = websocket_open($broadcast,8001,$headers,$errstr,$timeout);
             if($sp){
                 if(is_null($key)) return true;
                 $bytes_written = websocket_write($sp,"hello server");
