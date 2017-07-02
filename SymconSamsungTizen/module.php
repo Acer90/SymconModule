@@ -72,15 +72,15 @@
                 while(true){
                     if ($output['event'] == 'ms.channel.connect') {
                         $bytes_written = websocket_write($sp,$send_data, false);
-                        if(is_numeric($bytes_written)){
+                        // if(is_numeric($bytes_written)){
                             echo $data = websocket_read($sp,$errstr);
                             echo "\r\n";
                             //echo "Server responed with: " . $errstr ? $errstr : $data;
                             $this->SetStatus(102);
                             return true;
-                        }else{
-                            return false;
-                        }
+                        // }else{
+                        //     return false;
+                        // }
                         break;
                     }
                 }
