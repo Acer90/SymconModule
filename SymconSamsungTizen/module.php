@@ -67,8 +67,9 @@
             $sp = websocket_open($broadcast,8001, "/api/v2/channels/samsung.remote.control", $headers,$errstr,$timeout);
             if($sp){
                 if(is_null($key)) return true;
-                echo $data = websocket_read($sp,$errstr);
+                
                 $bytes_written = websocket_write($sp,$send_data);
+                echo $data = websocket_read($sp,$errstr);
                 if($bytes_written){
                     echo $data = websocket_read($sp,$errstr);
                     echo "Server responed with: " . $errstr ? $errstr : $data;
