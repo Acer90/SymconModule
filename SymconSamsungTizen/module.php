@@ -61,7 +61,7 @@
             //echo $url = $broadcast . "/api/v2/channels/samsung.remote.control";
             $send_data = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$key.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
 
-            $client = new \vakata\websocket\Client('ws://$broadcast:8001/api/v2/channels/samsung.remote.control');
+            $client = new \vakata\websocket\Client('ws://'.$broadcast.':8001/api/v2/channels/samsung.remote.control');
             $client->onMessage(function ($message, $client) {
                 echo $message . "\r\n";
             });
