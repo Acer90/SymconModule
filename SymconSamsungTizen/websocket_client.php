@@ -170,6 +170,7 @@ function websocket_write($sp,$data,$final=true){
   for($i = 0; $i < strlen($data); $i++)
     $data[$i]=chr(ord($data[$i]) ^ ord($mask[$i % 4]));
   
+  echo $header.$data;
   return fwrite($sp,$header.$data);    
 }
 
