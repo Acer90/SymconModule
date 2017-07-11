@@ -56,7 +56,7 @@
             //$headers = ["Cookie: SID=".session_id()];
             $headers='';
             //echo $url = $broadcast . "/api/v2/channels/samsung.remote.control";
-            echo $send_data = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$key.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
+            $send_data = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$key.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
             
             // $client = new WebsocketClient;
             // $client->connect($broadcast, 8001, '/api/v2/channels/samsung.remote.control');
@@ -64,16 +64,14 @@
 
             // print_r($data);
 
+
             $sp = websocket_open($broadcast,8001, "/api/v2/channels/samsung.remote.control", $headers,$errstr,$timeout);
             if($sp){
                 if(is_null($key)) return true;
-                $result = websocket_read($sp,$errstr);
+                sleep(1);
+                echo $result = websocket_read($sp,$errstr);
                 $output = json_decode($result, true);
                 if ($output['event'] == 'ms.channel.connect') {
-                    $bytes_written = websocket_write($sp,$send_data, true);
-                    sleep(1);
-                    $bytes_written = websocket_write($sp,$send_data, true);
-                    sleep(1);
                     $bytes_written = websocket_write($sp,$send_data, true);
                     if(is_numeric($bytes_written)){
                         $data = websocket_read($sp,$errstr);
