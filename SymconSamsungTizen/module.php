@@ -65,7 +65,7 @@
             // print_r($data);
 
 
-            $sp = websocket_open($broadcast,8001, "/api/v2/channels/samsung.remote.control", $headers,$errstr,$timeout);
+            $sp = websocket_open($broadcast,8001, "api/v2/channels/samsung.remote.control", $headers,$errstr,$timeout);
             if($sp){
                 if(is_null($key)) return true;
                 sleep(1);
