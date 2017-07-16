@@ -149,20 +149,10 @@
             {
                 $errorcode = socket_last_error();
                 $errormsg = socket_strerror($errorcode);
-                socket_close($sock);
+                // socket_close($sock);
                 $this->SetStatus(209);
-                return "ERROR";
+                return $buf;
             }
-
-            // $received;
-            // while(socket_recv($sock, $buf, 1024, MSG_WAITALL) >= 1)
-            // {
-            //     $received .= $buf;
-            // }
-
-            //print the received message
-
-            socket_close($sock);
             return $buf;
         }
 
