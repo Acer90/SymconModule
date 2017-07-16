@@ -50,42 +50,101 @@
 
         }
 
-        public function SendKey(string $key = null){
-            $broadcast = $this->ReadPropertyString("IPAddress");
-            $timeout = $this->ReadPropertyInteger("Timeout");
-            //$headers = ["Cookie: SID=".session_id()];
-            $headers='';
-            //echo $url = $broadcast . "/api/v2/channels/samsung.remote.control";
-            $send_data = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$key.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
-            
-            // $client = new WebsocketClient;
-            // $client->connect($broadcast, 8001, '/api/v2/channels/samsung.remote.control');
-            // $data = $client->sendData($send_data);
+        public function SendKey(string $key, bool $WaitforStart = false){
+            $rdata = SendData($key, $WaitforStart);
 
-            // print_r($data);
-
-
-            $sp = websocket_open($broadcast,8001, "/api/v2/channels/samsung.remote.control", $headers,$errstr,$timeout);
-            if($sp){
-                if(is_null($key)) return true;
-                sleep(0.2);
-                echo $result = websocket_read($sp,$errstr);
-                $output = json_decode($result, true);
-                if ($output['event'] == 'ms.channel.connect') {
-                    sleep(0.2);
-                    $bytes_written = websocket_write($sp,$send_data, true);
-                    if(is_numeric($bytes_written)){
-                        $data = websocket_read($sp,$errstr);
-                        //echo "Server responed with: " . $errstr ? $errstr : $data;
-                        $this->SetStatus(102);
-                        return true;
-                    }else{
-                        return false;
-                    }
-                }
+            if($rdata == "OK"){
+                return true;
             }else{
                 return false;
             }
+
+            //$send_data = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$key.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
+            // $sp = websocket_open($broadcast,8001, "/api/v2/channels/samsung.remote.control", $headers,$errstr,$timeout);
+            // if($sp){
+            //     if(is_null($key)) return true;
+            //     sleep(0.2);
+            //     echo $result = websocket_read($sp,$errstr);
+            //     $output = json_decode($result, true);
+            //     if ($output['event'] == 'ms.channel.connect') {
+            //         sleep(0.2);
+            //         $bytes_written = websocket_write($sp,$send_data, true);
+            //         if(is_numeric($bytes_written)){
+            //             $data = websocket_read($sp,$errstr);
+            //             //echo "Server responed with: " . $errstr ? $errstr : $data;
+            //             $this->SetStatus(102);
+            //             return true;
+            //         }else{
+            //             return false;
+            //         }
+            //     }
+            // }else{
+            //     return false;
+            // }
+        }
+
+        public function SendKeys(string $keys, bool $WaitforStart = false){
+            $key_str = "";
+            $first = true;
+            foreach($keys as $key){
+                if($first){
+                    $first = false;
+                    $key_str = $key;
+                }else{
+                    $key_str = $key_str . ";" . $key;
+                }
+            }
+
+            $rdata = SendData($key_str, $WaitforStart);
+
+            if($rdata == "OK"){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+        private function SendData(string $keys, bool $Wait = false){
+            $ip = $this->ReadPropertyString("SIPAddress");
+            $port = $this->ReadPropertyString("SPort");
+            $timeout = $this->ReadPropertyInteger("Timeout");
+            if(!($sock = socket_create(AF_INET, SOCK_STREAM, 0)))
+            {
+                $errorcode = socket_last_error();
+                $errormsg = socket_strerror($errorcode);
+                $this->SetStatus(206);
+                return "ERROR";
+            }
+
+            //Connect socket to remote server
+            if(!socket_connect($sock , $ip , $port))
+            {
+                $errorcode = socket_last_error();
+                $errormsg = socket_strerror($errorcode);
+                $this->SetStatus(207);
+                return "ERROR";
+            }
+            $message = "WAIT=".$Wait."&KEYS=".$keys;
+
+            if( ! socket_send ( $sock , $message , strlen($message) , 0))
+            {
+                $errorcode = socket_last_error();
+                $errormsg = socket_strerror($errorcode);
+                $this->SetStatus(208);
+                return "ERROR";
+            }
+
+            //Now receive reply from server
+            if(socket_recv ( $sock , $buf , 2045 , MSG_WAITALL ) === FALSE)
+            {
+                $errorcode = socket_last_error();
+                $errormsg = socket_strerror($errorcode);
+                $this->SetStatus(209);
+                return "ERROR";
+            }
+
+            //print the received message
+            return $buf;
         }
 
         public function CheckOnline(){
