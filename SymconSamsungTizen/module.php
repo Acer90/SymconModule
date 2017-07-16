@@ -50,7 +50,7 @@
 
         }
 
-        public function SendKey(string $key, bool $WaitforStart = false){
+        public function SendKey(string $key, $WaitforStart = false){
             $rdata = SendData($key, $WaitforStart);
 
             if($rdata == "OK"){
@@ -83,7 +83,7 @@
             // }
         }
 
-        public function SendKeys(string $keys, bool $WaitforStart = false){
+        public function SendKeys(string $keys, $WaitforStart = false){
             $key_str = "";
             $first = true;
             foreach($keys as $key){
@@ -104,7 +104,7 @@
             }
         }
 
-        private function SendData(string $keys, bool $Wait = false){
+        private function SendData(string $keys, $Wait = false){
             $ip = $this->ReadPropertyString("SIPAddress");
             $port = $this->ReadPropertyString("SPort");
             $timeout = $this->ReadPropertyInteger("Timeout");
