@@ -55,7 +55,7 @@
         }
 
         public function SendKey(string $key, $WaitforStart = false){
-            $rdata = SendData($key, $WaitforStart);
+            $rdata = SamsungTizen_SendData($key, $WaitforStart);
 
             if($rdata == "OK"){
                 return true;
@@ -99,7 +99,7 @@
                 }
             }
 
-            $rdata = SendData($key_str, $WaitforStart);
+            $rdata = SamsungTizen_SendData($key_str, $WaitforStart);
 
             if($rdata == "OK"){
                 return true;
