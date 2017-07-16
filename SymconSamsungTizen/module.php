@@ -88,11 +88,11 @@
             // }
         }
 
-        public function SendKeys($Intid, string $keys, $WaitforStart = false){
+        public function SendKeys($Intid, $keys, $WaitforStart = false){
             $Intid = $this->InstanceID;
             $key_str = "";
             $first = true;
-            foreach($keys as $key){
+            foreach($keys as &$key){
                 if($first){
                     $first = false;
                     $key_str = $key;
