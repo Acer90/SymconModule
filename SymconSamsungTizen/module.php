@@ -108,7 +108,7 @@
             }
         }
 
-        private function SendData(string $keys, $Wait = false){
+        public function SendData(string $keys, $Wait = false){
             $ip = $this->ReadPropertyString("SIPAddress");
             $port = $this->ReadPropertyString("SPort");
             $timeout = $this->ReadPropertyInteger("Timeout");
