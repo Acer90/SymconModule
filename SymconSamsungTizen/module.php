@@ -155,7 +155,7 @@
             // }
 
             $received;
-            while(socket_recv($sock, $buf, 1024, 0) >= 1)
+            while(socket_recv($sock, $buf, 1024, MSG_WAITALL) >= 1)
             {
                 $received .= $buf;
             }
