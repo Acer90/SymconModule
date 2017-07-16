@@ -55,7 +55,8 @@
         }
 
         public function SendKey(string $key, $WaitforStart = false){
-            $rdata = SamsungTizen_SendData($key, $WaitforStart);
+            $Intid = $this->InstanceID;
+            $rdata = SamsungTizen_SendData($Intid, $key, $WaitforStart);
 
             if($rdata == "OK"){
                 return true;
@@ -87,7 +88,8 @@
             // }
         }
 
-        public function SendKeys(string $keys, $WaitforStart = false){
+        public function SendKeys($Intid, string $keys, $WaitforStart = false){
+            $Intid = $this->InstanceID;
             $key_str = "";
             $first = true;
             foreach($keys as $key){
