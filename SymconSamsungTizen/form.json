@@ -13,7 +13,7 @@
     "actions":
     [
         { "type": "Button", "label": "WakeUp", "onClick": "SamsungTizen_WakeUp($id);" },
-        { "type": "Button", "label": "PowerOff", "onClick": "SamsungTizen_SendKey($id, 'KEY_POWER');" }
+        { "type": "Button", "label": "PowerOff", "onClick": "SamsungTizen_SendKey($id, 'KEY_POWER', false);" }
         
     ],
     "status":
