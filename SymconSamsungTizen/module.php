@@ -56,13 +56,30 @@
 
         public function SendKey(string $key, $WaitforStart = false){
             $Intid = $this->InstanceID;
-            $rdata = SamsungTizen_SendData($Intid, $key, $WaitforStart);
+            $key_str = "";
+            $first = true;
+            $rdata = "";
+            if(strpos($key, ';')) {
+                $skey = explode(";", $key);
+                foreach ($skey as $key_value)
+                {
+                    if($first){
+                        $first = false;
+                        $key_str = $value;
+                    }else{
+                        $key_str = $key_str . ";" . $value;
+                    }
+                }   
+            }else{
+                $rdata = SamsungTizen_SendData($Intid, $key, $WaitforStart);
+            }
 
             if($rdata == "OK"){
                 return true;
             }else{
                 return false;
             }
+            
 
             //$send_data = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$key.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
             // $sp = websocket_open($broadcast,8001, "/api/v2/channels/samsung.remote.control", $headers,$errstr,$timeout);
