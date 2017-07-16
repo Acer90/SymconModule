@@ -92,15 +92,15 @@
             $Intid = $this->InstanceID;
             $key_str = "";
             $first = true;
-            foreach($keys as &$key){
+            reset($keys);
+            while (list(, $value) = each($keys)) {
                 if($first){
                     $first = false;
-                    $key_str = $key;
+                    $key_str = $value;
                 }else{
-                    $key_str = $key_str . ";" . $key;
+                    $key_str = $key_str . ";" . $value;
                 }
             }
-
             $rdata = SamsungTizen_SendData($key_str, $WaitforStart);
 
             if($rdata == "OK"){
