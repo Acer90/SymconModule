@@ -68,10 +68,11 @@
             $sp = websocket_open($broadcast,8001, "/api/v2/channels/samsung.remote.control", $headers,$errstr,$timeout);
             if($sp){
                 if(is_null($key)) return true;
-                sleep(1);
+                sleep(0.2);
                 echo $result = websocket_read($sp,$errstr);
                 $output = json_decode($result, true);
                 if ($output['event'] == 'ms.channel.connect') {
+                    sleep(0.2);
                     $bytes_written = websocket_write($sp,$send_data, true);
                     if(is_numeric($bytes_written)){
                         $data = websocket_read($sp,$errstr);
