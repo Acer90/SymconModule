@@ -131,7 +131,8 @@
                 $this->SetStatus(207);
                 return "ERROR";
             }
-            echo $message = "WAIT=".$Wait."&KEYS=".$keys;
+            $converted_Wait = ($Wait) ? 'true' : 'false';
+            $message = "WAIT=".$converted_Wait."&KEYS=".$keys;
 
             if( ! socket_send ( $sock , $message , strlen($message) , 0))
             {
