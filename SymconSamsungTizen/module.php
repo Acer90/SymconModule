@@ -145,40 +145,16 @@
 
             socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>$timeout, "usec"=>0));
             //Now receive reply from server
-            // if(socket_recv ( $sock , $buf , 2048 , MSG_WAITALL) === FALSE)
-            // {
-            //     $errorcode = socket_last_error();
-            //     $errormsg = socket_strerror($errorcode);
-            //     // socket_close($sock);
-            //     $this->SetStatus(209);
-            //     return $buf;
-            // }
-
-            $data = '';
-            $done = false;
-            while(!$done) {
-                socket_clear_error($sock);
-                $bytes = @socket_recv($sock, $r_data, 4000, MSG_DONTWAIT);
-
-                $lastError = socket_last_error($sock);
-
-                if ($lastError != 11 && $lastError > 0) {
-                    // something went wrong! do something
-                    $done = true;
-                }
-                else if ($bytes === false) {
-                    // something went wrong also! do something else
-                    $done = true;
-                }
-                else if (intval($bytes) > 0) {
-                    $data .= $r_data;
-                }
-                else {
-                    usleep(2000); // prevent "CPU burn"
-                }
+            if(socket_recv ( $sock , $buf , 2048 , MSG_WAITALL) === FALSE)
+            {
+                $errorcode = socket_last_error();
+                $errormsg = socket_strerror($errorcode);
+                // socket_close($sock);
+                $this->SetStatus(102);
+                return $buf;
             }
 
-            return $data;
+            return $buf;
         }
 
         public function CheckOnline(){
