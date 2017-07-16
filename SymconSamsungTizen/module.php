@@ -127,15 +127,17 @@
             {
                 $errorcode = socket_last_error();
                 $errormsg = socket_strerror($errorcode);
+                socket_close($sock);
                 $this->SetStatus(207);
                 return "ERROR";
             }
-            $message = "WAIT=".$Wait."&KEYS=".$keys;
+            echo $message = "WAIT=".$Wait."&KEYS=".$keys;
 
             if( ! socket_send ( $sock , $message , strlen($message) , 0))
             {
                 $errorcode = socket_last_error();
                 $errormsg = socket_strerror($errorcode);
+                socket_close($sock);
                 $this->SetStatus(208);
                 return "ERROR";
             }
@@ -145,11 +147,14 @@
             {
                 $errorcode = socket_last_error();
                 $errormsg = socket_strerror($errorcode);
+                socket_close($sock);
                 $this->SetStatus(209);
                 return "ERROR";
             }
 
             //print the received message
+
+            socket_close($sock);
             return $buf;
         }
 
