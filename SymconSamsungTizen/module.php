@@ -56,23 +56,7 @@
 
         public function SendKey(string $key, $WaitforStart = false){
             $Intid = $this->InstanceID;
-            $key_str = "";
-            $first = true;
-            $rdata = "";
-            if(strpos($key, ';')) {
-                $skey = explode(";", $key);
-                foreach ($skey as $key_value)
-                {
-                    if($first){
-                        $first = false;
-                        $key_str = $key_value;
-                    }else{
-                        $key_str = $key_str . ";" . $key_value;
-                    }
-                }   
-            }else{
-                $rdata = SamsungTizen_SendData($Intid, $key, $WaitforStart);
-            }
+            $rdata = SamsungTizen_SendData($Intid, $key, $WaitforStart);
 
             if($rdata == "OK"){
                 return true;
