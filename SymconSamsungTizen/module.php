@@ -65,9 +65,9 @@
                 {
                     if($first){
                         $first = false;
-                        $key_str = $value;
+                        $key_str = $key_value;
                     }else{
-                        $key_str = $key_str . ";" . $value;
+                        $key_str = $key_str . ";" . $key_value;
                     }
                 }   
             }else{
