@@ -14,8 +14,12 @@
             // Modul-Eigenschaftserstellung
             $this->RegisterPropertyString("IPAddress", "192.168.178.1"); 
             $this->RegisterPropertyString("MACAddress", "aa:bb:cc:00:11:22"); 
-            $this->RegisterPropertyInteger("Timeout", 3);
             $this->RegisterPropertyInteger("Interval", 10);
+
+            $this->RegisterPropertyString("SIPAddress", "127.0.0.1");
+            $this->RegisterPropertyString("SPort", "8001");
+            $this->RegisterPropertyInteger("Timeout", 3);
+            
 
             //event erstellen
             $this->RegisterTimer("CheckOnline", $this->ReadPropertyInteger("Interval"), 'CheckOnline_SyncData($_IPS[\'TARGET\'], false);');
