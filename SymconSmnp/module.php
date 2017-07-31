@@ -39,7 +39,7 @@
             $this->RegisterPropertyString("utilizationtyp", ""); 
 
             //create Skript
-            $script_found = IPS_GetScriptIDByName("Action Script", $this->InstanceID);
+            $script_found = @IPS_GetScriptIDByName("Action Script", $this->InstanceID);
             if($script_found === FALSE){
                 $ScriptID = IPS_CreateScript(0);
                 IPS_SetName($ScriptID, "Action Script");
