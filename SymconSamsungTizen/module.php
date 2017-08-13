@@ -113,7 +113,7 @@
             }
         }
 
-        public function SendData(string $keys, $Wait = false){
+        public function SendData(string $keys, $Wait = false, $SendOnlyData = false){
             $ip = $this->ReadPropertyString("SIPAddress");
             $port = $this->ReadPropertyString("SPort");
             $timeout = $this->ReadPropertyInteger("Timeout");
@@ -135,7 +135,12 @@
                 return "ERROR";
             }
             $converted_Wait = ($Wait) ? 'true' : 'false';
-            $message = "WAIT=".$converted_Wait."&KEYS=".$keys;
+            
+            if($SendOnlyData){
+                $message = $keys;
+            }else{
+                $message = "WAIT=".$converted_Wait."&KEYS=".$keys;
+            }
 
             if( ! socket_send ( $sock , $message , strlen($message) , 0))
             {
@@ -164,7 +169,7 @@
             $Intid = $this->InstanceID;
             $varonline = $this->ReadPropertyInteger("VariableOnline");
             if(IPS_VariableExists($varonline) && IPS_GetVariable($varonline)["VariableType"] == 0){
-                $rdata = SamsungTizen_SendData($Intid, "STATUS", FALSE);
+                $rdata = SamsungTizen_SendData($Intid, "STATUS", FALSE, TRUE);
                 
                 switch($rdata){
                     case "TRUE" || "True" || "true":
