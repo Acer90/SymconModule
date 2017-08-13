@@ -8,9 +8,7 @@
         { "type": "Label", "label": "Server" },
         { "type": "ValidationTextBox", "name": "SIPAddress", "caption": "Host" },
         { "type": "NumberSpinner", "name": "SPort", "caption": "Port"},
-        { "type": "NumberSpinner", "name": "Timeout", "caption": "Timeout"},
-        { "type": "Label", "label": "Status" },
-        { "type": "SelectVariable", "name": "VariableOnline", "caption": "Variable Online" }
+        { "type": "NumberSpinner", "name": "Timeout", "caption": "Timeout"}
     ],
     "actions":
     [

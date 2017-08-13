@@ -160,15 +160,21 @@
 
         public function CheckOnline(){
             $Intid = $this->InstanceID;
-            if(@IPS_GetVariableIDByName("Online", $Intid) === False){
-                $VarID = IPS_CreateVariable(0);
-                IPS_SetName($VarID, "Online"); // Variable benennen
-                IPS_SetParent($VarID, $Intid);
-                IPS_SetVariableCustomProfile($VarID, "~Switch");
-            }
-            $VarID = @IPS_GetVariableIDByName("Online", $Intid);
-            if($VarID !== False){
-                SetValueBoolean($VarID, SamsungTizen_SendKey(null));
+            $varonline = $this->ReadPropertyString("VariableOnline");
+            if(IPS_VariableExists($varonline) && IPS_GetVariable(40770)["VariableType"] == 0){
+                $rdata = SamsungTizen_SendData("STATUS");
+                
+                switch($rdata){
+                    case "TRUE" || "True" || "true":
+                        SetValueBoolean($varonline, TRUE);
+                        break;
+                    case "FALSE" || "False" || "false":
+                        SetValueBoolean($varonline, FALSE);
+                        break;
+                    default:
+                        SetValueBoolean($varonline, FALSE);
+                        break;
+                }
             }
         }
     }
