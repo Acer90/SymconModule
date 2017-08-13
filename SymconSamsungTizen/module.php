@@ -20,6 +20,8 @@
             $this->RegisterPropertyString("SPort", "8001");
             $this->RegisterPropertyInteger("Timeout", 3);
             
+            $this->RegisterPropertyInteger("VariableOnline", 0);
+            
 
             //event erstellen
             $this->RegisterTimer("CheckOnline", $this->ReadPropertyInteger("Interval"), 'SamsungTizen_CheckOnline($_IPS[\'TARGET\']);');
