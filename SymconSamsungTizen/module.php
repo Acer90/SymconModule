@@ -135,8 +135,8 @@
                 return "ERROR";
             }
             $converted_Wait = ($Wait) ? 'true' : 'false';
-            
-            if($SendOnlyData){
+
+            if($SendOnlyData == TRUE){
                 $message = $keys;
             }else{
                 $message = "WAIT=".$converted_Wait."&KEYS=".$keys;
