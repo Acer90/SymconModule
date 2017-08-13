@@ -163,7 +163,7 @@
         public function CheckOnline(){
             $Intid = $this->InstanceID;
             $varonline = $this->ReadPropertyInteger("VariableOnline");
-            if(IPS_VariableExists($varonline) && IPS_GetVariable(40770)["VariableType"] == 0){
+            if(IPS_VariableExists($varonline) && IPS_GetVariable($varonline)["VariableType"] == 0){
                 $rdata = SamsungTizen_SendData("STATUS", FALSE);
                 
                 switch($rdata){
