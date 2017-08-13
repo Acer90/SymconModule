@@ -1,9 +1,6 @@
 <?
-    include("websocket_client.php");
-
-    
     // Klassendefinition
-    class SamsungTizen extends IPSModule {
+    class SymconWS2812 extends IPSModule {
         public function __construct($InstanceID) {
             parent::__construct($InstanceID);
         }

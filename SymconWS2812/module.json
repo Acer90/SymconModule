@@ -1,14 +1,14 @@
 {
     "id": "{4BF95816-240B-441A-8897-E2BDBF342207}",
-    "name": "SamsungTizen",
+    "name": "SymconWS2812",
     "type": 3,
 	"vendor": "",
 	"aliases": 
 	[
-		"SamsungTizen"
+		"SymconWS2812"
 	],
     "parentRequirements": [],
     "childRequirements": [],
     "implemented": [],
-    "prefix": "SamsungTizen"
+    "prefix": "SymconWS2812"
 }
