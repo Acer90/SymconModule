@@ -164,7 +164,7 @@
             $Intid = $this->InstanceID;
             $varonline = $this->ReadPropertyInteger("VariableOnline");
             if(IPS_VariableExists($varonline) && IPS_GetVariable($varonline)["VariableType"] == 0){
-                $rdata = SamsungTizen_SendData("STATUS", FALSE);
+                $rdata = SamsungTizen_SendData($Intid, "STATUS", FALSE);
                 
                 switch($rdata){
                     case "TRUE" || "True" || "true":
