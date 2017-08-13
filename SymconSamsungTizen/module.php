@@ -19,7 +19,7 @@
             $this->RegisterPropertyString("SIPAddress", "127.0.0.1");
             $this->RegisterPropertyString("SPort", "8001");
             $this->RegisterPropertyInteger("Timeout", 3);
-            
+
             $this->RegisterPropertyInteger("VariableOnline", 0);
             
 
@@ -162,7 +162,7 @@
 
         public function CheckOnline(){
             $Intid = $this->InstanceID;
-            $varonline = $this->ReadPropertyString("VariableOnline");
+            $varonline = $this->ReadPropertyInteger("VariableOnline");
             if(IPS_VariableExists($varonline) && IPS_GetVariable(40770)["VariableType"] == 0){
                 $rdata = SamsungTizen_SendData("STATUS");
                 
