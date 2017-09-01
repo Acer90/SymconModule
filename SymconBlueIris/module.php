@@ -445,7 +445,7 @@
             };
         }
 
-        public function Status(string $session = null){
+        public function Status(string $session = null, integer $signal = null, integer $profil = null, string $dio = null, string $play = null){
             if(is_null($session)){
                 $this->SetStatus(203);
                 return "ERROR";
@@ -460,7 +460,12 @@
 
             $url = 'http://'.$IPAddress.":".$Port."/json";
 
-            $data = array("cmd" => "status", "session" => $session);                                                                 
+            $data = array("cmd" => "status", "session" => $session); 
+            if(!is_null($signal)) $data["signal"] = $signal;
+            if(!is_null($profil)) $data["profile"] = $profil;
+            if(!is_null($dio)) $data["dio"] = $dio;
+            if(!is_null($play)) $data["play"] = $play;
+
             $data_string = json_encode($data);                                                                                   
                                                                                                                                 
             $ch = curl_init($url);                                                                      
