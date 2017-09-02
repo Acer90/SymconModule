@@ -104,7 +104,7 @@
                     $key_str = $key_str . ";" . $value;
                 }
             }
-            $rdata = SamsungTizen_SendData($key_str, $WaitforStart);
+            $rdata = SamsungTizen_SendData($key_str, $WaitforStart, false);
 
             if($rdata == "OK"){
                 return true;
