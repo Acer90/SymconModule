@@ -728,6 +728,15 @@
                     if($VarID !== False){
                         if(!empty($val["FPS"])) SetValue($VarID,$val["FPS"]); else SetValue($VarID, 0);
                     }
+
+                    $MediaID = @IPS_GetMediaIDByName("Stream", $key);
+                    if($MediaID !== False){
+                        $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg"; 
+                        if(IPS_GetMedia($MediaID)["MediaFile"] != $ImageFile) {
+                            
+                            IPS_SetMediaFile($MediaID, $ImageFile, true);
+                        }
+                    }
                 }else{
                     $InsID = IPS_CreateInstance("{5308D185-A3D2-42D0-B6CE-E9D3080CE184}");
                     IPS_SetName($InsID, $val["optionDisplay"]); // Instanz benennen
