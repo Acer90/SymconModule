@@ -593,6 +593,8 @@
             $id = $this->InstanceID;
             $IPAddress = $this->ReadPropertyString("IPAddress");
             $Port = $this->ReadPropertyInteger("Port");
+            $Username = $this->ReadPropertyString("Username");
+            $Password = $this->ReadPropertyString("Password");
             $sid = BlueIris_Login($id);
             if($sid == "ERROR") exit;
 
@@ -675,7 +677,10 @@
                         }
 
                         if(@IPS_GetMediaIDByName("Stream", $key) === False){
-                            $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg";     // Image-Datei
+                            if(!empty($Username) && !empty($Password))
+                                $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg?user=".$Username."&pw=".$Password; // Image-Datei
+                            else     
+                                $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg";
                             $MediaID = IPS_CreateMedia(3);                  // Image im MedienPool anlegen
                             IPS_SetMediaFile($MediaID, $ImageFile, true);   // Image im MedienPool mit Image-Datei verbinden
                             IPS_SetName($MediaID, "Stream"); // Medienobjekt benennen
@@ -731,7 +736,10 @@
 
                     $MediaID = @IPS_GetMediaIDByName("Stream", $key);
                     if($MediaID !== False){
-                        $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg"; 
+                        if(!empty($Username) && !empty($Password))
+                            $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg?user=".$Username."&pw=".$Password; // Image-Datei
+                        else     
+                            $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg";
                         if(IPS_GetMedia($MediaID)["MediaFile"] != $ImageFile) {
                             
                             IPS_SetMediaFile($MediaID, $ImageFile, true);
@@ -779,8 +787,10 @@
                     IPS_SetName($VarID, "isRecording"); // Variable benennen
                     IPS_SetParent($VarID, $InsID);
                     IPS_SetVariableCustomProfile($VarID, "~Switch");
-
-                    $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg";     // Image-Datei
+                    if(!empty($Username) && !empty($Password))
+                        $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg?user=".$Username."&pw=".$Password; // Image-Datei
+                    else     
+                        $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg"; // Image-Datei
                     $MediaID = IPS_CreateMedia(3);                  // Image im MedienPool anlegen
                     IPS_SetMediaFile($MediaID, $ImageFile, true);   // Image im MedienPool mit Image-Datei verbinden
                     IPS_SetName($MediaID, "Stream"); // Medienobjekt benennen
