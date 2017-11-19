@@ -90,7 +90,7 @@
             $ipAdress = $this->ReadPropertyString("IPAddress");
 
             $TizenAdress = "ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control";
-            return "{\"Open\": \"True\", \"URL\": \"".$TizenAdress."\"}";
+            return "{\"URL\": \"".$TizenAdress."\"}";
         }
     }
 ?>
