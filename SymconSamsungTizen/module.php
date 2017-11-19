@@ -20,6 +20,7 @@
             $this->RegisterPropertyInteger("VariableOnline", 0);
 
             $this->ConnectParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}");  
+            $this->GetConfigurationForParent();
 
             //event erstellen 
             $this->RegisterTimer("CheckOnline", $this->ReadPropertyInteger("Interval"), 'SamsungTizen_CheckOnline($_IPS[\'TARGET\']);');
@@ -32,6 +33,8 @@
 
             $this->SetStatus(102);
             $this->SetTimerInterval("CheckOnline", $this->ReadPropertyInteger("Interval")*1000);
+
+            $this->GetConfigurationForParent();
         }
 
         public function WakeUp(){
@@ -99,6 +102,13 @@
                // Datenverarbeitung und schreiben der Werte in die Statusvariablen
                //SetValue($this->GetIDForIdent("Value"), $data->Buffer);
             
-           }
+        }
+
+        public function GetConfigurationForParent() {
+            $ipAdress = $this->ReadPropertyString("IPAddress");
+
+            $TizenAdress = "ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control";
+            return "{\"Open\": \"True\", \"URL\": \"".$TizenAdress."\"}";
+        }
     }
 ?>
