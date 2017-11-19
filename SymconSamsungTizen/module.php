@@ -59,12 +59,11 @@
             //$rdata = SamsungTizen_SendData($Intid, $key, $WaitforStart);
             $test = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$key.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
             $test = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"KEY_1","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
-            $resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $test))); 
-            sleep(1);
+            $resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => false, "Buffer" => $test))); 
 
             $test = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"KEY_2","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
-            $resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $test))); 
-            sleep(1);
+            $resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => false, "Buffer" => $test))); 
+            
             $test = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"KEY_ENTER","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
             $resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $test))); 
 
