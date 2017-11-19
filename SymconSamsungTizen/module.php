@@ -21,7 +21,7 @@
 
             $this->ConnectParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}");  
 
-            //event erstellen
+            //event erstellen 
             $this->RegisterTimer("CheckOnline", $this->ReadPropertyInteger("Interval"), 'SamsungTizen_CheckOnline($_IPS[\'TARGET\']);');
             $this->SetStatus(102);
         }
