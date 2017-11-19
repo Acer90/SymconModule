@@ -56,37 +56,14 @@
 
         public function SendKey(string $key, $WaitforStart = false){
             $Intid = $this->InstanceID;
-            $rdata = SamsungTizen_SendData($Intid, $key, $WaitforStart);
-
+            //$rdata = SamsungTizen_SendData($Intid, $key, $WaitforStart);
+            $test = '{\"method\":\"ms.remote.control\",\"params\":{\"Cmd\":\"Click\",\"DataOfCmd\":\"" + Key + "\",\"Option\":\"false\",\"TypeOfRemote\":\"SendRemoteKey\"}}';
+            $this->SendDataToParent($test);
             if($rdata == "OK"){
                 return true;
             }else{
                 return false;
             }
-            
-
-            //$send_data = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$key.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
-            // $sp = websocket_open($broadcast,8001, "/api/v2/channels/samsung.remote.control", $headers,$errstr,$timeout);
-            // if($sp){
-            //     if(is_null($key)) return true;
-            //     sleep(0.2);
-            //     echo $result = websocket_read($sp,$errstr);
-            //     $output = json_decode($result, true);
-            //     if ($output['event'] == 'ms.channel.connect') {
-            //         sleep(0.2);
-            //         $bytes_written = websocket_write($sp,$send_data, true);
-            //         if(is_numeric($bytes_written)){
-            //             $data = websocket_read($sp,$errstr);
-            //             //echo "Server responed with: " . $errstr ? $errstr : $data;
-            //             $this->SetStatus(102);
-            //             return true;
-            //         }else{
-            //             return false;
-            //         }
-            //     }
-            // }else{
-            //     return false;
-            // }
         }
 
         public function SendKeys($Intid, $keys, $WaitforStart = false){
@@ -182,5 +159,16 @@
                 }
             }
         }
+
+        public function ReceiveData($JSONString) {
+            
+               // Empfangene Daten vom Gateway/Splitter
+               $data = json_decode($JSONString);
+               IPS_LogMessage("ReceiveData", utf8_decode($data->Buffer));
+            
+               // Datenverarbeitung und schreiben der Werte in die Statusvariablen
+               SetValue($this->GetIDForIdent("Value"), $data->Buffer);
+            
+           }
     }
 ?>
