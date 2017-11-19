@@ -54,7 +54,7 @@
 
         }
 
-        public function SendKeys($Intid, $keys){
+        public function SendKeys($keys){
             $Intid = $this->InstanceID;
             if (strpos($a, ';') !== false) {
                 $keys_data = explode(";", $keys);
