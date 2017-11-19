@@ -57,7 +57,7 @@
 
         }
 
-        public function SendKeys($keys){
+        public function SendKeys($keys, $sleep = 1){
             $Intid = $this->InstanceID;
             echo WSC_SendPing($Intid,"");
             if (strpos($keys, ';') !== false) {
@@ -65,7 +65,7 @@
                 foreach ($keys_data as $value) {
                     $send_str = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$value.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
                     $resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str))); 
-                    sleep(1);
+                    sleep($sleep);
                 }
             }else{
                 $send_str = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$keys.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
