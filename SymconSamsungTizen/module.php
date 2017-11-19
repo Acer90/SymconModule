@@ -77,7 +77,7 @@
             $Intid = $this->InstanceID;
             $varonline = $this->ReadPropertyInteger("VariableOnline");
             if(IPS_VariableExists($varonline) && IPS_GetVariable($varonline)["VariableType"] == 0){
-                /*$rdata = SamsungTizen_SendData($Intid, "STATUS", FALSE, TRUE);
+                SetValueBoolean($varonline, WSC_SendPing(22372 /*[WebsocketClient]*/,""));
                 
                 switch($rdata){
                     case "TRUE" || "True" || "true":
