@@ -1,14 +1,13 @@
 {
     "id": "{65BF76B4-042C-4971-A5CC-292FA5E49C86}",
     "name": "SamsungTizen",
-    "parentRequirements": ["{3AB77A94-3467-4E66-8A73-840B4AD89582}"],
     "type": 3,
 	"vendor": "",
 	"aliases": 
 	[
 		"SamsungTizen"
 	],
-    "parentRequirements": [],
+    "parentRequirements": ["{3AB77A94-3467-4E66-8A73-840B4AD89582}"],
     "childRequirements": [],
     "implemented": [],
     "prefix": "SamsungTizen"
