@@ -57,7 +57,7 @@
         public function SendKey(string $key, $WaitforStart = false){
             $Intid = $this->InstanceID;
             //$rdata = SamsungTizen_SendData($Intid, $key, $WaitforStart);
-            $test = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"' + $key + '","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
+            echo $test = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$key.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
             $resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => ""))); 
             //$resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $test))); 
 
@@ -66,7 +66,6 @@
             }else{
                 return false;
             }*/
-            return $test;
         }
 
         public function SendKeys($Intid, $keys, $WaitforStart = false){
