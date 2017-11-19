@@ -75,19 +75,14 @@
             $Intid = $this->InstanceID;
             $varonline = $this->ReadPropertyInteger("VariableOnline");
             if(IPS_VariableExists($varonline) && IPS_GetVariable($varonline)["VariableType"] == 0){
-                SetValueBoolean($varonline, WSC_SendPing(22372 /*[WebsocketClient]*/,"")); // hier fehlt noch die id
+                $resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => ""))); 
+                SetValueBoolean($varonline, $resultat); // hier fehlt noch die id
             }
         }
 
         public function ReceiveData($JSONString) {
-            
-               // Empfangene Daten vom Gateway/Splitter
                $data = json_decode($JSONString);
-               IPS_LogMessage("ReceiveData", utf8_decode($data->Buffer));
-            
-               // Datenverarbeitung und schreiben der Werte in die Statusvariablen
-               //SetValue($this->GetIDForIdent("Value"), $data->Buffer);
-            
+               IPS_LogMessage("ReceiveData", utf8_decode($data->Buffer));          
         }
 
         public function GetConfigurationForParent() {
