@@ -56,7 +56,7 @@
 
         public function SendKeys($keys){
             $Intid = $this->InstanceID;
-            echo IPS_GetParent($Intid);
+            echo WSC_SendPing($Intid,"");
             if (strpos($keys, ';') !== false) {
                 $keys_data = explode(";", $keys);
                 foreach ($keys_data as $value) {
