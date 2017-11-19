@@ -58,8 +58,6 @@
         }
 
         public function SendKeys($keys, $sleep = 1){
-            $Intid = $this->InstanceID;
-            echo WSC_SendPing($Intid,"");
             if (strpos($keys, ';') !== false) {
                 $keys_data = explode(";", $keys);
                 foreach ($keys_data as $value) {
