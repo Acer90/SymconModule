@@ -57,7 +57,8 @@
         public function SendKey(string $key, $WaitforStart = false){
             $Intid = $this->InstanceID;
             //$rdata = SamsungTizen_SendData($Intid, $key, $WaitforStart);
-            $test = '{\"method\":\"ms.remote.control\",\"params\":{\"Cmd\":\"Click\",\"DataOfCmd\":\"" + Key + "\",\"Option\":\"false\",\"TypeOfRemote\":\"SendRemoteKey\"}}';
+            $test = '{\"method\":\"ms.remote.control\",\"params\":{\"Cmd\":\"Click\",\"DataOfCmd\":\"' + Key + '\",\"Option\":\"false\",\"TypeOfRemote\":\"SendRemoteKey\"}}';
+            echo $test;
             $resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => false, "Buffer" => ""))); 
             $resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $test))); 
 
@@ -146,7 +147,7 @@
             $Intid = $this->InstanceID;
             $varonline = $this->ReadPropertyInteger("VariableOnline");
             if(IPS_VariableExists($varonline) && IPS_GetVariable($varonline)["VariableType"] == 0){
-                $rdata = SamsungTizen_SendData($Intid, "STATUS", FALSE, TRUE);
+                /*$rdata = SamsungTizen_SendData($Intid, "STATUS", FALSE, TRUE);
                 
                 switch($rdata){
                     case "TRUE" || "True" || "true":
@@ -158,7 +159,7 @@
                     default:
                         SetValueBoolean($varonline, FALSE);
                         break;
-                }
+                }*/
             }
         }
 
