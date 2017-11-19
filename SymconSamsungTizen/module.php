@@ -54,98 +54,19 @@
 
         }
 
-        public function SendKey(string $key, $WaitforStart = false){
+        public function SendKeys($Intid, $keys){
             $Intid = $this->InstanceID;
-            //$rdata = SamsungTizen_SendData($Intid, $key, $WaitforStart);
-            $test = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$key.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
-            $test = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"KEY_1","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
-            $resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => false, "Buffer" => $test))); 
-
-            $test = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"KEY_2","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
-            $resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => false, "Buffer" => $test))); 
-            
-            $test = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"KEY_ENTER","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
-            $resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $test))); 
-
-            /*if($rdata == "OK"){
-                return true;
-            }else{
-                return false;
-            }*/
-        }
-
-        public function SendKeys($Intid, $keys, $WaitforStart = false){
-            $Intid = $this->InstanceID;
-            $key_str = "";
-            $first = true;
-            reset($keys);
-            while (list(, $value) = each($keys)) {
-                if($first){
-                    $first = false;
-                    $key_str = $value;
-                }else{
-                    $key_str = $key_str . ";" . $value;
+            if (strpos($a, ';') !== false) {
+                $keys_data = explode(";", $keys);
+                foreach ($keys_data as $value) {
+                    $send_str = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$value.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
+                    $resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str))); 
+                    sleep(1);
                 }
-            }
-            $rdata = SamsungTizen_SendData($key_str, $WaitforStart, false);
-
-            if($rdata == "OK"){
-                return true;
             }else{
-                return false;
+                $send_str = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$keys.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
+                $resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str))); 
             }
-        }
-
-        public function SendData(string $keys, $Wait = false, $SendOnlyData = false){
-            $ip = $this->ReadPropertyString("SIPAddress");
-            $port = $this->ReadPropertyString("SPort");
-            $timeout = $this->ReadPropertyInteger("Timeout");
-            if(!($sock = socket_create(AF_INET, SOCK_STREAM, 0)))
-            {
-                $errorcode = socket_last_error();
-                $errormsg = socket_strerror($errorcode);
-                $this->SetStatus(206);
-                return "ERROR";
-            }
-
-            //Connect socket to remote server
-            if(!socket_connect($sock , $ip , $port))
-            {
-                $errorcode = socket_last_error();
-                $errormsg = socket_strerror($errorcode);
-                socket_close($sock);
-                $this->SetStatus(207);
-                return "ERROR";
-            }
-            $converted_Wait = ($Wait) ? 'true' : 'false';
-
-            if($SendOnlyData == TRUE){
-                $message = $keys;
-            }else{
-                $message = "WAIT=".$converted_Wait."&KEYS=".$keys;
-            }
-
-            if( ! socket_send ( $sock , $message , strlen($message) , 0))
-            {
-                $errorcode = socket_last_error();
-                $errormsg = socket_strerror($errorcode);
-                socket_close($sock);
-                $this->SetStatus(208);
-                return "ERROR";
-            }
-
-            socket_set_option($sock, SOL_SOCKET, SO_RCVTIMEO, array("sec"=>$timeout, "usec"=>0));
-            //Now receive reply from server
-            if(socket_recv ( $sock , $buf , 2048 , MSG_WAITALL) === FALSE)
-            {
-                $errorcode = socket_last_error();
-                $errormsg = socket_strerror($errorcode);
-                // socket_close($sock);
-                $this->SetStatus(102);
-                return $buf;
-            }
-
-            return $buf;
         }
 
         public function CheckOnline(){
