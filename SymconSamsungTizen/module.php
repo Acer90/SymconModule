@@ -55,9 +55,8 @@
         }
 
         public function SendKeys($keys){
-            echo $keys;
             $Intid = $this->InstanceID;
-            if (strpos($a, ';') !== false) {
+            if (strpos($keys, ';') !== false) {
                 $keys_data = explode(";", $keys);
                 foreach ($keys_data as $value) {
                     $send_str = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$value.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
