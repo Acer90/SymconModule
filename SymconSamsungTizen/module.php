@@ -77,7 +77,11 @@
             $varonline = $this->ReadPropertyInteger("VariableOnline");
             if(IPS_VariableExists($varonline) && IPS_GetVariable($varonline)["VariableType"] == 0){
                 @$resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => ""))); 
-                echo $resultat;
+                if($resultat == 1 || $resultat == true){
+                    $resultat = true;
+                }else{
+                    $resultat = false;
+                }
                 SetValueBoolean($varonline, $resultat);
             }
         }
