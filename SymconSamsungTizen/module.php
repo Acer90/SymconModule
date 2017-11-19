@@ -168,7 +168,7 @@
                IPS_LogMessage("ReceiveData", utf8_decode($data->Buffer));
             
                // Datenverarbeitung und schreiben der Werte in die Statusvariablen
-               SetValue($this->GetIDForIdent("Value"), $data->Buffer);
+               //SetValue($this->GetIDForIdent("Value"), $data->Buffer);
             
            }
     }
