@@ -34,6 +34,7 @@
             $this->SetStatus(102);
             $this->SetTimerInterval("CheckOnline", $this->ReadPropertyInteger("Interval")*1000);
 
+            $this->ConnectParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}"); 
             $this->GetConfigurationForParent();
         }
 
