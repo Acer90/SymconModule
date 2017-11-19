@@ -19,7 +19,7 @@
 
             $this->RegisterPropertyInteger("VariableOnline", 0);
 
-            $this->ConnectParent("3AB77A94-3467-4E66-8A73-840B4AD89582");  
+            $this->ConnectParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}");  
 
             //event erstellen
             $this->RegisterTimer("CheckOnline", $this->ReadPropertyInteger("Interval"), 'SamsungTizen_CheckOnline($_IPS[\'TARGET\']);');
