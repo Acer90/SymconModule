@@ -77,7 +77,7 @@
             $Intid = $this->InstanceID;
             $varonline = $this->ReadPropertyInteger("VariableOnline");
             if(IPS_VariableExists($varonline) && IPS_GetVariable($varonline)["VariableType"] == 0){
-                SetValueBoolean($varonline, WSC_SendPing(22372 /*[WebsocketClient]*/,""));
+                SetValueBoolean($varonline, WSC_SendPing(22372 /*[WebsocketClient]*/,"")); // hier fehlt noch die id
                 
                 switch($rdata){
                     case "TRUE" || "True" || "true":
