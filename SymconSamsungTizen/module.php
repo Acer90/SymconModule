@@ -89,7 +89,7 @@
                     default:
                         SetValueBoolean($varonline, FALSE);
                         break;
-                }*/
+                }
             }
         }
 
