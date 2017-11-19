@@ -721,7 +721,7 @@
                         if(!empty($val["FPS"])) SetValue($VarID,$val["FPS"]); else SetValue($VarID, 0);
                     }
                 }else{
-                    $InsID = IPS_CreateInstance("{5308D185-A3D2-42D0-B6CE-E9D3080CE184}");
+                    /*$InsID = IPS_CreateInstance("{5308D185-A3D2-42D0-B6CE-E9D3080CE184}");
                     IPS_SetName($InsID, $val["optionDisplay"]); // Instanz benennen
                     IPS_SetParent($InsID, $id); 
 
@@ -771,7 +771,7 @@
 
                     $VarID = IPS_CreateVariable(2);
                     IPS_SetName($VarID, "FPS"); // Variable benennen
-                    IPS_SetParent($VarID, $InsID);
+                    IPS_SetParent($VarID, $InsID); */
                 }
             }
 
