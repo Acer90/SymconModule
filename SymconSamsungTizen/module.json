@@ -7,8 +7,8 @@
 	[
 		"SamsungTizen"
 	],
-    "parentRequirements": [],
+    "parentRequirements": ["{BC49DE11-24CA-484D-85AE-9B6F24D89321}"],
     "childRequirements": [],
-    "implemented": ["3AB77A94-3467-4E66-8A73-840B4AD89582"],
+    "implemented": ["{12312312-1231-1231-1231-12312312}"],
     "prefix": "SamsungTizen"
 }
