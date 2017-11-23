@@ -4,28 +4,16 @@
         { "type": "Label", "label": "TV" },
         { "type": "ValidationTextBox", "name": "IPAddress", "caption": "Host" },
         { "type": "ValidationTextBox", "name": "MACAddress", "caption": "Mac Adress" },
-<<<<<<< HEAD
-        { "type": "IntervalBox", "name": "Interval", "caption": "Sekunden" },
-        { "type": "Label", "label": "Server" },
-        { "type": "ValidationTextBox", "name": "SIPAddress", "caption": "Host" },
-        { "type": "NumberSpinner", "name": "SPort", "caption": "Port"},
-        { "type": "NumberSpinner", "name": "Timeout", "caption": "Timeout"},
-=======
         { "type": "IntervalBox", "name": "Sleep", "caption": "ms" },
         { "type": "IntervalBox", "name": "Interval", "caption": "Sek" },
->>>>>>> Development
         { "type": "Label", "label": "Status" },
         { "type": "SelectVariable", "name": "VariableOnline", "caption": "Variable Online" }
     ],
     "actions":
     [
         { "type": "Button", "label": "WakeUp", "onClick": "SamsungTizen_WakeUp($id);" },
-<<<<<<< HEAD
-        { "type": "Button", "label": "PowerOff", "onClick": "SamsungTizen_SendKey($id, 'KEY_POWER', false, false);" }
-=======
         { "type": "Button", "label": "PowerOff", "onClick": "SamsungTizen_SendKeys($id, 'KEY_POWER');" },
         { "type": "Button", "label": "Test", "onClick": "echo SamsungTizen_SendKeys($id, 'KEY_1;KEY_2;KEY_3;KEY_ENTER');" }
->>>>>>> Development
         
     ],
     "status":

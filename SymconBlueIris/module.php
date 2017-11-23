@@ -746,61 +746,6 @@
                         }
                     }
                 }else{
-<<<<<<< HEAD
-                    $InsID = IPS_CreateInstance("{5308D185-A3D2-42D0-B6CE-E9D3080CE184}");
-                    IPS_SetName($InsID, $val["optionDisplay"]); // Instanz benennen
-                    IPS_SetParent($InsID, $id); 
-
-                    IPS_SetProperty($InsID, "ShortName", $val["optionValue"]); // Ändere Eigenschaft "HomeCode"
-                    IPS_ApplyChanges($InsID);
-
-                    $VarID = IPS_CreateVariable(0);
-                    IPS_SetName($VarID, "isOnline"); // Variable benennen
-                    IPS_SetParent($VarID, $InsID);
-                    IPS_SetVariableCustomProfile($VarID, "~Switch");
-
-                    $VarID = IPS_CreateVariable(0);
-                    IPS_SetName($VarID, "isPaused"); // Variable benennen
-                    IPS_SetParent($VarID, $InsID);
-                    IPS_SetVariableCustomProfile($VarID, "~Switch");
-
-                    $VarID = IPS_CreateVariable(0);
-                    IPS_SetName($VarID, "isNoSignal"); // Variable benennen
-                    IPS_SetParent($VarID, $InsID);
-                    IPS_SetVariableCustomProfile($VarID, "~Switch");
-
-                    $VarID = IPS_CreateVariable(0);
-                    IPS_SetName($VarID, "isAlerting"); // Variable benennen
-                    IPS_SetParent($VarID, $InsID);
-                    IPS_SetVariableCustomProfile($VarID, "~Switch");
-
-                    $VarID = IPS_CreateVariable(0);
-                    IPS_SetName($VarID, "isMotion"); // Variable benennen
-                    IPS_SetParent($VarID, $InsID);
-                    IPS_SetVariableCustomProfile($VarID, "~Switch");
-
-                    $VarID = IPS_CreateVariable(0);
-                    IPS_SetName($VarID, "isTriggered"); // Variable benennen
-                    IPS_SetParent($VarID, $InsID);
-                    IPS_SetVariableCustomProfile($VarID, "~Switch");
-
-                    $VarID = IPS_CreateVariable(0);
-                    IPS_SetName($VarID, "isRecording"); // Variable benennen
-                    IPS_SetParent($VarID, $InsID);
-                    IPS_SetVariableCustomProfile($VarID, "~Switch");
-                    if(!empty($Username) && !empty($Password))
-                        $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg?user=".$Username."&pw=".$Password; // Image-Datei
-                    else     
-                        $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg"; // Image-Datei
-                    $MediaID = IPS_CreateMedia(3);                  // Image im MedienPool anlegen
-                    IPS_SetMediaFile($MediaID, $ImageFile, true);   // Image im MedienPool mit Image-Datei verbinden
-                    IPS_SetName($MediaID, "Stream"); // Medienobjekt benennen
-                    IPS_SetParent($MediaID, $InsID);
-
-                    $VarID = IPS_CreateVariable(2);
-                    IPS_SetName($VarID, "FPS"); // Variable benennen
-                    IPS_SetParent($VarID, $InsID);
-=======
                     if($createVar){
                         $InsID = IPS_CreateInstance("{5308D185-A3D2-42D0-B6CE-E9D3080CE184}");
                         IPS_SetName($InsID, $val["optionDisplay"]); // Instanz benennen
@@ -854,7 +799,6 @@
                         IPS_SetName($VarID, "FPS"); // Variable benennen
                         IPS_SetParent($VarID, $InsID);
                     }
->>>>>>> Development
                 }
             }
 
