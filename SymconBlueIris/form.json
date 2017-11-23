@@ -11,7 +11,7 @@
     "actions":
     [
         { "type": "Button", "label": "Sync Data", "onClick": "BlueIris_SyncData($id, false);" },
-        { "type": "Button", "label": "Get Variables", "onClick": "BlueIris_SyncData($id, true);" }
+        { "type": "Button", "label": "Get Variables/Cams", "onClick": "BlueIris_SyncData($id, true);" }
     ],
     "status":
     [

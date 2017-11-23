@@ -7,8 +7,14 @@
 	[
 		"SamsungTizen"
 	],
+<<<<<<< HEAD
     "parentRequirements": [],
     "childRequirements": [],
     "implemented": [],
+=======
+    "parentRequirements": ["{BC49DE11-24CA-484D-85AE-9B6F24D89321}"],
+    "childRequirements": [],
+    "implemented": ["{C51A4B94-8195-4673-B78D-04D91D52D2DD}"],
+>>>>>>> Development
     "prefix": "SamsungTizen"
 }
