@@ -58,7 +58,8 @@
 
         }
 
-        public function SendKeys($keys, $sleep = 1){
+        public function SendKeys($keys){
+            $sleep = $this->ReadPropertyString("Sleep");
             if (strpos($keys, ';') !== false) {
                 $keys_data = explode(";", $keys);
                 foreach ($keys_data as $value) {
