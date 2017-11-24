@@ -56,7 +56,7 @@
         }
 
         public function SendKeys(String $keys){
-            $sleep = $this->ReadPropertyString("Sleep");
+            $sleep = $this->ReadPropertyInteger("Sleep");
             $sleep = $sleep / 1000;
             if (strpos($keys, ';') !== false) {
                 $keys_data = explode(";", $keys);
