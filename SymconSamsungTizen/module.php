@@ -36,9 +36,8 @@
         public function WakeUp(){
             $broadcast = $this->ReadPropertyString("IPAddress");
             $mac_addr = $this->ReadPropertyString("MACAddress");
-            $timeout = $this->ReadPropertyInteger("Timeout");
 
-            if (!$fp = fsockopen('udp://' . $broadcast, 2304, $errno, $errstr, $timeout)) 
+            if (!$fp = fsockopen('udp://' . $broadcast, 2304, $errno, $errstr, 10)) 
                 return false; 
 
             $mac_hex = preg_replace('=[^a-f0-9]=i', '', $mac_addr); 
