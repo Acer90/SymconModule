@@ -12,10 +12,7 @@
             $this->RegisterPropertyString("IPAddress", "192.168.178.1"); 
             $this->RegisterPropertyString("MACAddress", "aa:bb:cc:00:11:22"); 
             $this->RegisterPropertyInteger("Interval", 10);
-
-            $this->RegisterPropertyString("SIPAddress", "127.0.0.1");
-            $this->RegisterPropertyString("SPort", "8001");
-            $this->RegisterPropertyInteger("Timeout", 3);
+            $this->RegisterPropertyInteger("Sleep", 1000);
 
             $this->RegisterPropertyInteger("VariableOnline", 0);
 
@@ -60,6 +57,7 @@
 
         public function SendKeys(String $keys){
             $sleep = $this->ReadPropertyString("Sleep");
+            $sleep = $sleep / 1000;
             if (strpos($keys, ';') !== false) {
                 $keys_data = explode(";", $keys);
                 foreach ($keys_data as $value) {
