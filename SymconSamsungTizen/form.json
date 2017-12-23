@@ -7,14 +7,14 @@
         { "type": "IntervalBox", "name": "Sleep", "caption": "ms" },
         { "type": "IntervalBox", "name": "Interval", "caption": "Sek" },
         { "type": "Label", "label": "Status" },
-        { "type": "SelectVariable", "name": "VariableOnline", "caption": "Variable Online" }
+        { "type": "SelectVariable", "name": "VariableOnline", "caption": "Variable Online" },
+        { "type": "SelectInstance", "name": "InstanceWebSocket", "caption": "Instance Websocket" }
     ],
     "actions":
     [
         { "type": "Button", "label": "WakeUp", "onClick": "SamsungTizen_WakeUp($id);" },
         { "type": "Button", "label": "PowerOff", "onClick": "SamsungTizen_SendKeys($id, 'KEY_POWER');" },
         { "type": "Button", "label": "Test", "onClick": "echo SamsungTizen_SendKeys($id, 'KEY_1;KEY_2;KEY_3;KEY_ENTER');" }
-        
     ],
     "status":
     [
