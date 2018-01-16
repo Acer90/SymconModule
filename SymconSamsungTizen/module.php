@@ -1,5 +1,5 @@
 <?
- // Klassendefinition
+    // Klassendefinition
     class SamsungTizen extends IPSModule {
         public function __construct($InstanceID) {
             parent::__construct($InstanceID);
@@ -17,10 +17,8 @@
             $this->RegisterPropertyInteger("VariableOnline", 0);
             $this->RegisterPropertyInteger("InstanceWebSocket", 0); 
 
-            $this->ConnectParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}");  
-            $this->GetConfigurationForParent();
 
-            //event erstellen 
+            //event erstellen
             $this->RegisterTimer("CheckOnline", $this->ReadPropertyInteger("Interval"), 'SamsungTizen_CheckOnline($_IPS[\'TARGET\']);');
             $this->SetStatus(102);
         }
@@ -31,9 +29,6 @@
 
             $this->SetStatus(102);
             $this->SetTimerInterval("CheckOnline", $this->ReadPropertyInteger("Interval")*1000);
-
-            $this->ConnectParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}"); 
-            $this->GetConfigurationForParent();
         }
 
         public function WakeUp(){

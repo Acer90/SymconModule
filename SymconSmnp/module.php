@@ -39,7 +39,7 @@
             $this->RegisterPropertyString("utilizationtyp", ""); 
 
             //create Skript
-            $script_found = IPS_GetScriptIDByName("Action Script", $this->InstanceID);
+            $script_found = @IPS_GetScriptIDByName("Action Script", $this->InstanceID);
             if($script_found === FALSE){
                 $ScriptID = IPS_CreateScript(0);
                 IPS_SetName($ScriptID, "Action Script");
@@ -85,6 +85,12 @@
                 IPS_CreateVariableProfile("SNMP_PortUtilization", 2);
                 IPS_SetVariableProfileDigits("SNMP_PortUtilization", 1);
                 IPS_SetVariableProfileText("SNMP_PortUtilization", "", "%");
+            }
+
+            if (!IPS_VariableProfileExists("SNMP_PortMbit")){
+                IPS_CreateVariableProfile("SNMP_PortMbit", 2);
+                IPS_SetVariableProfileDigits("SNMP_PortMbit", 1);
+                IPS_SetVariableProfileText("SNMP_PortMbit", "", "Mbit/s");
             }
         }
 
@@ -292,6 +298,21 @@
 
                                         $instanceID = $varid;
                                     break;
+                                case stristr($oid,'PortMbitRX') || stristr($oid,'PortMbitTX'):
+                                        $varid = IPS_CreateVariable(2);
+                                        $vartyp = "int";
+                                        IPS_SetName($varid, $name); 
+                                        IPS_SetParent($varid, $id);
+                                        IPS_SetVariableCustomProfile($varid, "SNMP_PortMbit");
+                                        IPS_SetDisabled($varid, true);
+
+                                        if(IPS_InstanceExists($ArchivId)){
+                                            AC_SetLoggingStatus($ArchivId, $varid, true);
+                                            IPS_ApplyChanges($ArchivId);
+                                        } 
+
+                                        $instanceID = $varid;
+                                    break;
                                 default:
                                     continue;
                             }
@@ -400,6 +421,54 @@
 
                                     $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
                                     SetValue($instanceID, round($util,1));
+                                    
+                                    // IPS_LogMessage($_IPS['SELF'], "Test-".$oid." (".$instanceID.")".$rdata["Value"]."-". $lastvalue ."|".time()."-". $lastchange);
+
+                                    $this->SetBuffer($instanceID."-lastvalue", $rdata["Value"]);
+                                    $this->SetBuffer($instanceID."-lastchange", time());
+                                break;
+                                case stristr($oid,'PortMbitRX'):
+                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.10." .$port_id); //ifInOctets
+                                    if(!is_array($rdata)) continue;  
+                                    if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
+                                        $this->SetBuffer($Device["instanceID"]."-lastvalue", $rdata["Value"]);
+                                        $this->SetBuffer($Device["instanceID"]."-lastchange", time());
+                                        continue; 
+                                    } 
+                                    if($rdata["Value"] < $lastvalue){
+                                        $spanvalue = (4294967295 - $lastvalue) + $rdata["Value"];
+                                    }else{
+                                        $spanvalue = $rdata["Value"] - $lastvalue;
+                                    }
+                                    $spantime = time() - $lastchange;
+
+                                    $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
+                                    $mbit = ($util / 100) * $speed; 
+                                    SetValue($instanceID, round($mbit,1));
+
+                                    // IPS_LogMessage($_IPS['SELF'], "Test-".$oid." (".$instanceID.")".$rdata["Value"]."-". $lastvalue ."|".time()."-". $lastchange);
+
+                                    $this->SetBuffer($instanceID."-lastvalue", $rdata["Value"]);
+                                    $this->SetBuffer($instanceID."-lastchange", time());
+                                break;
+                                case stristr($oid,'PortMbitTX'):
+                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.16." .$port_id); //ifOutOctets
+                                    if(!is_array($rdata)) continue;  
+                                    if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
+                                        $this->SetBuffer($Device["instanceID"]."-lastvalue", $rdata["Value"]);
+                                        $this->SetBuffer($Device["instanceID"]."-lastchange", time());
+                                        continue; 
+                                    } 
+                                    if($rdata["Value"] < $lastvalue){
+                                        $spanvalue = (4294967295 - $lastvalue) + $rdata["Value"];
+                                    }else{
+                                        $spanvalue = $rdata["Value"] - $lastvalue;
+                                    }
+                                    $spantime = time() - $lastchange;
+
+                                    $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
+                                    $mbit = ($util / 100) * $speed; 
+                                    SetValue($instanceID, round($mbit,1));
                                     
                                     // IPS_LogMessage($_IPS['SELF'], "Test-".$oid." (".$instanceID.")".$rdata["Value"]."-". $lastvalue ."|".time()."-". $lastchange);
 
