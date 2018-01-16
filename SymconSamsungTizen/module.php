@@ -1,7 +1,4 @@
 <?
-    include("websocket_client.php");
-
-    
     // Klassendefinition
     class SamsungTizen extends IPSModule {
         public function __construct($InstanceID) {
@@ -18,7 +15,8 @@
             $this->RegisterPropertyInteger("Sleep", 1000);
 
             $this->RegisterPropertyInteger("VariableOnline", 0);
-            
+            $this->RegisterPropertyInteger("InstanceWebSocket", 0); 
+
 
             //event erstellen
             $this->RegisterTimer("CheckOnline", $this->ReadPropertyInteger("Interval"), 'SamsungTizen_CheckOnline($_IPS[\'TARGET\']);');
@@ -73,7 +71,7 @@
             $varonline = $this->ReadPropertyInteger("VariableOnline");
             if(IPS_VariableExists($varonline) && IPS_GetVariable($varonline)["VariableType"] == 0){
                 $resultat = @$this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => ""))); 
-                IPS_LogMessage("ReceiveData", $resultat);    
+                //IPS_LogMessage("ReceiveData", $resultat);    
                 if($resultat == 1 || $resultat == true){
                     $resultat = true;
                 }else{
@@ -85,7 +83,7 @@
 
         public function ReceiveData($JSONString) {
                $data = json_decode($JSONString);
-               IPS_LogMessage("ReceiveData", utf8_decode($data->Buffer));          
+               //IPS_LogMessage("ReceiveData", utf8_decode($data->Buffer));          
         }
 
         public function GetConfigurationForParent() {
