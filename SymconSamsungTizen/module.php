@@ -61,7 +61,7 @@
             else  
             {  
                 // setting a broadcast option to socket:  
-                $opt_ret = socket_set_option($s, 1, 6, TRUE);  
+                $opt_ret = socket_set_option($s, SOL_SOCKET, SO_REUSEADDR, TRUE);  
                 if($opt_ret < 0)  
                 {  
                     echo "setsockopt() failed, error: " . strerror($opt_ret) . "\n";  
