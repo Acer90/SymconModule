@@ -61,15 +61,16 @@
             else  
             {  
                 // setting a broadcast option to socket:  
-                $opt_ret = socket_set_option($s, 1, SO_BROADCAST, TRUE);  
+                $opt_ret = socket_set_option($socket, SOL_SOCKET, SO_BROADCAST, true);
                 if($opt_ret < 0)  
                 {  
                     echo "setsockopt() failed, error: " . strerror($opt_ret) . "\n";  
                 }  
                 $e = socket_sendto($s, $msg, strlen($msg), 0, $broadcast, 2050);  
                 echo $e; 
-                socket_close($s);  
+                socket_close($s);
                 echo "Magic Packet sent (".$e.") to ".$broadcast.", MAC=".$mac_addr; 
+                
                 return true; 
             } 
 
