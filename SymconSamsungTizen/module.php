@@ -54,8 +54,8 @@
             $s = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);  
             if ($s == false)  
             {  
-                echo "Error creating socket!\n";  
-                echo "Error code is '".socket_last_error($s)."' - " . socket_strerror(socket_last_error($s));  
+                //echo "Error creating socket!\n";  
+                //echo "Error code is '".socket_last_error($s)."' - " . socket_strerror(socket_last_error($s));  
                 return false;
             }  
             else  
@@ -64,12 +64,13 @@
                 $opt_ret = socket_set_option($s, SOL_SOCKET, SO_BROADCAST, true);
                 if($opt_ret < 0)  
                 {  
-                    echo "setsockopt() failed, error: " . strerror($opt_ret) . "\n";  
+                    //echo "setsockopt() failed, error: " . strerror($opt_ret) . "\n";  
+                    return false;
                 }  
                 $e = socket_sendto($s, $msg, strlen($msg), 0, $broadcast, 2050);  
                 echo $e; 
                 socket_close($s);
-                echo "Magic Packet sent (".$e.") to ".$broadcast.", MAC=".$mac_addr; 
+                //echo "Magic Packet sent (".$e.") to ".$broadcast.", MAC=".$mac_addr; 
 
                 return true; 
             } 
