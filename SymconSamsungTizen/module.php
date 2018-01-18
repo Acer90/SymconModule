@@ -107,22 +107,15 @@
         public function CheckOnline(){
             $Intid = $this->InstanceID;
             $varonline = $this->ReadPropertyInteger("VariableOnline");
-            $int_websocket = $this->ReadPropertyInteger("InstanceWebSocket"); 
+            $ipAdress = $this->ReadPropertyString("IPAddress");
 
-            if(IPS_VariableExists($varonline) && IPS_GetVariable($varonline)["VariableType"] == 0){
-                //old Fucntion
-                //$resultat = @$this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => ""))); 
-                $send_str = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
-                $resultat = WSC_SendPing($int_websocket, $send_str);
-                
-                //IPS_LogMessage("ReceiveData", $resultat);    
-                if($resultat == 1 || $resultat == true){
-                    $resultat = true;
-                }else{
-                    $resultat = false;
-                }
-                SetValueBoolean($varonline, $resultat);
-            }
+            if($fp = fsockopen($ipAdress, 8001,$errCode, $errStr, 1)){   
+                SetValueBoolean($varonline, true);
+             } else {
+                SetValueBoolean($varonline, false);
+             } 
+             fclose($fp);
+            
         }
 
         public function ReceiveData($JSONString) {
