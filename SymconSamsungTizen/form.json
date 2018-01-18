@@ -16,7 +16,8 @@
     [
         { "type": "Button", "label": "Wake Up!", "onClick": "SamsungTizen_WakeUp($id);" },
         { "type": "Button", "label": "PowerOff", "onClick": "SamsungTizen_SendKeys($id, 'KEY_POWER');" },
-        { "type": "Button", "label": "Test", "onClick": "echo SamsungTizen_SendKeys($id, 'KEY_1;KEY_2;KEY_3;KEY_ENTER');" }
+        { "type": "Button", "label": "PowerOff", "onClick": "SamsungTizen_TogglePower($id);" },
+        { "type": "Button", "label": "Send 1,2,3,Enter", "onClick": "echo SamsungTizen_SendKeys($id, 'KEY_1;KEY_2;KEY_3;KEY_ENTER');" }
     ],
     "status":
     [

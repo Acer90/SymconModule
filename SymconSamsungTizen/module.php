@@ -284,6 +284,20 @@
             
         }
 
+        public function TogglePower(){
+            $Intid = $this->InstanceID;
+            $varonline = $this->ReadPropertyInteger("VariableOnline");
+
+            if($varonline == 0 || !IPS_VariableExists($varonline)) return false;
+
+            if(GetValueBoolean($varonline) == true){
+                SamsungTizen_SendKeys($Intid, 'KEY_POWER');
+            }else{
+                SamsungTizen_WakeUp($Intid);
+            }
+
+        }
+
         public function ReceiveData($JSONString) {
                $data = json_decode($JSONString);
                //IPS_LogMessage("ReceiveData", utf8_decode($data->Buffer));          
