@@ -5,7 +5,7 @@
             parent::__construct($InstanceID);
         }
 
-        public function Create(){
+        public function Create() {
             parent::Create();
 
             // Modul-Eigenschaftserstellung
@@ -61,32 +61,20 @@
             else  
             {  
                 // setting a broadcast option to socket:  
-                $opt_ret = socket_set_option($s, 1, 6, TRUE);  
+                $opt_ret = socket_set_option($s, SOL_SOCKET, SO_BROADCAST, true);
                 if($opt_ret < 0)  
                 {  
                     //echo "setsockopt() failed, error: " . strerror($opt_ret) . "\n";  
+                    return false;
                 }  
                 $e = socket_sendto($s, $msg, strlen($msg), 0, $broadcast, 2050);  
-                //echo $e; 
-                socket_close($s);  
+                echo $e; 
+                socket_close($s);
                 //echo "Magic Packet sent (".$e.") to ".$broadcast.", MAC=".$mac_addr; 
+
                 return true; 
             } 
-        }
-        
-	    public function WakeUp_Win(){
-            $broadcast = $this->ReadPropertyString("IPAddress");
-            $mac_addr = $this->ReadPropertyString("MACAddress");
-            if (!$fp = fsockopen('udp://' . $broadcast, 2304, $errno, $errstr, 10)) 
-                return false; 
 
-            $mac_hex = preg_replace('=[^a-f0-9]=i', '', $mac_addr); 
-            $mac_bin = pack('H12', $mac_hex); 
-            $data = str_repeat("\xFF", 6) . str_repeat($mac_bin, 16); 
-
-            fputs($fp, $data); 
-            fclose($fp); 
-            return true; 
         }
 
         public function SendKeys(String $keys){
@@ -139,4 +127,3 @@
         }
     }
 ?>
-　
