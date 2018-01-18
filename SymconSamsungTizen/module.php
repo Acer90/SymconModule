@@ -72,7 +72,7 @@
                     $e = socket_sendto($s, $msg, strlen($msg), 0, $broadcast, 2050);  
                     //echo $e; 
                     socket_close($s);  
-                    //echo "Magic Packet sent (".$e.") to ".$addr.", MAC=".$mac;  
+                    echo "Magic Packet sent (".$e.") to ".$addr.", MAC=".$mac;  
                     return true;
                 }  
             }else{
@@ -82,7 +82,7 @@
                 $mac_hex = preg_replace('=[^a-f0-9]=i', '', $mac_addr); 
                 $mac_bin = pack('H12', $mac_hex); 
                 $data = str_repeat("\xFF", 6) . str_repeat($mac_bin, 16); 
-    
+                echo "test";
                 fputs($fp, $data); 
                 fclose($fp); 
                 return true; 
