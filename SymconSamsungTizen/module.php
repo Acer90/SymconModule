@@ -40,7 +40,7 @@
             $broadcast = $this->ReadPropertyString("IPAddress");
             $mac_addr = $this->ReadPropertyString("MACAddress");
 
-            if (substr(IPS_GetKernelDir(),0,1) === "/") 
+            if (false) 
             { 
                 $addr_byte = explode(':', $mac_addr);  
                 $hw_addr = '';  
