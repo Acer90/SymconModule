@@ -5,7 +5,7 @@
             parent::__construct($InstanceID);
         }
 
-        public function Create() {
+        public function Create(){
             parent::Create();
 
             // Modul-Eigenschaftserstellung
@@ -24,22 +24,22 @@
             $this->RegisterTimer("CheckOnline", $this->ReadPropertyInteger("Interval"), 'SamsungTizen_CheckOnline($_IPS[\'TARGET\']);');
             $this->SetStatus(102);
         }
-        　
+
         public function ApplyChanges() {
             // Diese Zeile nicht löschen
             parent::ApplyChanges();
-            　
+
             $this->SetStatus(102);
             $this->SetTimerInterval("CheckOnline", $this->ReadPropertyInteger("Interval")*1000);
-            　
+
             $this->ConnectParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}"); 
             $this->GetConfigurationForParent();
         }
-        　
+
         public function WakeUp(){
             $broadcast = $this->ReadPropertyString("IPAddress");
             $mac_addr = $this->ReadPropertyString("MACAddress");
-            　
+
             $addr_byte = explode(':', $mac_addr);  
             $hw_addr = '';  
             
@@ -73,6 +73,7 @@
                 return true; 
             } 
         }
+        
 	    public function WakeUp_Win(){
             $broadcast = $this->ReadPropertyString("IPAddress");
             $mac_addr = $this->ReadPropertyString("MACAddress");
