@@ -107,13 +107,14 @@
         public function CheckOnline(){
             $Intid = $this->InstanceID;
             $varonline = $this->ReadPropertyInteger("VariableOnline");
+            $ipAdress = $this->ReadPropertyString("IPAddress");
 
-            $fP = fSockOpen($host, $port, $errno, $errstr, $timeout); 
-            if (!$fP) { 
-                SetValueBoolean($varonline, false);
-            }else{
+            if($fp = fsockopen($ipAdress, 8001,$errCode, $errStr, 1)){   
                 SetValueBoolean($varonline, true);
-            } 
+             } else {
+                SetValueBoolean($varonline, false);
+             } 
+             fclose($fp);
             
         }
 
