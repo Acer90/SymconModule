@@ -51,7 +51,7 @@
             
             // send it to the broadcast address using UDP  
             // SQL_BROADCAST option isn't help!!  
-            $s = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);  
+            $s = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP); 
             if ($s == false)  
             {  
                 //echo "Error creating socket!\n";  
@@ -67,7 +67,7 @@
                     //echo "setsockopt() failed, error: " . strerror($opt_ret) . "\n";  
                     return false;
                 }  
-                $e = socket_sendto($s, $msg, strlen($msg), 0, $broadcast, 2050);  
+                $e = socket_sendto($s, $msg, strlen($msg), 0, $broadcast, 9);  
                 echo $e; 
                 socket_close($s);
                 //echo "Magic Packet sent (".$e.") to ".$broadcast.", MAC=".$mac_addr; 
