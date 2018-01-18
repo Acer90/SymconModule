@@ -40,41 +40,54 @@
             $broadcast = $this->ReadPropertyString("IPAddress");
             $mac_addr = $this->ReadPropertyString("MACAddress");
 
-            $addr_byte = explode(':', $mac_addr);  
-            $hw_addr = '';  
-            
-            for ($a=0; $a < 6; $a++) $hw_addr .= chr(hexdec($addr_byte[$a]));  
-            
-            $msg = chr(255).chr(255).chr(255).chr(255).chr(255).chr(255);  
-            
-            for ($a = 1; $a <= 16; $a++) $msg .= $hw_addr;  
-            
-            // send it to the broadcast address using UDP  
-            // SQL_BROADCAST option isn't help!!  
-            $s = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);  
-            if ($s == false)  
-            {  
-                //echo "Error creating socket!\n";  
-                //echo "Error code is '".socket_last_error($s)."' - " . socket_strerror(socket_last_error($s));  
-                return false;
-            }  
-            else  
-            {  
-                // setting a broadcast option to socket:  
-                $opt_ret = socket_set_option($s, SOL_SOCKET, SO_BROADCAST, true);
-                if($opt_ret < 0)  
+            if (substr(IPS_GetKernelDir(),0,1) === "/") 
+            { 
+                $addr_byte = explode(':', $mac_addr);  
+                $hw_addr = '';  
+                
+                for ($a=0; $a < 6; $a++) $hw_addr .= chr(hexdec($addr_byte[$a]));  
+                
+                $msg = chr(255).chr(255).chr(255).chr(255).chr(255).chr(255);  
+                
+                for ($a = 1; $a <= 16; $a++) $msg .= $hw_addr;  
+                
+                // send it to the broadcast address using UDP  
+                // SQL_BROADCAST option isn't help!!  
+                $s = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);  
+                if ($s == false)  
                 {  
-                    //echo "setsockopt() failed, error: " . strerror($opt_ret) . "\n";  
+                    //echo "Error creating socket!\n";  
+                    //echo "Error code is '".socket_last_error($s)."' - " . socket_strerror(socket_last_error($s));  
                     return false;
                 }  
-                $e = socket_sendto($s, $msg, strlen($msg), 0, $broadcast, 2050);  
-                echo $e; 
-                socket_close($s);
-                //echo "Magic Packet sent (".$e.") to ".$broadcast.", MAC=".$mac_addr; 
-
+                else  
+                {  
+                    // setting a broadcast option to socket:  
+                    $opt_ret = socket_set_option($s, 1, 6, TRUE);  
+                    if($opt_ret < 0)  
+                    {  
+                        //echo "setsockopt() failed, error: " . strerror($opt_ret) . "\n";  
+                        return false;
+                    }  
+                    $e = socket_sendto($s, $msg, strlen($msg), 0, $broadcast, 2050);  
+                    //echo $e; 
+                    socket_close($s);  
+                    //echo "Magic Packet sent (".$e.") to ".$addr.", MAC=".$mac;  
+                    return true;
+                }  
+            }else{
+                if (!$fp = fsockopen('udp://' . $broadcast, 2304, $errno, $errstr, 10)) 
+                    return false; 
+    
+                $mac_hex = preg_replace('=[^a-f0-9]=i', '', $mac_addr); 
+                $mac_bin = pack('H12', $mac_hex); 
+                $data = str_repeat("\xFF", 6) . str_repeat($mac_bin, 16); 
+    
+                fputs($fp, $data); 
+                fclose($fp); 
                 return true; 
-            } 
-
+            }
+            
         }
 
         public function SendKeys(String $keys){
