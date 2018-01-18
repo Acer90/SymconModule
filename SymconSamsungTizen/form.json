@@ -12,7 +12,8 @@
     ],
     "actions":
     [
-        { "type": "Button", "label": "WakeUp", "onClick": "SamsungTizen_WakeUp($id);" },
+        { "type": "Button", "label": "WakeUp on Linuxsystem", "onClick": "SamsungTizen_WakeUp($id);" },
+        { "type": "Button", "label": "WakeUp on Windowssystem", "onClick": "SamsungTizen_WakeUp_Win($id);" },
         { "type": "Button", "label": "PowerOff", "onClick": "SamsungTizen_SendKeys($id, 'KEY_POWER');" },
         { "type": "Button", "label": "Test", "onClick": "echo SamsungTizen_SendKeys($id, 'KEY_1;KEY_2;KEY_3;KEY_ENTER');" }
     ],
