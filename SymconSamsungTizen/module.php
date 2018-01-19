@@ -152,7 +152,7 @@
 
                         fclose($socket);
                         unset($socket);
-                        return $sent_fsockopen; // true
+                        return true; // true
                     }
                     else
                     {
