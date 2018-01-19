@@ -86,8 +86,8 @@
             }else{
                 $mac_address = $mac_addr;  // SERVER
                 $addr = $broadcast;              // Adresse aus dem eigenen Segment, Router oder aktueller Rechner sind OK.
-                //$cidr = "24";                        // MASK: 255.255.255.0 ==> 24 (3 Byte * 8 Bit)
-                //$port = "9";  
+                $cidr = "24";                        // MASK: 255.255.255.0 ==> 24 (3 Byte * 8 Bit)
+                $port = "9";  
 
                 // Prepare magic packet: part 1/3 (defined constant)
                 $buf="";
