@@ -43,8 +43,8 @@
             $addr = $this->ReadPropertyString("IPAddress");
             $mac_address = $this->ReadPropertyString("MACAddress");
 
-            $cidr = $this->ReadPropertyInteger("CIDR");                        // MASK: 255.255.255.0 ==> 24 (3 Byte * 8 Bit)
-            $port = $this->ReadPropertyInteger("WoLPort");  
+            $cidr = 24;                        // MASK: 255.255.255.0 ==> 24 (3 Byte * 8 Bit)
+            $port = 9;;  
 
             // Prepare magic packet: part 1/3 (defined constant)
             $buf="";
@@ -54,7 +54,7 @@
             $mac_address=str_replace(":", "-", $mac_address);
             if ((!preg_match("/([A-F0-9]{2}[-]){5}([0-9A-F]){2}/",$mac_address)) || (strlen($mac_address) != 17))
             {
-                $error = "Input error: Pattern of MAC-address is not \"xx-xx-xx-xx-xx-xx\" (x = digit or letter).<br>\n";
+                echo $error = "Input error: Pattern of MAC-address is not \"xx-xx-xx-xx-xx-xx\" (x = digit or letter).<br>\n";
                 return false; // false
             }
             else
