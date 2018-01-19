@@ -17,6 +17,9 @@
             $this->RegisterPropertyInteger("VariableOnline", 0);
             $this->RegisterPropertyInteger("InstanceWebSocket", 0); 
 
+            $this->RegisterPropertyInteger("CIDR", 24);
+            $this->RegisterPropertyInteger("WoLPort", 9); 
+
             $this->ConnectParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}");  
             $this->GetConfigurationForParent();
 
@@ -39,6 +42,11 @@
         public function WakeUp(){
             $broadcast = $this->ReadPropertyString("IPAddress");
             $mac_addr = $this->ReadPropertyString("MACAddress");
+
+            $cidr = $this->ReadPropertyInteger("CIDR");
+            $port = $this->ReadPropertyInteger("WoLPort");
+
+            echo $cidr . "|".$port;
 
             if (false) 
             { 
@@ -78,8 +86,8 @@
             }else{
                 $mac_address = $mac_addr;  // SERVER
                 $addr = $broadcast;              // Adresse aus dem eigenen Segment, Router oder aktueller Rechner sind OK.
-                $cidr = "24";                        // MASK: 255.255.255.0 ==> 24 (3 Byte * 8 Bit)
-                $port = "9";  
+                //$cidr = "24";                        // MASK: 255.255.255.0 ==> 24 (3 Byte * 8 Bit)
+                //$port = "9";  
 
                 // Prepare magic packet: part 1/3 (defined constant)
                 $buf="";
