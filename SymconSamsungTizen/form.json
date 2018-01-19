@@ -10,13 +10,18 @@
         { "type": "IntervalBox", "name": "Interval", "caption": "Sek" },
         { "type": "Label", "label": "Status" },
         { "type": "SelectVariable", "name": "VariableOnline", "caption": "Variable Online" },
-        { "type": "SelectInstance", "name": "InstanceWebSocket", "caption": "Instance Websocket" }
+        { "type": "SelectInstance", "name": "InstanceWebSocket", "caption": "Instance Websocket" },
+        { "type": "Label", "label": "WOL Settings" },
+        { "type": "Label", "label": "Classless Inter-Domain Routing (MASK: 255.255.255.0 ==> 24 (3 Byte * 8 Bit))" },
+        { "type": "NumberSpinner", "name": "CIDR", "caption": "CIDR" },
+        { "type": "NumberSpinner", "name": "WoLPort", "caption": "WoL Port" }
     ],
     "actions":
     [
         { "type": "Button", "label": "Wake Up!", "onClick": "SamsungTizen_WakeUp($id);" },
-        { "type": "Button", "label": "PowerOff", "onClick": "SamsungTizen_SendKeys($id, 'KEY_POWER');" },
-        { "type": "Button", "label": "Test", "onClick": "echo SamsungTizen_SendKeys($id, 'KEY_1;KEY_2;KEY_3;KEY_ENTER');" }
+        { "type": "Button", "label": "Power Off", "onClick": "SamsungTizen_SendKeys($id, 'KEY_POWER');" },
+        { "type": "Button", "label": "Toggle Power", "onClick": "SamsungTizen_TogglePower($id);" },
+        { "type": "Button", "label": "Send 1,2,3,Enter", "onClick": "echo SamsungTizen_SendKeys($id, 'KEY_1;KEY_2;KEY_3;KEY_ENTER');" }
     ],
     "status":
     [
