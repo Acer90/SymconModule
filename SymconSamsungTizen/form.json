@@ -10,7 +10,11 @@
         { "type": "IntervalBox", "name": "Interval", "caption": "Sek" },
         { "type": "Label", "label": "Status" },
         { "type": "SelectVariable", "name": "VariableOnline", "caption": "Variable Online" },
-        { "type": "SelectInstance", "name": "InstanceWebSocket", "caption": "Instance Websocket" }
+        { "type": "SelectInstance", "name": "InstanceWebSocket", "caption": "Instance Websocket" },
+        { "type": "Label", "label": "WOL Settings" },
+        { "type": "Label", "label": "Classless Inter-Domain Routing (MASK: 255.255.255.0 ==> 24 (3 Byte * 8 Bit))" },
+        { "type": "NumberSpinner", "name": "CIDR", "caption": "CIDR" },
+        { "type": "NumberSpinner", "name": "WoLPort", "caption": "WoL Port" }
     ],
     "actions":
     [
