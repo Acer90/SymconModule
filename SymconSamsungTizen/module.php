@@ -141,7 +141,7 @@
             if (function_exists('fsockopen'))
             {
                 // Try fsockopen function - To do: handle error 'Permission denied'
-                $socket=fsockopen("udp://" . $addr, $port, $errno, $errstr);
+                $socket = @fsockopen("udp://" . $addr, $port, $errno, $errstr);
                 if($socket)
                 {
                     $socket_data = fwrite($socket, $buf);
@@ -170,7 +170,7 @@
             // Try socket_create function
             if (function_exists('socket_create'))
             {
-                $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP); // create socket based on IPv4, datagram and UDP
+                $socket = @socket_create(AF_INET, SOCK_DGRAM, SOL_UDP); // create socket based on IPv4, datagram and UDP
                 if($socket)
                 {
                     $level = SOL_SOCKET; // to enable manipulation of options at the socket level (you may have to change this to 1)
