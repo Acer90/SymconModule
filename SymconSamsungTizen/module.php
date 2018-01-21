@@ -239,10 +239,9 @@
             if ($fp === NULL){   
                 SetValueBoolean($varonline, false);
             } else {
-            SetValueBoolean($varonline, true);
+                SetValueBoolean($varonline, true);
+                fclose($fp);
             } 
-            fclose($fp);
-            
         }
 
         public function TogglePower(){
