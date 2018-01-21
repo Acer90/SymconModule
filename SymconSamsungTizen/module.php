@@ -236,12 +236,12 @@
             $ipAdress = $this->ReadPropertyString("IPAddress");
 
             $fp = @fsockopen($ipAdress, 8001,$errCode, $errStr, 1);
-            if ($fp){   
-                SetValueBoolean($varonline, true);
-             } else {
+            if ($fp === NULL){   
                 SetValueBoolean($varonline, false);
-             } 
-             fclose($fp);
+            } else {
+            SetValueBoolean($varonline, true);
+            } 
+            fclose($fp);
             
         }
 
