@@ -192,14 +192,17 @@
                     break;
             } 
 
-            print_r($out);
+            
+            $rdata = [];
+            $i = 0;
+            foreach($out["oid"] as $item){
+                $rdata[$i]["oid"] = $item;
+                $rdata[$i]["type"] = $out["type"][$i];
+                $rdata[$i]["value"] = $out["value"][$i];
 
-            if(!array_key_exists("value", $out) && count($out["value"]) != 3) {
-                $this->SetStatus(203);
-                return "";
+                $i++;
             }
-            return $rdata = array("Type" => $out["value"][1], "Value" => $out["value"][2]);
-            print_r($rdata);
+            return $rdata;
         }
 
         public function WriteSNMP($oid, $value, $type = "str") {
