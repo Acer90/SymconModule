@@ -151,7 +151,7 @@
             print_r($rdata);
         }
 
-        public function WalkSNMP($oid_st) {
+        public function WalkSNMP($oid_st, $oid_end) {
             $Filedir = dirname(__FILE__). "\\bin\\". "SnmpWalk.exe";
             $re = '/(?<typ>.+)=(?<value>.+)/m';
             
@@ -172,7 +172,7 @@
             }else{
                 $SNMPCommunity = $this->ReadPropertyString("SNMPCommunity");
 
-                $Parameters = '-r:' . $SNMPIPAddress.' -p:'.$SNMPPort.' -t:'.$SNMPTimeout.' -c:"'.$SNMPCommunity.'"' .' -os:.' . $oid_st;
+                $Parameters = '-r:' . $SNMPIPAddress.' -p:'.$SNMPPort.' -t:'.$SNMPTimeout.' -c:"'.$SNMPCommunity.'"' .' -os:.' . $oid_st .' -op:.' .$oid_end;
                 $out = IPS_Execute($Filedir , $Parameters, FALSE, TRUE);
             }
 
