@@ -153,7 +153,7 @@
 
         public function WalkSNMP($oid_st, $oid_end) {
             $Filedir = dirname(__FILE__). "\\bin\\". "SnmpWalk.exe";
-            $re = '/(?<typ>.+)=(?<value>.+)/m';
+            $re = '/(?<type>.+)=(?<value>.+)/m';
             
             $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
             $SNMPPort = $this->ReadPropertyInteger("SNMPPort");
