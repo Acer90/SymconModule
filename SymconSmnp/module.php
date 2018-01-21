@@ -150,6 +150,60 @@
             return $rdata = array("Type" => $out["value"][1], "Value" => $out["value"][2]);
             print_r($rdata);
         }
+
+        public function WalkSNMP($oid) {
+            $Filedir = dirname(__FILE__). "\\bin\\". "SnmpWalk.exe";
+            $re = '/(?<typ>.+)=(?<value>.+)/m';
+            
+            $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
+            $SNMPPort = $this->ReadPropertyInteger("SNMPPort");
+            $SNMPTimeout = $this->ReadPropertyInteger("SNMPTimeout");
+            $SNMPVersion = $this->ReadPropertyString("SNMPVersion");
+
+            if($SNMPVersion == "3") {
+                $SNMPSecurityName = $this->ReadPropertyString("SNMPSecurityName");
+                $SNMPAuthenticationProtocol = $this->ReadPropertyString("SNMPAuthenticationProtocol");
+                $SNMPAuthenticationPassword = $this->ReadPropertyString("SNMPAuthenticationPassword");
+                $SNMPPrivacyProtocol = $this->ReadPropertyString("SNMPPrivacyProtocol");
+                $SNMPPrivacyPassword = $this->ReadPropertyString("SNMPPrivacyPassword");
+                $SNMPEngineID = $this->ReadPropertyInteger("SNMPEngineID");
+                $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
+                $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
+            }else{
+                $SNMPCommunity = $this->ReadPropertyString("SNMPCommunity");
+
+                $Parameters = '-r:' . $SNMPIPAddress.' -p:'.$SNMPPort.' -t:'.$SNMPTimeout.' -c:"'.$SNMPCommunity.'"' .' -o:.' . $oid;
+                $out = IPS_Execute($Filedir , $Parameters, FALSE, TRUE);
+            }
+
+            echo $out;
+
+            switch (true){
+                case stristr($out,'%Invalid parameter'):
+                    $this->SetStatus(201);
+                    return '';
+                case stristr($out,'%Failed to get value of SNMP variable. Timeout.'):
+                    $this->SetStatus(205);
+                    return '';
+                case stristr($out,'Variable does not exist'):
+                    IPS_LogMessage($_IPS['SELF'], "Variable does not exist:  OID -> ". $oid);
+                    $this->SetStatus(202);
+                    return '';
+                default:
+                    preg_match_all($re, $out, $out);
+                    break;
+            } 
+
+
+
+            if(!array_key_exists("value", $out) && count($out["value"]) != 3) {
+                $this->SetStatus(203);
+                return "";
+            }
+            return $rdata = array("Type" => $out["value"][1], "Value" => $out["value"][2]);
+            print_r($rdata);
+        }
+
         public function WriteSNMP($oid, $value, $type = "str") {
             $Filedir = dirname(__FILE__). "\\bin\\". "SnmpSet.exe";
 
