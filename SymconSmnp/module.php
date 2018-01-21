@@ -176,8 +176,6 @@
                 $out = IPS_Execute($Filedir , $Parameters, FALSE, TRUE);
             }
 
-            echo $out;
-
             switch (true){
                 case stristr($out,'%Invalid parameter'):
                     $this->SetStatus(201);
@@ -194,7 +192,7 @@
                     break;
             } 
 
-
+            print_r($out);
 
             if(!array_key_exists("value", $out) && count($out["value"]) != 3) {
                 $this->SetStatus(203);
