@@ -235,13 +235,13 @@
             $varonline = $this->ReadPropertyInteger("VariableOnline");
             $ipAdress = $this->ReadPropertyString("IPAddress");
 
-            if($fp = fsockopen($ipAdress, 8001,$errCode, $errStr, 1)){   
-                SetValueBoolean($varonline, true);
-             } else {
+            $fp = @fsockopen($ipAdress, 8001,$errCode, $errStr, 1);
+            if (!isset($fp)){   
                 SetValueBoolean($varonline, false);
-             } 
-             fclose($fp);
-            
+            } else {
+                SetValueBoolean($varonline, true);
+                fclose($fp);
+            } 
         }
 
         public function TogglePower(){
