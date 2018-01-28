@@ -5,7 +5,7 @@
 	"vendor": "",
 	"aliases": 
 	[
-		"IPS SNMP"
+		"IPS Win SNMP Client"
 	],
     "parentRequirements": [],
     "childRequirements": [],

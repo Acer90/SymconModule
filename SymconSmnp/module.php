@@ -1,4 +1,6 @@
 <?
+    require('lib/snmp.php');
+    
     // Klassendefinition
     class IPSSNMP extends IPSModule {
         public function __construct($InstanceID) {
