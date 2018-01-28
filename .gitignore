@@ -1,7 +1,2 @@
 
 .vscode/settings.json
-.vscode/__autoinclude.inc.php
-.vscode/__compatibility.inc.php
-.vscode/__generated.inc.php
-.vscode/__ipsmodule.inc.php
-.vscode/__rpc.inc.php
