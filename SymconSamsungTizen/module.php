@@ -14,14 +14,13 @@
             $this->RegisterPropertyInteger("Interval", 10);
             $this->RegisterPropertyInteger("Sleep", 1000);
 
-            $this->RegisterPropertyInteger("VariableOnline", 0);
-            $this->RegisterPropertyInteger("InstanceWebSocket", 0); 
-
             $this->RegisterPropertyInteger("CIDR", 24);
             $this->RegisterPropertyInteger("WoLPort", 9); 
 
             $this->ConnectParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}");  
             $this->GetConfigurationForParent();
+
+            $this->RegisterVariableBoolean("VariableOnline", "Status", "~Switch", 0);
 
             //event erstellen 
             $this->RegisterTimer("CheckOnline", $this->ReadPropertyInteger("Interval"), 'SamsungTizen_CheckOnline($_IPS[\'TARGET\']);');
@@ -232,21 +231,21 @@
 
         public function CheckOnline(){
             $Intid = $this->InstanceID;
-            $varonline = $this->ReadPropertyInteger("VariableOnline");
+            $varonline = IPS_GetObjectIDByIdent("VariableOnline", $Intid);
             $ipAdress = $this->ReadPropertyString("IPAddress");
 
             $fp = @fsockopen($ipAdress, 8001,$errCode, $errStr, 1);
             if (!isset($fp)){   
-                SetValueBoolean($varonline, false);
+                if(GetValueBoolean($varonline) != false) SetValueBoolean($varonline, false);
             } else {
-                SetValueBoolean($varonline, true);
+                if(GetValueBoolean($varonline) != true) SetValueBoolean($varonline, true);
                 fclose($fp);
             } 
         }
 
         public function TogglePower(){
             $Intid = $this->InstanceID;
-            $varonline = $this->ReadPropertyInteger("VariableOnline");
+            $varonline = IPS_GetObjectIDByIdent("VariableOnline", $Intid);
 
             if($varonline == 0 || !IPS_VariableExists($varonline)) return false;
 
@@ -260,7 +259,7 @@
 
         public function ReceiveData($JSONString) {
                $data = json_decode($JSONString);
-               //IPS_LogMessage("ReceiveData", utf8_decode($data->Buffer));          
+               $this->SendDebug("ReceiveData", utf8_decode($data->Buffer), 0);          
         }
 
         public function GetConfigurationForParent() {
