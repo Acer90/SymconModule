@@ -104,95 +104,64 @@
             $this->SetTimerInterval("SyncData", $this->ReadPropertyInteger("SNMPInterval")*1000);
         }
 
-        public function ReadSNMP($oid) {
-            $Filedir = dirname(__FILE__). "\\bin\\". "SnmpGet.exe";
-            $re = '/(?<typ>.+)=(?<value>.+)/m';
-            
+        public function ReadSNMP($oid_array) {  
+                    
             $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
             $SNMPPort = $this->ReadPropertyInteger("SNMPPort");
             $SNMPTimeout = $this->ReadPropertyInteger("SNMPTimeout");
             $SNMPVersion = $this->ReadPropertyString("SNMPVersion");
+            $SNMPCommunity = $this->ReadPropertyString("SNMPCommunity");
+            $SNMPSecurityName = $this->ReadPropertyString("SNMPSecurityName");
+            $SNMPAuthenticationProtocol = $this->ReadPropertyString("SNMPAuthenticationProtocol");
+            $SNMPAuthenticationPassword = $this->ReadPropertyString("SNMPAuthenticationPassword");
+            $SNMPPrivacyProtocol = $this->ReadPropertyString("SNMPPrivacyProtocol");
+            $SNMPPrivacyPassword = $this->ReadPropertyString("SNMPPrivacyPassword");
+            //$SNMPEngineID = $this->ReadPropertyInteger("SNMPEngineID");
+            //$SNMPContextName = $this->ReadPropertyString("SNMPContextName");
+            //$SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
 
-            if($SNMPVersion == "3") {
-                $SNMPSecurityName = $this->ReadPropertyString("SNMPSecurityName");
-                $SNMPAuthenticationProtocol = $this->ReadPropertyString("SNMPAuthenticationProtocol");
-                $SNMPAuthenticationPassword = $this->ReadPropertyString("SNMPAuthenticationPassword");
-                $SNMPPrivacyProtocol = $this->ReadPropertyString("SNMPPrivacyProtocol");
-                $SNMPPrivacyPassword = $this->ReadPropertyString("SNMPPrivacyPassword");
-                $SNMPEngineID = $this->ReadPropertyInteger("SNMPEngineID");
-                $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
-                $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
-            }else{
-                $SNMPCommunity = $this->ReadPropertyString("SNMPCommunity");
+            
+             
+            $snmp = new snmp();
 
-                $Parameters = '-r:' . $SNMPIPAddress.' -p:'.$SNMPPort.' -t:'.$SNMPTimeout.' -c:"'.$SNMPCommunity.'"' .' -o:.' . $oid;
-                $out = IPS_Execute($Filedir , $Parameters, FALSE, TRUE);
-            }
-
-            switch (true){
-                case stristr($out,'%Invalid parameter'):
-                    $this->SetStatus(201);
-                    return '';
-                case stristr($out,'%Failed to get value of SNMP variable. Timeout.'):
-                    $this->SetStatus(205);
-                    return '';
-                case stristr($out,'Variable does not exist'):
-                    IPS_LogMessage($_IPS['SELF'], "Variable does not exist:  OID -> ". $oid);
-                    $this->SetStatus(202);
-                    return '';
-                default:
-                    preg_match_all($re, $out, $out);
+            switch($SNMPVersion){
+                case "1";
+                    $snmp->version = SNMP_VERSION_1;
+                    $snmp_serverdata = ['community' => $SNMPCommunity];
                     break;
-            } 
-
-            if(!array_key_exists("value", $out) && count($out["value"]) != 3) {
-                $this->SetStatus(203);
-                return "";
+                case "2";
+                    $snmp->version = SNMP_VERSION_2;
+                    $snmp_serverdata = ['community' => $SNMPCommunity];
+                    break;
+                case "2c";
+                    $snmp->version = SNMP_VERSION_2C;
+                    $snmp_serverdata = ['community' => $SNMPCommunity];
+                    break;
+                case "2u";
+                    $snmp->version = SNMP_VERSION_2U;
+                    $snmp_serverdata = ['community' => $SNMPCommunity];
+                    break;
+                case "3";
+                    $snmp->version = SNMP_VERSION_3;
+                    $snmp_serverdata = ['v3_flags'=> SNMP_AUTH_PRIV, 'v3_user'=>$SNMPSecurityName,'v3_auth'=>$SNMPAuthenticationPassword, 'v3_priv'=>$SNMPPrivacyPassword, 'v3_hash'=>$SNMPAuthenticationProtocol, 'v3_crypt_algorithm'=>$SNMPPrivacyProtocol];
+                    break;
             }
-            return $rdata = array("Type" => $out["value"][1], "Value" => $out["value"][2]);
-            print_r($rdata);
+
+            
+            if(is_array($oid_array) || false){
+                $out = $snmp->bulk_get($SNMPIPAddress, $oid_array, ['community' => $SNMPCommunity]);
+            }
+            else{
+                $out = $snmp->get($SNMPIPAddress, $oid_array, ['community' => $SNMPCommunity]);
+            }
+
+            if(!isset($out) || empty($out)){
+                $out = [];
+            }
+            return $out;
         }
 
         public function WalkSNMP($oid_st, $oid_end) {
-            $Filedir = dirname(__FILE__). "\\bin\\". "SnmpWalk.exe";
-            $re = '/^OID.(?<oid>.+).\sType.(?<type>.+).\sValue.\s\s(?<value>.+)$/m';
-            
-            $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
-            $SNMPPort = $this->ReadPropertyInteger("SNMPPort");
-            $SNMPTimeout = $this->ReadPropertyInteger("SNMPTimeout");
-            $SNMPVersion = $this->ReadPropertyString("SNMPVersion");
-
-            if($SNMPVersion == "3") {
-                $SNMPSecurityName = $this->ReadPropertyString("SNMPSecurityName");
-                $SNMPAuthenticationProtocol = $this->ReadPropertyString("SNMPAuthenticationProtocol");
-                $SNMPAuthenticationPassword = $this->ReadPropertyString("SNMPAuthenticationPassword");
-                $SNMPPrivacyProtocol = $this->ReadPropertyString("SNMPPrivacyProtocol");
-                $SNMPPrivacyPassword = $this->ReadPropertyString("SNMPPrivacyPassword");
-                $SNMPEngineID = $this->ReadPropertyInteger("SNMPEngineID");
-                $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
-                $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
-            }else{
-                $SNMPCommunity = $this->ReadPropertyString("SNMPCommunity");
-
-                $Parameters = '-r:' . $SNMPIPAddress.' -p:'.$SNMPPort.' -t:'.$SNMPTimeout.' -c:"'.$SNMPCommunity.'"' .' -os:.' . $oid_st .' -op:.' .$oid_end;
-                $out = IPS_Execute($Filedir , $Parameters, FALSE, TRUE);
-            }
-
-            switch (true){
-                case stristr($out,'%Invalid parameter'):
-                    $this->SetStatus(201);
-                    return '';
-                case stristr($out,'%Failed to get value of SNMP variable. Timeout.'):
-                    $this->SetStatus(205);
-                    return '';
-                case stristr($out,'Variable does not exist'):
-                    IPS_LogMessage($_IPS['SELF'], "Variable does not exist:  OID -> ". $oid);
-                    $this->SetStatus(202);
-                    return '';
-                default:
-                    preg_match_all($re, $out, $out);
-                    break;
-            } 
 
             
             $rdata = [];
@@ -215,43 +184,17 @@
             $SNMPTimeout = $this->ReadPropertyInteger("SNMPTimeout");
             $SNMPVersion = $this->ReadPropertyString("SNMPVersion");
 
-            if($SNMPVersion == "3") {
-                $SNMPSecurityName = $this->ReadPropertyString("SNMPSecurityName");
-                $SNMPAuthenticationProtocol = $this->ReadPropertyString("SNMPAuthenticationProtocol");
-                $SNMPAuthenticationPassword = $this->ReadPropertyString("SNMPAuthenticationPassword");
-                $SNMPPrivacyProtocol = $this->ReadPropertyString("SNMPPrivacyProtocol");
-                $SNMPPrivacyPassword = $this->ReadPropertyString("SNMPPrivacyPassword");
-                $SNMPEngineID = $this->ReadPropertyInteger("SNMPEngineID");
-                $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
-                $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
-            }else{
-                $SNMPCommunity = $this->ReadPropertyString("SNMPCommunity");
+            $SNMPSecurityName = $this->ReadPropertyString("SNMPSecurityName");
+            $SNMPAuthenticationProtocol = $this->ReadPropertyString("SNMPAuthenticationProtocol");
+            $SNMPAuthenticationPassword = $this->ReadPropertyString("SNMPAuthenticationPassword");
+            $SNMPPrivacyProtocol = $this->ReadPropertyString("SNMPPrivacyProtocol");
+            $SNMPPrivacyPassword = $this->ReadPropertyString("SNMPPrivacyPassword");
+            $SNMPEngineID = $this->ReadPropertyInteger("SNMPEngineID");
+            $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
+            $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
 
-                $Parameters = '-r:' . $SNMPIPAddress.' -p:'.$SNMPPort.' -t:'.$SNMPTimeout.' -c:"'.$SNMPCommunity.'"' .' -o:.' . $oid.' -val:'.$value.' -tp:'.$type;
-                $out = IPS_Execute($Filedir , $Parameters, FALSE, TRUE);
-            }
 
-            switch (true){
-                case stristr($out,'%Invalid parameter'):
-                    $this->SetStatus(201);
-                    return FALSE;
-                case stristr($out,'%Failed to get value of SNMP variable. Timeout.'):
-                    $this->SetStatus(103);
-                    return FALSE;
-                case stristr($out,'Variable does not exist'):
-                    $this->SetStatus(202);
-                    IPS_LogMessage($_IPS['SELF'], "Variable does not exist:  OID -> ". $oid);
-                    return FALSE;
-                case stristr($out,'Failed to set value to SNMP variable. Bad value'):
-                    $this->SetStatus(204);
-                    return FALSE;
-                case stristr($out,'OK'):
-                    IPS_LogMessage($_IPS['SELF'], "Change:  ".$oid." -> ". $value. "(".$type.")");
-                    $this->SetStatus(102);
-                    return TRUE;    
-                default:
-                    return FALSE;
-            } 
+            return FALSE;
         }
 
         public function ChangeValue($instance, $value){
@@ -297,8 +240,6 @@
             $id = $this->InstanceID;
             $this->SetStatus(102);
             $DevicesString = $this->ReadPropertyString("Devices");
-            $ArchivId = $this->ReadPropertyInteger("ArchivID");
-            $ScriptID = $this->ReadPropertyInteger("SkriptID");
             $Devices = json_decode($DevicesString, true);
             //print_r($Devices);
             foreach ($Devices as &$Device) {

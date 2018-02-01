@@ -8,7 +8,9 @@
         { "type": "Select", "name": "SNMPVersion", "caption": "Version",
             "options": [
                 { "label": "Version 1", "value": "1" },
+                { "label": "Version 2", "value": "2" },
                 { "label": "Version 2c", "value": "2c" },
+                { "label": "Version 2u", "value": "2u" },
                 { "label": "Version 3", "value": "3" }
         ]},
         { "type": "Label", "label": "SNMP V1/V2 Settings" },
@@ -115,8 +117,8 @@
     ],
     "actions":
     [
-        { "type": "Button", "label": "Test", "onClick": "echo IPSWINSNMP_ReadSNMP($id, '.1.3.6.1.2.1.1.3.0');" },
-        { "type": "Button", "label": "Sync", "onClick": "IPSWINSNMP_SyncData($id);" },
+        { "type": "Button", "label": "Test", "onClick": "print_r(IPSSNMP_ReadSNMP($id, '1.3.6.1.2.1.1.3.0'));" },
+        { "type": "Button", "label": "Sync", "onClick": "IPSSNMP_SyncData($id);" },
         { "type": "Label", "label": "GetPorts" },
         { "type": "CheckBox", "name": "status", "caption": "Load Status" },
         { "type": "CheckBox", "name": "utilization", "caption": "Load utilization" },
