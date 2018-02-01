@@ -166,14 +166,14 @@
 
             
             $rdata = [];
-            $i = 0;
+            /*$i = 0;
             foreach($out["oid"] as $item){
                 $rdata[$i]["oid"] = $item;
                 $rdata[$i]["type"] = $out["type"][$i];
                 $rdata[$i]["value"] = $out["value"][$i];
 
                 $i++;
-            }
+            } */
             return $rdata;
         }
 
@@ -268,7 +268,6 @@
                                         IPS_SetName($varid, $name); 
                                         IPS_SetParent($varid, $id);
                                         IPS_SetVariableCustomProfile($varid, "SNMP_PortStatus_100");
-                                        if(IPS_ScriptExists($ScriptID)) IPS_SetVariableCustomAction($varid, $ScriptID);
 
                                         $instanceID = $varid;
                                     break;
@@ -278,7 +277,6 @@
                                         IPS_SetName($varid, $name); 
                                         IPS_SetParent($varid, $id);
                                         IPS_SetVariableCustomProfile($varid, "SNMP_PortStatus_1000");
-                                        if(IPS_ScriptExists($ScriptID)) IPS_SetVariableCustomAction($varid, $ScriptID);
 
                                         $instanceID = $varid;
                                     break;
@@ -290,11 +288,6 @@
                                         IPS_SetVariableCustomProfile($varid, "SNMP_PortUtilization");
                                         IPS_SetDisabled($varid, true);
 
-                                        if(IPS_InstanceExists($ArchivId)){
-                                            AC_SetLoggingStatus($ArchivId, $varid, true);
-                                            IPS_ApplyChanges($ArchivId);
-                                        } 
-
                                         $instanceID = $varid;
                                     break;
                                 case stristr($oid,'PortMbitRX') || stristr($oid,'PortMbitTX'):
@@ -304,11 +297,6 @@
                                         IPS_SetParent($varid, $id);
                                         IPS_SetVariableCustomProfile($varid, "SNMP_PortMbit");
                                         IPS_SetDisabled($varid, true);
-
-                                        if(IPS_InstanceExists($ArchivId)){
-                                            AC_SetLoggingStatus($ArchivId, $varid, true);
-                                            IPS_ApplyChanges($ArchivId);
-                                        } 
 
                                         $instanceID = $varid;
                                     break;
@@ -575,10 +563,6 @@
                                         case "mWtoW":
                                             $varid = IPS_CreateVariable(2);
                                             IPS_SetVariableCustomProfile($varid, "SNMP_Watt");
-                                            if(IPS_InstanceExists($ArchivId)){
-                                                AC_SetLoggingStatus($ArchivId, $varid, true);
-                                                IPS_ApplyChanges($ArchivId);
-                                            } 
                                         break;
                                         case "switch"  || "switch12":
                                             $varid = IPS_CreateVariable(0);
@@ -628,7 +612,6 @@
                             IPS_SetName($varid, $name); 
                             IPS_SetParent($varid, $id);
                             IPS_SetDisabled($varid, $allow_use);
-                            if($use_action && IPS_ScriptExists($ScriptID)) IPS_SetVariableCustomAction($varid, $ScriptID);
 
                             $Device["instanceID"] = $varid;
                             $Device["var"] = $vartyp;
