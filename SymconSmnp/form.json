@@ -58,9 +58,9 @@
                     "type": "ValidationTextBox"
                 }
             }, {
-                "label": "Type",
+                "label": "Convert",
                 "name": "typ",
-                "width": "50px",
+                "width": "70px",
                 "add": "",
                 "edit": {
                     "type": "Select",
