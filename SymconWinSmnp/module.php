@@ -307,7 +307,17 @@
                 if(IPS_VariableExists($instanceID) && !empty($this->GetBuffer($instanceID."-lastvalue"))) $lastvalue = $this->GetBuffer($instanceID."-lastvalue"); else $lastvalue = 0; 
                 if(IPS_VariableExists($instanceID) && !empty($this->GetBuffer($instanceID."-lastchange"))) $lastchange = $this->GetBuffer($instanceID."-lastchange"); else $lastchange = 0;
                 if(isset($Device["speed"])) $speed = $Device["speed"]; else $speed = 100;
-                
+
+
+                if(IPS_VariableExists($instanceID)){
+                    $obj = IPS_GetObject($instanceID);
+                    if(empty($obj["ObjectIdent"])){
+                        $ident = preg_replace ( '/[^a-z0-9]/i', '', $oid );
+                        IPS_SetIdent($instanceID, $ident);
+                    }
+                }
+
+
                 if(!empty($name) && !empty($oid)){
                     if(stristr($oid,'|')){
                         

@@ -422,7 +422,7 @@
 
                     $strarr = explode("|", $oid);
                     if (count($strarr) < 2) continue;
-                    $port_id = $strarr[1];
+                    $port_id = intval($strarr[1]);
                     if (!is_numeric($port_id)) continue;
 
                     if ($instanceID === false) {
@@ -719,7 +719,7 @@
 
                 }
             }
-            echo 'Total running time in seconds: ' . round((microtime(true) - $time_start)*1000)."ms for ".count($output)." queries";
+            return  'Total running time in seconds: ' . round((microtime(true) - $time_start)*1000)."ms for ".count($output)." queries";
         }
 
         public function GetPorts($status = false, $util = false, $utyp = ""){
@@ -787,7 +787,6 @@
 
             IPS_SetProperty($id, "Devices", json_encode($Devices));
             IPS_ApplyChanges($id);
-
             return "Load Complete! Please restart the Instance-Menu.";
         }
     }
