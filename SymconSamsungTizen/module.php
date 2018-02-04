@@ -235,7 +235,7 @@
             $ipAdress = $this->ReadPropertyString("IPAddress");
 
             $fp = @fsockopen($ipAdress, 8001,$errCode, $errStr, 1);
-            if (!isset($fp)){   
+            if (!$fp){
                 if(GetValueBoolean($varonline) != false) SetValueBoolean($varonline, false);
             } else {
                 if(GetValueBoolean($varonline) != true) SetValueBoolean($varonline, true);
