@@ -231,6 +231,7 @@
             $DevicesString = $this->ReadPropertyString("Devices");
             $Devices = json_decode($DevicesString, true);
             $oid = "";
+            $converter = "";
 
             foreach($Devices as $Device){
                 if (empty($Device["oid"])) continue;
@@ -239,12 +240,51 @@
 
                 if($ident == $obj["ObjectIdent"]) {
                     $oid = $Device["oid"];
+                    $converter = $Device["typ"];
                     break;
                 }
             }
 
             if(empty($oid)){
                 return false;
+            }
+
+            echo $oid;
+
+            //portstatus
+            switch($oid){
+                case stristr($oid,'PortStatus100') || stristr($oid,'PortStatus1000'):
+                    if($value == -1) {
+                        $strarr = explode("|", $oid);
+                        if (count($strarr) < 2) return false;
+                        $port_id = intval($strarr[1]);
+                        if (!is_numeric($port_id)) return false;
+                        $value = 2;
+                        $oid = "1.3.6.1.2.1.2.2.1.7.$port_id";
+                    }else{
+                        $strarr = explode("|", $oid);
+                        if (count($strarr) < 2) return false;
+                        $port_id = intval($strarr[1]);
+                        if (!is_numeric($port_id)) return false;
+                        $value = 1;
+                        $oid = "1.3.6.1.2.1.2.2.1.7.$port_id";
+                    }
+                    break;
+            }
+
+            //converter
+            if(!empty($converter)){
+                switch ($converter){
+                    case "switch":
+                        if($value) $value = 1; else $value = 0;
+                        break;
+                    case "switch12":
+                        if($value) $value = 1; else $value = 2;
+                        break;
+                    case "mWtoW":
+                        $value = (Int)($value * 1000);
+                        break;
+                }
             }
 
             $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
