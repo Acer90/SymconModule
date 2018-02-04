@@ -11,8 +11,7 @@
             parent::Create();
 
             // Modul-Eigenschaftserstellung
-            $this->RegisterPropertyString("SNMPIPAddress", "192.168.178.1"); 
-            $this->RegisterPropertyInteger("SNMPPort", 161);
+            $this->RegisterPropertyString("SNMPIPAddress", "192.168.178.1");
             $this->RegisterPropertyInteger("SNMPTimeout", 1);
             $this->RegisterPropertyInteger("SNMPInterval", 10);
             $this->RegisterPropertyString("SNMPVersion", "2c");
@@ -23,57 +22,23 @@
             $this->RegisterPropertyString("SNMPAuthenticationProtocol", "SHA"); 
             $this->RegisterPropertyString("SNMPAuthenticationPassword", "SomeAuthPass"); 
             $this->RegisterPropertyString("SNMPPrivacyProtocol", "DES"); 
-            $this->RegisterPropertyString("SNMPPrivacyPassword", "SomePrivPass"); 
+            $this->RegisterPropertyString("SNMPPrivacyPassword", "SomePrivPass");
 
-            //$this->RegisterPropertyInteger("SNMPEngineID", "0"); 
-            //$this->RegisterPropertyString("SNMPContextName", ""); 
+            $this->RegisterPropertyInteger("SNMPEngineID", "0");
+            $this->RegisterPropertyString("SNMPContextName", "");
+            $this->RegisterPropertyInteger("SNMPContextEngine", "0");
 
-            //{ "type": "NumberSpinner", "name": "SNMPEngineID", "caption": "Engine ID", "hex": true},
-            //{ "type": "ValidationTextBox", "name": "SNMPContextName", "caption": "Context Name" },
-            //{ "type": "NumberSpinner", "name": "SNMPContextEngine", "caption": "Context Engine", "hex": true},
-
-            $this->RegisterPropertyInteger("SNMPSpeedModify", "1"); 
-
-            $this->RegisterPropertyInteger("ArchivID", "0");
-
-            $this->RegisterPropertyBoolean("status", false); 
-            $this->RegisterPropertyBoolean("utilization", false);
-            $this->RegisterPropertyString("utilizationtyp", ""); 
-
-            //create Skript
-            $script_found = @IPS_GetScriptIDByName("Action Script", $this->InstanceID);
-            if($script_found === FALSE){
-                $ScriptID = IPS_CreateScript(0);
-                IPS_SetName($ScriptID, "Action Script");
-                $data = file_get_contents(dirname(__FILE__). "\\action.php");
-                IPS_SetScriptContent($ScriptID, $data);
-                IPS_SetDisabled($ScriptID, true);
-                IPS_SetHidden($ScriptID, true);
-                IPS_SetParent($ScriptID, $this->InstanceID);
-            }else{
-                $ScriptID = $script_found;
-            }
-            
-
-            $this->RegisterPropertyInteger("SkriptID", $ScriptID);
-
+            $this->RegisterPropertyInteger("SNMPSpeedModify", "1");
             $this->RegisterPropertyString("Devices", ""); 
 
             //event erstellen
-            $this->RegisterTimer("SyncData", $this->ReadPropertyInteger("SNMPInterval"), 'IPSWINSNMP_SyncData($_IPS[\'TARGET\']);');
+            $this->RegisterTimer("SyncData", $this->ReadPropertyInteger("SNMPInterval"), 'IPSSNMP_SyncData($_IPS[\'TARGET\']);');
 
             //Profile erstellen
             if (!IPS_VariableProfileExists("SNMP_Watt")){
                 IPS_CreateVariableProfile("SNMP_Watt", 2);
                 IPS_SetVariableProfileDigits("SNMP_Watt", 1);
                 IPS_SetVariableProfileText("SNMP_Watt", "", "W");
-            }
-            if (!IPS_VariableProfileExists("SNMP_PortStatus_100")){
-                IPS_CreateVariableProfile("SNMP_PortStatus_100", 1);
-                IPS_SetVariableProfileAssociation("SNMP_PortStatus_100", -1, "Offline", "", 0xff0000);
-                IPS_SetVariableProfileAssociation("SNMP_PortStatus_100", 0, "Waiting", "", -1);
-                IPS_SetVariableProfileAssociation("SNMP_PortStatus_100", 10, "10 Mbit", "", 0xffff00);
-                IPS_SetVariableProfileAssociation("SNMP_PortStatus_100", 100, "100 Mbit", "", 0x00cc00);
             }
             if (!IPS_VariableProfileExists("SNMP_PortStatus_1000")){
                 IPS_CreateVariableProfile("SNMP_PortStatus_1000", 1);
@@ -104,10 +69,13 @@
             $this->SetTimerInterval("SyncData", $this->ReadPropertyInteger("SNMPInterval")*1000);
         }
 
-        public function ReadSNMP($oid_array) {  
+        /**
+         * @param $oid_array
+         * @return array|mixed
+         */
+        public function ReadSNMP($oid_array) {
                     
             $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
-            $SNMPPort = $this->ReadPropertyInteger("SNMPPort");
             $SNMPTimeout = $this->ReadPropertyInteger("SNMPTimeout");
             $SNMPVersion = $this->ReadPropertyString("SNMPVersion");
             $SNMPCommunity = $this->ReadPropertyString("SNMPCommunity");
@@ -116,44 +84,42 @@
             $SNMPAuthenticationPassword = $this->ReadPropertyString("SNMPAuthenticationPassword");
             $SNMPPrivacyProtocol = $this->ReadPropertyString("SNMPPrivacyProtocol");
             $SNMPPrivacyPassword = $this->ReadPropertyString("SNMPPrivacyPassword");
-            //$SNMPEngineID = $this->ReadPropertyInteger("SNMPEngineID");
-            //$SNMPContextName = $this->ReadPropertyString("SNMPContextName");
-            //$SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
-
-            //upload test
-            
+            $SNMPEngineID = $this->ReadPropertyInteger("SNMPEngineID");
+            $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
+            $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
              
             $snmp = new snmp();
+            $snmp_sdata = array();
+            $snmp->timeout = $SNMPTimeout;
 
             switch($SNMPVersion){
                 case "1";
                     $snmp->version = SNMP_VERSION_1;
-                    $snmp_serverdata = ['community' => $SNMPCommunity];
+                    $snmp_sdata = ['community' => $SNMPCommunity];
                     break;
                 case "2";
                     $snmp->version = SNMP_VERSION_2;
-                    $snmp_serverdata = ['community' => $SNMPCommunity];
+                    $snmp_sdata = ['community' => $SNMPCommunity];
                     break;
                 case "2c";
                     $snmp->version = SNMP_VERSION_2C;
-                    $snmp_serverdata = ['community' => $SNMPCommunity];
+                    $snmp_sdata = ['community' => $SNMPCommunity];
                     break;
                 case "2u";
                     $snmp->version = SNMP_VERSION_2U;
-                    $snmp_serverdata = ['community' => $SNMPCommunity];
+                    $snmp_sdata = ['community' => $SNMPCommunity];
                     break;
                 case "3";
                     $snmp->version = SNMP_VERSION_3;
-                    $snmp_serverdata = ['v3_flags'=> SNMP_AUTH_PRIV, 'v3_user'=>$SNMPSecurityName,'v3_auth'=>$SNMPAuthenticationPassword, 'v3_priv'=>$SNMPPrivacyPassword, 'v3_hash'=>$SNMPAuthenticationProtocol, 'v3_crypt_algorithm'=>$SNMPPrivacyProtocol];
+                    $snmp_sdata = ['v3_flags'=> SNMP_AUTH_PRIV, 'v3_user'=>$SNMPSecurityName,'v3_auth'=>$SNMPAuthenticationPassword, 'v3_priv'=>$SNMPPrivacyPassword, 'v3_hash'=>$SNMPAuthenticationProtocol, 'v3_crypt_algorithm'=>$SNMPPrivacyProtocol, 'v3_engine_id'=>$SNMPEngineID, 'v3_context_engine_id'=>$SNMPContextEngine, 'v3_context_name'=>$SNMPContextName];
                     break;
             }
 
-            
-            if(is_array($oid_array) || false){
-                $out = $snmp->bulk_get($SNMPIPAddress, $oid_array, ['community' => $SNMPCommunity]);
+            if(is_array($oid_array)){
+                $out = $snmp->bulk_get($SNMPIPAddress, $oid_array, $snmp_sdata);
             }
             else{
-                $out = $snmp->get($SNMPIPAddress, $oid_array, ['community' => $SNMPCommunity]);
+                $out = $snmp->get($SNMPIPAddress, $oid_array, $snmp_sdata);
             }
 
             if(!isset($out) || empty($out)){
@@ -162,29 +128,12 @@
             return $out;
         }
 
-        public function WalkSNMP($oid_st, $oid_end) {
-
-            
-            $rdata = [];
-            /*$i = 0;
-            foreach($out["oid"] as $item){
-                $rdata[$i]["oid"] = $item;
-                $rdata[$i]["type"] = $out["type"][$i];
-                $rdata[$i]["value"] = $out["value"][$i];
-
-                $i++;
-            } */
-            return $rdata;
-        }
-
-        public function WriteSNMP($oid, $value, $type = "str") {
-            $Filedir = dirname(__FILE__). "\\bin\\". "SnmpSet.exe";
+        public function WalkSNMP($oid) {
 
             $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
-            $SNMPPort = $this->ReadPropertyInteger("SNMPPort");
             $SNMPTimeout = $this->ReadPropertyInteger("SNMPTimeout");
             $SNMPVersion = $this->ReadPropertyString("SNMPVersion");
-
+            $SNMPCommunity = $this->ReadPropertyString("SNMPCommunity");
             $SNMPSecurityName = $this->ReadPropertyString("SNMPSecurityName");
             $SNMPAuthenticationProtocol = $this->ReadPropertyString("SNMPAuthenticationProtocol");
             $SNMPAuthenticationPassword = $this->ReadPropertyString("SNMPAuthenticationPassword");
@@ -194,451 +143,584 @@
             $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
             $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
 
+            $snmp = new snmp();
+            $snmp_sdata = array();
+            $snmp->timeout = $SNMPTimeout;
 
-            return FALSE;
+            switch($SNMPVersion){
+                case "1";
+                    $snmp->version = SNMP_VERSION_1;
+                    $snmp_sdata = ['community' => $SNMPCommunity];
+                    break;
+                case "2";
+                    $snmp->version = SNMP_VERSION_2;
+                    $snmp_sdata = ['community' => $SNMPCommunity];
+                    break;
+                case "2c";
+                    $snmp->version = SNMP_VERSION_2C;
+                    $snmp_sdata = ['community' => $SNMPCommunity];
+                    break;
+                case "2u";
+                    $snmp->version = SNMP_VERSION_2U;
+                    $snmp_sdata = ['community' => $SNMPCommunity];
+                    break;
+                case "3";
+                    $snmp->version = SNMP_VERSION_3;
+                    $snmp_sdata = ['v3_flags'=> SNMP_AUTH_PRIV, 'v3_user'=>$SNMPSecurityName,'v3_auth'=>$SNMPAuthenticationPassword, 'v3_priv'=>$SNMPPrivacyPassword, 'v3_hash'=>$SNMPAuthenticationProtocol, 'v3_crypt_algorithm'=>$SNMPPrivacyProtocol, 'v3_engine_id'=>$SNMPEngineID, 'v3_context_engine_id'=>$SNMPContextEngine, 'v3_context_name'=>$SNMPContextName];
+                    break;
+            }
+
+            $out = $snmp->walk($SNMPIPAddress, $oid, $snmp_sdata);
+            return $out;
         }
 
-        public function ChangeValue($instance, $value){
+        public function WriteSNMPbyOID($oid, $value, $type) {
+            $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
+            $SNMPTimeout = $this->ReadPropertyInteger("SNMPTimeout");
+            $SNMPVersion = $this->ReadPropertyString("SNMPVersion");
+            $SNMPCommunity = $this->ReadPropertyString("SNMPCommunity");
+            $SNMPSecurityName = $this->ReadPropertyString("SNMPSecurityName");
+            $SNMPAuthenticationProtocol = $this->ReadPropertyString("SNMPAuthenticationProtocol");
+            $SNMPAuthenticationPassword = $this->ReadPropertyString("SNMPAuthenticationPassword");
+            $SNMPPrivacyProtocol = $this->ReadPropertyString("SNMPPrivacyProtocol");
+            $SNMPPrivacyPassword = $this->ReadPropertyString("SNMPPrivacyPassword");
+            $SNMPEngineID = $this->ReadPropertyInteger("SNMPEngineID");
+            $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
+            $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
+
+            $snmp = new snmp();
+            $snmp_sdata = array();
+            $snmp->timeout = $SNMPTimeout;
+
+            switch($SNMPVersion){
+                case "1";
+                    $snmp->version = SNMP_VERSION_1;
+                    $snmp_sdata = ['community' => $SNMPCommunity];
+                    break;
+                case "2";
+                    $snmp->version = SNMP_VERSION_2;
+                    $snmp_sdata = ['community' => $SNMPCommunity];
+                    break;
+                case "2c";
+                    $snmp->version = SNMP_VERSION_2C;
+                    $snmp_sdata = ['community' => $SNMPCommunity];
+                    break;
+                case "2u";
+                    $snmp->version = SNMP_VERSION_2U;
+                    $snmp_sdata = ['community' => $SNMPCommunity];
+                    break;
+                case "3";
+                    $snmp->version = SNMP_VERSION_3;
+                    $snmp_sdata = ['v3_flags'=> SNMP_AUTH_PRIV, 'v3_user'=>$SNMPSecurityName,'v3_auth'=>$SNMPAuthenticationPassword, 'v3_priv'=>$SNMPPrivacyPassword, 'v3_hash'=>$SNMPAuthenticationProtocol, 'v3_crypt_algorithm'=>$SNMPPrivacyProtocol, 'v3_engine_id'=>$SNMPEngineID, 'v3_context_engine_id'=>$SNMPContextEngine, 'v3_context_name'=>$SNMPContextName];
+                    break;
+            }
+
+            $snmp->set($SNMPIPAddress, $oid, $value, $type, $snmp_sdata);
+            return true;
+        }
+
+        public function WriteSNMPbyVarID($varid, $value, $type)
+        {
+            if(!is_numeric($varid)){
+                return false;
+            }
+            $obj = IPS_GetObject($varid);
+            if($obj == false || !array_key_exists("ObjectIdent",$obj)){
+                return false;
+            }
+
             $DevicesString = $this->ReadPropertyString("Devices");
             $Devices = json_decode($DevicesString, true);
-            $id = $this->InstanceID;
+            $oid = "";
 
-            $key = array_search($instance, array_column($Devices, 'instanceID'));
-            if(is_null($key)) return FALSE;
-            if(stristr($Devices[$key]["oid"],'|')){
-                $strarr = explode("|", $Devices[$key]["oid"]);
-                if(count($strarr) < 2) return FALSE;
-                $port_id = $strarr[1];
-                if(!is_numeric($port_id)) return FALSE;
+            foreach($Devices as $Device){
+                if (empty($Device["oid"])) continue;
 
-                switch($Devices[$key]["oid"]){
-                    case stristr($Devices[$key]["oid"],'PortStatus100') || stristr($Devices[$key]["oid"],'PortStatus1000'):
-                            if($value == -1){
-                                return IPSWINSNMP_WriteSNMP($id, "1.3.6.1.2.1.2.2.1.7." .$port_id, 2, $Devices[$key]["var"]);
-                            }else{
-                                return IPSWINSNMP_WriteSNMP($id, "1.3.6.1.2.1.2.2.1.7." .$port_id, 1, $Devices[$key]["var"]);
-                            }
-                        break;
-                }
-            }else{
-                switch ($Devices[$key]["typ"]){
-                    case "switch":
-                        if($value) $value = 1; else $value = 0;
-                        return IPSWINSNMP_WriteSNMP($id, $Devices[$key]["oid"], $value, $Devices[$key]["var"]);
-                    case "switch12":
-                        if($value) $value = 1; else $value = 2;
-                        return IPSWINSNMP_WriteSNMP($id, $Devices[$key]["oid"], $value, $Devices[$key]["var"]);
-                    case "mWtoW":
-                        $value = (Int)($value * 1000);
-                        return IPSWINSNMP_WriteSNMP($id, $Devices[$key]["oid"], $value, $Devices[$key]["var"]);
-                    default:
-                        return IPSWINSNMP_WriteSNMP($id, $Devices[$key]["oid"], $value, $Devices[$key]["var"]);
+                $ident = preg_replace ( '/[^a-z0-9]/i', '', $Device["oid"]);
+
+                if($ident == $obj["ObjectIdent"]) {
+                    $oid = $Device["oid"];
+                    break;
                 }
             }
+
+            if(empty($oid)){
+                return false;
+            }
+
+            $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
+            $SNMPTimeout = $this->ReadPropertyInteger("SNMPTimeout");
+            $SNMPVersion = $this->ReadPropertyString("SNMPVersion");
+            $SNMPCommunity = $this->ReadPropertyString("SNMPCommunity");
+            $SNMPSecurityName = $this->ReadPropertyString("SNMPSecurityName");
+            $SNMPAuthenticationProtocol = $this->ReadPropertyString("SNMPAuthenticationProtocol");
+            $SNMPAuthenticationPassword = $this->ReadPropertyString("SNMPAuthenticationPassword");
+            $SNMPPrivacyProtocol = $this->ReadPropertyString("SNMPPrivacyProtocol");
+            $SNMPPrivacyPassword = $this->ReadPropertyString("SNMPPrivacyPassword");
+            $SNMPEngineID = $this->ReadPropertyInteger("SNMPEngineID");
+            $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
+            $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
+
+            $snmp = new snmp();
+            $snmp_sdata = array();
+            $snmp->timeout = $SNMPTimeout;
+
+            switch ($SNMPVersion) {
+                case "1";
+                    $snmp->version = SNMP_VERSION_1;
+                    $snmp_sdata = ['community' => $SNMPCommunity];
+                    break;
+                case "2";
+                    $snmp->version = SNMP_VERSION_2;
+                    $snmp_sdata = ['community' => $SNMPCommunity];
+                    break;
+                case "2c";
+                    $snmp->version = SNMP_VERSION_2C;
+                    $snmp_sdata = ['community' => $SNMPCommunity];
+                    break;
+                case "2u";
+                    $snmp->version = SNMP_VERSION_2U;
+                    $snmp_sdata = ['community' => $SNMPCommunity];
+                    break;
+                case "3";
+                    $snmp->version = SNMP_VERSION_3;
+                    $snmp_sdata = ['v3_flags'=> SNMP_AUTH_PRIV, 'v3_user'=>$SNMPSecurityName,'v3_auth'=>$SNMPAuthenticationPassword, 'v3_priv'=>$SNMPPrivacyPassword, 'v3_hash'=>$SNMPAuthenticationProtocol, 'v3_crypt_algorithm'=>$SNMPPrivacyProtocol, 'v3_engine_id'=>$SNMPEngineID, 'v3_context_engine_id'=>$SNMPContextEngine, 'v3_context_name'=>$SNMPContextName];
+                    break;
+            }
+
+            $snmp->set($SNMPIPAddress, $oid, $value, $type, $snmp_sdata);
+            return true;
         }
 
-        public function SyncData(){
+        public function SyncData()
+        {
+            $time_start = microtime(true);
             $id = $this->InstanceID;
             $this->SetStatus(102);
             $DevicesString = $this->ReadPropertyString("Devices");
             $Devices = json_decode($DevicesString, true);
-            //print_r($Devices);
+
+            //Read Data from SNMP Server
+
+            $oids = [];
+            $i = 0;
+            $output = [];
+
             foreach ($Devices as &$Device) {
-                $instanceID = $Device["instanceID"];
-                $name = $Device["name"];
                 $oid = $Device["oid"];
-                $typ = $Device["typ"];
-                if(IPS_VariableExists($instanceID) && !empty($this->GetBuffer($instanceID."-lastvalue"))) $lastvalue = $this->GetBuffer($instanceID."-lastvalue"); else $lastvalue = 0; 
-                if(IPS_VariableExists($instanceID) && !empty($this->GetBuffer($instanceID."-lastchange"))) $lastchange = $this->GetBuffer($instanceID."-lastchange"); else $lastchange = 0;
-                if(isset($Device["speed"])) $speed = $Device["speed"]; else $speed = 100;
-                
-                if(!empty($name) && !empty($oid)){
-                    if(stristr($oid,'|')){
-                        
-                        $strarr = explode("|", $oid);
-                        if(count($strarr) < 2) continue;
-                        $port_id = $strarr[1];
-                        if(!is_numeric($port_id)) continue;
 
-                        if(!IPS_VariableExists($instanceID)){
-                            switch($oid){
-                                case stristr($oid,'PortStatus100') && !stristr($oid,'PortStatus1000'):
-                                        $varid = IPS_CreateVariable(1);
-                                        $vartyp = "int";
-                                        IPS_SetName($varid, $name); 
-                                        IPS_SetParent($varid, $id);
-                                        IPS_SetVariableCustomProfile($varid, "SNMP_PortStatus_100");
 
-                                        $instanceID = $varid;
-                                    break;
-                                case stristr($oid,'PortStatus1000'):
-                                        $varid = IPS_CreateVariable(1);
-                                        $vartyp = "int";
-                                        IPS_SetName($varid, $name); 
-                                        IPS_SetParent($varid, $id);
-                                        IPS_SetVariableCustomProfile($varid, "SNMP_PortStatus_1000");
+                if ($i > 50) {
+                    $output = $output + IPSSNMP_ReadSNMP($id, $oids);
+                    $oids = [];
+                    $i = 0;
+                }
 
-                                        $instanceID = $varid;
-                                    break;
-                                case stristr($oid,'PortUtilizationRX') || stristr($oid,'PortUtilizationTX') || stristr($oid,'PortUtilizationTRX') || stristr($oid,'PortUtilizationFD-TRX'):
-                                        $varid = IPS_CreateVariable(2);
-                                        $vartyp = "int";
-                                        IPS_SetName($varid, $name); 
-                                        IPS_SetParent($varid, $id);
-                                        IPS_SetVariableCustomProfile($varid, "SNMP_PortUtilization");
-                                        IPS_SetDisabled($varid, true);
 
-                                        $instanceID = $varid;
-                                    break;
-                                case stristr($oid,'PortMbitRX') || stristr($oid,'PortMbitTX'):
-                                        $varid = IPS_CreateVariable(2);
-                                        $vartyp = "int";
-                                        IPS_SetName($varid, $name); 
-                                        IPS_SetParent($varid, $id);
-                                        IPS_SetVariableCustomProfile($varid, "SNMP_PortMbit");
-                                        IPS_SetDisabled($varid, true);
+                if (stristr($oid, '|')) {
 
-                                        $instanceID = $varid;
-                                    break;
-                                default:
-                                    continue;
+                    $strarr = explode("|", $oid);
+                    if (count($strarr) < 2) continue;
+                    $port_id = $strarr[1];
+                    if (!is_numeric($port_id)) continue;
+
+                    switch ($oid) {
+                        case stristr($oid, 'PortStatus100') || stristr($oid, 'PortStatus1000'):
+                            $add_oid = ".1.3.6.1.2.1.2.2.1.7." . ($port_id - 1);
+                            if (!in_array($add_oid, $oids)) {
+                                $oids[] = $add_oid;
+                                $i++;
                             }
-                            $Device["instanceID"] = $varid;
-                            $Device["var"] = $vartyp;
+                            $add_oid = ".1.3.6.1.2.1.2.2.1.8." . ($port_id - 1);
+                            if (!in_array($add_oid, $oids)) {
+                                $oids[] = $add_oid;
+                                $i++;
+                            }
+                            $add_oid = ".1.3.6.1.2.1.2.2.1.5." . ($port_id - 1);
+                            if (!in_array($add_oid, $oids)) {
+                                $oids[] = $add_oid;
+                                $i++;
+                            }
+                            break;
+                        case stristr($oid, 'PortUtilizationRX') || stristr($oid, 'PortMbitRX'):
+                            $add_oid = ".1.3.6.1.2.1.2.2.1.10." . ($port_id - 1);
+                            if (!in_array($add_oid, $oids)) {
+                                $oids[] = $add_oid;
+                                $i++;
+                            }
+                            break;
+                        case stristr($oid, 'PortUtilizationTX') || stristr($oid, 'PortMbitTX'):
+                            $add_oid = ".1.3.6.1.2.1.2.2.1.16." . ($port_id - 1);
+                            if (!in_array($add_oid, $oids)) {
+                                $oids[] = $add_oid;
+                                $i++;
+                            }
+                            break;
+                        case stristr($oid, 'PortUtilizationTRX') || stristr($oid, 'PortUtilizationFD-TRX'):
+                            $add_oid = ".1.3.6.1.2.1.2.2.1.10." . ($port_id - 1);
+                            if (!in_array($add_oid, $oids)) {
+                                $oids[] = $add_oid;
+                                $i++;
+                            }
+                            $add_oid = ".1.3.6.1.2.1.2.2.1.16." . ($port_id - 1);
+                            if (!in_array($add_oid, $oids)) {
+                                $oids[] = $add_oid;
+                                $i++;
+                            }
+                            break;
+                            break;
+                        default:
+                            continue;
+                    }
+                } else {
+                    $add_oid = $oid;
+                    if ($add_oid[0] != ".") $add_oid = "." . $add_oid;
 
-                            IPS_SetProperty($id, "Devices", json_encode($Devices));
-                            IPS_ApplyChanges($id);
+                    $oid_split = explode(".",$add_oid);
+                    $last_id = $oid_split[count($oid_split)-1];
+
+                    if($last_id == 0){
+                        $add_oid = substr($add_oid, 0, -2);
+                    }else{
+                        //edit last ID
+                        $c = -2;
+                        While(true){
+                            $last_char = substr($add_oid, $c);
+
+                            if (strpos($last_char, '.') !== false) {
+                                #conatins "."
+                                $add_oid = substr($add_oid, 0, $c) .".".($last_id-1);
+                                break;
+                            }
+
+                            $c--;
                         }
-                        
-                        switch($oid){
-                            case stristr($oid,'PortStatus100') && !stristr($oid,'PortStatus1000'):
-                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.7." .$port_id); //read is Port Online
-                                    if(!is_array($rdata)) continue;  
-                                    if($rdata["Value"] == 2){
-                                        SetValue($instanceID, -1);
-                                        continue;
-                                    }
-                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.8." .$port_id); //read is Port Used
-                                    if(!is_array($rdata)) continue;  
-                                    if($rdata["Value"] == 2){
-                                        SetValue($instanceID, 0);
-                                        continue;
-                                    }
-                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.5." .$port_id); //read is Port Speed
-                                    if(!is_array($rdata)) continue;
-                                    $value = $rdata["Value"] * $this->ReadPropertyInteger("SNMPSpeedModify");
-                                    switch($value){
-                                        case 10000000:
-                                            SetValue($instanceID, 10);
-                                            break;
-                                        case 100000000:
-                                            SetValue($instanceID, 100);
-                                            break;
-                                        default:
-                                            SetValue($instanceID, -1);
-                                    }  
+                    }
+
+
+                    if (!in_array($add_oid, $oids)) {
+                        $oids[] = $add_oid;
+                        $i++;
+                    }
+                }
+            }
+            $output = $output + IPSSNMP_ReadSNMP($id, $oids);
+            //print_r($output);
+
+            foreach ($Devices as &$Device) {
+                $oid = $Device["oid"];
+                if (empty($oid)) continue;
+
+                $ident = preg_replace ( '/[^a-z0-9]/i', '', $oid );
+                $instanceID = @IPS_GetObjectIDByIdent($ident, $id);
+                $typ = $Device["typ"];
+
+                if (IPS_VariableExists($instanceID) && !empty($this->GetBuffer($instanceID . "-lastvalue"))) $lastvalue = $this->GetBuffer($instanceID . "-lastvalue"); else $lastvalue = 0;
+                if (IPS_VariableExists($instanceID) && !empty($this->GetBuffer($instanceID . "-lastchange"))) $lastchange = $this->GetBuffer($instanceID . "-lastchange"); else $lastchange = 0;
+                if (isset($Device["speed"])) $speed = $Device["speed"]; else $speed = 100;
+
+                if (stristr($oid, '|')) {
+
+                    $strarr = explode("|", $oid);
+                    if (count($strarr) < 2) continue;
+                    $port_id = $strarr[1];
+                    if (!is_numeric($port_id)) continue;
+
+                    if ($instanceID === false) {
+                        switch ($oid) {
+                            case stristr($oid, 'PortStatus100') || stristr($oid, 'PortStatus1000'):
+                                $this->RegisterVariableInteger($ident, $oid, "SNMP_PortStatus_1000");
+                                $instanceID = IPS_GetObjectIDByIdent($ident, $id);
                                 break;
-                                case stristr($oid,'PortStatus1000'):
-                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.7." .$port_id); //read is Port Online
-                                    if(!is_array($rdata)) continue;  
-                                    if($rdata["Value"] == 2){
-                                        SetValue($instanceID, -1);
-                                        continue;
-                                    }
-                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.8." .$port_id); //read is Port Used
-                                    if(!is_array($rdata)) continue;  
-                                    if($rdata["Value"] == 2){
-                                        SetValue($instanceID, 0);
-                                        continue;
-                                    }
-                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.5." .$port_id); //read is Port Speed
-                                    if(!is_array($rdata)) continue;
-                                    $value = $rdata["Value"] * $this->ReadPropertyInteger("SNMPSpeedModify");
-                                    switch($value){
-                                        case 10000000:
-                                            SetValue($instanceID, 10);
-                                            break;
-                                        case 100000000:
-                                            SetValue($instanceID, 100);
-                                            break;
-                                        case 1000000000:
-                                            SetValue($instanceID, 1000);
-                                            break;
-                                        default:
-                                            SetValue($instanceID, -1);
-                                    }  
+                            case stristr($oid, 'PortUtilizationRX') || stristr($oid, 'PortUtilizationTX') || stristr($oid, 'PortUtilizationTRX') || stristr($oid, 'PortUtilizationFD-TRX'):
+                                $this->RegisterVariableFloat($ident, $oid, "SNMP_PortUtilization");
+                                $instanceID = IPS_GetObjectIDByIdent($ident, $id);
                                 break;
-                                case stristr($oid,'PortUtilizationRX'):
-                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.10." .$port_id); //ifInOctets
-                                    if(!is_array($rdata)) continue;  
-                                    if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
-                                        $this->SetBuffer($Device["instanceID"]."-lastvalue", $rdata["Value"]);
-                                        $this->SetBuffer($Device["instanceID"]."-lastchange", time());
-                                        continue; 
-                                    } 
-                                    if($rdata["Value"] < $lastvalue){
-                                        $spanvalue = (4294967295 - $lastvalue) + $rdata["Value"];
-                                    }else{
-                                        $spanvalue = $rdata["Value"] - $lastvalue;
-                                    }
-                                    $spantime = time() - $lastchange;
-
-                                    $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
-                                    SetValue($instanceID, round($util,1));
-
-                                    // IPS_LogMessage($_IPS['SELF'], "Test-".$oid." (".$instanceID.")".$rdata["Value"]."-". $lastvalue ."|".time()."-". $lastchange);
-
-                                    $this->SetBuffer($instanceID."-lastvalue", $rdata["Value"]);
-                                    $this->SetBuffer($instanceID."-lastchange", time());
-                                break;
-                                case stristr($oid,'PortUtilizationTX'):
-                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.16." .$port_id); //ifOutOctets
-                                    if(!is_array($rdata)) continue;  
-                                    if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
-                                        $this->SetBuffer($Device["instanceID"]."-lastvalue", $rdata["Value"]);
-                                        $this->SetBuffer($Device["instanceID"]."-lastchange", time());
-                                        continue; 
-                                    } 
-                                    if($rdata["Value"] < $lastvalue){
-                                        $spanvalue = (4294967295 - $lastvalue) + $rdata["Value"];
-                                    }else{
-                                        $spanvalue = $rdata["Value"] - $lastvalue;
-                                    }
-                                    $spantime = time() - $lastchange;
-
-                                    $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
-                                    SetValue($instanceID, round($util,1));
-                                    
-                                    // IPS_LogMessage($_IPS['SELF'], "Test-".$oid." (".$instanceID.")".$rdata["Value"]."-". $lastvalue ."|".time()."-". $lastchange);
-
-                                    $this->SetBuffer($instanceID."-lastvalue", $rdata["Value"]);
-                                    $this->SetBuffer($instanceID."-lastchange", time());
-                                break;
-                                case stristr($oid,'PortMbitRX'):
-                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.10." .$port_id); //ifInOctets
-                                    if(!is_array($rdata)) continue;  
-                                    if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
-                                        $this->SetBuffer($Device["instanceID"]."-lastvalue", $rdata["Value"]);
-                                        $this->SetBuffer($Device["instanceID"]."-lastchange", time());
-                                        continue; 
-                                    } 
-                                    if($rdata["Value"] < $lastvalue){
-                                        $spanvalue = (4294967295 - $lastvalue) + $rdata["Value"];
-                                    }else{
-                                        $spanvalue = $rdata["Value"] - $lastvalue;
-                                    }
-                                    $spantime = time() - $lastchange;
-
-                                    $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
-                                    $mbit = ($util / 100) * $speed; 
-                                    SetValue($instanceID, round($mbit,1));
-
-                                    // IPS_LogMessage($_IPS['SELF'], "Test-".$oid." (".$instanceID.")".$rdata["Value"]."-". $lastvalue ."|".time()."-". $lastchange);
-
-                                    $this->SetBuffer($instanceID."-lastvalue", $rdata["Value"]);
-                                    $this->SetBuffer($instanceID."-lastchange", time());
-                                break;
-                                case stristr($oid,'PortMbitTX'):
-                                    $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.16." .$port_id); //ifOutOctets
-                                    if(!is_array($rdata)) continue;  
-                                    if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
-                                        $this->SetBuffer($Device["instanceID"]."-lastvalue", $rdata["Value"]);
-                                        $this->SetBuffer($Device["instanceID"]."-lastchange", time());
-                                        continue; 
-                                    } 
-                                    if($rdata["Value"] < $lastvalue){
-                                        $spanvalue = (4294967295 - $lastvalue) + $rdata["Value"];
-                                    }else{
-                                        $spanvalue = $rdata["Value"] - $lastvalue;
-                                    }
-                                    $spantime = time() - $lastchange;
-
-                                    $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
-                                    $mbit = ($util / 100) * $speed; 
-                                    SetValue($instanceID, round($mbit,1));
-                                    
-                                    // IPS_LogMessage($_IPS['SELF'], "Test-".$oid." (".$instanceID.")".$rdata["Value"]."-". $lastvalue ."|".time()."-". $lastchange);
-
-                                    $this->SetBuffer($instanceID."-lastvalue", $rdata["Value"]);
-                                    $this->SetBuffer($instanceID."-lastchange", time());
-                                break;
-                                case stristr($oid,'PortUtilizationTRX'):
-                                    $rdata1 = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.10." .$port_id); //ifInOctets
-                                    $rdata2 = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.16." .$port_id); //ifOutOctets
-                                    if(!is_array($rdata1)) continue;
-                                    if(!is_array($rdata2)) continue;  
-                                    if(empty($lastchange) || empty($lastvalue) || !stristr($lastvalue,'|')){
-                                        $this->SetBuffer($Device["instanceID"]."-lastvalue", $rdata1["Value"] . "|" . $rdata2["Value"]);
-                                        $this->SetBuffer($Device["instanceID"]."-lastchange", time());
-                                        continue;
-                                    } 
-                                    $arrlastvalue = explode("|", $lastvalue);
-                                    if(count($arrlastvalue) < 2) continue;
-
-                                    if($rdata1["Value"] < $arrlastvalue[0]){
-                                        $spanvalue1 = (4294967295 - $arrlastvalue[0]) + $rdata1["Value"];
-                                    }else{
-                                        $spanvalue1 = $rdata1["Value"] - $arrlastvalue[0];
-                                    }
-
-                                    if($rdata2["Value"] < $arrlastvalue[1]){
-                                        $spanvalue2 = (4294967295 - $arrlastvalue[1]) + $rdata2["Value"];
-                                    }else{
-                                        $spanvalue2 = $rdata2["Value"] - $arrlastvalue[1];
-                                    }
-
-                                    $spantime = time() - $lastchange;
-
-                                    $util = ((($spanvalue1 + $spanvalue2) * 8 * 100) / ($spantime * ($speed * 1000000)));
-                                    SetValue($instanceID, round($util,1));
-
-                                    $this->SetBuffer($instanceID."-lastvalue",  $rdata1["Value"] . "|" . $rdata2["Value"]);
-                                    $this->SetBuffer($instanceID."-lastchange", time());
-                                break;
-                                case stristr($oid,'PortUtilizationFD-TRX'):
-                                    $rdata1 = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.10." .$port_id); //ifInOctets
-                                    $rdata2 = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.16." .$port_id); //ifOutOctets
-                                    if(!is_array($rdata1)) continue;
-                                    if(!is_array($rdata2)) continue;  
-                                    if(empty($lastchange) || empty($lastvalue) || !stristr($lastvalue,'|')){
-                                        $this->SetBuffer($Device["instanceID"]."-lastvalue", $rdata1["Value"] . "|" . $rdata2["Value"]);
-                                        $this->SetBuffer($Device["instanceID"]."-lastchange", time());
-                                        continue;
-                                    } 
-                                    $arrlastvalue = explode("|", $lastvalue);
-                                    if(count($arrlastvalue) < 2) continue;
-
-                                    if($rdata1["Value"] < $arrlastvalue[0]){
-                                        $spanvalue1 = (4294967295 - $arrlastvalue[0]) + $rdata1["Value"];
-                                    }else{
-                                        $spanvalue1 = $rdata1["Value"] - $arrlastvalue[0];
-                                    }
-
-                                    if($rdata2["Value"] < $arrlastvalue[1]){
-                                        $spanvalue2 = (4294967295 - $arrlastvalue[1]) + $rdata2["Value"];
-                                    }else{
-                                        $spanvalue2 = $rdata2["Value"] - $arrlastvalue[1];
-                                    }
-
-                                    $spantime = time() - $lastchange;
-
-                                    $util = ((max($spanvalue1, $spanvalue2) * 8 * 100) / ($spantime * ($speed * 1000000)));
-                                    SetValue($instanceID, round($util,1));
-
-                                    $this->SetBuffer($instanceID."-lastvalue",  $rdata1["Value"] . "|" . $rdata2["Value"]);
-                                    $this->SetBuffer($instanceID."-lastchange", time());
+                            case stristr($oid, 'PortMbitRX') || stristr($oid, 'PortMbitTX'):
+                                $this->RegisterVariableFloat($ident, $oid, "SNMP_PortMbit");
+                                $instanceID = IPS_GetObjectIDByIdent($ident, $id);
                                 break;
                             default:
                                 continue;
                         }
-                    }else{
-                        $rdata = IPSWINSNMP_ReadSNMP($id, $oid);
+                    }
 
-                        if(!is_array($rdata)) continue;
-                        if(!IPS_VariableExists($instanceID)){
-                            $vartyp = "";
-                            $varid = 0;
-                            $allow_use = false;
-                            $use_action = false;
-                            
-                            switch (true){
-                                case stristr($rdata["Type"],'NsapAddress'):
-                                    //Boolean anlegen
-                                    $varid = IPS_CreateVariable(3);
-                                    $vartyp = "str";
+                    switch($oid){
+                        case stristr($oid,'PortStatus100') || stristr($oid,'PortStatus1000'):
+                            $search_oid = ".1.3.6.1.2.1.2.2.1.7." . $port_id;
+                            if(!array_key_exists($search_oid, $output)) continue;
+                            if($output[$search_oid] == 2){
+                                SetValue($instanceID, -1);
+                                $this->SendDebug("SetValue",  $oid." (".$instanceID.") => -1", 0);
+                                continue;
+                            }
+                            $search_oid = ".1.3.6.1.2.1.2.2.1.8." . $port_id;
+                            if(!array_key_exists($search_oid, $output)) continue;
+                            if($output[$search_oid] == 2){
+                                SetValue($instanceID, 0);
+                                $this->SendDebug("SetValue",  $oid." (".$instanceID.") => 0", 0);
+                                continue;
+                            }
+                            $search_oid = ".1.3.6.1.2.1.2.2.1.5." . $port_id;
+                            if(!array_key_exists($search_oid, $output)) continue;
+                            $value = $output[$search_oid] * $this->ReadPropertyInteger("SNMPSpeedModify");
+                            $svalue = -1;
+                            switch($value){
+                                case 10000000:
+                                    $svalue = 10;
                                     break;
-                                case stristr($rdata["Type"],'IpAddress'):
-                                    //Boolean anlegen
-                                    $varid = IPS_CreateVariable(3);
-                                    $vartyp = "ip";
+                                case 100000000:
+                                    $svalue = 100;
                                     break;
-                                case stristr($rdata["Type"],'Bit String'):
-                                    //Boolean anlegen
-                                    $varid = IPS_CreateVariable(3);
-                                    $vartyp = "hex";
+                                case 1000000000:
+                                    $svalue = 1000;
                                     break;
-                                case stristr($rdata["Type"],'Integer') && !stristr($typ,'UInteger'):
-                                    //Integer anlegen
-                                    switch($typ){
-                                        case "mWtoW":
-                                            $varid = IPS_CreateVariable(2);
-                                            IPS_SetVariableCustomProfile($varid, "SNMP_Watt");
-                                        break;
-                                        case "switch"  || "switch12":
-                                            $varid = IPS_CreateVariable(0);
-                                            IPS_SetVariableCustomProfile($varid, "~Switch");
-                                            $allow_use = true;
-                                            $use_action = true;
-                                        break;
-                                        default:
-                                            $varid = IPS_CreateVariable(1);
-                                        break;
-                                    }
-                                    $vartyp = "int";
-                                    break;
-                                case stristr($rdata["Type"],'Gauge'):
-                                    //Integer anlegen
-                                    $varid = IPS_CreateVariable(1);
-                                    $vartyp = "uint";
-                                    break;
-                                case stristr($rdata["Type"],'Counter'):
-                                    //Integer anlegen
-                                    $varid = IPS_CreateVariable(1);
-                                    $vartyp = "int";
-                                    break;
-                                case stristr($rdata["Type"],'UInteger'):
-                                    //Integer anlegen
-                                    $varid = IPS_CreateVariable(1);
-                                    $vartyp = "uint";
-                                    break;
-                                case stristr($rdata["Type"],'Object Identifier'):
-                                    //Integer anlegen
-                                    $varid = IPS_CreateVariable(1);
-                                    $vartyp = "oid";
-                                    break;
-                                case stristr($rdata["Type"],'TimeTicks'):
-                                    //Float anlegen
-                                    $varid = IPS_CreateVariable(3);
-                                    $vartyp = "uint";
-                                    break;
-                                case stristr($rdata["Type"],'Octet String'):
-                                    //Float anlegen
-                                    $varid = IPS_CreateVariable(3);
-                                    $vartyp = "str";
-                                    break;
+                                default:
+                                    $svalue = -1;
+                            }
+                            SetValue($instanceID, $svalue);
+
+                            $this->SendDebug("SetValue",  $oid." (".$instanceID.") =>".$svalue, 0);
+                            break;
+                        case stristr($oid,'PortUtilizationRX'):
+                            $search_oid = ".1.3.6.1.2.1.2.2.1.10." . $port_id;
+                            if(!array_key_exists($search_oid, $output)) continue;
+
+                            if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
+                                $this->SetBuffer($instanceID."-lastvalue", $output[$search_oid]);
+                                $this->SetBuffer($instanceID."-lastchange", time());
+                                continue;
                             }
 
-                            if(empty($vartyp) || $varid == 0) continue;
-                            IPS_SetName($varid, $name); 
-                            IPS_SetParent($varid, $id);
-                            IPS_SetDisabled($varid, $allow_use);
+                            if($output[$search_oid] < $lastvalue){
+                                $spanvalue = (4294967295 - $lastvalue) + $output[$search_oid];
+                            }else{
+                                $spanvalue = $output[$search_oid] - $lastvalue;
+                            }
+                            $spantime = time() - $lastchange;
 
-                            $Device["instanceID"] = $varid;
-                            $Device["var"] = $vartyp;
-                            $instanceID = $varid;
+                            $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
+                            SetValue($instanceID, round($util,1));
 
-                            IPS_SetProperty($id, "Devices", json_encode($Devices));
-                            IPS_ApplyChanges($id);
-                        }
-                        switch($typ){
-                            case "mWtoW":
-                                $value = $rdata["Value"] / 1000;
-                                if(is_numeric($rdata["Value"])) {
-                                    SetValue($instanceID, $value);
+                            $this->SendDebug("SetValue",  $oid." (".$instanceID.") => ".round($util,1)."%"  , 0);
 
-                                    if($value == 0) IPS_SetHidden($instanceID, true); else IPS_SetHidden($instanceID, false);
-                                }
+                            $this->SetBuffer($instanceID."-lastvalue", $output[$search_oid]);
+                            $this->SetBuffer($instanceID."-lastchange", time());
                             break;
-                            case "switch" || "switch12":
-                                if(is_numeric($rdata["Value"]) && $rdata["Value"] == 1) SetValue($instanceID, true); else SetValue($instanceID, false);
+                        case stristr($oid,'PortUtilizationTX'):
+                            $search_oid = ".1.3.6.1.2.1.2.2.1.16." . $port_id;
+                            if(!array_key_exists($search_oid, $output)) continue;
+
+                            if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
+                                $this->SetBuffer($instanceID."-lastvalue", $output[$search_oid]);
+                                $this->SetBuffer($instanceID."-lastchange", time());
+                                continue;
+                            }
+                            if($output[$search_oid] < $lastvalue){
+                                $spanvalue = (4294967295 - $lastvalue) + $output[$search_oid];
+                            }else{
+                                $spanvalue = $output[$search_oid] - $lastvalue;
+                            }
+                            $spantime = time() - $lastchange;
+
+                            $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
+                            SetValue($instanceID, round($util,1));
+
+                            $this->SendDebug("SetValue",  $oid." (".$instanceID.") => ".round($util,1)."%"  , 0);
+
+                            $this->SetBuffer($instanceID."-lastvalue", $output[$search_oid]);
+                            $this->SetBuffer($instanceID."-lastchange", time());
                             break;
-                            default:
-                                if(GetValue($instanceID) != $rdata["Value"]) SetValue($instanceID, $rdata["Value"]);
+                        case stristr($oid,'PortMbitRX'):
+                            $search_oid = ".1.3.6.1.2.1.2.2.1.10." . $port_id;
+                            if(!array_key_exists($search_oid, $output)) continue;
+
+                            if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
+                                $this->SetBuffer($instanceID."-lastvalue", $output[$search_oid]);
+                                $this->SetBuffer($instanceID."-lastchange", time());
+                                continue;
+                            }
+                            if($output[$search_oid] < $lastvalue){
+                                $spanvalue = (4294967295 - $lastvalue) + $output[$search_oid];
+                            }else{
+                                $spanvalue = $output[$search_oid] - $lastvalue;
+                            }
+                            $spantime = time() - $lastchange;
+
+                            $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
+                            $mbit = ($util / 100) * $speed;
+                            SetValue($instanceID, round($mbit,1));
+
+                            $this->SendDebug("SetValue",  $oid." (".$instanceID.") => ".round($mbit,1)."Mbit" , 0);
+
+                            $this->SetBuffer($instanceID."-lastvalue", $output[$search_oid]);
+                            $this->SetBuffer($instanceID."-lastchange", time());
                             break;
-                        }
+                        case stristr($oid,'PortMbitTX'):
+                            $search_oid = ".1.3.6.1.2.1.2.2.1.16." . $port_id;
+                            if(!array_key_exists($search_oid, $output)) continue;
+
+                            if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
+                                $this->SetBuffer($instanceID."-lastvalue", $output[$search_oid]);
+                                $this->SetBuffer($instanceID."-lastchange", time());
+                                continue;
+                            }
+                            if($output[$search_oid] < $lastvalue){
+                                $spanvalue = (4294967295 - $lastvalue) + $output[$search_oid];
+                            }else{
+                                $spanvalue = $output[$search_oid] - $lastvalue;
+                            }
+                            $spantime = time() - $lastchange;
+
+                            $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
+                            $mbit = ($util / 100) * $speed;
+                            SetValue($instanceID, round($mbit,1));
+
+                            $this->SendDebug("SetValue",  $oid." (".$instanceID.") => ".round($mbit,1)."Mbit" , 0);
+
+                            $this->SetBuffer($instanceID."-lastvalue", $output[$search_oid]);
+                            $this->SetBuffer($instanceID."-lastchange", time());
+                            break;
+                        case stristr($oid,'PortUtilizationTRX'):
+                            $search_oid1 = ".1.3.6.1.2.1.2.2.1.10." . $port_id;
+                            $search_oid2 = ".1.3.6.1.2.1.2.2.1.16." . $port_id;
+                            if(!array_key_exists($search_oid1, $output)) continue;
+                            if(!array_key_exists($search_oid2, $output)) continue;
+
+                            if(empty($lastchange) || empty($lastvalue) || !stristr($lastvalue,'|')){
+                                $this->SetBuffer($instanceID."-lastvalue", $output[$search_oid1] . "|" . $output[$search_oid2]);
+                                $this->SetBuffer($instanceID."-lastchange", time());
+                                continue;
+                            }
+                            $arrlastvalue = explode("|", $lastvalue);
+                            if(count($arrlastvalue) < 2) continue;
+
+                            if($output[$search_oid1] < $arrlastvalue[0]){
+                                $spanvalue1 = (4294967295 - $arrlastvalue[0]) + $output[$search_oid1];
+                            }else{
+                                $spanvalue1 = $output[$search_oid1] - $arrlastvalue[0];
+                            }
+
+                            if($output[$search_oid2] < $arrlastvalue[1]){
+                                $spanvalue2 = (4294967295 - $arrlastvalue[1]) + $output[$search_oid2];
+                            }else{
+                                $spanvalue2 = $output[$search_oid2] - $arrlastvalue[1];
+                            }
+
+                            $spantime = time() - $lastchange;
+
+                            $util = ((($spanvalue1 + $spanvalue2) * 8 * 100) / ($spantime * ($speed * 1000000)));
+                            SetValue($instanceID, round($util,1));
+
+                            $this->SendDebug("SetValue",  $oid." (".$instanceID.") => ".round($util,1)."%" , 0);
+
+                            $this->SetBuffer($instanceID."-lastvalue",  $output[$search_oid1] . "|" . $output[$search_oid2]);
+                            $this->SetBuffer($instanceID."-lastchange", time());
+                            break;
+                        case stristr($oid,'PortUtilizationFD-TRX'):
+                            $search_oid1 = ".1.3.6.1.2.1.2.2.1.10." . $port_id;
+                            $search_oid2 = ".1.3.6.1.2.1.2.2.1.16." . $port_id;
+                            if(!array_key_exists($search_oid1, $output)) continue;
+                            if(!array_key_exists($search_oid2, $output)) continue;
+
+                            if(empty($lastchange) || empty($lastvalue) || !stristr($lastvalue,'|')){
+                                $this->SetBuffer($instanceID."-lastvalue", $output[$search_oid1] . "|" . $output[$search_oid2]);
+                                $this->SetBuffer($instanceID."-lastchange", time());
+                                continue;
+                            }
+                            $arrlastvalue = explode("|", $lastvalue);
+                            if(count($arrlastvalue) < 2) continue;
+
+                            if($output[$search_oid1] < $arrlastvalue[0]){
+                                $spanvalue1 = (4294967295 - $arrlastvalue[0]) + $output[$search_oid1];
+                            }else{
+                                $spanvalue1 = $output[$search_oid1] - $arrlastvalue[0];
+                            }
+
+                            if($output[$search_oid2] < $arrlastvalue[1]){
+                                $spanvalue2 = (4294967295 - $arrlastvalue[1]) + $output[$search_oid2];
+                            }else{
+                                $spanvalue2 = $output[$search_oid2] - $arrlastvalue[1];
+                            }
+
+                            $spantime = time() - $lastchange;
+
+                            $util = ((max($spanvalue1, $spanvalue2) * 8 * 100) / ($spantime * ($speed * 1000000)));
+                            SetValue($instanceID, round($util,1));
+
+                            $this->SendDebug("SetValue",  $oid." (".$instanceID.") => ".round($util,1)."%" , 0);
+
+                            $this->SetBuffer($instanceID."-lastvalue",  $output[$search_oid1] . "|" . $output[$search_oid2]);
+                            $this->SetBuffer($instanceID."-lastchange", time());
+                            break;
+                        default:
+                            continue;
                     }
+                } else {
+                    if ($oid != ".") $oid = "." . $oid;
+
+                    if(!array_key_exists($oid, $output)) continue;
+                    $value = $output[$oid];
+
+                    if($instanceID === false){
+
+                        switch (gettype($value)){
+                            case "boolean":
+                                //Boolean anlegen
+                                $this->RegisterVariableBoolean($ident, $oid, "SNMP_PortStatus_1000");
+                                break;
+                            case "integer":
+                                //Integer anlegen
+                                switch($typ){
+                                    case "mWtoW":
+                                        $this->RegisterVariableFloat($ident, $oid, "SNMP_Watt");
+                                        break;
+                                    case "switch"  || "switch12":
+                                        $this->RegisterVariableBoolean($ident, $oid, "~Switch");
+                                        break;
+                                    default:
+                                        $varid = IPS_CreateVariable(1);
+                                        $this->RegisterVariableInteger($ident, $oid);
+                                        break;
+                                }
+                                break;
+                            case "double":
+                                //Float anlegen
+                                switch($typ){
+                                    default:
+                                        $this->RegisterVariableFloat($ident, $oid);
+                                        break;
+                                }
+                                break;
+                            default:
+                                //String anlegen
+                                $this->RegisterVariableString($ident, $oid);
+                                break;
+                        }
+
+                        $instanceID = IPS_GetObjectIDByIdent($ident, $id);
+                    }
+
+                    switch($typ){
+                        case "mWtoW":
+                            $value = $value / 1000;
+                            if(is_numeric($value)) {
+                                SetValue($instanceID, $value);
+
+                                if($value == 0) IPS_SetHidden($instanceID, true); else IPS_SetHidden($instanceID, false);
+                            }
+                            break;
+                        case "switch" || "switch12":
+                            if(is_numeric($value) && $value == 1) SetValue($instanceID, true); else SetValue($instanceID, false);
+                            break;
+                        default:
+                            if(GetValue($instanceID) != $value) SetValue($instanceID, $value);
+                            break;
+                    }
+
                 }
-            }    
+            }
+            echo 'Total running time in seconds: ' . round((microtime(true) - $time_start)*1000)."ms for ".count($output)." queries";
         }
 
         public function GetPorts($status = false, $util = false, $utyp = ""){
@@ -649,40 +731,57 @@
             $DevicesString = $this->ReadPropertyString("Devices");
             $Devices = json_decode($DevicesString, true);
 
-            $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.1.0"); //ifNumber
-            if(!is_array($rdata)) return "OID Not found!"; 
-            $value = $rdata["Value"];
+            $rdata = IPSSNMP_WalkSNMP($id, "1.3.6.1.2.1.2.2.1.5"); //ifspeed
+            if(!is_array($rdata)) return "OID Not found!";
 
-            for ($i=1; $i <= $value; $i++){
-                //$rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.1.".$i); //ifindex
-                //if(!is_array($rdata)) continue; 
-                //if(!is_numeric($rdata["Value"]) || $rdata["Value"] >= 100) continue; //
-                $rdata = IPSWINSNMP_ReadSNMP($id, "1.3.6.1.2.1.2.2.1.5.".$i); //ifspeed
-                if(!is_array($rdata)) continue;
-                if(!is_numeric($rdata["Value"]) || $rdata["Value"] == 0){
-                    $speed = 1000;
-                }else{
-                    $speed = $rdata["Value"] / 1000000 * $this->ReadPropertyInteger("SNMPSpeedModify");
+            foreach($rdata as $key => $val){
+                $exp_key = explode(".",$key);
+                if($exp_key[(count($exp_key)-1)] >= 100){
+                    break;
                 }
 
-                if($i < 10) $name = "0".$i; else $name = $i;
-                
+                if(!is_array($rdata)) continue;
+                if(!is_numeric($val) || $val == 0){
+                    $speed = 1000;
+                }else{
+                    $speed = $val / 1000000 * $this->ReadPropertyInteger("SNMPSpeedModify");
+                }
+
+                if($exp_key[(count($exp_key)-1)] < 10) $name = "0".$exp_key[(count($exp_key)-1)]; else $name = $exp_key[(count($exp_key)-1)];
+
                 if($status == true){
-                    $key1 = array_search("PortStatus100|".$i, array_column($Devices, 'oid'));
-                    $key2 = array_search("PortStatus1000|".$i, array_column($Devices, 'oid'));
+                    $key1 = "";$key2 = "";
+                    if(count($Devices)>0){
+                        $key1 = array_search("PortStatus100|".$name, array_column($Devices, 'oid'));
+                        $key2 = array_search("PortStatus1000|".$name, array_column($Devices, 'oid'));
+                    }
+
                     if(empty($key1) && empty($key2)){
-                        if($speed = 100) $oid = "PortStatus100|".$i; else $oid = "PortStatus1000|".$i;
-                        $add = array("instanceID" => 0,"name" => "Port-".$name."|Status", "oid" => $oid, "var" => "", "typ" => "", "speed" => $speed);
-                        array_push($Devices, $add);
+                        if($speed = 100) $oid = "PortStatus100|".$name; else $oid = "PortStatus1000|".$name;
+                        $add = array("oid" => $oid, "typ" => "", "speed" => $speed);
+                        if(count($Devices)>0){
+                            array_push($Devices, $add);
+                        }else{
+                            $Devices[] = $add;
+                        }
                     }
                 }
 
                 if($util == true){
-                    $key1 = array_search(($utyp."|".$i), array_column($Devices, 'oid'));
+                    $key1 = "";
+                    if(count($Devices)>0) {
+                        $key1 = array_search(($utyp . "|" . $name), array_column($Devices, 'oid'));
+                    }
+
                     if(empty($key1)){
-                        $oid = $utyp . "|" . $i;
-                        $add = array("instanceID" => 0,"name" => "Port-".$name."|".$utyp, "oid" => $oid, "var" => "", "typ" => "", "speed" => $speed);
-                        array_push($Devices, $add);
+                        $oid = $utyp . "|" . $name;
+                        $add = array( "oid" => $oid,  "typ" => "", "speed" => $speed);
+                        if(count($Devices)>0){
+                            array_push($Devices, $add);
+                        }else{
+                            $Devices[] = $add;
+                        }
+
                     }
                 }
             }

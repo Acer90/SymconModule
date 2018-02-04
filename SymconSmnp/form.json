@@ -2,7 +2,6 @@
     "elements":
     [
         { "type": "ValidationTextBox", "name": "SNMPIPAddress", "caption": "Host" },
-        { "type": "NumberSpinner", "name": "SNMPPort", "caption": "Port" },
         { "type": "NumberSpinner", "name": "SNMPTimeout", "caption": "Timeout"},
         { "type": "IntervalBox", "name": "SNMPInterval", "caption": "Sekunden" },
         { "type": "Select", "name": "SNMPVersion", "caption": "Version",
@@ -33,12 +32,11 @@
                 { "label": "3DES", "value": "3DES" }
         ]},
         { "type": "PasswordTextBox", "name": "SNMPPrivacyPassword", "caption": "Privacy Password" },
+        { "type": "NumberSpinner", "name": "SNMPEngineID", "caption": "Engine ID", "hex": true},
+        { "type": "ValidationTextBox", "name": "SNMPContextName", "caption": "Context Name" },
+        { "type": "NumberSpinner", "name": "SNMPContextEngine", "caption": "Context Engine", "hex": true},
         { "type": "Label", "label": "Speed Modify" },   
         { "type": "NumberSpinner", "name": "SNMPSpeedModify", "caption": "Speed Modify"},
-        { "type": "Label", "label": "Logging" },
-        { "type": "SelectInstance", "name": "ArchivID", "caption": "Archiv" },
-        { "type": "Label", "label": "Action Script" },
-        { "type": "SelectScript", "name": "SkriptID", "caption": "Action Skript" },
         { "type": "Label", "label": "Devices" },
         {
             "type": "List",
@@ -52,43 +50,12 @@
                 "direction": "ascending"
             },
             "columns": [{
-                "label": "InstanceID",
-                "name": "instanceID", 
-                "width": "50px",
-                "add": 0,
-                "edit": {
-                    "type": "SelectInstance"
-        }
-            }, {
-                "label": "Name",
-                "name": "name",
-                "width": "150px",
-                "add": "",
-                "edit": {
-                    "type": "ValidationTextBox"
-                }
-            }, {
                 "label": "OID",
                 "name": "oid",
-                "width": "150px",
+                "width": "auto",
                 "add": "",
                 "edit": {
                     "type": "ValidationTextBox"
-                }
-            }, {
-            "label": "Var",
-                "name": "var",
-                "width": "50px",
-                "add": "str",
-                "edit": {
-                    "type": "Select",
-                    "options": [
-                        { "label": "str", "value": "str" },
-                        { "label": "int", "value": "int" },
-                        { "label": "uint", "value": "uint" },
-                        { "label": "hex", "value": "hex" },
-                        { "label": "oid", "value": "oid" },
-                        { "label": "ip", "value": "ip" }]
                 }
             }, {
                 "label": "Type",
@@ -107,7 +74,7 @@
                 "label": "Speed",
                 "name": "speed",
                 "width": "50px",
-                "add": 100,
+                "add": 1000,
                 "edit": {
                     "type": "NumberSpinner"
                 }
@@ -129,7 +96,7 @@
                 { "label": "PortUtilizationTRX", "value": "PortUtilizationTRX" },
                 { "label": "PortUtilizationFD-TRX", "value": "PortUtilizationFD-TRX" }
         ]},
-        { "type": "Button", "label": "Load Ports", "onClick": "echo IPSWINSNMP_GetPorts($id, $status, $utilization, $utilizationtyp);" }
+        { "type": "Button", "label": "Load Ports", "onClick": "echo IPSSNMP_GetPorts($id, $status, $utilization, $utilizationtyp);" }
         
     ],
     "status":

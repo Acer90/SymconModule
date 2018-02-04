@@ -411,6 +411,8 @@ class snmp
 
     $packet = $this->build_packet($varbind, $security, $type);
 
+
+
     // add each host to the queue
     if(!is_array($hosts)) $hosts = array($hosts);
     foreach($hosts as $host)
