@@ -87,7 +87,7 @@
             $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
             $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
              
-            $snmp = new snmp();
+            $snmp = new new_snmp();
             $snmp_sdata = array();
             $snmp->timeout = $SNMPTimeout;
 
@@ -142,7 +142,7 @@
             $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
             $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
 
-            $snmp = new snmp();
+            $snmp = new new_snmp();
             $snmp_sdata = array();
             $snmp->timeout = $SNMPTimeout;
 
@@ -187,7 +187,7 @@
             $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
             $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
 
-            $snmp = new snmp();
+            $snmp = new new_snmp();
             $snmp_sdata = array();
             $snmp->timeout = $SNMPTimeout;
 
@@ -260,7 +260,7 @@
             $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
             $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
 
-            $snmp = new snmp();
+            $snmp = new new_snmp();
             $snmp_sdata = array();
             $snmp->timeout = $SNMPTimeout;
 
