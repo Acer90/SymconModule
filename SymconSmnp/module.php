@@ -87,7 +87,7 @@
             $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
             $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
              
-            $snmp = new new_snmp();
+            $snmp = new snmp();
             $snmp_sdata = array();
             $snmp->timeout = $SNMPTimeout;
 
@@ -142,7 +142,7 @@
             $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
             $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
 
-            $snmp = new new_snmp();
+            $snmp = new snmp();
             $snmp_sdata = array();
             $snmp->timeout = $SNMPTimeout;
 
@@ -187,7 +187,7 @@
             $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
             $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
 
-            $snmp = new new_snmp();
+            $snmp = new snmp();
             $snmp_sdata = array();
             $snmp->timeout = $SNMPTimeout;
 
@@ -260,7 +260,7 @@
             $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
             $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
 
-            $snmp = new new_snmp();
+            $snmp = new snmp();
             $snmp_sdata = array();
             $snmp->timeout = $SNMPTimeout;
 
@@ -310,7 +310,7 @@
 
 
                 if ($i > 50) {
-                    $output = $output + IPSSNMP_ReadSNMP($id, $oids);
+                    $output = $output + $this->ReadSNMP($oids);
                     $oids = [];
                     $i = 0;
                 }
@@ -403,7 +403,7 @@
                     }
                 }
             }
-            $output = $output + IPSSNMP_ReadSNMP($id, $oids);
+            $output = $output + $this->ReadSNMP($oids);
             //print_r($output);
 
             foreach ($Devices as &$Device) {
@@ -730,7 +730,7 @@
             $DevicesString = $this->ReadPropertyString("Devices");
             $Devices = json_decode($DevicesString, true);
 
-            $rdata = IPSSNMP_WalkSNMP($id, "1.3.6.1.2.1.2.2.1.5"); //ifspeed
+            $rdata = $this->WalkSNMP("1.3.6.1.2.1.2.2.1.5"); //ifspeed
             if(!is_array($rdata)) return "OID Not found!";
 
             foreach($rdata as $key => $val){

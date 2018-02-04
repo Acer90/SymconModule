@@ -49,7 +49,7 @@ define('SNMP_VERSION_3',  3); // doesn't work yet
  *
  * @package phpSNMP
  */
-class new_snmp
+class snmp
 {
   var $version = SNMP_VERSION_1;	// version can be SNMP_VERSION_1, SNMP_VERSION_2C, SNMP_VERSION_3
   var $timeout = 10.0;			// timeout in seconds for waiting for a return packet
