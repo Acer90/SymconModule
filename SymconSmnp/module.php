@@ -249,7 +249,6 @@
                 return false;
             }
 
-            echo $oid;
 
             //portstatus
             switch($oid){
