@@ -113,16 +113,19 @@
                     $snmp_sdata = ['v3_flags'=> SNMP_AUTH_PRIV, 'v3_user'=>$SNMPSecurityName,'v3_auth'=>$SNMPAuthenticationPassword, 'v3_priv'=>$SNMPPrivacyPassword, 'v3_hash'=>$SNMPAuthenticationProtocol, 'v3_crypt_algorithm'=>$SNMPPrivacyProtocol, 'v3_engine_id'=>$SNMPEngineID, 'v3_context_engine_id'=>$SNMPContextEngine, 'v3_context_name'=>$SNMPContextName];
                     break;
             }
+            $out = [];
 
             if(is_array($oid_array)){
-                $out = $snmp->bulk_get($SNMPIPAddress, $oid_array, $snmp_sdata);
+                if($SNMPVersion == 1){
+                    foreach($oid_array as $oid){
+                        $out = $out + $snmp->bulk_get($SNMPIPAddress, $oid, $snmp_sdata);
+                    }
+                }else{
+                    $out = $snmp->bulk_get($SNMPIPAddress, $oid_array, $snmp_sdata);
+                }
             }
             else{
                 $out = $snmp->get($SNMPIPAddress, $oid_array, $snmp_sdata);
-            }
-
-            if(!isset($out) || empty($out)){
-                $out = [];
             }
             return $out;
         }
