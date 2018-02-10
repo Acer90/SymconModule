@@ -53,7 +53,7 @@
             $mac_address=str_replace(":", "-", $mac_address);
             if ((!preg_match("/([A-F0-9]{2}[-]){5}([0-9A-F]){2}/",$mac_address)) || (strlen($mac_address) != 17))
             {
-                $error = "Input error: Pattern of MAC-address is not \"xx-xx-xx-xx-xx-xx\" (x = digit or letter).<br>\n";
+                echo $error = "Input error: Pattern of MAC-address is not \"xx-xx-xx-xx-xx-xx\" (x = digit or letter).<br>\n";
                 return false; // false
             }
             else
@@ -81,7 +81,7 @@
                 if (gethostbyname($addr) == $addr)
                 {
                     // $addr is NOT a resolvable domainname
-                    $error = "Input error: host name of broadcast address is unresolvable.<br>\n";
+                    echo $error = "Input error: host name of broadcast address is unresolvable.<br>\n";
                     return false; // false
                 }
                 else
@@ -98,7 +98,7 @@
                 // Check whether $cidr is valid
                 if ((!ctype_digit($cidr)) || ($cidr < 0) || ($cidr > 32))
                 {
-                    $error = "Input error: CIDR subnet mask is not a number within the range of 0 till 32.<br>\n";
+                    echo $error = "Input error: CIDR subnet mask is not a number within the range of 0 till 32.<br>\n";
                     return false; // false
                 }
                 // Convert $cidr from one decimal to one inverted binary array
@@ -208,7 +208,7 @@
             }
             else
             {
-                $error = "No magic packet has been sent, since no functions are available to transmit it.<br>\n";
+                echo $error = "No magic packet has been sent, since no functions are available to transmit it.<br>\n";
                 return false; // false
             }
         }
