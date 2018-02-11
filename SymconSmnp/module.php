@@ -1,5 +1,5 @@
 <?
-    require('lib/snmp.php');
+    require_once('lib/snmp.php');
 
     class IPSSNMP extends IPSModule {
         public function __construct($InstanceID) {
