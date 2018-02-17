@@ -75,18 +75,19 @@ Eigenschaften des 'Device' für Get/SetProperty-Befehle:
 | SNMPSpeedModify            | int     | 1            | Zur korreckten Berechung der Geschwindigkeit |
 | Devices                    | string  |              | List alle eingetragenen OID´s                |
 
-##### Devices
+#### Devices
 
 | Label                      | name    | Funktion                                                              |
 | :------------------------: | :-----: | :-------------------------------------------------------------------: |
-| OID                        | oid     | Hier können OID´s, oder Platzhalter eingetragen werden                |                                     |
+| OID                        | oid     | Hier können OID´s, oder Platzhalter eingetragen werden                |                                     
 | Convert                    | typ     | Hier können Converter eingetragen werden                              |
 | Speed                      | speed   | Zum berechen der Auslastung wird die maximalgeschwindigkeit angegeben |
 
-##### Platzhalter
+#### Platzhalter
 
-| Label                      | name    | Ausgabe                                                              |
-| :------------------------: | :-----: | :-------------------------------------------------------------------: |
+| Platzhalter                | Beispiel             | Ausgabe                                                                           |
+| :------------------------: | :------------------: | :-------------------------------------------------------------------------------: |
+| PortStatus100|(Portnummer) | PortStatus100|01     | Gibt den Status des Portes in Offline, Wating, 1Mbit, 100Mbit, oder 1Gbit aus.    |
 
 ## 8. Datenaustausch
 
