@@ -76,6 +76,7 @@ Eigenschaften des 'Device' für Get/SetProperty-Befehle:
 | Devices                    | string  |              | List alle eingetragenen OID´s                |
 
 (Devices)
+
 | Label                      | name    | Funktion                                                              |
 | :------------------------: | :-----: | :-------------------------------------------------------------------: |
 | OID                        | oid     | Hier können OID´s, oder Platzhalter eingetragen werden                |                                     |
@@ -83,6 +84,7 @@ Eigenschaften des 'Device' für Get/SetProperty-Befehle:
 | Speed                      | speed   | Zum berechen der Auslastung wird die maximalgeschwindigkeit angegeben |
 
 (Platzhalter)
+
 | Label                      | name    | Ausgabe                                                              |
 | :------------------------: | :-----: | :-------------------------------------------------------------------: |
 
