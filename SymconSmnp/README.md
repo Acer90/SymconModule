@@ -15,7 +15,7 @@ Implementierung eines Snmp Clientes
 7. [Parameter / Modul-Infos](#7-parameter--modul-infos)
 8. [Datenaustausch](#8-datenaustausch)
 9. [Anhang](#9-anhang)
-10.[Lizenz](#10-lizenz)
+10. [Lizenz](#10-lizenz)
 
 ## 1. Funktionsumfang
 
