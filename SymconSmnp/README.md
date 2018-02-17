@@ -10,7 +10,7 @@ Implementierung eines Snmp Clientes in IP-Symcon
 2. [Voraussetzungen](#2-voraussetzungen)
 3. [Installation](#3-installation)
 4. [Hinweise zur Verwendung](#4-hinweise-zur-verwendung)
-5. [Einrichten eines Client-Splitter in IPS](#5-einrichten-eines-client-splitter-in-ips)
+5. [Einrichten](#5-einrichten)
 6. [PHP-Befehlsreferenz](#6-php-befehlsreferenz)
 7. [Parameter / Modul-Infos](#7-parameter--modul-infos)
 8. [Datenaustausch](#8-datenaustausch)
@@ -19,10 +19,7 @@ Implementierung eines Snmp Clientes in IP-Symcon
 
 ## 1. Funktionsumfang
 
-  Dieses Modul ermöglicht es anhand der IP-Adresse der Clients, die verschiedenen Datenströme von einem ServerSocket oder WebSocket-Server, sauber sortiert an andere Instanzen weiterleitet.  
-  Somit können die Daten pro Client z.B. in einer RegisterVariable weiter verarbeitet werden.  
-  Werden Daten an einen Client versendet, wird auch zielgerichtet nur an den einen Client geantwortet.  
-
+  Beschreibung folgt 
 
 ## 2. Voraussetzungen
 
@@ -35,13 +32,9 @@ Implementierung eines Snmp Clientes in IP-Symcon
 
 ## 4. Hinweise zur Verwendung
 
-## 5. Einrichten eines Client-Splitter in IPS
+## 5. Einrichten 
 
-  Unter Instanz hinzufügen (Splitter) wählen und ein 'Client Splitter' hinzufügen (Haken bei Alle Module anzeigen!).  
-  Der Splitter erwartet in der Konfiguration eine IPv4 Adresse und leitet Daten nur dann an die untergeordneten Instanzen weiter, wenn die IP-Adresse übereinstimmt.  
-  Der trennt also die Datenströme von verschiedenen Clients, welche sich auf den ServerSocket oder den WebSocket verbinden, auf und ermöglicht es die Daten sauber pro Client zu verarbeiten.   
-  ![](imgs/ClientSplitter.png)  
-
+    folgt
 
 ## 6. PHP-Befehlsreferenz
 
