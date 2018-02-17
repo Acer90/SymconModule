@@ -2,7 +2,7 @@
 [![Version](https://img.shields.io/badge/Symcon%20Version-4.3%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-4-3-%28Stable%29-Changelog)
 
 # SymconModule
-Diese Library wurde von Acer90 erstellt, sie Enthält mehere Module für IP-Symcon ab Version 4.3 
+Diese Library wurde von Acer90 erstellt, sie enthält mehrere Module für IP-Symcon ab Version 4.3 
 
 ## Dokumentation
 
