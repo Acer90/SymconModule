@@ -62,7 +62,7 @@ Eigenschaften des 'Device' für Get/SetProperty-Befehle:
 | SNMPIPAddress              | string  | 127.0.0.1    | Die IP-Adresse des SNMP-Servers              |
 | SNMPTimeout                | int     | 1            | Timeout in Sekunden                          |
 | SNMPInterval               | int     | 10           | Prüfinterval in Sekunden                     |
-| SNMPVersion                | string  | Version 2c   | Eintragen der Snmp Serverversion             |
+| SNMPVersion                | string  | 2c           | Eintragen der Snmp Serverversion             |
 | SNMPCommunity              | string  | public       |                                              |
 | SNMPSecurityName           | string  | SomeName     | Nur für Version 3!                           |
 | SNMPAuthenticationProtocol | string  | SHA          | Nur für Version 3!                           |
@@ -75,7 +75,7 @@ Eigenschaften des 'Device' für Get/SetProperty-Befehle:
 | SNMPSpeedModify            | int     | 1            | Zur korreckten Berechung der Geschwindigkeit |
 | Devices                    | string  |              | List alle eingetragenen OID´s                |
 
-(Devices)
+##### Devices
 
 | Label                      | name    | Funktion                                                              |
 | :------------------------: | :-----: | :-------------------------------------------------------------------: |
@@ -83,7 +83,7 @@ Eigenschaften des 'Device' für Get/SetProperty-Befehle:
 | Convert                    | typ     | Hier können Converter eingetragen werden                              |
 | Speed                      | speed   | Zum berechen der Auslastung wird die maximalgeschwindigkeit angegeben |
 
-(Platzhalter)
+##### Platzhalter
 
 | Label                      | name    | Ausgabe                                                              |
 | :------------------------: | :-----: | :-------------------------------------------------------------------: |
