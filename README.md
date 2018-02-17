@@ -21,19 +21,19 @@ Diese Library wurde von Acer90 erstellt, sie enthält mehrere Module für IP-Sym
 ## 1. Funktionsumfang
 
 - __SymconBlueIris__ ([Dokumentation](SymconBlueIris))  
-	Überwacht ob ein bestimmtest Netzwerkgerät einen DHCP-Request sendet. (z.B. Handy betritt WLAN, Dashbutton wurde betätigt usw.)  
+	Liest Informationen aus der BlueIris Kamera Software aus.  
 
 - __SymconSamsungTizen__ ([Dokumentation](SymconSamsungTizen))  
-	Implementierung eines Clients mit Websocket Protokoll in IPS.  
+	Zum Steuern eines Samsung Fernsehers mit Tizen Betriebsystem.
 
 - __SymconSmnp__ ([Dokumentation](SymconSmnp))  
-	Implementierung eines Server mit Websocket Protokoll in IPS.  
+	Abrufen und Steuern von SNMP Server. 
 
 - __SymconWS2812__ ([Dokumentation](SymconWS2812))  
-	Implementierung eines Splitters für ServerSocket und WebSocket-Server.  
+	Steuern eines SNMP Clients
 
 - __SymconWinSmnp__ ([Dokumentation](SymconWinSmnp))  
-	Demo für den Datenaustausch mit dem WebSocket-Server.  
+	(veraltet) Nur für Windows! Abrufen und Steuern von SNMP Server.
 
 ## 2. Voraussetzungen
 
