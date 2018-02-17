@@ -118,7 +118,7 @@
             if(is_array($oid_array)){
                 if($SNMPVersion == "1"){
                     foreach($oid_array as $oid){
-                        $out = $out + $snmp->get($SNMPIPAddress, $oid, $snmp_sdata);
+                        $out = $out + $snmp->get($SNMPIPAddress, $oid, $snmp_sdata); //
                     }
                 }else{
                     $out = $snmp->bulk_get($SNMPIPAddress, $oid_array, $snmp_sdata);
