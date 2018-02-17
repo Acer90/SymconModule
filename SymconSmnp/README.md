@@ -87,8 +87,8 @@ Eigenschaften des 'Device' für Get/SetProperty-Befehle:
 
 | Platzhalter                 | Beispiel             | Ausgabe                                                                           |
 | :-------------------------: | :------------------: | :-------------------------------------------------------------------------------: |
-| PortStatus100|Portnummer  | PortStatus100|01     | Gibt den Status des Portes in Offline, Wating, 1Mbit, oder 100Mbit aus.           |
-| PortStatus1000|Portnummer | PortStatus1000|01    | Gibt den Status des Portes in Offline, Wating, 1Mbit, 100Mbit, oder 1Gbit aus.    |
+| PortStatus100\|Portnummer    | PortStatus100|01     | Gibt den Status des Portes in Offline, Wating, 1Mbit, oder 100Mbit aus.           |
+| PortStatus1000\|Portnummer   | PortStatus1000|01    | Gibt den Status des Portes in Offline, Wating, 1Mbit, 100Mbit, oder 1Gbit aus.    |
 
 ## 8. Datenaustausch
 
