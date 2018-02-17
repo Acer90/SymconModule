@@ -41,7 +41,7 @@ Diese Library wurde von Acer90 erstellt, sie enthält mehrere Module für IP-Sym
 
 ## 3. Software-Installation
 
-**IPS 4.3:**  
+**ab IPS 4.3:**  
     `https://github.com/Acer90/SymconModule`
 
 ## 4. Einrichten der Instanzen in IP-Symcon

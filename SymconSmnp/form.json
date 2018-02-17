@@ -46,7 +46,7 @@
             "add": true,
             "delete": true,
             "sort": {
-                "column": "name",
+                "column": "oid",
                 "direction": "ascending"
             },
             "columns": [{

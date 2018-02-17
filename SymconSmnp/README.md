@@ -1,6 +1,6 @@
 # SymconSnmp
 
-Implementierung eines Snmp Clientes
+Implementierung eines Snmp Clientes in IP-Symcon
 
 ## Dokumentation
 
@@ -30,18 +30,10 @@ Implementierung eines Snmp Clientes
  
 ## 3. Installation
 
-   Über das Modul-Control folgende URL hinzufügen.  
-   `git://github.com/Nall-chan/IPSNetwork.git`  
-
-   **Bei kommerzieller Nutzung (z.B. als Errichter oder Integrator) wenden Sie sich bitte an den Autor.**  
+   **ab IPS 4.3:**  
+       `https://github.com/Acer90/SymconModule`  
 
 ## 4. Hinweise zur Verwendung
-
-   Der Client Splitter kann sowohl hinter einem IPS-ServerSocket als auch hinter den WebSocket-Server betrieben werden und trennt Datenströme nach den IP-Adressen der Clients auf.  
-   Der Client Splitter stellt ein Interface für die RegisterVariable sowie andere IPS-Instanzen welche ein serielles Protokoll nutzen bereit.     
-  ![](imgs/daClientSplitter.png)  
-  ![](imgs/phyCS.png)  
-
 
 ## 5. Einrichten eines Client-Splitter in IPS
 
@@ -65,11 +57,34 @@ GUID des Modules (z.B. wenn Instanz per PHP angelegt werden soll):
 
 Eigenschaften des 'Device' für Get/SetProperty-Befehle:  
 
-| Eigenschaft   | Typ     | Standardwert | Funktion                             |
-| :-----------: | :-----: | :----------: | :----------------------------------: |
-| SNMPIPAddress | string  | 127.0.0.1    | Die IP-Adresse des SNMP-Servers      |
-| SNMPIPAddress | string  | 127.0.0.1    | Die IP-Adresse des SNMP-Servers      |
+| Eigenschaft                | Typ     | Standardwert | Funktion                                     |
+| :------------------------: | :-----: | :----------: | :------------------------------------------: |
+| SNMPIPAddress              | string  | 127.0.0.1    | Die IP-Adresse des SNMP-Servers              |
+| SNMPTimeout                | int     | 1            | Timeout in Sekunden                          |
+| SNMPInterval               | int     | 10           | Prüfinterval in Sekunden                     |
+| SNMPVersion                | string  | Version 2c   | Eintragen der Snmp Serverversion             |
+| SNMPCommunity              | string  | public       |                                              |
+| SNMPSecurityName           | string  | SomeName     | Nur für Version 3!                           |
+| SNMPAuthenticationProtocol | string  | SHA          | Nur für Version 3!                           |
+| SNMPAuthenticationPassword | string  | SomeAuthPass | Nur für Version 3!                           |
+| SNMPPrivacyProtocol        | string  | DES          | Nur für Version 3!                           |
+| SNMPPrivacyPassword        | string  | SomePrivPass | Nur für Version 3!                           |
+| SNMPEngineID               | int     | 0            | Nur für Version 3!                           |
+| SNMPContextName            | string  |              | Nur für Version 3!                           |
+| SNMPContextEngine          | int     | 0            | Nur für Version 3!                           |
+| SNMPSpeedModify            | int     | 1            | Zur korreckten Berechung der Geschwindigkeit |
+| Devices                    | string  |              | List alle eingetragenen OID´s                |
 
+(Devices)
+| Label                      | name    | Funktion                                                              |
+| :------------------------: | :-----: | :-------------------------------------------------------------------: |
+| OID                        | oid     | Hier können OID´s, oder Platzhalter eingetragen werden                |                                     |
+| Convert                    | typ     | Hier können Converter eingetragen werden                              |
+| Speed                      | speed   | Zum berechen der Auslastung wird die maximalgeschwindigkeit angegeben |
+
+(Platzhalter)
+| Label                      | name    | Ausgabe                                                              |
+| :------------------------: | :-----: | :-------------------------------------------------------------------: |
 
 ## 8. Datenaustausch
 
