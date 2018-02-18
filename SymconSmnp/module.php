@@ -121,12 +121,46 @@
                         $out = $out + $snmp->get($SNMPIPAddress, $oid, $snmp_sdata); //Version 1 can´t bulk_get
                     }
                 }else{
-                    $out = $snmp->bulk_get($SNMPIPAddress, $oid_array, $snmp_sdata);
+                    $new_oid_array = array();
+
+                    foreach($oid_array as $oid) {
+                        $add_oid = $oid;
+                        if ($add_oid[0] != ".") $add_oid = "." . $add_oid;
+
+                        $oid_split = explode(".", $add_oid);
+                        $last_id = $oid_split[count($oid_split) - 1];
+
+                        if ($last_id == 0) {
+                            $add_oid = substr($add_oid, 0, -2);
+                        } else {
+                            //edit last ID
+                            $c = -2;
+                            While (true) {
+                                $last_char = substr($add_oid, $c);
+
+                                if (strpos($last_char, '.') !== false) {
+                                    #conatins "."
+                                    $add_oid = substr($add_oid, 0, $c) . "." . ($last_id - 1);
+                                    break;
+                                }
+
+                                $c--;
+                            }
+                        }
+
+                        if (!in_array($add_oid, $new_oid_array)) {
+                            $new_oid_array[] = $add_oid;
+                        }
+                    }
+
+                    if(count($new_oid_array)> 0)
+                        $out = $snmp->bulk_get($SNMPIPAddress, $new_oid_array, $snmp_sdata);
                 }
             }
             else{
                 $out = $snmp->get($SNMPIPAddress, $oid_array, $snmp_sdata);
             }
+
             return $out;
         }
 
@@ -367,43 +401,43 @@
 
                     switch ($oid) {
                         case stristr($oid, 'PortStatus100') || stristr($oid, 'PortStatus1000'):
-                            $add_oid = ".1.3.6.1.2.1.2.2.1.7." . ($port_id - 1);
+                            $add_oid = ".1.3.6.1.2.1.2.2.1.7." . $port_id;
                             if (!in_array($add_oid, $oids)) {
                                 $oids[] = $add_oid;
                                 $i++;
                             }
-                            $add_oid = ".1.3.6.1.2.1.2.2.1.8." . ($port_id - 1);
+                            $add_oid = ".1.3.6.1.2.1.2.2.1.8." . $port_id;
                             if (!in_array($add_oid, $oids)) {
                                 $oids[] = $add_oid;
                                 $i++;
                             }
-                            $add_oid = ".1.3.6.1.2.1.2.2.1.5." . ($port_id - 1);
+                            $add_oid = ".1.3.6.1.2.1.2.2.1.5." . $port_id;
                             if (!in_array($add_oid, $oids)) {
                                 $oids[] = $add_oid;
                                 $i++;
                             }
                             break;
                         case stristr($oid, 'PortUtilizationRX') || stristr($oid, 'PortMbitRX'):
-                            $add_oid = ".1.3.6.1.2.1.2.2.1.10." . ($port_id - 1);
+                            $add_oid = ".1.3.6.1.2.1.2.2.1.10." . $port_id;
                             if (!in_array($add_oid, $oids)) {
                                 $oids[] = $add_oid;
                                 $i++;
                             }
                             break;
                         case stristr($oid, 'PortUtilizationTX') || stristr($oid, 'PortMbitTX'):
-                            $add_oid = ".1.3.6.1.2.1.2.2.1.16." . ($port_id - 1);
+                            $add_oid = ".1.3.6.1.2.1.2.2.1.16." . $port_id;
                             if (!in_array($add_oid, $oids)) {
                                 $oids[] = $add_oid;
                                 $i++;
                             }
                             break;
                         case stristr($oid, 'PortUtilizationTRX') || stristr($oid, 'PortUtilizationFD-TRX'):
-                            $add_oid = ".1.3.6.1.2.1.2.2.1.10." . ($port_id - 1);
+                            $add_oid = ".1.3.6.1.2.1.2.2.1.10." . $port_id;
                             if (!in_array($add_oid, $oids)) {
                                 $oids[] = $add_oid;
                                 $i++;
                             }
-                            $add_oid = ".1.3.6.1.2.1.2.2.1.16." . ($port_id - 1);
+                            $add_oid = ".1.3.6.1.2.1.2.2.1.16." . $port_id;
                             if (!in_array($add_oid, $oids)) {
                                 $oids[] = $add_oid;
                                 $i++;
@@ -414,33 +448,8 @@
                             continue;
                     }
                 } else {
-                    $add_oid = $oid;
-                    if ($add_oid[0] != ".") $add_oid = "." . $add_oid;
-
-                    $oid_split = explode(".",$add_oid);
-                    $last_id = $oid_split[count($oid_split)-1];
-
-                    if($last_id == 0){
-                        $add_oid = substr($add_oid, 0, -2);
-                    }else{
-                        //edit last ID
-                        $c = -2;
-                        While(true){
-                            $last_char = substr($add_oid, $c);
-
-                            if (strpos($last_char, '.') !== false) {
-                                #conatins "."
-                                $add_oid = substr($add_oid, 0, $c) .".".($last_id-1);
-                                break;
-                            }
-
-                            $c--;
-                        }
-                    }
-
-
-                    if (!in_array($add_oid, $oids)) {
-                        $oids[] = $add_oid;
+                    if (!in_array($oid, $oids)) {
+                        $oids[] = $oid;
                         $i++;
                     }
                 }
