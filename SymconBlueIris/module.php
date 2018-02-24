@@ -296,7 +296,7 @@
             };
         }
 
-        public function ClipList(string $session = null, string $camera = null, integer $startdate = null, integer $enddate = null, bool $tiles = null){
+        public function ClipList(String $session = null, String $camera = null, Int $startdate = null, Int $enddate = null, Bool $tiles = null){
             if(is_null($session)){
                 $this->SetStatus(203);
                 return "ERROR";

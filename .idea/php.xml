@@ -5,4 +5,5 @@
       <path value="F:\phpinclude" />
     </include_path>
   </component>
+  <component name="PhpProjectSharedConfiguration" php_language_level="7" />
 </project>
