@@ -766,7 +766,10 @@
                                 $days = floor($value/8640000);
                                 $hours = date("H:i:s",$secs+strtotime("1970/1/1"));
 
-                                SetValue($instanceID, $days. " Tage ". $hours);
+                                if($days > 0)
+                                    SetValue($instanceID, $days. " Tage ". $hours);
+                                else
+                                    SetValue($instanceID, $hours);
                             }
                             break;
                         case "switch" || "switch12":
