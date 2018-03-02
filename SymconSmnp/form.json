@@ -68,7 +68,8 @@
                     { "label": "", "value": "" },
                     { "label": "mWtoW", "value": "mWtoW" },
                     { "label": "Switch", "value": "switch" },
-                    { "label": "Switch12", "value": "switch12" }]
+                    { "label": "Switch12", "value": "switch12" },
+                    { "label": "toTimeSpan", "value": "toTimeSpan" }]
                 }
             }, {
                 "label": "Speed",

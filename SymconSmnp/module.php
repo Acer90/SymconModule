@@ -760,6 +760,15 @@
                                 if($value == 0) IPS_SetHidden($instanceID, true); else IPS_SetHidden($instanceID, false);
                             }
                             break;
+                        case "toTimeSpan":
+                            if(is_numeric($value)) {
+                                $secs = $value / 100;
+                                $days = floor($value/8640000);
+                                $hours = date("H:i:s",$secs+strtotime("1970/1/1"));
+
+                                SetValue($instanceID, $days. " Tage ". $hours);
+                            }
+                            break;
                         case "switch" || "switch12":
                             if(is_numeric($value) && $value == 1) SetValue($instanceID, true); else SetValue($instanceID, false);
                             break;
