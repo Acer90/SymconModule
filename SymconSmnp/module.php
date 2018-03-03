@@ -725,11 +725,13 @@
                                     case "mWtoW":
                                         $this->RegisterVariableFloat($ident, $oid, "SNMP_Watt");
                                         break;
+                                    case "toTimeSpan":
+                                        $this->RegisterVariableString($ident, $oid);
+                                        break;
                                     case "switch"  || "switch12":
                                         $this->RegisterVariableBoolean($ident, $oid, "~Switch");
                                         break;
                                     default:
-                                        $varid = IPS_CreateVariable(1);
                                         $this->RegisterVariableInteger($ident, $oid);
                                         break;
                                 }
