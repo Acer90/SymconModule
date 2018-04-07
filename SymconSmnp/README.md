@@ -19,11 +19,11 @@ Implementierung eines Snmp Clientes in IP-Symcon
 
 ## 1. Funktionsumfang
 
-  Beschreibung folgt 
+  Dieses Modul ermöglicht es Netzwerkgeräte mit den SNMP Protokol auszulesen und zu Steuern.
 
 ## 2. Voraussetzungen
 
- - IPS ab Version 4.3  
+  - IPS ab Version 4.3  
  
 ## 3. Installation
 
@@ -34,8 +34,21 @@ Implementierung eines Snmp Clientes in IP-Symcon
 
 ## 5. Einrichten 
 
-    folgt
-
+    die Folgenden Werte müssen definiert sein:
+      - Ip-Adresse
+      - Timeout
+      - Interval
+      - Version
+      - Devices gefüllt mit OID's !!!Ohne beginden Punkt!!! (z.B. "1.3.6.1.2.1.1.3.0"), oder den Untenangebenden Platzhaltern.
+      
+      zustäzlich für Version 1 und Version 2:
+        - Community (z.B. public, private)
+      
+      zustäzlich für Version 3:
+        - SecurityName
+        - Protokol
+        - Password
+      
 ## 6. PHP-Befehlsreferenz
 
  (Keine PHP Funktionen)
@@ -54,7 +67,7 @@ Eigenschaften des 'Device' für Get/SetProperty-Befehle:
 | :------------------------: | :-----: | :----------: | :------------------------------------------: |
 | SNMPIPAddress              | string  | 127.0.0.1    | Die IP-Adresse des SNMP-Servers              |
 | SNMPTimeout                | int     | 1            | Timeout in Sekunden                          |
-| SNMPInterval               | int     | 10           | Prüfinterval in Sekunden                     |
+| SNMPInterval               | int     | 10           | Abfrageinterval in Sekunden                  |
 | SNMPVersion                | string  | 2c           | Eintragen der Snmp Serverversion             |
 | SNMPCommunity              | string  | public       |                                              |
 | SNMPSecurityName           | string  | SomeName     | Nur für Version 3!                           |
