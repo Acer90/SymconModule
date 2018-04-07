@@ -52,9 +52,32 @@ Implementierung eines Snmp Clientes in IP-Symcon
       
 ## 6. PHP-Befehlsreferenz
 
- ```
- test
- ```
+<!-- language: php -->
+ ```php
+ <?php
+  $intanceID = 54321;
+
+  $oid = "1.3.6.1.2.1.1.5.0";
+  $value = "neuer Hostname";
+  $varid = 12345;
+  //$type 'i' = integer; 't' = time ticks; 'x' = hex string; 's' = string; 'a' = IP address; 'o' = object ID; 'n' = null value
+  $type = "s";
+
+  IPSSNMP_WriteSNMPbyOID($intanceID, $oid, $value, $type);
+  IPSSNMP_WriteSNMPbyVarID($intanceID, $varid, $value, $type);
+
+  print_r(IPSSNMP_WalkSNMP($intanceID, $oid)); //ausgabe als Array wobei der Key die OID ist.
+  print_r(IPSSNMP_WalkSNMP($intanceID, $oid)); //ausgabe als Array wobei der Key die OID ist.
+
+  //entweder als einzel Abruf 
+  $oid_singel = "1.3.6.1.2.1.1.5.0";
+  print_r(IPSSNMP_ReadSNMP($intanceID, $oid_singel)); //ausgabe als Array wobei der Key die OID ist.
+
+  //oder als Bulk abruf
+  $oid_array = ["1.3.6.1.2.1.1.5.0", "1.3.6.1.2.1.1.6.0"];
+  print_r(IPSSNMP_ReadSNMP($intanceID, $oid_array)); //ausgabe als Array wobei der Key jeweils die OID ist.  
+?>
+```
 
 ## 7. Parameter / Modul-Infos
 
