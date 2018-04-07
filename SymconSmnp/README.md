@@ -39,11 +39,12 @@ Implementierung eines Snmp Clientes in IP-Symcon
       - Timeout
       - Interval
       - Version
-      - Devices gefüllt mit OID's !!!Ohne beginden Punkt!!! (z.B. "1.3.6.1.2.1.1.3.0"), oder den Untenangebenden Platzhaltern.
-      
+      - Devices gefüllt mit OID's !!!Ohne beginden Punkt!!! (z.B. "1.3.6.1.2.1.1.3.0"), 
+        oder den Untenangebenden Platzhaltern.
+
       zustäzlich für Version 1 und Version 2:
         - Community (z.B. public, private)
-      
+
       zustäzlich für Version 3:
         - SecurityName
         - Protokol
@@ -51,7 +52,9 @@ Implementierung eines Snmp Clientes in IP-Symcon
       
 ## 6. PHP-Befehlsreferenz
 
- (Keine PHP Funktionen)
+ ```
+ test
+ ```
 
 ## 7. Parameter / Modul-Infos
 
