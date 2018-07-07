@@ -1,0 +1,19 @@
+{
+    "elements":
+    [
+        { "type": "Label", "label": "Abruf Live-Daten" },
+        { "type": "IntervalBox", "name": "Interval", "caption": "Sek" },
+        { "type": "Label", "label": "Abruf Geräteeigenschaften" },
+        { "type": "IntervalBox", "name": "IntervalProperties", "caption": "Sek" }
+    ],
+    "actions":
+    [
+        { "type": "Button", "label": "Lade Einstellungen", "onClick": "echo StecaSolarix_Load_LiveProperties($id);" },
+        { "type": "Button", "label": "Lade Live Daten", "onClick": "echo StecaSolarix_Load_LiveData($id);" }
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Connection Success!" },
+        { "code": 201, "icon": "error", "caption": "Error Invalid parameter" }
+    ]
+}
