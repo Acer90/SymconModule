@@ -28,15 +28,15 @@ Diese Library wurde von Acer90 erstellt, sie enthält mehrere Module für IP-Sym
 
 - __SymconSmnp__ ([Dokumentation](SymconSmnp))  
 	Abrufen und Steuern von SNMP Server. 
+	
+- __SymconStecaSolarix__ ([Dokumentation](SymconStecaSolarix))  
+	Abrufen von Daten und Steuern eines Steca Solarix PLI 5000-48 Wechselrichters
 
 - __SymconWS2812__ ([Dokumentation](SymconWS2812))  
 	Steuern eines SNMP Clients
 
 - __SymconWinSmnp__ ([Dokumentation](SymconWinSmnp))  
 	(veraltet) Nur für Windows! Abrufen und Steuern von SNMP Server.
-	
-- __SymconStecaSolarix__ ([Dokumentation](SymconStecaSolarix))  
-	Abrufen von Daten und Steuern eines Steca Solarix PLI 5000-48 Wechselrichters
 
 ## 2. Voraussetzungen
 
@@ -55,12 +55,13 @@ Details sind in der Dokumentation der jeweiligen Module beschrieben.
 
 ###  1. GUID der Module
 
-| Modul                  | Typ      | Prefix | GUID                                   |
-| :--------------------: | :------: | :----: | :------------------------------------: |
+| Modul                  | Typ      | Prefix       | GUID                                   |
+| :--------------------: | :------: | :----------: | :------------------------------------: |
 | SymconBlueIris         | Device   | BlueIris     | {7E62F9B0-5474-426F-B91B-E25F4B25A824} |
 | SymconBlueIrisCam      | Device   | BlueIrisCam  | {5308D185-A3D2-42D0-B6CE-E9D3080CE184} |
 | SymconSamsungTizen     | Device   | SamsungTizen | {65BF76B4-042C-4971-A5CC-292FA5E49C86} |
 | SymconSmnp             | Device   | IPSSNMP      | {2F4FB7B0-AF13-46F1-9DEA-1DEBE0C3E324} |
+| SymconStecaSolarix     | Device   | StecaSolarix | {DCD58674-94D6-F15E-9537-F1627F145417} |
 | SymconWS2812           | Device   | SymconWS2812 | {4BF95816-240B-441A-8897-E2BDBF342207} |
 | SymconWinSmnp          | Device   | IPSWINSNMP   | {1A75660D-48AE-4B89-B351-957CAEBEF22D} |
 
