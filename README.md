@@ -14,8 +14,6 @@ Diese Library wurde von Acer90 erstellt, sie enthält mehrere Module für IP-Sym
 4. [Einrichten der Instanzen in IP-Symcon](#4-einrichten-der-instanzen-in-ip-symcon)
 5. [Anhang](#5-anhang)  
     1. [GUID der Module](#1-guid-der-module)
-    2. [Changlog](#2-changlog)
-    3. [Spenden](#3-spenden)
 6. [Lizenz](#6-lizenz)
 
 ## 1. Funktionsumfang
