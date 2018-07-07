@@ -34,6 +34,9 @@ Diese Library wurde von Acer90 erstellt, sie enthält mehrere Module für IP-Sym
 
 - __SymconWinSmnp__ ([Dokumentation](SymconWinSmnp))  
 	(veraltet) Nur für Windows! Abrufen und Steuern von SNMP Server.
+	
+- __SymconStecaSolarix__ ([Dokumentation](SymconStecaSolarix))  
+	Abrufen von Daten und Steuern eines Steca Solarix PLI 5000-48 Wechselrichters
 
 ## 2. Voraussetzungen
 
