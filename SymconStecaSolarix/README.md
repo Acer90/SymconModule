@@ -33,7 +33,7 @@ Implementierung eines Snmp Clientes in IP-Symcon
 ## 4. Hinweise zur Verwendung
 Infos über die einzeln Variablen findest du im Handbuch des Wechselrichters
 
-[https://www.steca.com/frontend/standard/popup_download.php?datei=210/21080_0x0x0x0x0_Steca_Solarix_PLI_Manual_DE.pdf](https://www.steca.com/frontend/standard/popup_download.php?datei=210/21080_0x0x0x0x0_Steca_Solarix_PLI_Manual_DE.pdf)  
+[https://www.steca.com/](https://www.steca.com/frontend/standard/popup_download.php?datei=210/21080_0x0x0x0x0_Steca_Solarix_PLI_Manual_DE.pdf)  
 
 ## 5. Einrichten 
 
