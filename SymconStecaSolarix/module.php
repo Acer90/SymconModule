@@ -251,6 +251,7 @@
                     }
                     break;
                 case 102:
+                    //Peri
                     $data_str = substr($data_str,1,$zeichen-4);
                     $data_arr = explode(" ", $data_str);
 
@@ -264,6 +265,7 @@
                     SetValue($this->GetIDForIdent("VarSolarEnergyBalance"), $data_arr[24]);
                     break;
                 case 110:
+                    //Live Data
                     $data_str = substr($data_str,1,$zeichen-4);
                     $data_arr = explode(" ", $data_str);
 

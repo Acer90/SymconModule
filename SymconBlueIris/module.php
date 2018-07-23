@@ -391,7 +391,7 @@
             };
         }
 
-        public function PTZ(string $session = null, string $camera = null, integer $button = null, integer $updown = null){
+        public function PTZ($session = null,  $camera = null, $button = null, $updown = null){
             if(is_null($session)){
                 $this->SetStatus(203);
                 return "ERROR";
@@ -445,7 +445,7 @@
             };
         }
 
-        public function Status(string $session = null, integer $signal = null, integer $profil = null, string $dio = null, string $play = null){
+        public function Status($session = null,$signal = null, $profil = null, $dio = null, $play = null){
             if(is_null($session)){
                 $this->SetStatus(203);
                 return "ERROR";
