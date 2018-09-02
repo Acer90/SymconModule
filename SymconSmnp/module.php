@@ -443,9 +443,8 @@
                                 $i++;
                             }
                             break;
-                            break;
                         default:
-                            continue;
+                            continue 2;
                     }
                 } else {
                     if (!in_array($oid, $oids)) {
@@ -491,28 +490,28 @@
                                 $instanceID = IPS_GetObjectIDByIdent($ident, $id);
                                 break;
                             default:
-                                continue;
+                                continue 2;
                         }
                     }
 
                     switch($oid){
                         case stristr($oid,'PortStatus100') || stristr($oid,'PortStatus1000'):
                             $search_oid = ".1.3.6.1.2.1.2.2.1.7." . $port_id;
-                            if(!array_key_exists($search_oid, $output)) continue;
+                            if(!array_key_exists($search_oid, $output)) continue 2;
                             if($output[$search_oid] == 2){
                                 SetValue($instanceID, -1);
                                 $this->SendDebug("SetValue",  $oid." (".$instanceID.") => -1", 0);
-                                continue;
+                                continue 2;
                             }
                             $search_oid = ".1.3.6.1.2.1.2.2.1.8." . $port_id;
-                            if(!array_key_exists($search_oid, $output)) continue;
+                            if(!array_key_exists($search_oid, $output)) continue 2;
                             if($output[$search_oid] == 2){
                                 SetValue($instanceID, 0);
                                 $this->SendDebug("SetValue",  $oid." (".$instanceID.") => 0", 0);
-                                continue;
+                                continue 2;
                             }
                             $search_oid = ".1.3.6.1.2.1.2.2.1.5." . $port_id;
-                            if(!array_key_exists($search_oid, $output)) continue;
+                            if(!array_key_exists($search_oid, $output)) continue 2;
                             $value = $output[$search_oid] * $this->ReadPropertyInteger("SNMPSpeedModify");
                             $svalue = -1;
                             switch($value){
@@ -534,12 +533,12 @@
                             break;
                         case stristr($oid,'PortUtilizationRX'):
                             $search_oid = ".1.3.6.1.2.1.2.2.1.10." . $port_id;
-                            if(!array_key_exists($search_oid, $output)) continue;
+                            if(!array_key_exists($search_oid, $output)) continue 2;
 
                             if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
                                 $this->SetBuffer($instanceID."-lastvalue", $output[$search_oid]);
                                 $this->SetBuffer($instanceID."-lastchange", time());
-                                continue;
+                                continue 2;
                             }
 
                             if($output[$search_oid] < $lastvalue){
@@ -559,12 +558,12 @@
                             break;
                         case stristr($oid,'PortUtilizationTX'):
                             $search_oid = ".1.3.6.1.2.1.2.2.1.16." . $port_id;
-                            if(!array_key_exists($search_oid, $output)) continue;
+                            if(!array_key_exists($search_oid, $output)) continue 2;
 
                             if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
                                 $this->SetBuffer($instanceID."-lastvalue", $output[$search_oid]);
                                 $this->SetBuffer($instanceID."-lastchange", time());
-                                continue;
+                                continue 2;
                             }
                             if($output[$search_oid] < $lastvalue){
                                 $spanvalue = (4294967295 - $lastvalue) + $output[$search_oid];
@@ -583,12 +582,12 @@
                             break;
                         case stristr($oid,'PortMbitRX'):
                             $search_oid = ".1.3.6.1.2.1.2.2.1.10." . $port_id;
-                            if(!array_key_exists($search_oid, $output)) continue;
+                            if(!array_key_exists($search_oid, $output)) continue 2;
 
                             if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
                                 $this->SetBuffer($instanceID."-lastvalue", $output[$search_oid]);
                                 $this->SetBuffer($instanceID."-lastchange", time());
-                                continue;
+                                continue 2;
                             }
                             if($output[$search_oid] < $lastvalue){
                                 $spanvalue = (4294967295 - $lastvalue) + $output[$search_oid];
@@ -608,12 +607,12 @@
                             break;
                         case stristr($oid,'PortMbitTX'):
                             $search_oid = ".1.3.6.1.2.1.2.2.1.16." . $port_id;
-                            if(!array_key_exists($search_oid, $output)) continue;
+                            if(!array_key_exists($search_oid, $output)) continue 2;
 
                             if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
                                 $this->SetBuffer($instanceID."-lastvalue", $output[$search_oid]);
                                 $this->SetBuffer($instanceID."-lastchange", time());
-                                continue;
+                                continue 2;
                             }
                             if($output[$search_oid] < $lastvalue){
                                 $spanvalue = (4294967295 - $lastvalue) + $output[$search_oid];
@@ -634,16 +633,16 @@
                         case stristr($oid,'PortUtilizationTRX'):
                             $search_oid1 = ".1.3.6.1.2.1.2.2.1.10." . $port_id;
                             $search_oid2 = ".1.3.6.1.2.1.2.2.1.16." . $port_id;
-                            if(!array_key_exists($search_oid1, $output)) continue;
-                            if(!array_key_exists($search_oid2, $output)) continue;
+                            if(!array_key_exists($search_oid1, $output)) continue 2;
+                            if(!array_key_exists($search_oid2, $output)) continue 2;
 
                             if(empty($lastchange) || empty($lastvalue) || !stristr($lastvalue,'|')){
                                 $this->SetBuffer($instanceID."-lastvalue", $output[$search_oid1] . "|" . $output[$search_oid2]);
                                 $this->SetBuffer($instanceID."-lastchange", time());
-                                continue;
+                                continue 2;
                             }
                             $arrlastvalue = explode("|", $lastvalue);
-                            if(count($arrlastvalue) < 2) continue;
+                            if(count($arrlastvalue) < 2) continue 2;
 
                             if($output[$search_oid1] < $arrlastvalue[0]){
                                 $spanvalue1 = (4294967295 - $arrlastvalue[0]) + $output[$search_oid1];
@@ -670,16 +669,16 @@
                         case stristr($oid,'PortUtilizationFD-TRX'):
                             $search_oid1 = ".1.3.6.1.2.1.2.2.1.10." . $port_id;
                             $search_oid2 = ".1.3.6.1.2.1.2.2.1.16." . $port_id;
-                            if(!array_key_exists($search_oid1, $output)) continue;
-                            if(!array_key_exists($search_oid2, $output)) continue;
+                            if(!array_key_exists($search_oid1, $output)) continue 2;
+                            if(!array_key_exists($search_oid2, $output)) continue 2;
 
                             if(empty($lastchange) || empty($lastvalue) || !stristr($lastvalue,'|')){
                                 $this->SetBuffer($instanceID."-lastvalue", $output[$search_oid1] . "|" . $output[$search_oid2]);
                                 $this->SetBuffer($instanceID."-lastchange", time());
-                                continue;
+                                continue 2;
                             }
                             $arrlastvalue = explode("|", $lastvalue);
-                            if(count($arrlastvalue) < 2) continue;
+                            if(count($arrlastvalue) < 2) continue 2;
 
                             if($output[$search_oid1] < $arrlastvalue[0]){
                                 $spanvalue1 = (4294967295 - $arrlastvalue[0]) + $output[$search_oid1];
@@ -704,7 +703,7 @@
                             $this->SetBuffer($instanceID."-lastchange", time());
                             break;
                         default:
-                            continue;
+                            continue 2;
                     }
                 } else {
                     if ($oid != ".") $oid = "." . $oid;
