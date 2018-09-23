@@ -72,6 +72,32 @@
          * @param $oid_array
          * @return array|mixed
          */
+        public function Test(){
+            echo "test";
+            $oid = '.1.3.6.1.2.1.69.1.1.3';
+            $oid = '.1.3.6.1.6.3.15.1.1.4.0';
+
+            // test the oid_format function
+            $z = oid_format($oid, OID_TEXT);
+            $zz = oid_format($z, OID_NUMERIC);
+            echo "$oid => $z => $zz\n";
+
+            $ip = '100.1.2.2'; 		// ip address or hostname
+            $community = 'PCBEUser';		// community string
+            $oid = '.1.3.6.1.4.1.318.1.1.1.2.2.1';		// only numerical oids are supported
+
+            $snmp = new ipssnmpclass();
+
+            $snmp->version = SNMP_VERSION_1;
+
+            print_r($snmp->walk($ip, $oid, ['community' => $community]));
+
+
+
+            // get system uptime
+            print_r($snmp->get($ip, '.1.3.6.1.4.1.318.1.1.1.4.2.3.0', ['community' => $community]));
+        }
+
         public function ReadSNMP($oid_array) {
                     
             $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
@@ -381,7 +407,7 @@
             $i = 0;
             $output = [];
 
-            foreach ($Devices as &$Device) {
+            foreach ($Devices as $Device) {
                 $oid = $Device["oid"];
 
 
