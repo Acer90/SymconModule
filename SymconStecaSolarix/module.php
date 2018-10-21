@@ -788,11 +788,7 @@
         }
 
         public function GetConfigurationForParent() {
-            //$ipAdress = $this->ReadPropertyString("IPAddress");
-
-            //$TizenAdress = "ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control";
-            //return "{\"URL\": \"".$TizenAdress."\"}";
-            return;
+            return "{\"BaudRate\": \"2400\", \"DataBits\": \"8\", \"StopBits\": \"1\", \"Parity\": \"None\"}";
         }
     }
 ?>
