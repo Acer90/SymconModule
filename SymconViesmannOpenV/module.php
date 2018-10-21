@@ -396,4 +396,8 @@ class ViesmannOpenV extends IPSModule {
         $this->SetValue($Ident, $Value);
 
     }
+
+    public function GetConfigurationForParent() {
+        return "{\"BaudRate\": \"4800\", \"DataBits\": \"8\", \"StopBits\": \"2\", \"Parity\": \"Even\"}";
+    }
 }

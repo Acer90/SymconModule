@@ -1,0 +1,11 @@
+{
+  "id": "{45E9E8B4-9A85-A176-D8DE-2FA71137A0E3}",
+  "name": "SymconAlarmSystem",
+  "type": 3,
+  "vendor": "Viesmann",
+  "aliases": ["SymconAlarmSystem"],
+  "parentRequirements": [],
+  "childRequirements": [],
+  "implemented": [],
+  "prefix": "SymconAlarmSystem"
+}
