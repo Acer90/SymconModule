@@ -208,19 +208,44 @@ class ViesmannOpenV extends IPSModule {
         if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("GetDataFromSerial", $data_str, 0);
 
         sort($BufferList);
-        //foreach($BufferList as $item){
-            //$this->SendDebug("2.Bufferdata", $item, 0);
-        //}
+        if($this->ReadPropertyBoolean("Debug")) {
+            foreach ($BufferList as $item) {
+                $this->SendDebug("2.Bufferdata", $item, 0);
+            }
+        }
 
         if(in_array("Last", $BufferList)){
             $last = json_decode($this->GetBuffer("Last"), true);
             if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("R-3.Last Data", $this->GetBuffer("Last"), 0);
             $len = hexdec($last["length"])*2;
+
             $data = "";
             if(in_array("Data", $BufferList)){
                 $data = $this->GetBuffer("Data").$data_str;
             }else{
                 $data = $data_str;
+            }
+
+            //Fix Send Bug
+            if($len > 2 && strpos($data, '0505') !== false){
+                //wert verwerfen
+                $this->SendDebug("Transmit verworfen", $last["hex"], 0);
+                $this->SetBuffer("Last", "");
+                $this->SetBuffer("Data", "");
+
+                //senden des nächsten Befehls
+                sort($BufferList);
+                $first_item = $BufferList[0];
+
+                if($first_item != "Return" && $first_item != "Last" && $first_item != "Data"){
+                    $item = json_decode($this->GetBuffer($first_item), true);
+
+                    $this->SetBuffer($first_item, "");
+                    $this->SetBuffer("Last", json_encode($item));
+                    $this->SendDebug("Send Hex", "01".$item["hex"].$item["length"].$item["value"], 0);
+                    $this->SendToIO(hex2bin("01".$item["hex"].$item["length"].$item["value"]));
+                }
+                exit;
             }
 
             if(substr($last["hex"], 0, 2) == "F4"){
