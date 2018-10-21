@@ -1,6 +1,6 @@
 <?
 // Klassendefinition
-class ViesmannOpenV extends IPSModule {
+class SymconAlarmSystem extends IPSModule {
 
     public function __construct($InstanceID) {
         parent::__construct($InstanceID);
