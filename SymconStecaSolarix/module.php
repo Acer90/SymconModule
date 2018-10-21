@@ -302,7 +302,7 @@
                             SetValue($this->GetIDForIdent("VarLadezustand"), 3);
                             break;
                     }
-                    SetValue($this->GetIDForIdent("VarPVLadeleistung"), $data_arr[19]);
+                    if(count($data_arr) > 19) $this->SetValue("VarPVLadeleistung",  $data_arr[19]);
 
                     break;
                 case 15:
