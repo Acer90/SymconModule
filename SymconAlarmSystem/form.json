@@ -1,11 +1,11 @@
 {
     "elements":
     [
-        { "type": "Label", "label": "Abruf Live-Daten" },
-        { "type": "NumberSpinner", "name": "Interval", "caption": "Sek" },
-        { "type": "Label", "label": "Timeout" },
-        { "type": "NumberSpinner", "name": "Timeout", "caption": "Sek" },
-        {"type": "CheckBox", "name": "Debug", "caption": "Debug"},
+        { "type": "Label", "label": "Punkte Alarm" },
+        { "type": "NumberSpinner", "name": "P_Alarm", "caption": "Punkte" },
+        { "type": "Label", "label": "Punkte Warnung" },
+        { "type": "NumberSpinner", "name": "P_Warn", "caption": "Punkte" },
+        { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
         { "type": "Label", "label": "Werte" },
         {
             "type": "List",
@@ -22,100 +22,69 @@
                 {
                     "label": "Name",
                     "name": "Name",
-                    "width": "auto",
+                    "width": "200px",
                     "add": "",
                     "edit": {
                         "type": "ValidationTextBox"
                     }
             }, {
-                    "label": "HexStamp",
-                    "name": "HexStamp",
-                    "width": "100px",
+                    "label": "Variable",
+                    "name": "Variable",
+                    "width": "auto",
                     "add": "",
                     "edit": {
-                        "type": "ValidationTextBox"
+                        "type": "SelectVariable"
                     }
             }, {
                 "label": "Typ",
                 "name": "Typ",
                 "width": "100px",
-                "add": "string",
+                "add": "==",
                 "edit": {
                     "type": "Select",
                     "options": [
-                        { "label": "String", "value": "string" },
-                        { "label": "Int", "value": "int" },
-                        { "label": "Float", "value": "float" },
-                        { "label": "Bool", "value": "bool" }]
+                        { "label": "==", "value": "==" },
+                        { "label": ">", "value": ">" },
+                        { "label": "<", "value": "<" },
+                        { "label": ">=", "value": ">=" },
+                        { "label": "<=", "value": "<=" },
+                        { "label": "!=", "value": "!=" }]
                 }
             }, {
-                    "label": "Ausgabelänge",
+                    "label": "Check",
                     "name": "length",
                     "width": "150px",
                     "add": 1,
-                    "edit": { "type": "NumberSpinner" }
+                    "edit": { "type": "ValidationTextBox" }
             }, {
-                    "label": "Converter",
-                    "name": "Convert",
+                    "label": "Time (Sec)",
+                    "name": "Time",
                     "width": "120px",
                     "add": "",
                     "edit": {
-                        "type": "Select",
-                        "options": [
-                            { "label": "", "value": "" },
-                            { "label": "/2", "value": "2" },
-                            { "label": "/10", "value": "10" },
-                            { "label": "/3600", "value": "3600" }]
+                        "type": "NumberSpinner"
                     }
             }, {
-                    "label": "Nur Lesen",
-                    "name": "only_read",
-                    "width": "100px",
-                    "add": "true",
+                    "label": "Punkte",
+                    "name": "Points",
+                    "width": "120px",
+                    "add": 5,
+                    "edit": {
+                      "type": "NumberSpinner"
+                    }
+            }, {
+                    "label": "Exp.",
+                    "name": "Exp",
+                    "width": "80px",
+                    "add": "False",
                     "edit": { "type": "CheckBox" }
                 }
-
-
             ]
         }
     ],
     "actions":
     [
-        { "type": "Label", "label": "Modes" },
-        { "type": "Button", "label": "Abschaltbetrieb", "onClick": "ViesmannOpenV_SendData($id, '2323', 1, false, false, '', 0, 0);" },
-        { "type": "Button", "label": "Warmwasser", "onClick": "ViesmannOpenV_SendData($id, '2323', 1, false, false, '01', 0, 0);" },
-        { "type": "Button", "label": "Heizen+Warmwasser", "onClick": "ViesmannOpenV_SendData($id, '2323', 1, false, false, '02', 0, 0);" },
-        { "type": "Label", "label": "Test-Area" },
-        { "type": "Button", "label": "Send Test", "onClick": "echo ViesmannOpenV_SendData($id, $HexStamp, $length, $r_only, true, $HexValue, 0, 0);" },
-        {
-          "type": "ExpansionPanel",
-          "caption": "Options Test-Area",
-          "items": [
-            {
-              "type": "ValidationTextBox",
-              "name": "HexStamp",
-              "caption": "HexStamp"
-            },
-            {
-              "type": "NumberSpinner",
-              "name": "length",
-              "caption": "Bytes"
-            },
-            {
-              "type": "CheckBox",
-              "name": "r_only",
-              "caption": "Read Only"
-            },
-            {
-              "type": "ValidationTextBox",
-              "name": "HexValue",
-              "caption": "HexValue"
-            }
-          ]
-        },
-
-        { "type": "Label", "label": "Buffer Leeren" },
-        { "type": "Button", "label": "Clear Buffer", "onClick": "echo ViesmannOpenV_ClearBuffer($id);" }
+        { "type": "Button", "label": "Test", "onClick": "echo SymconAlarmSystem_Test($id);" }
 
     ],
     "status":

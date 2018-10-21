@@ -15,14 +15,6 @@ class SymconAlarmSystem extends IPSModule {
         $this->RegisterPropertyString("VarList", "");
         $this->RegisterPropertyBoolean("Debug", false);
 
-        $this->ConnectParent("{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}");
-        $this->GetConfigurationForParent();
-
-        $BufferList = $this->GetBufferList();
-        if(!in_array("Return", $BufferList)) $this->SetBuffer ("Return", json_encode(array()));
-
-        //event erstellen
-        $this->RegisterTimer("SyncData", $this->ReadPropertyInteger("Interval"), 'ViesmannOpenV_SyncData($_IPS[\'TARGET\']);');
     }
 
     public function ApplyChanges() {
@@ -30,14 +22,6 @@ class SymconAlarmSystem extends IPSModule {
         parent::ApplyChanges();
 
         $this->SetStatus(102);
-
-        $this->ConnectParent("{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}");
-        $this->GetConfigurationForParent();
-
-        $BufferList = $this->GetBufferList();
-        if(!in_array("Return", $BufferList)) $this->SetBuffer ("Return", json_encode(array()));
-
-        $this->SetTimerInterval("SyncData", $this->ReadPropertyInteger("Interval")*1000);
 
     }
 

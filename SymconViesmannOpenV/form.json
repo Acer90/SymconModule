@@ -20,7 +20,7 @@
             },
             "columns": [
                 {
-                    "label": "Name",
+                    "label": "Ident",
                     "name": "Name",
                     "width": "auto",
                     "add": "",
