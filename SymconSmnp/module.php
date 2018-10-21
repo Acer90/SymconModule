@@ -61,17 +61,13 @@
         }
 
         public function ApplyChanges() {
-            // Diese Zeile nicht löschen
+            //Diese Zeile nicht löschen
             parent::ApplyChanges();
             //$this->RequireParent("{1A75660D-48AE-4B89-B351-957CAEBEF22D}");
 
             $this->SetTimerInterval("SyncData", $this->ReadPropertyInteger("SNMPInterval")*1000);
         }
 
-        /**
-         * @param $oid_array
-         * @return array|mixed
-         */
         public function Test(){
             echo "test";
             $oid = '.1.3.6.1.2.1.69.1.1.3';
@@ -84,7 +80,7 @@
 
             $ip = '100.1.2.2'; 		// ip address or hostname
             $community = 'PCBEUser';		// community string
-            $oid = '.1.3.6.1.4.1.318.1.1.1.2.2.1';		// only numerical oids are supported
+            $oid = '.1.3.6.1.4.1.318.1.1.1.2.2.1';		// only numerical oid are supported
 
             $snmp = new ipssnmpclass();
 
@@ -94,7 +90,7 @@
 
 
 
-            // get system uptime
+            // get system ut
             print_r($snmp->get($ip, '.1.3.6.1.4.1.318.1.1.1.4.2.3.0', ['community' => $community]));
         }
 
@@ -525,21 +521,21 @@
                             $search_oid = ".1.3.6.1.2.1.2.2.1.7." . $port_id;
                             if(!array_key_exists($search_oid, $output)) continue 2;
                             if($output[$search_oid] == 2){
-                                SetValue($instanceID, -1);
+                                if($this->GetValue($ident) != -1)$this->SetValue($ident, -1);
                                 $this->SendDebug("SetValue",  $oid." (".$instanceID.") => -1", 0);
                                 continue 2;
                             }
                             $search_oid = ".1.3.6.1.2.1.2.2.1.8." . $port_id;
                             if(!array_key_exists($search_oid, $output)) continue 2;
                             if($output[$search_oid] == 2){
-                                SetValue($instanceID, 0);
+                                if($this->GetValue($ident) != 0)$this->SetValue($ident, 0);
                                 $this->SendDebug("SetValue",  $oid." (".$instanceID.") => 0", 0);
                                 continue 2;
                             }
                             $search_oid = ".1.3.6.1.2.1.2.2.1.5." . $port_id;
                             if(!array_key_exists($search_oid, $output)) continue 2;
                             $value = $output[$search_oid] * $this->ReadPropertyInteger("SNMPSpeedModify");
-                            $svalue = -1;
+
                             switch($value){
                                 case 10000000:
                                     $svalue = 10;
@@ -553,7 +549,7 @@
                                 default:
                                     $svalue = -1;
                             }
-                            SetValue($instanceID, $svalue);
+                            if($this->GetValue($ident) != $svalue)$this->SetValue($ident, $svalue);
 
                             $this->SendDebug("SetValue",  $oid." (".$instanceID.") =>".$svalue, 0);
                             break;
@@ -575,7 +571,7 @@
                             $spantime = time() - $lastchange;
 
                             $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
-                            SetValue($instanceID, round($util,1));
+                            if($this->GetValue($ident) != round($util,1))$this->SetValue($ident, round($util,1));
 
                             $this->SendDebug("SetValue",  $oid." (".$instanceID.") => ".round($util,1)."%"  , 0);
 
@@ -599,7 +595,7 @@
                             $spantime = time() - $lastchange;
 
                             $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
-                            SetValue($instanceID, round($util,1));
+                            if($this->GetValue($ident) != round($util,1))$this->SetValue($ident, round($util,1));
 
                             $this->SendDebug("SetValue",  $oid." (".$instanceID.") => ".round($util,1)."%"  , 0);
 
@@ -624,7 +620,7 @@
 
                             $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
                             $mbit = ($util / 100) * $speed;
-                            SetValue($instanceID, round($mbit,1));
+                            if($this->GetValue($ident) != round($mbit,1))$this->SetValue($ident, round(mbit,1));
 
                             $this->SendDebug("SetValue",  $oid." (".$instanceID.") => ".round($mbit,1)."Mbit" , 0);
 
@@ -649,7 +645,7 @@
 
                             $util = (($spanvalue * 8 * 100) / ($spantime * ($speed * 1000000)));
                             $mbit = ($util / 100) * $speed;
-                            SetValue($instanceID, round($mbit,1));
+                            if($this->GetValue($ident) != round($mbit,1))$this->SetValue($ident, round(mbit,1));
 
                             $this->SendDebug("SetValue",  $oid." (".$instanceID.") => ".round($mbit,1)."Mbit" , 0);
 
@@ -685,7 +681,7 @@
                             $spantime = time() - $lastchange;
 
                             $util = ((($spanvalue1 + $spanvalue2) * 8 * 100) / ($spantime * ($speed * 1000000)));
-                            SetValue($instanceID, round($util,1));
+                            if($this->GetValue($ident) != round($util,1))$this->SetValue($ident, round($util,1));
 
                             $this->SendDebug("SetValue",  $oid." (".$instanceID.") => ".round($util,1)."%" , 0);
 
@@ -721,7 +717,7 @@
                             $spantime = time() - $lastchange;
 
                             $util = ((max($spanvalue1, $spanvalue2) * 8 * 100) / ($spantime * ($speed * 1000000)));
-                            SetValue($instanceID, round($util,1));
+                            if($this->GetValue($ident) != round($util,1))$this->SetValue($ident, round($util,1));
 
                             $this->SendDebug("SetValue",  $oid." (".$instanceID.") => ".round($util,1)."%" , 0);
 
@@ -782,7 +778,7 @@
                         case "mWtoW":
                             $value = $value / 1000;
                             if(is_numeric($value)) {
-                                SetValue($instanceID, $value);
+                                if($this->GetValue($ident) != $value)$this->SetValue($ident, $value);
 
                                 if($value == 0) IPS_SetHidden($instanceID, true); else IPS_SetHidden($instanceID, false);
                             }
@@ -794,16 +790,20 @@
                                 $hours = date("H:i:s",$secs+strtotime("1970/1/1"));
 
                                 if($days > 0)
-                                    SetValue($instanceID, $days. " Tage ". $hours);
+                                    if($this->GetValue($ident) != $days. " Tage ". $hours) $this->SetValue($ident, $days. " Tage ". $hours);
                                 else
-                                    SetValue($instanceID, $hours);
+                                    if($this->GetValue($ident) != $hours) $this->SetValue($ident, $hours);
                             }
                             break;
                         case "switch" || "switch12":
-                            if(is_numeric($value) && $value == 1) SetValue($instanceID, true); else SetValue($instanceID, false);
+                            if(is_numeric($value) && $value == 1) {
+                                if ($this->GetValue($ident) != true) $this->SetValue($ident, true);
+                            }else{
+                                if ($this->GetValue($ident) != false) $this->SetValue($ident, false);
+                            }
                             break;
                         default:
-                            if(GetValue($instanceID) != $value) SetValue($instanceID, $value);
+                            if($this->GetValue($ident) != $value) $this->SetValue($ident, $value);
                             break;
                     }
 

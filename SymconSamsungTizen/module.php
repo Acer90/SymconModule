@@ -1,5 +1,7 @@
 <?
  // Klassendefinition
+    require_once('wol.php');
+
     class SamsungTizen extends IPSModule {
         public function __construct($InstanceID) {
             parent::__construct($InstanceID);
@@ -7,6 +9,8 @@
 
         public function Create() {
             parent::Create();
+
+            $this->SetBuffer("Aktive", false);
 
             // Modul-Eigenschaftserstellung
             $this->RegisterPropertyString("IPAddress", "192.168.178.1"); 
@@ -39,36 +43,15 @@
         }
 
         public function WakeUp(){
-            $addr = $this->ReadPropertyString("IPAddress");
-            $mac_address = $this->ReadPropertyString("MACAddress");
 
-            $ip_arr = explode(".", $addr);
-            $ip = "";
-            for ($i=0; $i < count($ip_arr)-1; $i++) {
-                $ip .= $ip_arr[$i].".";
-            }
-            $ip .= "255";
+            $macAddressHexadecimal = strtoupper($this->ReadPropertyString("MACAddress"));
+            $ip= $this->ReadPropertyString("IPAddress");
+            $cidr= $this->ReadPropertyInteger("CIDR");
+            $port = $this->ReadPropertyInteger("WoLPort");
 
-            if(strstr($mac_address, "-") !== false)
-                $addr_byte = explode('-', $mac_address);
-            else if(strstr($mac_address, ":") !== false)
-                $addr_byte = explode(':', $mac_address);
+            wakeOnLan($macAddressHexadecimal, $ip, $cidr, $port, $output);
 
-            $hw_addr = '';
-
-            for ($a=0; $a < 6; $a++) $hw_addr .= chr(hexdec($addr_byte[$a]));
-
-            $msg = chr(255).chr(255).chr(255).chr(255).chr(255).chr(255);
-
-            for ($a = 1; $a <= 16; $a++) $msg .= $hw_addr;
-
-            $s = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
-            if ($s != false)
-            {
-                $opt_ret = @socket_set_option($s, 1, 6, TRUE);
-                $e = socket_sendto($s, $msg, strlen($msg), 0, $ip, 2050);
-                socket_close($s);
-            }
+            $this->SendDebug("WOL",json_encode($output),0);
         }
 
         public function SendKeys(String $keys){
@@ -94,11 +77,24 @@
 
             $fp = @fsockopen($ipAdress, 8001,$errCode, $errStr, 1);
             if (!$fp){
-                if(GetValueBoolean($varonline) != false) SetValueBoolean($varonline, false);
+                if(GetValueBoolean($varonline) != false){
+                    SetValueBoolean($varonline, false);
+                    $this->SetBuffer("Aktive", false);
+                    $this->GetConfigurationForParent();
+                    $this->SetStatus(104);
+                }
             } else {
-                if(GetValueBoolean($varonline) != true) SetValueBoolean($varonline, true);
+                if(GetValueBoolean($varonline) != true){
+                    SetValueBoolean($varonline, true);
+                    $this->SetBuffer("Aktive", true);
+                    $this->GetConfigurationForParent();
+                    $this->SetStatus(102);
+                }
+
                 fclose($fp);
-            } 
+            }
+
+
         }
 
         public function TogglePower(){
@@ -122,9 +118,10 @@
 
         public function GetConfigurationForParent() {
             $ipAdress = $this->ReadPropertyString("IPAddress");
-
+            $active = $this->GetBuffer("Aktive");
             $TizenAdress = "ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control";
-            return "{\"URL\": \"".$TizenAdress."\"}";
+            //return "{\"URL\": \"".$TizenAdress."\", \"Open\": \"".$active."\"}";
+            //return "{\"URL\": \"".$TizenAdress."\"}";
         }
     }
 ?>
