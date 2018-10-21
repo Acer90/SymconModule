@@ -30,7 +30,7 @@
             }, {
                     "label": "HexStamp",
                     "name": "HexStamp",
-                    "width": "auto",
+                    "width": "100px",
                     "add": "",
                     "edit": {
                         "type": "ValidationTextBox"
