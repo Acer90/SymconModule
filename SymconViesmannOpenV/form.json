@@ -33,7 +33,8 @@
                     "width": "100px",
                     "add": "",
                     "edit": {
-                        "type": "ValidationTextBox"
+                        "type": "ValidationTextBox",
+                        "caption": "Status emulieren"
                     }
             }, {
                 "label": "Typ",
@@ -74,8 +75,6 @@
                     "add": "true",
                     "edit": { "type": "CheckBox" }
                 }
-
-
             ]
         }
     ],
