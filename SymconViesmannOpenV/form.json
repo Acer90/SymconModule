@@ -5,7 +5,9 @@
         { "type": "NumberSpinner", "name": "Interval", "caption": "Sek" },
         { "type": "Label", "label": "Timeout" },
         { "type": "NumberSpinner", "name": "Timeout", "caption": "Sek" },
-        {"type": "CheckBox", "name": "Debug", "caption": "Debug"},
+        { "type": "Label", "label": "Sendeversuche" },
+        { "type": "NumberSpinner", "name": "ReTry", "caption": "Versuche" },
+        { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
         { "type": "Label", "label": "Werte" },
         {
             "type": "List",
@@ -73,7 +75,7 @@
                     "name": "only_read",
                     "width": "100px",
                     "add": "true",
-                    "edit": { "type": "CheckBox" }
+                    "edit": { "type": "CheckBox", "caption":"Nur Lesen" }
                 }
             ]
         }

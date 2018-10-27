@@ -14,6 +14,7 @@ class ViesmannOpenV extends IPSModule {
         $this->RegisterPropertyInteger("Timeout", 10);
         $this->RegisterPropertyString("VarList", "");
         $this->RegisterPropertyBoolean("Debug", false);
+        $this->RegisterPropertyInteger("ReTry", 3);
 
         $this->ConnectParent("{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}");
         $this->GetConfigurationForParent();
@@ -43,7 +44,11 @@ class ViesmannOpenV extends IPSModule {
 
     public function Test()
     {
-        //return $this->SendData($hexstamp, $bytes, $read_only, $return_data, $value);
+        $BufferList = $this->GetBufferList();
+        foreach ($BufferList as $item) {
+            echo $item . "=" . $this->GetBuffer($item);
+            echo $item . "\r\n";
+        }
 
     }
 
@@ -169,6 +174,20 @@ class ViesmannOpenV extends IPSModule {
 
     }
 
+    public function SendDataToIdent($ident, $read_only = true, $return_data = false, $value = "")
+    {
+        if(empty($ident)) return false;
+
+        $VarList = $this->ReadPropertyString("VarList");
+        $VarList = json_decode($VarList, true);
+
+        $key = array_search($ident, array_column($VarList, 'Name'));
+
+        if(empty($key)) return false;
+
+        return $this->SendData($VarList[$key]["HexStamp"], $VarList[$key]["length"], $read_only, $return_data, $value, 0, 0);
+    }
+
     protected function SendToIO(string $payload)
     {
         //an Socket schicken
@@ -252,7 +271,26 @@ class ViesmannOpenV extends IPSModule {
                 if($data == "00"){
                     $this->SendDebug("Send Change", "OK", 0);
                 }else{
-                    $this->SendDebug("Send Change", "ERROR", 0);
+                    if($this->ReadPropertyInteger("ReTry") > 0){
+                        if(array_key_exists("ReTry", $last)){
+                            $last["ReTry"] = $last["ReTry"] + 1;
+
+                            if($last["ReTry"] > $this->ReadPropertyInteger("ReTry")){
+                                $this->SendDebug("Send Change", "ERROR - Re Send Data(".$last["ReTry"].")", 0);
+                                $this->SetBuffer("Last", json_encode($last));
+                                $this->SendDebug("Send Hex", "01".$last["hex"].$last["length"].$last["value"], 0);
+                                $this->SendToIO(hex2bin("01".$last["hex"].$last["length"].$last["value"]));
+                            }
+                        }else{
+                            $last["ReTry"] = 1;
+                            $this->SendDebug("Send Change", "ERROR - Re Send Data(".$last["ReTry"].")", 0);
+                            $this->SetBuffer("Last", json_encode($last));
+                            $this->SendDebug("Send Hex", "01".$last["hex"].$last["length"].$last["value"], 0);
+                            $this->SendToIO(hex2bin("01".$last["hex"].$last["length"].$last["value"]));
+                        }
+                    }else{
+                        $this->SendDebug("Send Change", "ERROR", 0);
+                    }
                 }
             }
 
@@ -298,7 +336,7 @@ class ViesmannOpenV extends IPSModule {
             if($last["retrun_data"]){
                 $r_data = json_decode($this->GetBuffer("Return"), true);
                 if(!$r_data) $r_data = array();
-                //$r_data[$last["hex"]] = array("Data" => $data_int, "Time" => time());
+                $r_data[$last["hex"]] = array("Data" => $data_int, "Time" => time());
                 $this->SetBuffer ("Return", json_encode($r_data));
                 if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("R-5.RData", json_encode($r_data), 0);
             }
