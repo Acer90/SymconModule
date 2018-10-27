@@ -15,6 +15,8 @@ class SymconAlarmSystem extends IPSModule {
         $this->RegisterPropertyString("VarList", "");
         $this->RegisterPropertyBoolean("Debug", false);
 
+        //event erstellen
+        $this->RegisterTimer("CheckAlarm", $this->ReadPropertyInteger("Interval"), 'ViesmannOpenV_SyncData($_IPS[\'TARGET\']);');
     }
 
     public function ApplyChanges() {
@@ -23,6 +25,7 @@ class SymconAlarmSystem extends IPSModule {
 
         $this->SetStatus(102);
 
+        $this->SetTimerInterval("CheckAlarm", $this->ReadPropertyInteger("Interval")*1000);
     }
 
     public function Test()
