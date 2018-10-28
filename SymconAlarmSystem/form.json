@@ -54,7 +54,7 @@
                 }
             }, {
                     "label": "Check",
-                    "name": "length",
+                    "name": "check",
                     "width": "150px",
                     "add": 1,
                     "edit": { "type": "ValidationTextBox" }
@@ -83,7 +83,15 @@
                       "type": "CheckBox",
                       "Caption" : "Exponentielle Abnahme"
                     }
+            }, {
+                "label": "Gruppe",
+                "name": "Group",
+                "width": "100px",
+                "add": 0,
+                "edit": {
+                  "type": "NumberSpinner"
                 }
+            }
             ]
         }
     ],
