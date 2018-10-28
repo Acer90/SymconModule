@@ -5,6 +5,8 @@
         { "type": "NumberSpinner", "name": "P_Alarm", "caption": "Punkte" },
         { "type": "Label", "label": "Punkte Warnung" },
         { "type": "NumberSpinner", "name": "P_Warn", "caption": "Punkte" },
+        { "type": "Label", "label": "Aktualisierung Alarm-Level" },
+        { "type": "NumberSpinner", "name": "Interval", "caption": "Sek" },
         { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
         { "type": "Label", "label": "Werte" },
         {
@@ -76,8 +78,11 @@
                     "label": "Exp.",
                     "name": "Exp",
                     "width": "80px",
-                    "add": "False",
-                    "edit": { "type": "CheckBox" }
+                    "add": false,
+                    "edit": {
+                      "type": "CheckBox",
+                      "Caption" : "Exponentielle Abnahme"
+                    }
                 }
             ]
         }

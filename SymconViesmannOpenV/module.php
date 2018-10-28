@@ -354,6 +354,9 @@ class ViesmannOpenV extends IPSModule {
                     case 10:
                         $data_int = $data_int / 10;
                         break;
+                    case 1000:
+                        $data_int = $data_int / 1000;
+                        break;
                     case 3600:
                         $data_int = $data_int / 3600;
                         break;
@@ -424,6 +427,9 @@ class ViesmannOpenV extends IPSModule {
                 break;
             case 10:
                 $n_val = $n_val * 10;
+                break;
+            case 1000:
+                $n_val = $n_val * 1000;
                 break;
             case 3600:
                 $n_val = $n_val * 3600;

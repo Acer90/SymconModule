@@ -68,6 +68,7 @@
                             { "label": "", "value": "" },
                             { "label": "/2", "value": "2" },
                             { "label": "/10", "value": "10" },
+                            { "label": "/1000", "value": "1000" },
                             { "label": "/3600", "value": "3600" }]
                     }
             }, {
