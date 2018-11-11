@@ -66,6 +66,7 @@ class SymconAlarmSystem extends IPSModule
         if (!IPS_VariableProfileExists("SymconAlarmSystem_Status")) {
             IPS_CreateVariableProfile("SymconAlarmSystem_Status", 2);
             IPS_SetVariableProfileDigits("SymconAlarmSystem_Status", 0);
+            IPS_SetVariableProfileAssociation("SymconAlarmSystem_Status", -1, "OK", "", 0xe6e6e6);
             IPS_SetVariableProfileAssociation("SymconAlarmSystem_Status", 0, "OK", "", 0x00cc00);
             IPS_SetVariableProfileAssociation("SymconAlarmSystem_Status", $warn, "Warnung", "", 0xff9900);
             IPS_SetVariableProfileAssociation("SymconAlarmSystem_Status", $alarm, "Alarm", "", 0xff3300);
@@ -291,8 +292,6 @@ class SymconAlarmSystem extends IPSModule
             $this->SetValue("AlarmLevel".$group, 0);
             $this->SetValue("AlarmStatus".$group, 0);
         }
-
-
     }
 
     private function UpdateGroups(){
@@ -314,12 +313,12 @@ class SymconAlarmSystem extends IPSModule
     public function AlarmOn($Value){
         if(!$Value) {
             $this->SetValue("AlarmLevel", 0);
-            $this->SetValue("AlarmStatus", 0);
+            $this->SetValue("AlarmStatus", -1);
 
             $arr_groups = json_decode($this->GetBuffer("Groups"), true);
             foreach ($arr_groups as $group) {
                 $this->SetValue("AlarmLevel" . $group, 0);
-                $this->SetValue("AlarmStatus" . $group, 0);
+                $this->SetValue("AlarmStatus" . $group, -1);
             }
         }
         $this->SetValue("AlarmON", $Value);

@@ -132,6 +132,8 @@ class ViesmannOpenV extends IPSModule {
         $buffer_arr = array( "hex" => $hex, "length" => $length, "retrun_data" => $return_data, "value" =>  $value, "ips_id" => $ips_id, "convert" => $convert);
 
         $BufferList = $this->GetBufferList();
+        if(count($BufferList > 100)) $this->ClearBuffer();
+
         $t = time();
         if(in_array($t, $BufferList)){
             $r =  rand ( 0 , 100000 );
