@@ -362,6 +362,9 @@ class ViesmannOpenV extends IPSModule {
                     case 3600:
                         $data_int = $data_int / 3600;
                         break;
+                    case "X10":
+                        $data_int = $data_int * 10;
+                        break;
                 }
                 $this->SendDebug("Set-Var(".$last["ips_id"].")", $data_int, 0);
                 SetValue($last["ips_id"], $data_int);
@@ -435,6 +438,9 @@ class ViesmannOpenV extends IPSModule {
                 break;
             case 3600:
                 $n_val = $n_val * 3600;
+                break;
+            case "X10":
+                $n_val = $n_val / 10;
                 break;
         }
 
