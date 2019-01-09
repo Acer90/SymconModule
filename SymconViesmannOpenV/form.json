@@ -66,6 +66,9 @@
                         "type": "Select",
                         "options": [
                             { "label": "", "value": "" },
+                            { "label": "BCD zu DateTime", "value": "BCDDateTime" },
+                            { "label": "BCD zu Json", "value": "BCDJson" },
+                            { "label": "BCDtoUnix", "value": "BCDUnix" },
                             { "label": "/2", "value": "2" },
                             { "label": "/10", "value": "10" },
                             { "label": "x10", "value": "X10" },

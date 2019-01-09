@@ -345,11 +345,8 @@ class ViesmannOpenV extends IPSModule {
 
             //Ab hier erfolgt die Verabeitung
             if(IPS_VariableExists($last["ips_id"])) {
-
+                $this->SendDebug("Convert", $last["convert"], 0);
                 switch($last["convert"]){
-                    case 0:
-                    default:
-                        break;
                     case 2:
                         $data_int = $data_int / 2;
                         break;
@@ -364,6 +361,36 @@ class ViesmannOpenV extends IPSModule {
                         break;
                     case "X10":
                         $data_int = $data_int * 10;
+                        break;
+                    case "BCDDateTime":
+                        $out = $this->ConvertBCDToDatetimeUnixArray($data);
+
+                        if($out == false){
+                            $data_int = "";
+                        }else{
+                            $data_int = $out["DateTime"]->format("Y-m-d H:i:s");
+                        }
+                        break;
+                    case "BCDUnix":
+                        $out = $this->ConvertBCDToDatetimeUnixArray($data);
+
+                        if($out == false){
+                            $data_int = "";
+                        }else{
+                            $data_int = $out["Unix"];
+                        }
+                        break;
+                    case "BCDJson":
+                        $out = $this->ConvertBCDToDatetimeUnixArray($data);
+
+                        if($out == false){
+                            $data_int = "";
+                        }else{
+                            $data_int = json_encode($out["Array"]);
+                        }
+                        break;
+                    case 0:
+                    default:
                         break;
                 }
                 $this->SendDebug("Set-Var(".$last["ips_id"].")", $data_int, 0);
@@ -476,5 +503,53 @@ class ViesmannOpenV extends IPSModule {
 
     public function GetConfigurationForParent() {
         return "{\"BaudRate\": \"4800\", \"DataBits\": \"8\", \"StopBits\": \"2\", \"Parity\": \"Even\"}";
+    }
+
+    public function DateTimeToBCD(Datetime $dtvalue){
+        $dtvalue->format('Y-m-d H:i:s');
+        $year = $dtvalue->format('Y');
+        $month = $dtvalue->format('m');
+        $day = $dtvalue->format('d');
+        $hour = $dtvalue->format('H');
+        $minute = $dtvalue->format('i');
+        $second = $dtvalue->format('s');
+        $dayofweek = "0".$dtvalue->format('w');
+
+        $hex = $year.$month.$day.$dayofweek.$dayofweek.$hour.$minute.$second;
+        return $hex;
+    }
+
+    public function ConvertBCDToDatetimeUnixArray($hex){
+        $hex_arr = str_split($hex, 2);
+
+        if(count($hex_arr) < 8) return false;
+
+        $year = $hex_arr[0].$hex_arr[1];
+        $month = $hex_arr[2];
+        $day = $hex_arr[3];
+        $hour = $hex_arr[5];
+        $minute = $hex_arr[6];
+        $second = $hex_arr[7];
+        $dayofweek = $hex_arr[4];
+
+        $date = new DateTime();
+        $date->setDate($year, $month, $day);
+        $date->setTime($hour, $minute, $second);
+
+        $j_arr = array();
+        $j_arr["year"] = $year;
+        $j_arr["month"] = $month;
+        $j_arr["day"] = $day;
+        $j_arr["hour"] = $hour;
+        $j_arr["minute"] = $minute;
+        $j_arr["second"] = $second;
+        $j_arr["dayoftheweek"] = $dayofweek;
+
+        $r_arr = array();
+        $r_arr["DateTime"] = $date;
+        $r_arr["Unix"] = $date->getTimestamp();
+        $r_arr["Array"] = $j_arr;
+
+        return $r_arr;
     }
 }
