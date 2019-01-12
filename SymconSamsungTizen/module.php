@@ -119,7 +119,23 @@
         public function GetConfigurationForParent() {
             $ipAdress = $this->ReadPropertyString("IPAddress");
             $active = $this->GetBuffer("Aktive");
-            $TizenAdress = "ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control";
+            $origin = "http://".$ipAdress.":8001";
+            $TizenAdress = "ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control?name=symcon";
+
+            //"Open": ".$active.",
+            $change = "{    
+                    \"URL\": \"".$TizenAdress."\",
+                    \"Protocol\": \"\",
+                    \"Version\": 13,
+                    \"Origin\": \"".$origin."\",
+                    \"PingInterval\": 10,
+                    \"PingPayload\": \"\",
+                    \"Frame\": 1,
+                    \"BasisAuth\": false,
+                    \"Username\": \"\",
+                    \"Password\": \"\"
+                }";
+
             //return "{\"URL\": \"".$TizenAdress."\", \"Open\": \"".$active."\"}";
             //return "{\"URL\": \"".$TizenAdress."\"}";
         }
