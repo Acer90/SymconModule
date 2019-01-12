@@ -138,6 +138,7 @@
 
             //return "{\"URL\": \"".$TizenAdress."\", \"Open\": \"".$active."\"}";
             //return "{\"URL\": \"".$TizenAdress."\"}";
+            return $change;
         }
     }
 ?>
