@@ -21,7 +21,7 @@
             $this->RegisterPropertyInteger("CIDR", 24);
             $this->RegisterPropertyInteger("WoLPort", 9);
 
-            $this->RegisterAttributeBoolean("UseSSL", true);
+            $this->RegisterPropertyBoolean("UseSSL", true);
 
             $this->ConnectParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}");  
             $this->GetConfigurationForParent();
