@@ -19,7 +19,9 @@
             $this->RegisterPropertyInteger("Sleep", 1000);
 
             $this->RegisterPropertyInteger("CIDR", 24);
-            $this->RegisterPropertyInteger("WoLPort", 9); 
+            $this->RegisterPropertyInteger("WoLPort", 9);
+
+            $this->RegisterAttributeBoolean("UseSSL", true);
 
             $this->ConnectParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}");  
             $this->GetConfigurationForParent();
@@ -74,8 +76,14 @@
             $Intid = $this->InstanceID;
             $varonline = IPS_GetObjectIDByIdent("VariableOnline", $Intid);
             $ipAdress = $this->ReadPropertyString("IPAddress");
+            $useSSL = $this->ReadPropertyBoolean("UseSSL");
+            $port = 8001;
 
-            $fp = @fsockopen($ipAdress, 8001,$errCode, $errStr, 1);
+            if($useSSL){
+                $port = 8002;
+            }
+
+            $fp = @fsockopen($ipAdress, $port,$errCode, $errStr, 1);
             if (!$fp){
                 if(GetValueBoolean($varonline) != false){
                     SetValueBoolean($varonline, false);
@@ -118,9 +126,16 @@
 
         public function GetConfigurationForParent() {
             $ipAdress = $this->ReadPropertyString("IPAddress");
+            $useSSL = $this->ReadPropertyBoolean("UseSSL");
             $active = $this->GetBuffer("Aktive");
-            $origin = "http://".$ipAdress.":8001";
-            $TizenAdress = "ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control?name=symcon";
+
+            if($useSSL){
+                $origin = "http://".$ipAdress.":8002";
+                $TizenAdress = "wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control?name=symcon";
+            }else{
+                $origin = "http://".$ipAdress.":8001";
+                $TizenAdress = "ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control?name=symcon";
+            }
 
             //"Open": ".$active.",
             $change = "{    

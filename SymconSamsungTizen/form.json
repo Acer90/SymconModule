@@ -4,6 +4,7 @@
         { "type": "Label", "label": "TV" },
         { "type": "ValidationTextBox", "name": "IPAddress", "caption": "Host" },
         { "type": "ValidationTextBox", "name": "MACAddress", "caption": "Mac Adress" },
+        { "type": "CheckBox", "name": "UseSSL", "caption": "SSL verwenden" },
         { "type": "Label", "label": "Sleeptime between Keys!" },
         { "type": "IntervalBox", "name": "Sleep", "caption": "ms" },
         { "type": "Label", "label": "Check online every" },
