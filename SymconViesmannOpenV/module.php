@@ -362,11 +362,17 @@ class ViesmannOpenV extends IPSModule {
                     case "X10":
                         $data_int = $data_int * 10;
                         break;
-                    case "Temperature100":
-                        if ($data_int > 100)
+                    case "Temperature10":
+                        if ($data_int > 32767)
                             $data_int = ($data_int - 65535) /10;
                         else
                             $data_int = $data_int /10;
+                        break;
+                    case "Temperature100":
+                        if ($data_int > 32767)
+                            $data_int = ($data_int - 65535) /100;
+                        else
+                            $data_int = $data_int /100;
                         break;
                     case "BCDDateTime":
                         $out = $this->ConvertBCDToDatetimeUnixArray($data);
