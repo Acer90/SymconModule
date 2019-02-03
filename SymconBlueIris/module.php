@@ -338,8 +338,8 @@
             curl_close($ch);
 
             $output = json_decode($result, true);
-            //print_r($output);
-            if($output["result"] == "success"){ 
+            //$this->SendDebug("Debug:", $result, 0);
+            if($output["result"] == "success" and array_key_exists("data", $output)){
                 return $output["data"];
             }else{
                 return [];

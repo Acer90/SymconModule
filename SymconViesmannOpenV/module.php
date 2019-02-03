@@ -362,6 +362,12 @@ class ViesmannOpenV extends IPSModule {
                     case "X10":
                         $data_int = $data_int * 10;
                         break;
+                    case "Temperature100":
+                        if ($data_int > 100)
+                            $data_int = ($data_int - 65535) /10;
+                        else
+                            $data_int = $data_int /10;
+                        break;
                     case "BCDDateTime":
                         $out = $this->ConvertBCDToDatetimeUnixArray($data);
 
@@ -505,17 +511,33 @@ class ViesmannOpenV extends IPSModule {
         return "{\"BaudRate\": \"4800\", \"DataBits\": \"8\", \"StopBits\": \"2\", \"Parity\": \"Even\"}";
     }
 
-    public function DateTimeToBCD(Datetime $dtvalue){
-        $dtvalue->format('Y-m-d H:i:s');
+    public function UnixToBCD(ini $timestamp){
+        $date = new DateTime();
+        $date->setTimestamp($timestamp);
+        return DatetimeToBCD($date);
+    }
+
+    public function DatetimeToBCD(Datetime $dtvalue){
         $year = $dtvalue->format('Y');
         $month = $dtvalue->format('m');
         $day = $dtvalue->format('d');
         $hour = $dtvalue->format('H');
         $minute = $dtvalue->format('i');
         $second = $dtvalue->format('s');
-        $dayofweek = "0".$dtvalue->format('w');
+        $dayOfWeek = $dtvalue->format('w');
 
-        $hex = $year.$month.$day.$dayofweek.$dayofweek.$hour.$minute.$second;
+        return DataToBCD($year, $month, $day, $hour, $minute, $second, $dayOfWeek);
+    }
+
+    public function DataToBCD(int $year, int $month, int $day, int $hour, int $minute, int $second,int $dayOfWeek){
+        if($month < 10) $month = "0".$month;
+        if($day < 10) $day = "0".$day;
+        if($hour < 10) $hour = "0".$hour;
+        if($minute < 10) $minute = "0".$minute;
+        if($second < 10) $second = "0".$second;
+        $dayOfWeek = "0".$dayOfWeek;
+
+        $hex = $year.$month.$day.$dayOfWeek.$hour.$minute.$second;
         return $hex;
     }
 
