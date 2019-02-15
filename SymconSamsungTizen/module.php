@@ -131,10 +131,10 @@
 
             if($useSSL){
                 $origin = "http://".$ipAdress.":8002";
-                $TizenAdress = "wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control?name=symcon";
+                $TizenAdress = "wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control"; //?name=symcon
             }else{
                 $origin = "http://".$ipAdress.":8001";
-                $TizenAdress = "ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control?name=symcon";
+                $TizenAdress = "ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control"; //?name=symcon
             }
 
             //"Open": ".$active.",
