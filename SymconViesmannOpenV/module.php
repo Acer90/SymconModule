@@ -363,16 +363,12 @@ class ViesmannOpenV extends IPSModule {
                         $data_int = $data_int * 10;
                         break;
                     case "Temperature10":
-                        if ($data_int > 32767)
-                            $data_int = ($data_int - 65535) /10;
-                        else
-                            $data_int = $data_int /10;
+                        $data_int = $this->ConvertHexToRealNumbers($n_val, $item["length"]);
+                        $data_int = $data_int /10;
                         break;
                     case "Temperature100":
-                        if ($data_int > 32767)
-                            $data_int = ($data_int - 65535) /100;
-                        else
-                            $data_int = $data_int /100;
+                        $data_int = $this->ConvertHexToRealNumbers($n_val, $item["length"]);
+                        $data_int = $data_int /100;
                         break;
                     case "BCDDateTime":
                         $out = $this->ConvertBCDToDatetimeUnixArray($data);
@@ -579,5 +575,31 @@ class ViesmannOpenV extends IPSModule {
         $r_arr["Array"] = $j_arr;
 
         return $r_arr;
+    }
+
+    public function ConvertHexToRealNumbers($hex, $bytes){
+        $r_val  = 0;
+        $bin = base_convert($hex, 16, 2);
+        $len = $bytes * 8;
+
+        if(strlen($bin) == $len){
+            //negative Zahlen
+            $bin = substr($bin, 1);
+            //erstellen des Max
+            $max = "1";
+            for($i = 0; $i < $len; $i++){
+                $max = $max."0";
+            }
+
+            $r_val = base_convert($bin, 2, 10);
+            $max_val = base_convert($max, 2, 10);
+            $r_val =  ($max_val - $r_val) * -1;
+
+        }else{
+            //prosive zahlen
+            $r_val = base_convert($bin, 2, 10);
+        }
+
+        return $r_val;
     }
 }
