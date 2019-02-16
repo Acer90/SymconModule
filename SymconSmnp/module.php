@@ -10,6 +10,8 @@
             parent::Create();
 
             // Modul-Eigenschaftserstellung
+            $this->RegisterPropertyBoolean("Debug", false);
+
             $this->RegisterPropertyString("SNMPIPAddress", "192.168.178.1");
             $this->RegisterPropertyInteger("SNMPTimeout", 1);
             $this->RegisterPropertyInteger("SNMPInterval", 10);
@@ -68,7 +70,7 @@
             $this->SetTimerInterval("SyncData", $this->ReadPropertyInteger("SNMPInterval")*1000);
         }
 
-        public function Test(){
+        /*public function Test(){
             echo "test";
             $oid = '.1.3.6.1.2.1.69.1.1.3';
             $oid = '.1.3.6.1.6.3.15.1.1.4.0';
@@ -78,7 +80,7 @@
             $zz = oid_format($z, OID_NUMERIC);
             echo "$oid => $z => $zz\n";
 
-            $ip = '100.1.2.2'; 		// ip address or hostname
+            $ip = '10.1.2.2'; 		// ip address or hostname
             $community = 'PCBEUser';		// community string
             $oid = '.1.3.6.1.4.1.318.1.1.1.2.2.1';		// only numerical oid are supported
 
@@ -92,10 +94,12 @@
 
             // get system ut
             print_r($snmp->get($ip, '.1.3.6.1.4.1.318.1.1.1.4.2.3.0', ['community' => $community]));
-        }
+        }*/
 
         public function ReadSNMP($oid_array) {
-                    
+
+            if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP", json_encode($oid_array), 0);
+
             $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
             $SNMPTimeout = $this->ReadPropertyInteger("SNMPTimeout");
             $SNMPVersion = $this->ReadPropertyString("SNMPVersion");
@@ -112,6 +116,8 @@
             $snmp = new ipssnmpclass();
             $snmp_sdata = array();
             $snmp->timeout = $SNMPTimeout;
+
+            if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP","Use SNMPVersion => ".$SNMPVersion, 0);
 
             switch($SNMPVersion){
                 case "1";
@@ -139,8 +145,11 @@
 
             if(is_array($oid_array)){
                 if($SNMPVersion == "1"){
+                    if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP","Version 1 supports only single requests!", 0);
                     foreach($oid_array as $oid){
-                        $out = $out + $snmp->get($SNMPIPAddress, $oid, $snmp_sdata); //Version 1 can´t bulk_get
+                        $r = $snmp->get($SNMPIPAddress, $oid, $snmp_sdata); //Version 1 can´t bulk_get
+                        $out = $out + $r;
+                        if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP",$oid. " => ".json_encode($r), 0);
                     }
                 }else{
                     $new_oid_array = array();
@@ -175,18 +184,23 @@
                         }
                     }
 
-                    if(count($new_oid_array)> 0)
+                    if(count($new_oid_array)> 0) {
+                        if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP","Bulk-Request => ".json_encode($new_oid_array), 0);
                         $out = $snmp->bulk_get($SNMPIPAddress, $new_oid_array, $snmp_sdata);
+                    }
                 }
             }
             else{
                 $out = $snmp->get($SNMPIPAddress, $oid_array, $snmp_sdata);
+                if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP",$oid_array. " => ".json_encode($out), 0);
             }
 
             return $out;
         }
 
         public function WalkSNMP($oid) {
+
+            if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("WalkSNMP", $oid, 0);
 
             $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
             $SNMPTimeout = $this->ReadPropertyInteger("SNMPTimeout");
@@ -204,6 +218,8 @@
             $snmp = new ipssnmpclass();
             $snmp_sdata = array();
             $snmp->timeout = $SNMPTimeout;
+
+            if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("WalkSNMP","Use SNMPVersion => ".$SNMPVersion, 0);
 
             switch($SNMPVersion){
                 case "1";
@@ -229,10 +245,13 @@
             }
 
             $out = $snmp->walk($SNMPIPAddress, $oid, $snmp_sdata);
+            if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("WalkSNMP",$oid. " => ".json_encode($out), 0);
             return $out;
         }
 
         public function WriteSNMPbyOID($oid, $value, $type) {
+            if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("WriteSNMPbyOID", $oid ." => ". $value, 0);
+
             $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
             $SNMPTimeout = $this->ReadPropertyInteger("SNMPTimeout");
             $SNMPVersion = $this->ReadPropertyString("SNMPVersion");
@@ -249,6 +268,8 @@
             $snmp = new ipssnmpclass();
             $snmp_sdata = array();
             $snmp->timeout = $SNMPTimeout;
+
+            if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("WriteSNMPbyOID","Use SNMPVersion => ".$SNMPVersion, 0);
 
             switch($SNMPVersion){
                 case "1";

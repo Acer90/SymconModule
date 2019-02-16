@@ -1,6 +1,7 @@
 {
     "elements":
     [
+        { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
         { "type": "ValidationTextBox", "name": "SNMPIPAddress", "caption": "Host" },
         { "type": "NumberSpinner", "name": "SNMPTimeout", "caption": "Timeout"},
         { "type": "IntervalBox", "name": "SNMPInterval", "caption": "Sekunden" },
