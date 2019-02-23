@@ -584,16 +584,16 @@ class ViesmannOpenV extends IPSModule {
 
         if(strlen($bin) == $len){
             //negative Zahlen
-            $bin = substr($bin, 1);
+            //$bin = substr($bin, 1);
             //erstellen des Max
             $max = "1";
-            for($i = 0; $i < $len; $i++){
-                $max = $max."0";
+            for($i = 1; $i < $len; $i++){
+                $max = $max."1";
             }
 
             $r_val = base_convert($bin, 2, 10);
             $max_val = base_convert($max, 2, 10);
-            $r_val =  ($max_val - $r_val) * -1;
+            $r_val =  ($r_val - $max_val) + -1;
 
         }else{
             //prosive zahlen
