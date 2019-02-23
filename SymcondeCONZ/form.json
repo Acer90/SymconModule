@@ -1,0 +1,117 @@
+{
+    "elements":
+    [
+        { "type": "ValidationTextBox", "name": "IPAddress", "caption": "Host" },
+        { "type": "NumberSpinner", "name": "Port", "caption": "Port" },
+        { "type": "IntervalBox", "name": "Interval", "caption": "Sek" },
+        { "type": "ValidationTextBox", "name": "APIKey", "caption": "API Key" },
+        {
+            "type": "Configurator",
+            "name": "Configuration",
+            "caption": "Configuration",
+            "delete": true,
+            "values": [
+                {
+                    "id": 1,
+                    "name": "Kategorie",
+                    "address": ""
+                },{
+                    "parent": 1,
+                    "name": "Rechenmodul - Minimum",
+                    "address": "2",
+                    "create": {
+                        "moduleID": "{A7B0B43B-BEB0-4452-B55E-CD8A9A56B052}",
+                        "configuration": {
+                            "Calculation": 2,
+                            "Variables": "[]"
+                        }
+                    }
+                },{
+                    "parent": 1,
+                    "name": "Rechenmodul im Wohnzimmer",
+                    "address": "2",
+                    "create": {
+                        "moduleID": "{A7B0B43B-BEB0-4452-B55E-CD8A9A56B052}",
+                        "configuration": {
+                            "Calculation": 2,
+                            "Variables": "[]"
+                        },
+                        "location": [
+                            "Erdgeschoss",
+                            "Wohnzimmer"
+                        ]
+                    }
+                },{
+                    "parent": 1,
+                    "instanceID": 53398,
+                    "name": "Fehlerhafte Instanz",
+                    "address": "4"
+                },{
+                    "parent": 1,
+                    "name": "Rechenmodul - Auswahl",
+                    "address": "2",
+                    "create": {
+                        "Maximum": {
+                            "moduleID": "{A7B0B43B-BEB0-4452-B55E-CD8A9A56B052}",
+                            "configuration": {
+                                "Calculation": 3,
+                                "Variables": "[]"
+                            }
+                        },
+                        "Average": {
+                            "moduleID": "{A7B0B43B-BEB0-4452-B55E-CD8A9A56B052}",
+                            "configuration": {
+                                "Calculation": 4,
+                                "Variables": "[]"
+                            }
+                        }
+                    }
+                }, {
+                    "parent": 1,
+                    "name": "OZW772 IP-Interface",
+                    "address": "00:A0:03:FD:14:BB",
+                    "create": [
+                        {
+                            "moduleID": "{33765ABB-CFA5-40AA-89C0-A7CEA89CFE7A}",
+                            "configuration": {}
+                        },
+                        {
+                            "moduleID": "{1C902193-B044-43B8-9433-419F09C641B8}",
+                            "configuration": {
+                                "GatewayMode":1
+                            }
+                        },
+                        {
+                            "moduleID": "{82347F20-F541-41E1-AC5B-A636FD3AE2D8}",
+                            "configuration": {
+                                "Host":"172.17.31.95",
+                                "Port":3671,
+                                "Open":true
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "actions":
+    [
+        { "type": "Button", "label": "Test", "onClick": "deCONZ_Test($id);" },
+        { "type": "Button", "label": "Power Off", "onClick": "SamsungTizen_SendKeys($id, 'KEY_POWER');" },
+        { "type": "Button", "label": "Toggle Power", "onClick": "SamsungTizen_TogglePower($id);" },
+        { "type": "Button", "label": "Send 1,2,3,Enter", "onClick": "echo SamsungTizen_SendKeys($id, 'KEY_1;KEY_2;KEY_3;KEY_ENTER');" }
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Connection Success!" },
+        { "code": 201, "icon": "error", "caption": "Error Invalid parameter" },
+        { "code": 202, "icon": "error", "caption": "Variable does not exist!" },
+        { "code": 203, "icon": "error", "caption": "Internal Error!" },
+        { "code": 204, "icon": "error", "caption": "Timeout!" },
+        { "code": 205, "icon": "error", "caption": "Wrong Login!" },
+        { "code": 206, "icon": "error", "caption": "Can`t create Socket" },
+        { "code": 207, "icon": "error", "caption": "Server Offline" },
+        { "code": 208, "icon": "error", "caption": "Can`t send Data!" },
+        { "code": 209, "icon": "error", "caption": "Can`t recive Data!" }
+    ]
+}
