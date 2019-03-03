@@ -206,7 +206,8 @@
                     \"Username\": \"\",
                     \"Password\": \"\"
                 }";
-            
+
+            $this->SendDebug("Update Websocket", $change, 0);
             return $change;
         }
     }
