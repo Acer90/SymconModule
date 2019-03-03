@@ -171,6 +171,11 @@
 
             if($useSSL){
                 $origin = "http://".$ipAdress.":8002";
+
+                if(@$this->GetIDForIdent("VariableToken") === false){
+                    $this->RegisterVariableString("VariableToken", "Token", "", 0);
+                }
+
                 $token = $this->GetValue("VariableToken");
                 if(empty($token)){
                     $address = "wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control?name=symcon";
