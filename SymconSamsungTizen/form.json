@@ -9,10 +9,13 @@
         { "type": "IntervalBox", "name": "Sleep", "caption": "ms" },
         { "type": "Label", "label": "Check Service online every" },
         { "type": "IntervalBox", "name": "Interval", "caption": "Sec" },
-        { "type": "Label", "label": "WOL Settings" },
+        { "type": "Label", "label": "WoL Settings" },
         { "type": "Label", "label": "Classless Inter-Domain Routing (MASK: 255.255.255.0 ==> 24 (3 Byte * 8 Bit))" },
         { "type": "NumberSpinner", "name": "CIDR", "caption": "CIDR" },
-        { "type": "NumberSpinner", "name": "WoLPort", "caption": "WoL Port" }
+        { "type": "NumberSpinner", "name": "WoLPort", "caption": "WoL Port" },
+        { "type": "Label", "label": "WoL alternative software" },
+        { "type": "ValidationTextBox", "name": "WoLPath", "caption": "Path" },
+        { "type": "ValidationTextBox", "name": "WolParameter", "caption": "Start-Parameter" }
     ],
     "actions":
     [

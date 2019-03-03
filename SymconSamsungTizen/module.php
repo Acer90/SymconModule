@@ -20,6 +20,8 @@
 
             $this->RegisterPropertyInteger("CIDR", 24);
             $this->RegisterPropertyInteger("WoLPort", 9);
+            $this->RegisterPropertyString("WoLPath", "");
+            $this->RegisterPropertyString("WolParameter", "");
 
             $this->RegisterPropertyBoolean("UseSSL", true);
 
@@ -49,15 +51,19 @@
         }
 
         public function WakeUp(){
-
-            $macAddressHexadecimal = strtoupper($this->ReadPropertyString("MACAddress"));
             $ip= $this->ReadPropertyString("IPAddress");
             $cidr= $this->ReadPropertyInteger("CIDR");
             $port = $this->ReadPropertyInteger("WoLPort");
+            $w_path = $this->ReadPropertyString("WoLPath");
+            $w_parameters = $this->ReadPropertyString("WolParameter");
 
-            wakeOnLan($macAddressHexadecimal, $ip, $cidr, $port, $output);
-
-            $this->SendDebug("WOL",json_encode($output),0);
+            if(!empty($w_path)){
+                IPS_Execute($w_path, $w_parameters, false, false);
+            }else{
+                $macAddressHexadecimal = strtoupper($this->ReadPropertyString("MACAddress"));
+                wakeOnLan($macAddressHexadecimal, $ip, $cidr, $port, $output);
+                $this->SendDebug("WOL",json_encode($output),0);
+            }
         }
 
         public function SendKeys(String $keys){

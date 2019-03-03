@@ -11,6 +11,9 @@
       "WOL Settings": "\"Wake on LAN\" Einstellungen",
       "Classless Inter-Domain Routing (MASK: 255.255.255.0 ==> 24 (3 Byte * 8 Bit))": "Subnetmaske als Präfix (Maske: 255.255.255.0 ==> 24 (3 Byte * 8 Bit))",
       "WoL Port": "\"Wake on LAN\"-Port (Standart = 9)",
+      "WoL alternative software": "Alternative Software",
+      "Path": "Pfad",
+      "Start-Parameter": "Start-Parameter",
 
       "Wake Up!": "Aufwecken",
       "Power Off": "Auschalten",
