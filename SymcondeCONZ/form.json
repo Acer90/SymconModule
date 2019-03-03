@@ -3,8 +3,17 @@
     [
         { "type": "ValidationTextBox", "name": "IPAddress", "caption": "Host" },
         { "type": "NumberSpinner", "name": "Port", "caption": "Port" },
+        { "type": "NumberSpinner", "name": "WSPort", "caption": "Websocket-Port" },
         { "type": "IntervalBox", "name": "Interval", "caption": "Sek" },
-        { "type": "ValidationTextBox", "name": "APIKey", "caption": "API Key" },
+        { "type": "ValidationTextBox", "name": "APIKey", "caption": "API Key" }
+
+    ],
+    "actions":
+    [
+
+        { "type": "Button", "label": "Konfiguration holen", "onClick": "deCONZ_GETConfiguration($id);" },
+        { "type": "Button", "label": "Nur API-Key holen", "onClick": "deCONZ_GETAPIKey($id);" },
+        { "type": "Button", "label": "Geräteliste aktualisieren", "onClick": "echo deCONZ_UpdateDevices($id);" },
         {
             "type": "Configurator",
             "name": "Configuration",
@@ -94,24 +103,11 @@
             ]
         }
     ],
-    "actions":
-    [
-        { "type": "Button", "label": "Test", "onClick": "deCONZ_Test($id);" },
-        { "type": "Button", "label": "Power Off", "onClick": "SamsungTizen_SendKeys($id, 'KEY_POWER');" },
-        { "type": "Button", "label": "Toggle Power", "onClick": "SamsungTizen_TogglePower($id);" },
-        { "type": "Button", "label": "Send 1,2,3,Enter", "onClick": "echo SamsungTizen_SendKeys($id, 'KEY_1;KEY_2;KEY_3;KEY_ENTER');" }
-    ],
     "status":
     [
         { "code": 102, "icon": "active", "caption": "Connection Success!" },
-        { "code": 201, "icon": "error", "caption": "Error Invalid parameter" },
-        { "code": 202, "icon": "error", "caption": "Variable does not exist!" },
-        { "code": 203, "icon": "error", "caption": "Internal Error!" },
-        { "code": 204, "icon": "error", "caption": "Timeout!" },
-        { "code": 205, "icon": "error", "caption": "Wrong Login!" },
-        { "code": 206, "icon": "error", "caption": "Can`t create Socket" },
-        { "code": 207, "icon": "error", "caption": "Server Offline" },
-        { "code": 208, "icon": "error", "caption": "Can`t send Data!" },
-        { "code": 209, "icon": "error", "caption": "Can`t recive Data!" }
+        { "code": 201, "icon": "error", "caption": "Abrufen der Daten fehlgeschalgen! Weitere Infos in den Debug Logs!" },
+        { "code": 202, "icon": "error", "caption": "App verbinden Schaltfläche ist nicht aktive! Gehe in dein Webinterface und aktiviere \"App Verbinden\" unter Gateway => Erweitert" },
+        { "code": 203, "icon": "error", "caption": "Führe bitte zuerst \"Konfiguration holen\"" }
     ]
 }

@@ -1,14 +1,14 @@
 {
     "elements":
     [
-        { "type": "Label", "label": "TV" },
+        { "type": "Label", "label": "TV Settings" },
         { "type": "ValidationTextBox", "name": "IPAddress", "caption": "Host" },
-        { "type": "ValidationTextBox", "name": "MACAddress", "caption": "Mac Adress" },
-        { "type": "CheckBox", "name": "UseSSL", "caption": "SSL verwenden" },
-        { "type": "Label", "label": "Sleeptime between Keys!" },
+        { "type": "ValidationTextBox", "name": "MACAddress", "caption": "MAC Address (XX:XX:XX:XX:XX:XX)" },
+        { "type": "CheckBox", "name": "UseSSL", "caption": "use SSL" },
+        { "type": "Label", "label": "Time to wait between single Keys" },
         { "type": "IntervalBox", "name": "Sleep", "caption": "ms" },
-        { "type": "Label", "label": "Check online every" },
-        { "type": "IntervalBox", "name": "Interval", "caption": "Sek" },
+        { "type": "Label", "label": "Check Service online every" },
+        { "type": "IntervalBox", "name": "Interval", "caption": "Sec" },
         { "type": "Label", "label": "WOL Settings" },
         { "type": "Label", "label": "Classless Inter-Domain Routing (MASK: 255.255.255.0 ==> 24 (3 Byte * 8 Bit))" },
         { "type": "NumberSpinner", "name": "CIDR", "caption": "CIDR" },
@@ -24,14 +24,8 @@
     "status":
     [
         { "code": 102, "icon": "active", "caption": "Connection Success!" },
-        { "code": 201, "icon": "error", "caption": "Error Invalid parameter" },
-        { "code": 202, "icon": "error", "caption": "Variable does not exist!" },
-        { "code": 203, "icon": "error", "caption": "Internal Error!" },
-        { "code": 204, "icon": "error", "caption": "Timeout!" },
-        { "code": 205, "icon": "error", "caption": "Wrong Login!" },
-        { "code": 206, "icon": "error", "caption": "Can`t create Socket" },
-        { "code": 207, "icon": "error", "caption": "Server Offline" },
-        { "code": 208, "icon": "error", "caption": "Can`t send Data!" },
-        { "code": 209, "icon": "error", "caption": "Can`t recive Data!" }
+        { "code": 104, "icon": "active", "caption": "Connection Lost!" },
+        { "code": 203, "icon": "error", "caption": "Internal Error!" }
+
     ]
 }

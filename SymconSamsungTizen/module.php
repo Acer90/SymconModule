@@ -23,14 +23,17 @@
 
             $this->RegisterPropertyBoolean("UseSSL", true);
 
-            $this->ConnectParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}");  
-            $this->GetConfigurationForParent();
-
             $this->RegisterVariableBoolean("VariableOnline", "Status", "~Switch", 0);
+
+            $this->ConnectParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}");
+            $this->GetConfigurationForParent();
 
             //event erstellen 
             $this->RegisterTimer("CheckOnline", $this->ReadPropertyInteger("Interval"), 'SamsungTizen_CheckOnline($_IPS[\'TARGET\']);');
             $this->SetStatus(102);
+
+            $ParentId = @IPS_GetInstance($this->InstanceID)['ConnectionID'];
+            $this->RegisterMessage($ParentId, 10505 /* IM_CHANGESTATUS */);
         }
 
         public function ApplyChanges() {
@@ -42,6 +45,7 @@
 
             $this->ConnectParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}"); 
             $this->GetConfigurationForParent();
+
         }
 
         public function WakeUp(){
@@ -63,18 +67,16 @@
                 $keys_data = explode(";", $keys);
                 foreach ($keys_data as $value) {
                     $send_str = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$value.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
-                    $resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str))); 
+                    $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str)));
                     sleep($sleep);
                 }
             }else{
                 $send_str = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"'.$keys.'","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
-                $resultat = $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str))); 
+                $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str)));
             }
         }
 
         public function CheckOnline(){
-            $Intid = $this->InstanceID;
-            $varonline = IPS_GetObjectIDByIdent("VariableOnline", $Intid);
             $ipAdress = $this->ReadPropertyString("IPAddress");
             $useSSL = $this->ReadPropertyBoolean("UseSSL");
             $port = 8001;
@@ -85,17 +87,15 @@
 
             $fp = @fsockopen($ipAdress, $port,$errCode, $errStr, 1);
             if (!$fp){
-                if(GetValueBoolean($varonline) != false){
-                    SetValueBoolean($varonline, false);
-                    $this->SetBuffer("Aktive", false);
-                    $this->GetConfigurationForParent();
+                if($this->GetValue("VariableOnline") != false){
+                    $this->SetValue("VariableOnline", false);
+                    //$this->GetConfigurationForParent();
                     $this->SetStatus(104);
                 }
             } else {
-                if(GetValueBoolean($varonline) != true){
-                    SetValueBoolean($varonline, true);
-                    $this->SetBuffer("Aktive", true);
-                    $this->GetConfigurationForParent();
+                if($this->GetValue("VariableOnline") != true){
+                    $this->SetValue("VariableOnline", true);
+                    //$this->GetConfigurationForParent();
                     $this->SetStatus(102);
                 }
 
@@ -106,40 +106,85 @@
         }
 
         public function TogglePower(){
-            $Intid = $this->InstanceID;
-            $varonline = IPS_GetObjectIDByIdent("VariableOnline", $Intid);
-
-            if($varonline == 0 || !IPS_VariableExists($varonline)) return false;
-
-            if(GetValueBoolean($varonline) == true){
-                SamsungTizen_SendKeys($Intid, 'KEY_POWER');
+            if($this->GetValue("VariableOnline") == true){
+                $this->SendKeys('KEY_POWER');
             }else{
-                SamsungTizen_WakeUp($Intid);
+                $this->WakeUp();
             }
 
         }
 
+        public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
+
+            $this->SendDebug("MessageSink", "Message from SenderID ".$SenderID." with Message ".$Message."\r\n Data: ".print_r($Data, true), 0);
+
+            switch($Data[0]){
+                case 102:
+                    //$this->SendDebug("Connection", "Samsung Tizen connection establish", 0);
+                    $this->SetValue("VariableOnline" , true);
+                    $this->SetStatus(102);
+                    break;
+                default:
+                    $this->SendDebug("Connection", "Samsung Tizen connection lost", 0);
+                    $this->SetValue("VariableOnline" , false);
+                    break;
+            }
+        }
+
         public function ReceiveData($JSONString) {
                $data = json_decode($JSONString);
-               $this->SendDebug("ReceiveData", utf8_decode($data->Buffer), 0);          
+               $this->SendDebug("ReceiveData", utf8_decode($data->Buffer), 0);
+               $r_data = json_decode($data->Buffer,true);
+
+
+               if(array_key_exists("event", $r_data)){
+                   $event = $r_data["event"];
+                   switch ($event){
+                       case "ms.channel.connect":
+                           if($this->ReadAttributeBoolean("UseSSL") == true){
+                               $token = $r_data["token"];
+
+                               if(@$this->GetIDForIdent("VariableToken") === false){
+                                   $this->RegisterVariableString("VariableToken", "Token", "", 0);
+                               }
+
+                               if($token != $this->GetValue("VariableToken")){
+                                   $this->SetValue("VariableToken", $token);
+                                   $this->SendDebug("Token", "New Token " . $token . "has been set", 0);
+                                   $this->GetConfigurationForParent();
+                               }
+                           }
+                           $this->SendDebug("Connection", "Samsung Tizen connection establish", 0);
+                           $this->SetValue("VariableOnline" , true);
+                           break;
+                       default:
+
+                           break;
+                   }
+
+               }
         }
 
         public function GetConfigurationForParent() {
             $ipAdress = $this->ReadPropertyString("IPAddress");
             $useSSL = $this->ReadPropertyBoolean("UseSSL");
-            $active = $this->GetBuffer("Aktive");
 
             if($useSSL){
                 $origin = "http://".$ipAdress.":8002";
-                $TizenAdress = "wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control"; //?name=symcon
+                $token = $this->GetValue("VariableToken");
+                if(empty($token)){
+                    $address = "wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control?name=symcon";
+                }else{
+                    $address = "wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control?name=symcon&token=".$token;
+                }
             }else{
                 $origin = "http://".$ipAdress.":8001";
-                $TizenAdress = "ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control"; //?name=symcon
+                $address = "ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control?name=symcon";
             }
 
             //"Open": ".$active.",
             $change = "{    
-                    \"URL\": \"".$TizenAdress."\",
+                    \"URL\": \"".$address."\",
                     \"Protocol\": \"\",
                     \"Version\": 13,
                     \"Origin\": \"".$origin."\",
@@ -150,10 +195,7 @@
                     \"Username\": \"\",
                     \"Password\": \"\"
                 }";
-
-            //return "{\"URL\": \"".$TizenAdress."\", \"Open\": \"".$active."\"}";
-            //return "{\"URL\": \"".$TizenAdress."\"}";
+            
             return $change;
         }
     }
-?>

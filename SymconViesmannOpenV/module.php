@@ -118,6 +118,15 @@ class ViesmannOpenV extends IPSModule {
             //$value = "";
         //}
 
+        /*if(strlen($value) > 2){
+            $new_value = "";
+            for ($i=0; $i < strlen($value); $i++){
+                $new_value .= $value[$i];
+            }
+            $value = $new_value;
+            $this->SendDebug("###############", $value, 0);
+        }*/
+
         $length = dechex($bytes);
         if(strlen($length) == 1) $length = "0".$length;
 
@@ -457,11 +466,9 @@ class ViesmannOpenV extends IPSModule {
         $var_arr = IPS_GetVariable ( $id );
 
         $n_val = $Value;
+        $create_hex = true;
 
         switch($convert){
-            case 0:
-            default:
-                break;
             case 2:
                 $n_val = $n_val * 2;
                 break;
@@ -477,13 +484,52 @@ class ViesmannOpenV extends IPSModule {
             case "X10":
                 $n_val = $n_val / 10;
                 break;
+            case "Temperature10":
+                $n_val = $n_val * 10;
+                $n_val = $this->ConvertHexToRealNumbers($n_val, $length);
+                $create_hex = false;
+                break;
+            case "Temperature100":
+                $n_val = $n_val * 100;
+                $n_val = $this->ConvertHexToRealNumbers($n_val, $length);
+                $create_hex = false;
+                break;
+            case "BCDDateTime":
+                $format = 'Y-m-d H:i:s';
+                $date = DateTime::createFromFormat($format, $n_val);
+                $n_val = $this->ConvertDatetimeToBCD($date);
+                $create_hex = false;
+                break;
+            case "BCDUnix":
+                $n_val = $this->ConvertUnixToBCD($n_val);
+                $create_hex = false;
+                break;
+            case "BCDJson":
+                $data = json_decode($n_val, true);
+
+                $year = $data["year"];
+                $month = $data["month"];
+                $day = $data["day"];
+                $hour = $data["hour"];
+                $minute = $data["minute"];
+                $second = $data["second"];
+                $dayOfWeek = $data["dayoftheweek"];
+
+                $n_val = $this->ConvertDataToBCD($year, $month, $day, $hour, $minute, $second, $dayOfWeek);
+                $create_hex = false;
+                break;
+            case 0:
+            default:
+                break;
         }
 
-        $n_val = dechex($n_val);
-        $zahl = strlen($n_val);
-        if ($zahl % 2 != 0) {
-            //$this->SendDebug("5.RData", "Die Zahl $zahl ist ungerade", 0);
-            $n_val = "0".$n_val;
+        if($create_hex) {
+            $n_val = dechex($n_val);
+            $zahl = strlen($n_val);
+            if ($zahl % 2 != 0) {
+                //$this->SendDebug("5.RData", "Die Zahl $zahl ist ungerade", 0);
+                $n_val = "0" . $n_val;
+            }
         }
 
         switch ($var_arr["VariableType"]) {
@@ -501,8 +547,9 @@ class ViesmannOpenV extends IPSModule {
                 $this->SendData($HexStamp, 1, false, false, $n_val, 0, 0);
                 break;
             case 3: //String
+                $this->SendDebug("############", $n_val , 0);
                 $this->SendData($HexStamp, 1, false, false, $n_val, 0, 0);
-                $this->SendToIO(hex2bin($Value));
+                //$this->SendToIO(hex2bin($Value));
                 break;
         }
         $this->SetValue($Ident, $Value);
@@ -513,13 +560,13 @@ class ViesmannOpenV extends IPSModule {
         return "{\"BaudRate\": \"4800\", \"DataBits\": \"8\", \"StopBits\": \"2\", \"Parity\": \"Even\"}";
     }
 
-    public function UnixToBCD(ini $timestamp){
+    public function ConvertUnixToBCD(int $timestamp){
         $date = new DateTime();
         $date->setTimestamp($timestamp);
-        return DatetimeToBCD($date);
+        return $this->ConvertDatetimeToBCD($date);
     }
 
-    public function DatetimeToBCD(Datetime $dtvalue){
+    public function ConvertDatetimeToBCD(Datetime $dtvalue){
         $year = $dtvalue->format('Y');
         $month = $dtvalue->format('m');
         $day = $dtvalue->format('d');
@@ -528,10 +575,10 @@ class ViesmannOpenV extends IPSModule {
         $second = $dtvalue->format('s');
         $dayOfWeek = $dtvalue->format('w');
 
-        return DataToBCD($year, $month, $day, $hour, $minute, $second, $dayOfWeek);
+        return $this->ConvertDataToBCD($year, $month, $day, $hour, $minute, $second, $dayOfWeek);
     }
 
-    public function DataToBCD(int $year, int $month, int $day, int $hour, int $minute, int $second,int $dayOfWeek){
+    public function ConvertDataToBCD(int $year, int $month, int $day, int $hour, int $minute, int $second,int $dayOfWeek){
         if($month < 10) $month = "0".$month;
         if($day < 10) $day = "0".$day;
         if($hour < 10) $hour = "0".$hour;
@@ -601,5 +648,31 @@ class ViesmannOpenV extends IPSModule {
         }
 
         return $r_val;
+    }
+
+    public function ConvertRealNumbersToHex($num, $bytes){
+        $hex  = 0;
+        $len = $bytes * 8;
+
+        if($num < 0){
+            //negative Zahlen
+            //$bin = substr($bin, 1);
+            //erstellen des Max
+            $max = "1";
+            $num++;
+            for($i = 1; $i < $len; $i++){
+                $max = $max."1";
+            }
+            $max_val = base_convert($max, 2, 10);
+            $num = $max_val + $num;
+
+            $hex = base_convert($num, 10, 16);
+
+        }else{
+            //prosive zahlen
+            $hex = base_convert($num, 10, 16);
+        }
+
+        return $hex;
     }
 }
