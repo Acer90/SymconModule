@@ -147,7 +147,7 @@
                    $event = $r_data["event"];
                    switch ($event){
                        case "ms.channel.connect":
-                           if($this->ReadAttributeBoolean("UseSSL") == true){
+                           if($this->ReadPropertyBoolean("UseSSL") == true){
                                $token = $r_data["token"];
 
                                if(@$this->GetIDForIdent("VariableToken") === false){
