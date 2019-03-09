@@ -149,6 +149,7 @@
                        case "ms.channel.connect":
                            if($this->ReadPropertyBoolean("UseSSL") == true){
                                $token = $r_data["token"];
+                               $this->SendDebug("Token", "Token des Servers", 0);
 
                                if(@$this->GetIDForIdent("VariableToken") === false){
                                    $this->RegisterVariableString("VariableToken", "Token", "", 0);

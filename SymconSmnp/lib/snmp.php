@@ -55,6 +55,7 @@ class ipssnmpclass
   var $timeout = 10.0;			// timeout in seconds for waiting for a return packet
   var $default_security;		// default security parameters
 
+
  /**
   * Constructor
   */
@@ -65,6 +66,7 @@ class ipssnmpclass
                                     'v3_engine_time'=>0, 'v3_user'=>'', 'v3_auth'=>'', 'v3_priv'=>'',
                                     'v3_context_engine_id'=>'', 'v3_context_name'=>'', 'v3_hash'=>'md5',
                                     'v3_crypt_algorithm'=>'des', 'v3_crypt_mode'=>'cbc');
+
   }
 
  /**
@@ -227,6 +229,7 @@ class ipssnmpclass
       $packet = $this->build_packet($varbind, $security, 'trap');
     else
     {
+      IPS_LogMessage(0, "Unknown SNMP version [{$this->version}]");
       trigger_error("Unknown SNMP version [{$this->version}]", E_USER_WARNING);
       return;
     }
@@ -289,6 +292,7 @@ class ipssnmpclass
           $varbind[] = new rfc1157_VarBind(new rfc1155_ObjectID($o), new rfc1155_Null());
           break;
         default:
+          IPS_LogMessage(0, "Unknown type $type");
           trigger_error("Unknown type $type", E_USER_WARNING);
           $varbind[] = new rfc1157_VarBind(new rfc1155_ObjectID($o), new rfc1155_Null());
       }
@@ -327,6 +331,7 @@ class ipssnmpclass
         $pdu = new rfc1157_Set($this->assignRequestID(), 0, 0, $varbind);
       else
       {
+        IPS_LogMessage(0,"Unknown request type: $type");
         trigger_error("Unknown request type: $type", E_USER_WARNING);
         return '';
       }
@@ -358,6 +363,7 @@ class ipssnmpclass
       }
       else
       {
+        IPS_LogMessage(0, "Unknown request type: $type");
         trigger_error("Unknown request type: $type", E_USER_WARNING);
         return '';
       }
@@ -384,6 +390,7 @@ class ipssnmpclass
     }
     else
     {
+      IPS_LogMessage(0, "Unknown SNMP version {$this->version}");
       trigger_error("Unknown SNMP version {$this->version}", E_USER_WARNING);
       return '';
     }
@@ -440,6 +447,7 @@ class ipssnmpclass
     }
     else
     {
+      IPS_LogMessage(0, "Unknown SNMP version {$this->version}");
       trigger_error("Unknown SNMP version {$this->version}", E_USER_WARNING);
       return array();
     }
@@ -447,11 +455,14 @@ class ipssnmpclass
     $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
     if($socket === false)
     {
+      IPS_LogMessage(0, 'Unable to create socket.');
       trigger_error('Unable to create socket.', E_USER_WARNING);
       return array();
     }
-    if(!socket_set_nonblock($socket))
+    if(!socket_set_nonblock($socket)) {
+      IPS_LogMessage(0, 'Unable to set socket to nonblocking.');
       trigger_error('Unable to set socket to nonblocking.', E_USER_WARNING);
+    }
 
     $sent = 0;
     $received = 0;
@@ -465,20 +476,18 @@ class ipssnmpclass
         {
           // send next queue entry
           $entry = array_shift($queue);
-          if(strlen($entry[0]))
-          {
-            if($block_state == 1)
-            {
+          if(strlen($entry[0])) {
+            if ($block_state == 1) {
               socket_set_nonblock($socket);
               $block_state = 0;
             }
 
-            if(@socket_sendto($socket, $entry[0], strlen($entry[0]), 0, $entry[1], 161) === false)
+            if (@socket_sendto($socket, $entry[0], strlen($entry[0]), 0, $entry[1], 161) === false){
+              IPS_LogMessage(0, 'Unable to send packet.');
               trigger_error('Unable to send packet.', E_USER_WARNING);
-            else
-              $sent++;
-            $t = $this->microtime();
-          }
+            }else $sent++;
+              $t = $this->microtime();
+            }
         }
         elseif($block_state == 0)
         {
@@ -521,7 +530,10 @@ class ipssnmpclass
           {
             $pdu = $msg->pdu();
 
-            if($pdu->errorStatus()) trigger_error($pdu->errorString(), E_USER_WARNING);
+            if($pdu->errorStatus()) {
+              IPS_LogMessage(0, $pdu->errorString());
+              trigger_error($pdu->errorString(), E_USER_WARNING);
+            }
 
             foreach($pdu->varBindList() as $val)
             {

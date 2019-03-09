@@ -372,11 +372,11 @@ class ViesmannOpenV extends IPSModule {
                         $data_int = $data_int * 10;
                         break;
                     case "Temperature10":
-                        $data_int = $this->ConvertHexToRealNumbers($n_val, $item["length"]);
+                        $data_int = $this->ConvertHexToRealNumbers($n_val, $last["length"]);
                         $data_int = $data_int /10;
                         break;
                     case "Temperature100":
-                        $data_int = $this->ConvertHexToRealNumbers($n_val, $item["length"]);
+                        $data_int = $this->ConvertHexToRealNumbers($n_val, $last["length"]);
                         $data_int = $data_int /100;
                         break;
                     case "BCDDateTime":
