@@ -161,7 +161,7 @@
                                    $this->GetConfigurationForParent();
                                }
                            }
-                           $this->SendDebug("Connection", "Samsung Tizen connection establish", 0);
+                           $this->SendDebug("Connection", "Samsung Tizen connection establish (ms.channel.connect)", 0);
                            $this->SetValue("VariableOnline" , true);
                            break;
                        default:
