@@ -1,0 +1,14 @@
+{
+    "id": "{8370171F-7098-D1E0-C516-12D5A40C4725}",
+    "name": "deCONZ Configurator",
+    "type": 4,
+	"vendor": "",
+	"aliases": 
+	[
+		"deCONZ Configurator"
+	],
+    "parentRequirements": ["{55265492-DD6A-66A6-7F23-59257E814134}"],
+    "childRequirements": [],
+    "implemented": ["{C7DAFDEB-9071-70AD-CB94-C71170F850AA}"],
+    "prefix": "deCONZConfigurator"
+}

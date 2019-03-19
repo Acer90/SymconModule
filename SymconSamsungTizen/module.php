@@ -177,7 +177,7 @@
             $useSSL = $this->ReadPropertyBoolean("UseSSL");
 
             if($useSSL){
-                $origin = "http://".$ipAdress.":8002";
+                $origin = "https://".$ipAdress.":8002";
 
                 if(@$this->GetIDForIdent("VariableToken") === false){
                     $this->RegisterVariableString("VariableToken", "Token", "", 0);

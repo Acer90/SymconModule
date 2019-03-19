@@ -8,8 +8,6 @@
         public function Create() {
             parent::Create();
 
-            $this->SetBuffer("Aktive", false);
-
             // Modul-Eigenschaftserstellung
             $this->RegisterPropertyString("IPAddress", "");
             $this->RegisterPropertyInteger("Port", 80);
@@ -19,7 +17,7 @@
             $this->RegisterPropertyString("DeviceList", "");
 
 
-            $this->ConnectParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}");  
+            $this->ConnectParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}");
             $this->GetConfigurationForParent();
 
             //event erstellen 
@@ -34,7 +32,7 @@
             $this->SetStatus(102);
             $this->SetTimerInterval("CheckOnline", $this->ReadPropertyInteger("Interval")*1000);
 
-            $this->ConnectParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}"); 
+            $this->ConnectParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}");
             $this->GetConfigurationForParent();
         }
 
@@ -90,126 +88,6 @@
             //$this->GetData("discover", "https://dresden-light.appspot.com");
             //$this->GetData("api");
             //$this->PostData("api", "{\"username\": \"988112a4e198cc1211\",\"devicetype\": \"my application\"}");
-
-        }
-
-        public function GetConfigurationForm() {
-
-            return '{
-                "elements":
-                [
-                    { "type": "ValidationTextBox", "name": "IPAddress", "caption": "Host" },
-                    { "type": "NumberSpinner", "name": "Port", "caption": "Port" },
-                    { "type": "NumberSpinner", "name": "WSPort", "caption": "Websocket-Port" },
-                    { "type": "IntervalBox", "name": "Interval", "caption": "Sek" },
-                    { "type": "ValidationTextBox", "name": "APIKey", "caption": "API Key" }
-            
-                ],
-                "actions":
-                [
-            
-                    { "type": "Button", "label": "Konfiguration holen", "onClick": "deCONZ_GETConfiguration($id);" },
-                    { "type": "Button", "label": "Nur API-Key holen", "onClick": "deCONZ_GETAPIKey($id);" },
-                    { "type": "Button", "label": "Geräteliste aktualisieren", "onClick": "echo deCONZ_UpdateDevices($id);" },
-                    {
-                        "type": "Configurator",
-                        "name": "Configuration",
-                        "caption": "Configuration",
-                        "delete": true,
-                        "rowCount": 10,
-                        "values": [
-                            {
-                                "id": 1,
-                                "name": "Kategorie",
-                                "address": ""
-                            },{
-                                "parent": 1,
-                                "name": "Rechenmodul - Minimum",
-                                "address": "2",
-                                "create": {
-                                    "moduleID": "{A7B0B43B-BEB0-4452-B55E-CD8A9A56B052}",
-                                    "configuration": {
-                                        "Calculation": 2,
-                                        "Variables": "[]"
-                                    }
-                                }
-                            },{
-                                "parent": 1,
-                                "name": "Rechenmodul im Wohnzimmer",
-                                "address": "2",
-                                "create": {
-                                    "moduleID": "{A7B0B43B-BEB0-4452-B55E-CD8A9A56B052}",
-                                    "configuration": {
-                                        "Calculation": 2,
-                                        "Variables": "[]"
-                                    },
-                                    "location": [
-                                        "Erdgeschoss",
-                                        "Wohnzimmer"
-                                    ]
-                                }
-                            },{
-                                "parent": 1,
-                                "instanceID": 53398,
-                                "name": "Fehlerhafte Instanz",
-                                "address": "4"
-                            },{
-                                "parent": 1,
-                                "name": "Rechenmodul - Auswahl",
-                                "address": "2",
-                                "create": {
-                                    "Maximum": {
-                                        "moduleID": "{A7B0B43B-BEB0-4452-B55E-CD8A9A56B052}",
-                                        "configuration": {
-                                            "Calculation": 3,
-                                            "Variables": "[]"
-                                        }
-                                    },
-                                    "Average": {
-                                        "moduleID": "{A7B0B43B-BEB0-4452-B55E-CD8A9A56B052}",
-                                        "configuration": {
-                                            "Calculation": 4,
-                                            "Variables": "[]"
-                                        }
-                                    }
-                                }
-                            }, {
-                                "parent": 1,
-                                "name": "OZW772 IP-Interface",
-                                "address": "00:A0:03:FD:14:BB",
-                                "create": [
-                                    {
-                                        "moduleID": "{33765ABB-CFA5-40AA-89C0-A7CEA89CFE7A}",
-                                        "configuration": {}
-                                    },
-                                    {
-                                        "moduleID": "{1C902193-B044-43B8-9433-419F09C641B8}",
-                                        "configuration": {
-                                            "GatewayMode":1
-                                        }
-                                    },
-                                    {
-                                        "moduleID": "{82347F20-F541-41E1-AC5B-A636FD3AE2D8}",
-                                        "configuration": {
-                                            "Host":"172.17.31.95",
-                                            "Port":3671,
-                                            "Open":true
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ],
-                "status":
-                [
-                    { "code": 102, "icon": "active", "caption": "Connection Success!" },
-                    { "code": 201, "icon": "error", "caption": "Abrufen der Daten fehlgeschalgen! Weitere Infos in den Debug Logs!" },
-                    { "code": 202, "icon": "error", "caption": "App verbinden Schaltfläche ist nicht aktive! Gehe in dein Webinterface und aktiviere \"App Verbinden\" unter Gateway => Erweitert" },
-                    { "code": 203, "icon": "error", "caption": "Führe bitte zuerst \"Konfiguration holen\"" }
-                ]
-            }';
-
 
         }
 
@@ -298,8 +176,27 @@
         }
 
         public function ReceiveData($JSONString) {
-               $data = json_decode($JSONString);
-               $this->SendDebug("ReceiveData", utf8_decode($data->Buffer), 0);          
+            $data = json_decode($JSONString);
+            $this->SendDebug("ReceiveData", utf8_decode($data->Buffer), 0);
+
+            $data_arr = json_decode($data->Buffer, true);
+
+            if(array_key_exists("r",$data_arr)){
+                switch ($data_arr["r"]){
+                    case "sensors":
+                        $this->SendJSONToSensors($data->Buffer);
+                        break;
+                    default:
+
+                        break;
+                }
+            }
+        }
+
+        protected function SendJSONToSensors ($data)
+        {
+            // Weiterleitung zu allen Gerät-/Device-Instanzen
+            $this->SendDataToChildren(json_encode(Array("DataID" => "{AE76A7E7-860B-DC48-00D1-C100202AFA1C}", "Buffer" => $data))); //  I/O RX GUI
         }
 
         public function GetConfigurationForParent() {

@@ -1,0 +1,11 @@
+{
+  "id": "{AECF8A6E-1E81-E886-8361-4370C5910490}",
+  "name": "deCONZ Sensor",
+  "type": 3,
+  "vendor": "",
+  "aliases": ["SymcondeCONZSensor"],
+  "parentRequirements": ["{544D88E2-F711-654E-547B-6F80DA4A22B7}"],
+  "childRequirements": [],
+  "implemented": ["{AE76A7E7-860B-DC48-00D1-C100202AFA1C}"],
+  "prefix": "deCONZSensor"
+}
