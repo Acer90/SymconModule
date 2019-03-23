@@ -185,13 +185,13 @@
 
                 $token = $this->GetValue("VariableToken");
                 if(empty($token)){
-                    $address = "wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control?name=symcon";
+                    $address = "wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control?name=".base64_encode("symcon");
                 }else{
-                    $address = "wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control?name=symcon&token=".$token;
+                    $address = "wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control?name=".base64_encode("symcon")."&token=".$token;
                 }
             }else{
                 $origin = "http://".$ipAdress.":8001";
-                $address = "ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control?name=symcon";
+                $address = "ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control?name=".base64_encode("symcon");
             }
 
             //"Open": ".$active.",
