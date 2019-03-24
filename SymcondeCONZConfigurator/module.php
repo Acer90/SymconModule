@@ -145,7 +145,22 @@
                     $name = $item["name"];
 
                     if(array_key_exists($item["uniqueid"], $sensors)) $intID = $sensors[$item["uniqueid"]];
-                    if($intID > 0) $name = IPS_GetName($intID)." (".$item["name"].")";
+                    if($intID > 0) $name = IPS_GetName($intID);
+                    if(array_key_exists("state", $item)){
+                        $name = $name. " (State=";
+                        $first = true;
+                        foreach($item["state"] as $key_val => $item_val){
+                            if($first){
+                                $name = $name.$key_val;
+                                $first = false;
+                            }else{
+                                $name = $name.",".$key_val;
+                            }
+                        }
+                        $name = $name.")";
+                    }
+
+                    if(strlen($name > 100)) $name = substr($name, 0, 97). "...";
                     $create = array();
                     $create["moduleID"] ="{AECF8A6E-1E81-E886-8361-4370C5910490}";
 

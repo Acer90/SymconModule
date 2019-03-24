@@ -42,5 +42,68 @@ class deCONZSensor extends IPSModule
     {
         $data = json_decode($JSONString);
         $this->SendDebug("ReceiveData", utf8_decode($data->Buffer), 0);
+        $data_arr = json_decode($data->Buffer, true);
+        //{"e":"changed","id":"9","r":"sensors","state":{"dark":true,"daylight":false,"lastupdated":"2019-03-23T13:50:59","lightlevel":3011,"lux":2},"t":"event","uniqueid":"00:15:8d:00:02:ea:07:3d-01-0400"}
+        if($data_arr["uniqueid"] == $this->ReadPropertyString("uniqueid")){
+            if(array_key_exists("state", $data_arr)){
+                foreach ($data_arr["state"] as $key => $item){
+
+                    if(@$this->GetIDForIdent($key) === false){
+                        switch(gettype($item)){
+                            case "boolean":
+                                $this->RegisterVariableBoolean($key, $key, "~Switch", 0);
+                                break;
+                            case "string":
+                                $this->RegisterVariableString($key, $key, "", 0);
+                                break;
+                            case "integer":
+                                $this->RegisterVariableInteger($key, $key, "", 0);
+                                break;
+                            case "float":
+                                $this->RegisterVariableFloat($key, $key, "", 0);
+                                break;
+                        }
+                    }
+
+                    $this->SetValue(($key), $item);
+
+                }
+
+            }
+
+            if(array_key_exists("config", $data_arr)){
+                foreach ($data_arr["config"] as $key => $item) {
+                    if ($this->GetIDForIdent($key) === false) {
+                        switch (gettype($item)) {
+                            case "boolean":
+                                $this->RegisterVariableBoolean($key, $key, "~Switch", 0);
+                                break;
+                            case "string":
+                                $this->RegisterVariableString($key, $key, "", 0);
+                                break;
+                            case "integer":
+                                $this->RegisterVariableInteger($key, $key, "", 0);
+                                break;
+                            case "float":
+                                $this->RegisterVariableFloat($key, $key, "", 0);
+                                break;
+                        }
+
+                        switch ($key) {
+                            case "on":
+                            case "reachable":
+                            case "battery":
+                                break;
+                            default:
+                                $this->EnableAction($key);
+                                break;
+                        }
+
+                    }
+
+                    $this->SetValue(($key), $item);
+                }
+            }
+        }
     }
 }
