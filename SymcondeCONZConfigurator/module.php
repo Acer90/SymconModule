@@ -177,7 +177,52 @@
                 }
             }
 
+            $data_lights = IPS_GetInstanceListByModuleID("{03A88A06-1DA6-5A63-F443-250635164DAF}");
+            foreach ($data_lights as $item){
+                if(IPS_InstanceExists($item)){
+                    $arr = json_decode(IPS_GetConfiguration ($item), true);
+                    $sensors[$arr["uniqueid"]] = $item;
+                }
+            }
 
+            $data_sensors = json_decode($this->GetData("lights"), true);
+            if(is_array($data_sensors)){
+                foreach ($data_sensors as $item) {
+                    $intID = 0;
+                    $name = $item["name"];
+
+                    if(array_key_exists($item["uniqueid"], $sensors)) $intID = $sensors[$item["uniqueid"]];
+                    if($intID > 0) $name = IPS_GetName($intID);
+                    if(array_key_exists("state", $item)){
+                        $name = $name. " (State=";
+                        $first = true;
+                        foreach($item["state"] as $key_val => $item_val){
+                            if($first){
+                                $name = $name.$key_val;
+                                $first = false;
+                            }else{
+                                $name = $name.",".$key_val;
+                            }
+                        }
+                        $name = $name.")";
+                    }
+
+                    if(strlen($name > 100)) $name = substr($name, 0, 97). "...";
+                    $create = array();
+                    $create["moduleID"] ="{03A88A06-1DA6-5A63-F443-250635164DAF}";
+
+                    $configuration = array();
+                    $configuration["uniqueid"] = $item["uniqueid"];
+                    $create["configuration"] = $configuration;
+
+                    if($kat_id > 0){
+                        $create["location"] =  $kat_arr;
+                    }
+
+                    $values[] = array("parent" => 2, "name" => $name, "address" => $item["uniqueid"], "instanceID" => $intID, "create" => $create);
+
+                }
+            }
 
             $configurator["values"]  = $values;
             $actions[] = $configurator;

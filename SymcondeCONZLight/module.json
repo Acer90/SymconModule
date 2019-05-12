@@ -1,0 +1,11 @@
+{
+  "id": "{03A88A06-1DA6-5A63-F443-250635164DAF}",
+  "name": "deCONZ Light",
+  "type": 3,
+  "vendor": "",
+  "aliases": ["SymcondeCONZLight"],
+  "parentRequirements": ["{98BD2556-6A31-5B23-48DF-D76CDF8921AB}"],
+  "childRequirements": [],
+  "implemented": ["{D59F4287-6E3F-3400-245A-1783EA0FB2F3}"],
+  "prefix": "deCONZLight"
+}

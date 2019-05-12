@@ -257,7 +257,7 @@ class ViesmannOpenV extends IPSModule {
             }
 
             //Fix Send Bug
-            if($len > 2 && strpos($data, '0505') !== false){
+            if($len > 2 && strpos($data_str, '05') !== false){
                 //wert verwerfen
                 $this->SendDebug("Transmit verworfen", $last["hex"], 0);
                 $this->SetBuffer("Last", "");
@@ -406,6 +406,18 @@ class ViesmannOpenV extends IPSModule {
                             $data_int = json_encode($out["Array"]);
                         }
                         break;
+                    case "HexValue":
+                        $data_int = $data;
+                        break;
+                    case "TimerJson":
+                        $out = $this->ConvertTimerToJson($data);
+
+                        if($out == false){
+                            $data_int = "";
+                        }else{
+                            $data_int = $out;
+                        }
+                        break;
                     case 0:
                     default:
                         break;
@@ -518,6 +530,13 @@ class ViesmannOpenV extends IPSModule {
                 $n_val = $this->ConvertDataToBCD($year, $month, $day, $hour, $minute, $second, $dayOfWeek);
                 $create_hex = false;
                 break;
+            case "HexValue":
+                $create_hex = false;
+                break;
+            case "TimerJson":
+                $n_val = $this->ConvertJsonToTimer($n_val);
+                $create_hex = false;
+                break;
             case 0:
             default:
                 break;
@@ -558,6 +577,45 @@ class ViesmannOpenV extends IPSModule {
 
     public function GetConfigurationForParent() {
         return "{\"BaudRate\": \"4800\", \"DataBits\": \"8\", \"StopBits\": \"2\", \"Parity\": \"Even\"}";
+    }
+
+    public function ConvertJsonToTimer($jsondata){
+        $arr = json_decode($jsondata, true);
+        $hexstamp = "";
+
+        foreach($arr as $item){
+            $s_data = explode(":", $item);
+            $std = $s_data[0];
+            $min = intval($s_data[1]);
+
+            $byte_wert_int = ($min / 8 / 10 + $std) *8;
+            $hexstamp .= str_pad(dechex($byte_wert_int), 2, "0", STR_PAD_LEFT);
+        }
+
+        $hexstamp = str_pad($hexstamp, 16, "F", STR_PAD_RIGHT);
+        return $hexstamp;
+    }
+
+    public function ConvertTimerToJson($hexstamp){
+        if (strlen($hexstamp) != 16) return false;
+
+        $arr = str_split($hexstamp,2);
+        $r_value = array();
+
+        for ($i=0; $i<8;$i++)
+        {
+            $byte_wert_int = hexdec($arr[$i]);
+
+            if ($byte_wert_int != 255)
+            {
+                $std=floor($byte_wert_int/8);
+                $min= ($byte_wert_int/8 - $std) * 8 * 10;
+                $min= str_pad($min, 2, '0', STR_PAD_LEFT );
+                $r_value[] = $std.":".$min;
+            }
+        }
+
+        return json_encode($r_value);
     }
 
     public function ConvertUnixToBCD(int $timestamp){

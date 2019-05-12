@@ -186,6 +186,9 @@
                     case "sensors":
                         $this->SendJSONToSensors($data->Buffer);
                         break;
+                    case "lights":
+                        $this->SendJSONToLights($data->Buffer);
+                        break;
                     default:
 
                         break;
@@ -197,6 +200,12 @@
         {
             // Weiterleitung zu allen Gerät-/Device-Instanzen
             $this->SendDataToChildren(json_encode(Array("DataID" => "{AE76A7E7-860B-DC48-00D1-C100202AFA1C}", "Buffer" => $data))); //  I/O RX GUI
+        }
+
+        protected function SendJSONToLights ($data)
+        {
+            // Weiterleitung zu allen Gerät-/Device-Instanzen
+            $this->SendDataToChildren(json_encode(Array("DataID" => "{D59F4287-6E3F-3400-245A-1783EA0FB2F3}", "Buffer" => $data))); //  I/O RX GUI
         }
 
         public function GetConfigurationForParent() {
