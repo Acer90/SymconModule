@@ -245,8 +245,10 @@ class ViesmannOpenV extends IPSModule {
         }
 
         if(in_array("Last", $BufferList)){
-            $runTime  = $this->GetBuffer("RunTime") - microtime();
-            $this->SendDebug("Runtime", "Runtime: ".$runTime ."Sekunden", 0);
+            $oldTime = floatval(str_replace(",", ".", $this->GetBuffer("RunTime")));
+            $runTime = round((microtime(true) - $oldTime), 2);
+
+            $this->SendDebug("Runtime", "Runtime: ".$runTime ." Sec", 0);
 
             $last = json_decode($this->GetBuffer("Last"), true);
             if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("R-3.Last Data", $this->GetBuffer("Last"), 0);
@@ -260,7 +262,7 @@ class ViesmannOpenV extends IPSModule {
             }
 
             //Fix Send Bug
-            if($len > 2 && substr($data_str, -2) == "05" && $runTime >= 1.0){
+            if($len > 2 && substr($data_str, -2) == "05" && $runTime >= 0.5){
 
                 //wert verwerfen
                 $this->SendDebug("Transmit verworfen", $last["hex"]. " Return --> ". $data_str . "(".$runTime.")", 0);
@@ -277,7 +279,7 @@ class ViesmannOpenV extends IPSModule {
                     $this->SetBuffer($first_item, "");
                     $this->SetBuffer("Last", json_encode($item));
                     $this->SendDebug("Send Hex", "01".$item["hex"].$item["length"].$item["value"], 0);
-                    $this->SetBuffer("RunTime", microtime(true));
+                    $this->SetBuffer("RunTime", strval(microtime(true)));
                     $this->SendToIO(hex2bin("01".$item["hex"].$item["length"].$item["value"]));
                 }
                 exit;
@@ -295,7 +297,7 @@ class ViesmannOpenV extends IPSModule {
                                 $this->SendDebug("Send Change", "ERROR - Re Send Data(".$last["ReTry"].")", 0);
                                 $this->SetBuffer("Last", json_encode($last));
                                 $this->SendDebug("Send Hex", "01".$last["hex"].$last["length"].$last["value"], 0);
-                                $this->SetBuffer("RunTime", microtime(true));
+                                $this->SetBuffer("RunTime", strval(microtime(true)));
                                 $this->SendToIO(hex2bin("01".$last["hex"].$last["length"].$last["value"]));
                             }
                         }else{
@@ -303,7 +305,7 @@ class ViesmannOpenV extends IPSModule {
                             $this->SendDebug("Send Change", "ERROR - Re Send Data(".$last["ReTry"].")", 0);
                             $this->SetBuffer("Last", json_encode($last));
                             $this->SendDebug("Send Hex", "01".$last["hex"].$last["length"].$last["value"], 0);
-                            $this->SetBuffer("RunTime", microtime(true));
+                            $this->SetBuffer("RunTime", strval(microtime(true)));
                             $this->SendToIO(hex2bin("01".$last["hex"].$last["length"].$last["value"]));
                         }
                     }else{
@@ -328,7 +330,7 @@ class ViesmannOpenV extends IPSModule {
                     $this->SetBuffer($first_item, "");
                     $this->SetBuffer("Last", json_encode($item));
                     $this->SendDebug("Send Hex", $item["hex"].$item["length"].$item["value"], 0);
-                    $this->SetBuffer("RunTime", microtime(true));
+                    $this->SetBuffer("RunTime", strval(microtime(true)));
                     $this->SendToIO(hex2bin($item["hex"].$item["length"].$item["value"]));
                 }
 
