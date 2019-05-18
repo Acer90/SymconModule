@@ -245,6 +245,9 @@ class ViesmannOpenV extends IPSModule {
         }
 
         if(in_array("Last", $BufferList)){
+            $runTime  = $this->GetBuffer("RunTime") - microtime();
+            $this->SendDebug("Runtime", "Runtime: ".$runTime ."Sekunden", 0);
+
             $last = json_decode($this->GetBuffer("Last"), true);
             if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("R-3.Last Data", $this->GetBuffer("Last"), 0);
             $len = hexdec($last["length"])*2;
@@ -257,9 +260,10 @@ class ViesmannOpenV extends IPSModule {
             }
 
             //Fix Send Bug
-            if($len > 2 && strpos($data_str, '05') !== false){
+            if($len > 2 && substr($data_str, -2) == "05" && $runTime >= 1.0){
+
                 //wert verwerfen
-                $this->SendDebug("Transmit verworfen", $last["hex"], 0);
+                $this->SendDebug("Transmit verworfen", $last["hex"]. " Return --> ". $data_str . "(".$runTime.")", 0);
                 $this->SetBuffer("Last", "");
                 $this->SetBuffer("Data", "");
 
@@ -273,6 +277,7 @@ class ViesmannOpenV extends IPSModule {
                     $this->SetBuffer($first_item, "");
                     $this->SetBuffer("Last", json_encode($item));
                     $this->SendDebug("Send Hex", "01".$item["hex"].$item["length"].$item["value"], 0);
+                    $this->SetBuffer("RunTime", microtime(true));
                     $this->SendToIO(hex2bin("01".$item["hex"].$item["length"].$item["value"]));
                 }
                 exit;
@@ -290,6 +295,7 @@ class ViesmannOpenV extends IPSModule {
                                 $this->SendDebug("Send Change", "ERROR - Re Send Data(".$last["ReTry"].")", 0);
                                 $this->SetBuffer("Last", json_encode($last));
                                 $this->SendDebug("Send Hex", "01".$last["hex"].$last["length"].$last["value"], 0);
+                                $this->SetBuffer("RunTime", microtime(true));
                                 $this->SendToIO(hex2bin("01".$last["hex"].$last["length"].$last["value"]));
                             }
                         }else{
@@ -297,6 +303,7 @@ class ViesmannOpenV extends IPSModule {
                             $this->SendDebug("Send Change", "ERROR - Re Send Data(".$last["ReTry"].")", 0);
                             $this->SetBuffer("Last", json_encode($last));
                             $this->SendDebug("Send Hex", "01".$last["hex"].$last["length"].$last["value"], 0);
+                            $this->SetBuffer("RunTime", microtime(true));
                             $this->SendToIO(hex2bin("01".$last["hex"].$last["length"].$last["value"]));
                         }
                     }else{
@@ -321,6 +328,7 @@ class ViesmannOpenV extends IPSModule {
                     $this->SetBuffer($first_item, "");
                     $this->SetBuffer("Last", json_encode($item));
                     $this->SendDebug("Send Hex", $item["hex"].$item["length"].$item["value"], 0);
+                    $this->SetBuffer("RunTime", microtime(true));
                     $this->SendToIO(hex2bin($item["hex"].$item["length"].$item["value"]));
                 }
 
@@ -625,24 +633,25 @@ class ViesmannOpenV extends IPSModule {
     }
 
     public function ConvertDatetimeToBCD(Datetime $dtvalue){
+
         $year = $dtvalue->format('Y');
         $month = $dtvalue->format('m');
         $day = $dtvalue->format('d');
         $hour = $dtvalue->format('H');
         $minute = $dtvalue->format('i');
         $second = $dtvalue->format('s');
-        $dayOfWeek = $dtvalue->format('w');
+        $dayOfWeek = $dtvalue->format('N');
 
         return $this->ConvertDataToBCD($year, $month, $day, $hour, $minute, $second, $dayOfWeek);
     }
 
     public function ConvertDataToBCD(int $year, int $month, int $day, int $hour, int $minute, int $second,int $dayOfWeek){
-        if($month < 10) $month = "0".$month;
-        if($day < 10) $day = "0".$day;
-        if($hour < 10) $hour = "0".$hour;
-        if($minute < 10) $minute = "0".$minute;
-        if($second < 10) $second = "0".$second;
-        $dayOfWeek = "0".$dayOfWeek;
+        $month = str_pad($month, 2, '0', STR_PAD_LEFT );
+        $day = str_pad($day, 2, '0', STR_PAD_LEFT );
+        $hour = str_pad($hour, 2, '0', STR_PAD_LEFT );
+        $minute = str_pad($minute, 2, '0', STR_PAD_LEFT );
+        $second = str_pad($second, 2, '0', STR_PAD_LEFT );
+        $dayOfWeek = str_pad($dayOfWeek, 2, '0', STR_PAD_LEFT );
 
         $hex = $year.$month.$day.$dayOfWeek.$hour.$minute.$second;
         return $hex;
