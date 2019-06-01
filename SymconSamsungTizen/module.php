@@ -13,10 +13,13 @@
             $this->SetBuffer("Aktive", false);
 
             // Modul-Eigenschaftserstellung
+            $this->RegisterPropertyBoolean("Active", false);
+
             $this->RegisterPropertyString("IPAddress", "192.168.178.1"); 
             $this->RegisterPropertyString("MACAddress", "aa:bb:cc:00:11:22"); 
             $this->RegisterPropertyInteger("Interval", 10);
             $this->RegisterPropertyInteger("Sleep", 1000);
+            $this->RegisterPropertyString("SSLToken", "");
 
             $this->RegisterPropertyInteger("CIDR", 24);
             $this->RegisterPropertyInteger("WoLPort", 9);
@@ -43,10 +46,15 @@
             parent::ApplyChanges();
 
             $this->SetStatus(102);
-            $this->SetTimerInterval("CheckOnline", $this->ReadPropertyInteger("Interval")*1000);
+            if($this->ReadPropertyBoolean("Active")){
+                $this->SetTimerInterval("CheckOnline", $this->ReadPropertyInteger("Interval")*1000);
+            }else{
+                $this->SetTimerInterval("CheckOnline", 0);
+            }
+
 
             $this->ConnectParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}"); 
-            $this->GetConfigurationForParent();
+            $this->UpdateConfigurationForParent();
 
         }
 
@@ -149,17 +157,13 @@
                        case "ms.channel.connect":
                            if($this->ReadPropertyBoolean("UseSSL") == true){
                                $token = $r_data["data"]["token"];
-                               $this->SendDebug("Token", "Token des Servers:". $token, 0);
+                               /*$this->SendDebug("Token", "Token des Servers:". $token, 0);
 
-                               if(@$this->GetIDForIdent("VariableToken") === false){
-                                   $this->RegisterVariableString("VariableToken", "Token", "", 0);
-                               }
 
                                if($token != $this->GetValue("VariableToken")){
-                                   $this->SetValue("VariableToken", $token);
                                    $this->SendDebug("Token", "New Token " . $token . "has been set", 0);
-                                   $this->GetConfigurationForParent();
-                               }
+                                   #$this->UpdateConfigurationForParent();
+                               }*/
                            }
                            $this->SendDebug("Connection", "Samsung Tizen connection establish (ms.channel.connect)", 0);
                            $this->SetValue("VariableOnline" , true);
@@ -175,27 +179,26 @@
         public function GetConfigurationForParent() {
             $ipAdress = $this->ReadPropertyString("IPAddress");
             $useSSL = $this->ReadPropertyBoolean("UseSSL");
+            $token = $this->ReadPropertyString("SSLToken");
+            $active = $this->ReadPropertyBoolean("Active");
 
             if($useSSL){
                 $origin = "https://".$ipAdress.":8002";
 
-                if(@$this->GetIDForIdent("VariableToken") === false){
-                    $this->RegisterVariableString("VariableToken", "Token", "", 0);
-                }
-
-                $token = $this->GetValue("VariableToken");
                 if(empty($token)){
-                    $address = "wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control?name=SVBTeW1jb25UaXplbg==";
+                    $active = false;
+                    $address = utf8_encode("wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control?name=SVBTeW1jb25UaXplbg==");
                 }else{
-                    $address = "wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control?name=SVBTeW1jb25UaXplbg==&token=".$token;
+                    $address = utf8_encode("wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control?name=SVBTeW1jb25UaXplbg==&token=".$token);
                 }
             }else{
                 $origin = "http://".$ipAdress.":8001";
-                $address = "ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control?name=SVBTeW1jb25UaXplbg=="; //IPSymconTizen
+                $address = utf8_encode("ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control?name=SVBTeW1jb25UaXplbg=="); //IPSymconTizen
             }
 
-            //"Open": ".$active.",
+            //
             $change = "{    
+                    \"Open\": \".$active.\",
                     \"URL\": \"".$address."\",
                     \"Protocol\": \"\",
                     \"Version\": 13,
@@ -210,5 +213,46 @@
 
             $this->SendDebug("Update Websocket", $change, 0);
             return $change;
+        }
+
+        Private function UpdateConfigurationForParent() {
+            $ipAdress = $this->ReadPropertyString("IPAddress");
+            $useSSL = $this->ReadPropertyBoolean("UseSSL");
+            $token = $this->ReadPropertyString("SSLToken");
+            $active = $this->ReadPropertyBoolean("Active");
+            $ParentId = @IPS_GetInstance($this->InstanceID)['ConnectionID'];
+
+            if($useSSL){
+                $origin = "https://".$ipAdress.":8002";
+
+                if(empty($token)){
+                    $active = false;
+                    $address = utf8_encode("wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control?name=SVBTeW1jb25UaXplbg==");
+                }else{
+                    $address = utf8_encode("wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control?name=SVBTeW1jb25UaXplbg==&token=".$token);
+                }
+            }else{
+                $origin = "http://".$ipAdress.":8001";
+                $address = utf8_encode("ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control?name=SVBTeW1jb25UaXplbg=="); //IPSymconTizen
+            }
+
+            //
+            $change = "{    
+                    \"Open\": \".$active.\",
+                    \"URL\": \"".$address."\",
+                    \"Protocol\": \"\",
+                    \"Version\": 13,
+                    \"Origin\": \"".$origin."\",
+                    \"PingInterval\": 10,
+                    \"PingPayload\": \"\",
+                    \"Frame\": 1,
+                    \"BasisAuth\": false,
+                    \"Username\": \"\",
+                    \"Password\": \"\"
+                }";
+
+            $this->SendDebug("Update Websocket", "(".$ParentId.") => ".$change, 0);
+            IPS_SetConfiguration($ParentId, $change);
+            IPS_ApplyChanges($ParentId);
         }
     }

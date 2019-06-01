@@ -1,10 +1,12 @@
 {
     "elements":
     [
+        { "type": "CheckBox", "name": "Active", "caption": "Active" },
         { "type": "Label", "label": "TV Settings" },
         { "type": "ValidationTextBox", "name": "IPAddress", "caption": "Host" },
         { "type": "ValidationTextBox", "name": "MACAddress", "caption": "MAC Address (XX:XX:XX:XX:XX:XX)" },
         { "type": "CheckBox", "name": "UseSSL", "caption": "use SSL" },
+        { "type": "ValidationTextBox", "name": "SSLToken", "caption": "SSL Token" },
         { "type": "Label", "label": "Time to wait between single Keys" },
         { "type": "IntervalBox", "name": "Sleep", "caption": "ms" },
         { "type": "Label", "label": "Check Service online every" },
