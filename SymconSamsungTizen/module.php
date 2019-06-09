@@ -196,9 +196,8 @@
                 $address = utf8_encode("ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control?name=SVBTeW1jb25UaXplbg=="); //IPSymconTizen
             }
 
-            //
+            //\"Open\": \".$active.\",
             $change = "{    
-                    \"Open\": \".$active.\",
                     \"URL\": \"".$address."\",
                     \"Protocol\": \"\",
                     \"Version\": 13,
