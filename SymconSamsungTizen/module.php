@@ -226,13 +226,13 @@
 
                 if(empty($token)){
                     $active = false;
-                    $address = utf8_encode("wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control?name=SVBTeW1jb25UaXplbg==");
+                    $address = utf8_encode("wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control?name=SVBTeW1jb24=");
                 }else{
-                    $address = utf8_encode("wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control?name=SVBTeW1jb25UaXplbg==&token=".$token);
+                    $address = "wss://".$ipAdress.":8002/api/v2/channels/samsung.remote.control?name=aW9Ccm9rZXI=&token=".$token;
                 }
             }else{
                 $origin = "http://".$ipAdress.":8001";
-                $address = utf8_encode("ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control?name=SVBTeW1jb25UaXplbg=="); //IPSymconTizen
+                $address = utf8_encode("ws://".$ipAdress.":8001/api/v2/channels/samsung.remote.control?name=SVBTeW1jb24="); //IPSymconTizen
             }
 
             //
