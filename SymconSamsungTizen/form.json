@@ -6,7 +6,6 @@
         { "type": "ValidationTextBox", "name": "IPAddress", "caption": "Host" },
         { "type": "ValidationTextBox", "name": "MACAddress", "caption": "MAC Address (XX:XX:XX:XX:XX:XX)" },
         { "type": "CheckBox", "name": "UseSSL", "caption": "use SSL" },
-        { "type": "ValidationTextBox", "name": "SSLToken", "caption": "SSL Token" },
         { "type": "Label", "label": "Time to wait between single Keys" },
         { "type": "IntervalBox", "name": "Sleep", "caption": "ms" },
         { "type": "Label", "label": "Check Service online every" },
@@ -24,6 +23,9 @@
         { "type": "Button", "label": "Wake Up!", "onClick": "echo SamsungTizen_WakeUp($id);" },
         { "type": "Button", "label": "Power Off", "onClick": "SamsungTizen_SendKeys($id, 'KEY_POWER');" },
         { "type": "Button", "label": "Toggle Power", "onClick": "SamsungTizen_TogglePower($id);" },
+        { "type": "Button", "label": "Updates Apps", "onClick": "echo SamsungTizen_UpdateApps($id);" },
+        { "type": "Button", "label": "Start YouTube", "onClick": "echo SamsungTizen_StartApp($id, 'YouTube');" },
+        { "type": "Button", "label": "Open Symcon.de", "onClick": "echo SamsungTizen_StartWebPage($id, 'https://www.symcon.de/');" },
         { "type": "Button", "label": "Send 1,2,3,Enter", "onClick": "echo SamsungTizen_SendKeys($id, 'KEY_1;KEY_2;KEY_3;KEY_ENTER');" }
     ],
     "status":
