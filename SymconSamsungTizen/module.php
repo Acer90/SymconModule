@@ -224,6 +224,7 @@ class SamsungTizen extends IPSModule {
                         $this->SendDebug("Connection", "IO connection establish", 0);
                         $this->SetStatus(102);
                         $this->SetTimerInterval("CheckOnline", 0);
+                        $this->SetValue("VariableOnline", true);
                         break;
                     case 104: // WebSocket ist inaktiv
                         $this->SendDebug("Connection", "IO connection closed", 0);
@@ -327,7 +328,14 @@ class SamsungTizen extends IPSModule {
                             if ($token != $this->GetValue("VariableToken")) {
                                 $this->SetValue("VariableToken", $token);
                                 $this->SendDebug("Token", "New Token " . $token . " has been set", 0);
+
                                 $this->SetValue("VariableOnline", false);
+                                if ($this->ReadPropertyBoolean("Active")) {
+                                    $this->SetTimerInterval("CheckOnline", $this->ReadPropertyInteger("Interval") * 1000);
+                                } else {
+                                    $this->SetTimerInterval("CheckOnline", 0);
+                                }
+
                                 $this->UpdateConfigurationForParent();
                                 return;
                             }
