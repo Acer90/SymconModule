@@ -1,0 +1,11 @@
+{
+  "id": "{F59FD965-13F6-346E-1C40-7E4878372499}",
+  "name": "SymconAlarmClock",
+  "type": 3,
+  "vendor": "Swen Babenschneider",
+  "aliases": ["SymconAlarmClock"],
+  "parentRequirements": [],
+  "childRequirements": [],
+  "implemented": [],
+  "prefix": "SymconAlarmClock"
+}
