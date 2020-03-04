@@ -282,7 +282,7 @@ class ViesmannOpenV extends IPSModule {
                     $this->SetBuffer("RunTime", strval(microtime(true)));
                     $this->SendToIO(hex2bin("01".$item["hex"].$item["length"].$item["value"]));
                 }
-                exit;
+                return;
             }
 
             if(substr($last["hex"], 0, 2) == "F4"){
@@ -336,11 +336,11 @@ class ViesmannOpenV extends IPSModule {
 
             }elseif (strlen($data) < $len){
                 $this->SetBuffer("Data", $data);
-                exit;
+                return;
             }else{
                 $this->SetBuffer("Last", "");
                 $this->SetBuffer("Data", "");
-                exit;
+                return;
             }
 
             //umrechen zu int
@@ -474,7 +474,7 @@ class ViesmannOpenV extends IPSModule {
     public function RequestAction($Ident, $Value)
     {
         $id = $this->GetIDForIdent($Ident);
-        if($id == False) exit;
+        if($id == False) return;
 
         $VarList = $this->ReadPropertyString("VarList");
         $VarList = json_decode($VarList, true);
