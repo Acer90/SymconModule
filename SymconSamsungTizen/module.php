@@ -25,6 +25,32 @@ class SamsungTizen extends IPSModule
         // Alt / Neu Vergleich für die ParentId
         $this->SetBuffer("OldParent", 0);
 
+        //Profile erstellen
+        if (!IPS_VariableProfileExists("SamsungTizen.Apps")){
+            IPS_CreateVariableProfile("SamsungTizen.Apps", 1);
+        }
+
+        if (!IPS_VariableProfileExists("SamsungTizen.Sources")){
+            IPS_CreateVariableProfile("SamsungTizen.Sources", 1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 0, "INPUT 1", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 1, "INPUT 2", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 2, "INPUT 3", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 3, "INPUT 4", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 4, "INPUT 5", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 5, "VIDEO 1", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 6, "VIDEO 2", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 7, "VIDEO 3", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 8, "HDMI1", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 9, "HDMI2", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 10, "HDMI3", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 11, "HDMI4", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 12, "HDMI5", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 13, "INPUT 6", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 14, "TV", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 15, "INPUT 7", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 16, "INPUT 8", "", -1);
+        }
+
         // Modul-Eigenschaftserstellung
         $this->RegisterPropertyBoolean("Active", false);
 
@@ -43,6 +69,19 @@ class SamsungTizen extends IPSModule
         $this->RegisterVariableString('VariableToken', 'Token', "", 0);
         $this->RegisterVariableBoolean("VariableOnline", "Status", "~Switch", 0);
         $this->RegisterVariableString("VariableApps", "Apps", "", 0);
+        $this->RegisterVariableInteger("VariableAppRunning", "RunningApp", "SamsungTizen.Apps", 0);
+        $this->RegisterVariableBoolean("VariableRun", "Starten", "~Switch", 0);
+        $this->RegisterVariableInteger("VariableChannel", "Channel", "", 0);
+        $this->RegisterVariableInteger("VariableVolume", "Volume", "", 0);
+        $this->RegisterVariableBoolean("VariableMute", "Mute", "~Switch", 0);
+        $this->RegisterVariableInteger("VariableInput", "Input", "SamsungTizen.Sources", 0);
+
+        $this->EnableAction("VariableAppRunning");
+        $this->EnableAction("VariableChannel");
+        $this->EnableAction("VariableVolume");
+        $this->EnableAction("VariableRun");
+        $this->EnableAction("VariableMute");
+        $this->EnableAction("VariableInput");
 
         $this->RequireParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}");
 
@@ -63,8 +102,19 @@ class SamsungTizen extends IPSModule
         $this->RegisterVariableBoolean("VariableOnline", "Status", "~Switch", 0);
         $this->SetValue("VariableOnline", false);
         $this->RegisterVariableString("VariableApps", "Apps", "", 0);
+        $this->RegisterVariableInteger("VariableAppRunning", "RunningApp", "SamsungTizen.Apps", 0);
+        $this->RegisterVariableBoolean("VariableRun", "Starten", "~Switch", 0);
+        $this->RegisterVariableInteger("VariableChannel", "Channel", "", 0);
+        $this->RegisterVariableInteger("VariableVolume", "Volume", "", 0);
+        $this->RegisterVariableBoolean("VariableMute", "Mute", "~Switch", 0);
+        $this->RegisterVariableInteger("VariableInput", "Input", "", 0);
 
-        //$this->SetTimerInterval("CheckOnline", 0);
+        $this->EnableAction("VariableAppRunning");
+        $this->EnableAction("VariableChannel");
+        $this->EnableAction("VariableVolume");
+        $this->EnableAction("VariableRun");
+        $this->EnableAction("VariableMute");
+        $this->EnableAction("VariableInput");
 
         $this->RegisterMessage($this->InstanceID, 11101 /* FM_CONNECT */);
         $this->RegisterMessage($this->InstanceID, 11102 /* FM_DISCONNECT */);
@@ -120,7 +170,6 @@ class SamsungTizen extends IPSModule
 
     public function SendKeys(String $keys)
     {
-        $this->SendDebug(__FUNCTION__, '', 0);
         $sleep = $this->ReadPropertyInteger("Sleep");
         $sleep = $sleep / 1000;
         if (strpos($keys, ';') !== false) {
@@ -128,11 +177,18 @@ class SamsungTizen extends IPSModule
             foreach ($keys_data as $value) {
                 $send_str = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"' . $value . '","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
                 $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str)));
-                sleep($sleep);
+                $this->SendDebug(__FUNCTION__, $value, 0);
+                if($value == "KEY_VOLDOWN" || $value == "KEY_VOLUP"){
+                    sleep($sleep);
+                }else{
+                    sleep($sleep);
+                }
+
             }
         } else {
             $send_str = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"' . $keys . '","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
             $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str)));
+            $this->SendDebug(__FUNCTION__, $keys, 0);
         }
     }
 
@@ -207,6 +263,16 @@ class SamsungTizen extends IPSModule
         } else {
             $this->WakeUp();
         }
+    }
+
+    public function ResetKey(){
+        $SenderID = RegisterParent();
+        $this->SetValue("VariableToken", "");
+
+        $this->SendDebug("Force close Websocket", $SenderID, 0);
+        $Script = 'IPS_SetProperty(' . $SenderID . ', "Open", false);' . PHP_EOL;
+        $Script .= 'IPS_ApplyChanges(' . $SenderID . ');';
+        IPS_RunScriptText($Script);
     }
 
     public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
@@ -368,14 +434,203 @@ class SamsungTizen extends IPSModule
                     }
                     $this->SendDebug("Connection", "Samsung Tizen connection establish (ms.channel.connect)", 0);
                     $this->SetValue("VariableOnline", true);
+
+                    //Update Apps
+                    $this->UpdateApps();
                     break;
                 case "ed.installedApp.get":
                     $this->SetValue("VariableApps", json_encode($r_data['data']['data']));
+
+                    //Update AppProfil
+                    if (IPS_VariableProfileExists("SamsungTizen.Apps")){
+                        foreach($r_data['data']['data'] as $key=>$app){
+                            IPS_SetVariableProfileAssociation("SamsungTizen.Apps", $key, $app["name"], "", -1);
+                            $this->SendDebug("Apps", "Add App " . $app["name"]. "(".$app["appId"].") ID=".$key." to Profil SamsungTizen.Apps", 0);
+                        }
+                    }
                     break;
                 default:
-
+                    $this->SendDebug("DEBUG", "ReceiveData => ". $event, 0);
                     break;
             }
+        }else{
+            $this->SendDebug("DEBUG", "ReceiveData (KeyNotFound) => ". $JSONString, 0);
+        }
+    }
+
+    public function RequestAction($Ident, $Value) {
+        switch($Ident) {
+            case "VariableAppRunning":
+                $appData = json_decode($this->GetValue("VariableApps"), true);
+
+                if((count($appData)-1) < $Value ) return; //AppID nicht gefunden
+                $appName = $appData[$Value]["name"];
+
+                //App Starten
+                $this->SendDebug("RequestAction", "Starte App => ".$appName, 0);
+                $this->StartApp($appName);
+
+                $this->SetValue($Ident, $Value);
+                break;
+            case "VariableChannel":
+                $oldValue = $this->GetValue("VariableChannel");
+
+                $diff = $Value - $oldValue;
+                $this->SendDebug("RequestAction", "Kanal => ".$Value. "(OLD:".$oldValue.") Diff=" . $diff, 0);
+
+                switch (true){
+                    case $diff == -1:
+                        //Kanal runter
+                        $this->SendDebug("RequestAction", "Kanal runter", 0);
+                        $this->SendKeys('KEY_CHDOWN');
+                        break;
+                    case $diff == 1:
+                        //Kanal rauf
+                        $this->SendDebug("RequestAction", "Kanal rauf", 0);
+                        $this->SendKeys('KEY_CHUP');
+                        break;
+                    case $Value > 0 && ($diff > 1 || $diff < -1):
+                        //auf Kanal umschalten
+                        $this->SendDebug("RequestAction", "auf Kanal ".$Value." umschalten", 0);
+
+                        $key_str = "";
+                        $chars = str_split($Value);
+                        foreach($chars as $char){
+                            $key_str .= "KEY_".$char. ";";
+                        }
+                        $key_str .= "KEY_ENTER";
+
+                        $this->SendKeys($key_str);
+                        break;
+                    default:
+                        $this->SendDebug("RequestAction", "ERROR => illegaler Index! (".$Value.")", 0);
+                        break;
+                }
+
+                $this->SetValue($Ident, $Value);
+                break;
+            case "VariableVolume":
+                $oldValue = $this->GetValue("VariableVolume");
+                $diff = $Value - $oldValue;
+
+                switch (true) {
+                    case $diff > 0;
+                        $this->SendDebug("RequestAction", "Lautstaerke => ".$diff . " Stufen lauter", 0);
+
+                        $start = true;
+                        $key_str = "";
+                        for ($i = 1; $i <= $diff; $i++) {
+                            if($start){
+                                $key_str .= "KEY_VOLUP";
+                                $start = false;
+                            }else{
+                                $key_str .= ";KEY_VOLUP";
+                            }
+                        }
+
+                        $this->SendKeys($key_str);
+                    break;
+                    case $diff < 0;
+                        //Leiser
+                        $diff =  $diff *-1;
+                        $this->SendDebug("RequestAction", "Lautstaerke => ".$diff . " Stufen leiser", 0);
+
+                        $start = true;
+                        $key_str = "";
+                        for ($i = 1; $i <= $diff; $i++) {
+                            if($start){
+                                $key_str .= "KEY_VOLDOWN";
+                                $start = false;
+                            }else{
+                                $key_str .= ";KEY_VOLDOWN";
+                            }
+                        }
+
+                        $this->SendKeys($key_str);
+                        break;
+                    default:
+                        break;
+                }
+                $this->SetValue($Ident, $Value);
+                break;
+            case "VariableRun":
+                if($Value == true){
+                    if ($this->GetValue("VariableOnline") == true) {
+                        $this->SendKeys('KEY_POWER');
+                    } else {
+                        $this->WakeUp();
+                    }
+                }else{
+                    $this->SendKeys("KEY_POWER");
+                }
+
+                $this->SetValue($Ident, $Value);
+                break;
+            case "VariableMute":
+                $this->SendDebug("RequestAction", "Mute wechseln", 0);
+
+                $this->SendKeys("KEY_MUTE");
+                $this->SetValue($Ident, $Value);
+                break;
+            case "VariableInput":
+                switch ($Value){
+                    case 0:
+                        $this->SendKeys("KEY_COMPONENT1");
+                        break;
+                    case 1:
+                        $this->SendKeys("KEY_COMPONENT2");
+                        break;
+                    case 2:
+                        $this->SendKeys("KEY_AV1");
+                        break;
+                    case 3:
+                        $this->SendKeys("KEY_AV2");
+                        break;
+                    case 4:
+                        $this->SendKeys("KEY_AV3");
+                        break;
+                    case 4:
+                        $this->SendKeys("KEY_SVIDEO1");
+                        break;
+                    case 6:
+                        $this->SendKeys("KEY_SVIDEO2");
+                        break;
+                    case 7:
+                        $this->SendKeys("KEY_SVIDEO3");
+                        break;
+                    case 8:
+                        $this->SendKeys("KEY_HDMI");
+                        break;
+                    case 9:
+                        $this->SendKeys("KEY_HDMI1");
+                        break;
+                    case 10:
+                        $this->SendKeys("KEY_HDMI2");
+                        break;
+                    case 11:
+                        $this->SendKeys("KEY_HDMI3");
+                        break;
+                    case 12:
+                        $this->SendKeys("KEY_HDMI4");
+                        break;
+                    case 13:
+                        $this->SendKeys("KEY_DVI");
+                        break;
+                    case 14:
+                        $this->SendKeys("KEY_TV");
+                        break;
+                    case 15:
+                        $this->SendKeys("KEY_ANTENA");
+                        break;
+                    case 16:
+                        $this->SendKeys("KEY_DTV");
+                        break;
+                }
+
+                $this->SetValue($Ident, $Value);
+                break;
+            default:
+                throw new Exception("Invalid Ident");
         }
     }
 
