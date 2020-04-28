@@ -532,7 +532,8 @@ class ipssnmpclass
 
             if($pdu->errorStatus()) {
               IPS_LogMessage(0, $pdu->errorString());
-              trigger_error($pdu->errorString(), E_USER_WARNING);
+              //trigger_error($pdu->errorString(), E_USER_WARNING);
+              return null;
             }
 
             foreach($pdu->varBindList() as $val)
