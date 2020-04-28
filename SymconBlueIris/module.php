@@ -1,6 +1,16 @@
 <?
     // Klassendefinition
     class BlueIris extends IPSModule {
+        public function SetBuffer($Name, $Daten)
+        {
+            parent::SetBuffer($Name, serialize($Daten));
+        }
+
+        public function GetBuffer($Name)
+        {
+            return unserialize(parent::GetBuffer($Name));
+        }
+
         public function __construct($InstanceID) {
             parent::__construct($InstanceID);
         }
@@ -16,6 +26,8 @@
             $this->RegisterPropertyString("Username", "admin");
             $this->RegisterPropertyString("Password", "");
 
+            $this->SetBuffer("Session", "");
+
             //event erstellen
             $this->RegisterTimer("SyncData", $this->ReadPropertyInteger("Interval"), 'BlueIris_SyncData($_IPS[\'TARGET\'], false);');
             $this->SetStatus(102);
@@ -24,80 +36,108 @@
         public function ApplyChanges() {
             // Diese Zeile nicht löschen
             parent::ApplyChanges();
+            $this->SetBuffer("Session", "");
             //$this->RequireParent("{1A75660D-48AE-4B89-B351-957CAEBEF22D}");
 
             $this->SetStatus(102);
             $this->SetTimerInterval("SyncData", $this->ReadPropertyInteger("Interval")*1000);
         }
 
-        public function Login(){
-            $id = $this->InstanceID;
-            $IPAddress = $this->ReadPropertyString("IPAddress");
-            $Port = $this->ReadPropertyInteger("Port");
-            $Timeout = $this->ReadPropertyInteger("Timeout");
-            $Username = $this->ReadPropertyString("Username");
-            $Password = $this->ReadPropertyString("Password");
-            $url = 'http://'.$IPAddress.":".$Port."/json";
+        public function Login()
+        {
+            $run = 0;
+            $sid = $this->GetBuffer("Session");
 
-            $data = array("cmd" => "login");                            
-            $data_string = json_encode($data);  
+            while (true) {
 
-            $ch = curl_init($url);  
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);  
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);   
 
-            $result = curl_exec($ch);
+                $id = $this->InstanceID;
+                $IPAddress = $this->ReadPropertyString("IPAddress");
+                $Port = $this->ReadPropertyInteger("Port");
+                $Timeout = $this->ReadPropertyInteger("Timeout");
+                $Username = $this->ReadPropertyString("Username");
+                $Password = $this->ReadPropertyString("Password");
+                $url = 'http://' . $IPAddress . ":" . $Port . "/json";
 
-            if(curl_errno($ch))
-            {
-                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
-                return "ERROR";
+                if (empty($sid)) {
+
+
+                    $data = array("cmd" => "login");
+                    $data_string = json_encode($data);
+
+                    $ch = curl_init($url);
+                    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $Timeout);
+
+                    $result = curl_exec($ch);
+
+                    if (curl_errno($ch)) {
+                        if ($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
+                        return "ERROR";
+                    }
+                    curl_close($ch);
+
+                    $output = json_decode($result, true);
+                    $this->SendDebug(__FUNCTION__, $result, 0);
+
+                    $sid = $output["session"];
+
+                }
+
+                $userlogin = $Username . ":" . $sid . ":" . $Password;
+                $userlogin = preg_replace('/[^A-Za-z0-9. :-]/', '', $userlogin);
+                $response = md5($userlogin);
+
+                $data = array("cmd" => "login", "session" => $sid, "response" => $response);
+                $data_string = json_encode($data);
+
+                $i = 0;
+
+                $ch = curl_init($url);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $Timeout);
+                curl_setopt($ch, CURLOPT_COOKIE, 'PHPSESSID=' . $sid);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                        'Content-Type: application/json',
+                        'Content-Length: ' . strlen($data_string))
+                );
+                $result = curl_exec($ch);
+
+                if (curl_errno($ch)) {
+                    if ($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
+                    return "ERROR";
+                }
+
+                curl_close($ch);
+
+                $output = json_decode($result, true);
+
+                //print_r($output);
+                if ($output["result"] == "fail") {
+                    $this->SetStatus(205);
+                    $this->SendDebug(__FUNCTION__, $result, 0);
+
+                    $this->SetBuffer("Session", "");
+                    $run++;
+
+                    if($run > 5){
+                        return "ERROR";
+                    }else{
+                        $sid = "";
+                    }
+                } else {
+                    $this->SetStatus(102);
+                    //$this->SendDebug(__FUNCTION__, $result, 0);
+                    $this->SetBuffer("Session", $output["session"]);
+                    return $output["session"];
+                }
             }
-            curl_close($ch);
-
-            $output = json_decode($result, true);
-
-            $sid = $output["session"];
-
-            $response = md5($Username.":".$sid.":".$Password);
-
-            $data = array("cmd" => "login", "session" => $sid, "response" => $response);  //                                                 
-            $data_string = json_encode($data);                                                                                   
-                                                                                                                                
-            $ch = curl_init($url);                                                                      
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);    
-            curl_setopt($ch, CURLOPT_COOKIE, 'PHPSESSID='.$sid);                                                                 
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
-                'Content-Type: application/json',                                                                                
-                'Content-Length: ' . strlen($data_string))                                                                       
-            );     
-            $result = curl_exec($ch);
-
-            if(curl_errno($ch))
-            {
-                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
-                return "ERROR";
-            }
-
-            curl_close($ch);
-
-            $output = json_decode($result, true);
-
-            //print_r($output);
-            if($output["result"] == "fail"){
-                $this->SetStatus(205);
-                print_r($output);
-                return "ERROR";
-            }else{
-                $this->SetStatus(102);
-                return $output["session"];
-            };
         }
+
 
         public function Logout(string $session = null){
             if(is_null($session)){
@@ -121,7 +161,8 @@
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);                                                                     
+            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);
+            curl_setopt($ch, CURLOPT_COOKIE, 'PHPSESSID='.$session);
             curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
                 'Content-Type: application/json',                                                                                
                 'Content-Length: ' . strlen($data_string))                                                                       
@@ -137,6 +178,7 @@
             curl_close($ch);
 
             $output = json_decode($result, true);
+            $this->SendDebug(__FUNCTION__, $result, 0);
             if($output["result"] == "success"){
                 return True;
             }else{
@@ -169,7 +211,8 @@
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);                                                                     
+            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);
+            curl_setopt($ch, CURLOPT_COOKIE, 'PHPSESSID='.$session);
             curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
                 'Content-Type: application/json',                                                                                
                 'Content-Length: ' . strlen($data_string))                                                                       
@@ -188,6 +231,7 @@
             if($output["result"] == "success"){ 
                 return $output["data"];
             }else{
+                $this->SendDebug(__FUNCTION__, $result, 0);
                 return [];
             };
         }
@@ -228,7 +272,8 @@
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);                                                                     
+            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);
+            curl_setopt($ch, CURLOPT_COOKIE, 'PHPSESSID='.$session);
             curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
                 'Content-Type: application/json',                                                                                
                 'Content-Length: ' . strlen($data_string))                                                                       
@@ -247,6 +292,7 @@
             if($output["result"] == "success"){ 
                 return $output["data"];
             }else{
+                $this->SendDebug(__FUNCTION__, $result, 0);
                 return [];
             };
         }
@@ -273,7 +319,8 @@
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);                                                                     
+            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);
+            curl_setopt($ch, CURLOPT_COOKIE, 'PHPSESSID='.$session);
             curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
                 'Content-Type: application/json',                                                                                
                 'Content-Length: ' . strlen($data_string))                                                                       
@@ -292,6 +339,7 @@
             if($output["result"] == "success"){ 
                 return $output["data"];
             }else{
+                $this->SendDebug(__FUNCTION__, $result, 0);
                 return [];
             };
         }
@@ -342,6 +390,7 @@
             if($output["result"] == "success" and array_key_exists("data", $output)){
                 return $output["data"];
             }else{
+                $this->SendDebug(__FUNCTION__, $result, 0);
                 return [];
             };
         }
@@ -387,6 +436,7 @@
             if($output["result"] == "success"){ 
                 return $output["data"];
             }else{
+                $this->SendDebug(__FUNCTION__, $result, 0);
                 return [];
             };
         }
@@ -441,6 +491,7 @@
             if($output["result"] == "success"){ 
                 return $output;
             }else{
+                $this->SendDebug(__FUNCTION__, $result, 0);
                 return [];
             };
         }
@@ -491,6 +542,7 @@
             if($output["result"] == "success"){ 
                 return $output["data"];
             }else{
+                $this->SendDebug(__FUNCTION__, $result, 0);
                 return [];
             };
         }
@@ -536,6 +588,7 @@
             if($output["result"] == "success"){ 
                 return $output["data"];
             }else{
+                $this->SendDebug(__FUNCTION__, $result, 0);
                 return [];
             };
         }
@@ -585,6 +638,7 @@
             if($output["result"] == "success"){ 
                 return $output;
             }else{
+                $this->SendDebug(__FUNCTION__, $result, 0);
                 return [];
             };
         }
