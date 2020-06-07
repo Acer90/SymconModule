@@ -117,7 +117,6 @@
                 //print_r($output);
                 if ($output["result"] == "fail") {
                     $this->SetStatus(205);
-
                     $this->SetBuffer("Session", "");
                     $run++;
 
