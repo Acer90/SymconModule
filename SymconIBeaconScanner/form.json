@@ -1,0 +1,60 @@
+{
+  "elements": [
+    { "type": "CheckBox", "name": "Debug", "caption": "Debug" },
+    { "type": "NumberSpinner", "name": "Timeout", "caption": "Timeout" },
+    { "type": "NumberSpinner", "name": "CheckInterval", "caption": "Checktime" },
+    {
+      "type": "List",
+      "name": "IBeaconScanner_Devices",
+      "caption": "IBeaconScanner Devices",
+      "rowCount": 10,
+      "add": true,
+      "delete": true,
+      "sort": {
+        "column": "name",
+        "direction": "ascending"
+      },
+      "columns": [{
+        "label": "Name",
+        "name": "name",
+        "width": "auto",
+        "add": "",
+        "edit": {
+          "type": "ValidationTextBox"
+        }
+      }]
+    },
+    {
+      "type": "List",
+      "name": "IBeaconTag_Devices",
+      "caption": "IBeaconTag Devices",
+      "rowCount": 10,
+      "add": true,
+      "delete": true,
+      "sort": {
+        "column": "name",
+        "direction": "ascending"
+      },
+      "columns": [{
+        "label": "Name",
+        "name": "name",
+        "width": "200px",
+        "add": "",
+        "edit": {
+          "type": "ValidationTextBox"
+        }
+      },
+      {
+        "label": "Mac",
+        "name": "mac",
+        "width": "auto",
+        "add": "",
+        "edit": {
+          "type": "ValidationTextBox"
+        }
+      }]
+    }
+  ],
+  "actions": [],
+  "status": []
+}
