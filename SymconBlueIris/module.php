@@ -49,8 +49,6 @@
             $sid = $this->GetBuffer("Session");
 
             while (true) {
-
-
                 $id = $this->InstanceID;
                 $IPAddress = $this->ReadPropertyString("IPAddress");
                 $Port = $this->ReadPropertyInteger("Port");
@@ -119,14 +117,15 @@
                 //print_r($output);
                 if ($output["result"] == "fail") {
                     $this->SetStatus(205);
-                    $this->SendDebug(__FUNCTION__, $result, 0);
 
                     $this->SetBuffer("Session", "");
                     $run++;
 
                     if($run > 5){
+                        $this->SendDebug(__FUNCTION__, $result, 0);
                         return "ERROR";
                     }else{
+                        $this->Logout($sid);
                         $sid = "";
                     }
                 } else {
