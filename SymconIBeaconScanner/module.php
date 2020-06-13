@@ -49,7 +49,8 @@ class SymconIBeaconScanner extends IPSModule
             if (array_search($data->Topic, array_column($beacon_items, 'name')) !== false) {
                 if($debug) $this->SendDebug(__FUNCTION__, "Beacon -> " .$data->Topic. " found!", 0);
                 $beacon_data = json_decode($data->Payload, true);
-                if($debug) $this->SendDebug(__FUNCTION__, "Payload:  " .json_encode($beacon_data), 0);
+                if(json_last_error() != JSON_ERROR_NONE) return;
+                if($debug) $this->SendDebug(__FUNCTION__, "Payload:  " .json_encode($data->Payload), 0);
 
                 //Suchen jedes Beacons in der liste
                 $beacon_tags = json_decode($this->ReadPropertyString("IBeaconTag_Devices"), true);
