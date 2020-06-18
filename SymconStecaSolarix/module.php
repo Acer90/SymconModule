@@ -230,15 +230,12 @@
             $data_str = utf8_decode($data->Buffer);
             $Bufferdata = $this->GetBuffer("DataBuffer");
             $data_str = $Bufferdata.$data_str;
-            $this->SendDebug("Test", $data_str, 0);
-            $this->SendDebug("Test", bin2hex($data_str), 0);
 
             if($data_str[0] != "("){
                 $this->SetBuffer("DataBuffer", "");
                 return;
             }else{
                 $last_str = $rest = substr(bin2hex($data_str), -2, 2);
-                $this->SendDebug("Test", $last_str, 0);
                 if($last_str != "0d"){
                     $this->SetBuffer("DataBuffer", $data_str);
                     return;
