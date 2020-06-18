@@ -45,6 +45,8 @@
             $this->RegisterVariableBoolean("VarFaultCodeRecord", "Fehlercode", "~Switch", 0);
             $this->EnableAction("VarFaultCodeRecord");
 
+            $this->SetBuffer("DataBuffer", "");
+
 
             if (!IPS_VariableProfileExists("Steca_Modus")){
                 IPS_CreateVariableProfile("Steca_Modus", 1);
@@ -226,8 +228,24 @@
         public function ReceiveData($JSONString) {
             $data = json_decode($JSONString);
             $data_str = utf8_decode($data->Buffer);
+            $Bufferdata = $this->GetBuffer("DataBuffer");
+            $data_str = $Bufferdata.$data_str;
+            $this->SendDebug("Test", $data_str, 0);
+            $this->SendDebug("Test", bin2hex($data_str), 0);
+
+            if($data_str[0] != "("){
+                $this->SetBuffer("DataBuffer", "");
+                return;
+            }else{
+                $last_str = $rest = substr(bin2hex($data_str), -2, 2);
+                if($last_str = "0D"){
+                    $this->SetBuffer("DataBuffer", $data_str);
+                    return;
+                }
+            }
+
+            $this->SetBuffer("DataBuffer", "");
             $this->SendDebug("ReceiveData", $data_str, 0);
-            if($data_str[0] != "(") return;
             $zeichen = strlen($data_str);
 
             switch($zeichen){
