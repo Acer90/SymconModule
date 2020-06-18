@@ -238,7 +238,8 @@
                 return;
             }else{
                 $last_str = $rest = substr(bin2hex($data_str), -2, 2);
-                if($last_str = "0D"){
+                $this->SendDebug("Test", $last_str, 0);
+                if($last_str = "0d"){
                     $this->SetBuffer("DataBuffer", $data_str);
                     return;
                 }
