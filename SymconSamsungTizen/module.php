@@ -266,7 +266,7 @@ class SamsungTizen extends IPSModule
     }
 
     public function ResetKey(){
-        $SenderID = RegisterParent();
+        $SenderID = $this->RegisterParent();
         $this->SetValue("VariableToken", "");
 
         $this->SendDebug("Force close Websocket", $SenderID, 0);
