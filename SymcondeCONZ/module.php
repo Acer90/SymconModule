@@ -22,7 +22,6 @@
 
             //event erstellen 
             $this->RegisterTimer("CheckOnline", $this->ReadPropertyInteger("Interval"), 'deCONZ_UpdateDevices($_IPS[\'TARGET\']);');
-            $this->SetStatus(102);
         }
 
         public function ApplyChanges() {

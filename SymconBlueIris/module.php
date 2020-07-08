@@ -30,7 +30,6 @@
 
             //event erstellen
             $this->RegisterTimer("SyncData", $this->ReadPropertyInteger("Interval"), 'BlueIris_SyncData($_IPS[\'TARGET\'], false);');
-            $this->SetStatus(102);
         }
 
         public function ApplyChanges() {

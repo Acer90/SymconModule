@@ -66,7 +66,7 @@
             //Diese Zeile nicht löschen
             parent::ApplyChanges();
             //$this->RequireParent("{1A75660D-48AE-4B89-B351-957CAEBEF22D}");
-
+            $this->SetStatus(102);
             $this->SetTimerInterval("SyncData", $this->ReadPropertyInteger("SNMPInterval")*1000);
         }
 

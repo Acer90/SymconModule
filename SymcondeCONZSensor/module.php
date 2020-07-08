@@ -14,7 +14,6 @@ class deCONZSensor extends IPSModule
         //You cannot use variables here. Just static values.
 
         $this->RegisterPropertyString("uniqueid", "");
-
         $this->ConnectParent("{8AA55C67-B28A-C67B-5332-99CCE8190ACA}"); // I/O
 
     }
@@ -28,6 +27,7 @@ class deCONZSensor extends IPSModule
         // check kernel ready, if not wait
 
         $this->ConnectParent("{8AA55C67-B28A-C67B-5332-99CCE8190ACA}");
+        $this->SetStatus(102);
     }
 
 

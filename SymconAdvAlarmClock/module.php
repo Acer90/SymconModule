@@ -29,9 +29,6 @@ class SymconAlarmClock extends IPSModule
 
         //event erstellen
         $this->RegisterTimer("CheckStatus", $this->ReadPropertyInteger("Interval"), 'SymconAlarmClock_CheckStatus($_IPS[\'TARGET\']);');
-
-        $this->SetStatus(102);
-
         $this->SetTimerInterval("CheckStatus", $this->ReadPropertyInteger("Interval") * 1000);
 
         $this->UpdateMessageSink();
@@ -44,7 +41,7 @@ class SymconAlarmClock extends IPSModule
         $this->UpdateMessageSink();
 
         //$this->UpdateData();
-
+        $this->SetStatus(102);
     }
 
     public function CheckStatus()

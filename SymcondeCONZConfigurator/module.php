@@ -13,7 +13,6 @@
             $this->ConnectParent("{8AA55C67-B28A-C67B-5332-99CCE8190ACA}");
 
             //event erstellen
-            $this->SetStatus(102);
         }
 
         public function ApplyChanges() {

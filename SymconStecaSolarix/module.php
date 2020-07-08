@@ -192,8 +192,6 @@
             //event erstellen
             $this->RegisterTimer("Load_LiveData", $this->ReadPropertyInteger("Interval"), 'StecaSolarix_Load_LiveData($_IPS[\'TARGET\']);');
             $this->RegisterTimer("Load_LiveProperties", $this->ReadPropertyInteger("IntervalProperties"), 'StecaSolarix_Load_LiveProperties($_IPS[\'TARGET\']);');
-
-            $this->SetStatus(102);
         }
 
         public function ApplyChanges() {

@@ -87,7 +87,7 @@ class SamsungTizen extends IPSModule
 
         //event erstellen
         $this->RegisterTimer("CheckOnline", 0, 'SamsungTizen_CheckOnline($_IPS[\'TARGET\']);');
-        $this->SetStatus(102);
+
     }
 
     public function ApplyChanges()
@@ -122,6 +122,8 @@ class SamsungTizen extends IPSModule
             $this->RegisterParent();
             $this->UpdateConfigurationForParent();
         }
+
+        $this->SetStatus(102);
     }
 
     /**
