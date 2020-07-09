@@ -43,11 +43,11 @@ function hexdump($string)
 {
   $ret = '';
   for($i = 0; $i < strlen($string); $i++)
-    $ret .= str_pad(dechex(ord($string{$i})), 2, '0', STR_PAD_LEFT) . ' ';
+    $ret .= str_pad(dechex(ord($string[$i])), 2, '0', STR_PAD_LEFT) . ' ';
   $ret .= '[';
   for($i = 0; $i < strlen($string); $i++)
   {
-    $o = ord($string{$i});
+    $o = ord($string[$i]);
     if($o < 32 || $o > 127) $ret .= '.';
     else $ret .= chr($o);
   }
@@ -165,7 +165,7 @@ class rfc1155_Asn1Object
   */
   public function decodeTag($stream)
   {
-    $tag = ord($stream{0});
+    $tag = ord($stream[0]);
     $n = 1;
     if(($tag & 0x1F) == 0x1F)
     {
@@ -174,7 +174,7 @@ class rfc1155_Asn1Object
       $tag = 0;
       do
       {
-        $byte = ord($stream{$n});
+        $byte = ord($stream[$n]);
         $tag = $tag * 128 + ($byte & 0x7F);
         $n += 1;
       } while($byte & 0x80);
@@ -192,7 +192,7 @@ class rfc1155_Asn1Object
   */
   public function decodeLength($stream)
   {
-    $length = ord($stream{0});
+    $length = ord($stream[0]);
     $i = 1;
     if($length & 0x80)
     {
@@ -200,7 +200,7 @@ class rfc1155_Asn1Object
       $run = $length & 0x7F;
       $length = 0;
       for($i = 1; $i <= $run; $i++)
-        $length = $length * 256 + ord($stream{$i});
+        $length = $length * 256 + ord($stream[$i]);
     }
     return array($length, substr($stream, $i));
   }
@@ -512,7 +512,7 @@ class rfc1155_Integer extends rfc1155_Asn1Object
   public function decodeContents($stream)
   {
     $this->value = 0;
-    $byte = ord($stream{0});
+    $byte = ord($stream[0]);
     if(($byte & 0x80) == 0x80)
     {
       $negbit = 0x80;
@@ -520,7 +520,7 @@ class rfc1155_Integer extends rfc1155_Asn1Object
       for($i = 1; $i < strlen($stream); $i++)
       {
         $negbit *= 256;
-        $this->value = $this->value * 256 + ord($stream{$i});
+        $this->value = $this->value * 256 + ord($stream[$i]);
       }
       $this->value = $this->value - $negbit;
     }
@@ -528,7 +528,7 @@ class rfc1155_Integer extends rfc1155_Asn1Object
     {
       $this->value = $byte;
       for($i = 1; $i < strlen($stream); $i++)
-        $this->value = $this->value * 256 + ord($stream{$i});
+        $this->value = $this->value * 256 + ord($stream[$i]);
     }
     return $this;
   }
@@ -567,9 +567,9 @@ class rfc1155_OctetString extends rfc1155_Asn1Object
   {
     for($i = strlen($this->value) - 1; $i >= 0; $i--)
     {
-      if($this->value{$i} != "\n" && $this->value{$i} != "\t" && $this->value{$i} != "\r")
+      if($this->value[$i] != "\n" && $this->value[$i] != "\t" && $this->value[$i] != "\r")
       {
-        if(ord($this->value{$i}) < 16 || ord($this->value{$i}) > 127)
+        if(ord($this->value[$i]) < 16 || ord($this->value[$i]) > 127)
         {
           return false;
         }
@@ -589,7 +589,7 @@ class rfc1155_OctetString extends rfc1155_Asn1Object
   {
     $ret = '';
     for($i = 0; $i < strlen($this->value); $i++)
-      $ret .= str_pad(dechex(ord($this->value{$i})), 2, '0', STR_PAD_LEFT) . ' ';
+      $ret .= str_pad(dechex(ord($this->value[$i])), 2, '0', STR_PAD_LEFT) . ' ';
     return trim($ret);
   }
 
@@ -743,10 +743,10 @@ class rfc1155_ObjectID extends rfc1155_Asn1Object
     }
 
     // Do the funky decode of the first octet
-    if(ord($stream{0}) < 128)
+    if(ord($stream[0]) < 128)
     {
-      $this->value[] = intval(ord($stream{0}) / 40);
-      $this->value[] = ord($stream{0}) % 40;
+      $this->value[] = intval(ord($stream[0]) / 40);
+      $this->value[] = ord($stream[0]) % 40;
     }
     else
     {
@@ -763,7 +763,7 @@ class rfc1155_ObjectID extends rfc1155_Asn1Object
     $n = 1;
     while($n < strlen($stream))
     {
-      $subid = ord($stream{$n});
+      $subid = ord($stream[$n]);
       $n += 1;
 
       // If bit 8 is not set, this is the last octet of this subid
@@ -773,7 +773,7 @@ class rfc1155_ObjectID extends rfc1155_Asn1Object
         $val = $subid & 0x7f;
         while(($subid & 0x80) == 0x80)
         {
-          $subid = ord($stream{$n});
+          $subid = ord($stream[$n]);
           $n += 1;
           $val = $val * 128 + ($subid & 0x7f);
         }
@@ -1059,7 +1059,7 @@ class rfc1155_IPAddress extends rfc1155_OctetString
   */
   public function decodeContents($stream)
   {
-    $this->value = ord($stream{0}) . '.' . ord($stream{1}) . '.' . ord($stream{2}) . '.' . ord($stream{3});
+  $this->value = ord($stream[0]) . '.' . ord($stream[1]) . '.' . ord($stream[2]) . '.' . ord($stream[3]);
     return $this;
   }
 }
@@ -1142,7 +1142,7 @@ class rfc1155_Counter extends rfc1155_Integer
     {
       $this->value = 0;
       for($i = 0; $i < strlen($stream); $i++)
-        $this->value = $this->value * 256 + ord($stream{$i});
+        $this->value = $this->value * 256 + ord($stream[$i]);
     }
     return $this;
   }

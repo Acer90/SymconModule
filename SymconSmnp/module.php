@@ -824,7 +824,7 @@
                             }
                             break;
                         default:
-                            if($this->GetValue($ident) != $value) $this->SetValue($ident, $value);
+                            if($this->GetValue($ident) != $value) @$this->SetValue($ident, $value);
                             break;
                     }
 

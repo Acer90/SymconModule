@@ -48,10 +48,10 @@
       $oid = join('.', $oid);
       $ret_type = 'array';
     }
-    elseif($oid{0} != '.')
+    elseif($oid[0] != '.')
       $oid = '1.3.6.1.2.1.' . $oid;
 
-    while($oid{0} == '.') $oid = substr($oid, 1);
+    while($oid[0] == '.') $oid = substr($oid, 1);
 
     $oid = explode('.', $oid);
 

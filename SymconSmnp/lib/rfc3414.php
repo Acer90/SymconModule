@@ -150,14 +150,14 @@ class rfc3414_USM extends rfc1155_Sequence
         $i = USM_SALT_LEN - 1;
         while($i)
         {
-          if($salt{$i} == chr(255))
+          if($salt[$i] == chr(255))
           {
-            $salt{$i} = chr(0);
+            $salt[$i] = chr(0);
             $i--;
           }
           else
           {
-            $salt{$i} = chr(ord($salt{$i}) + 1);
+            $salt[$i] = chr(ord($salt[$i]) + 1);
             $i = 0;
           }
         }
