@@ -1,7 +1,7 @@
 <?
  // Klassendefinition
     class StecaSolarix extends IPSModule {
-        public function __construct($InstanceID) {
+        public function __construct(int $InstanceID) {
             parent::__construct($InstanceID);
         }
 
@@ -519,6 +519,8 @@
             //$this->SendToIO("PDz@\e\r");//Fault-code-record aus | 50 44 7A 40 1B 0D                       PDz@.
             //$this->SendToIO("PEzs*\r");//Fault-code-record an   | 50 45 7A 73 2A 0D                       PEzs*
 
+
+            $this->SendToIO(hex2bin("5150495249F8540D"));//51 50 49 52 49 0D   QPIRI
         }
 
         public function RequestAction($Ident, $Value) {
@@ -794,7 +796,7 @@
             }
         }
 
-        protected function SendToIO(string $payload)
+        protected function SendToIO($payload)
         {
             //an Socket schicken
             $result = $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => utf8_encode($payload))));

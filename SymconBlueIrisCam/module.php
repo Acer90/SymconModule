@@ -1,7 +1,7 @@
 <?
     // Klassendefinition
     class BlueIrisCam extends IPSModule {
-        public function __construct($InstanceID) {
+        public function __construct(int $InstanceID) {
             parent::__construct($InstanceID);
         }
 

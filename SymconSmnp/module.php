@@ -2,7 +2,7 @@
     require_once('lib/snmp.php');
 
     class IPSSNMP extends IPSModule {
-        public function __construct($InstanceID) {
+        public function __construct(int $InstanceID) {
             parent::__construct($InstanceID);
         }
 
@@ -96,7 +96,7 @@
             print_r($snmp->get($ip, '.1.3.6.1.4.1.318.1.1.1.4.2.3.0', ['community' => $community]));
         }*/
 
-        public function ReadSNMP($oid_array) {
+        public function ReadSNMP(array $oid_array) {
 
             if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP", json_encode($oid_array), 0);
 
@@ -198,7 +198,7 @@
             return $out;
         }
 
-        public function WalkSNMP($oid) {
+        public function WalkSNMP(string $oid) {
 
             if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("WalkSNMP", $oid, 0);
 
@@ -249,7 +249,7 @@
             return $out;
         }
 
-        public function WriteSNMPbyOID($oid, $value, $type) {
+        public function WriteSNMPbyOID(string $oid, string $value, string $type) {
             if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("WriteSNMPbyOID", $oid ." => ". $value, 0);
 
             $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
@@ -298,7 +298,7 @@
             return true;
         }
 
-        public function WriteSNMPbyVarID($varid, $value, $type)
+        public function WriteSNMPbyVarID(int $varid, string $value, string $type)
         {
             if(!is_numeric($varid)){
                 return false;
@@ -833,7 +833,7 @@
             return  'Total running time in seconds: ' . round((microtime(true) - $time_start)*1000)."ms for ".count($output)." queries";
         }
 
-        public function GetPorts($status = false, $util = false, $utyp = ""){
+        public function GetPorts(bool $status = false, bool $util = false, string $utyp = ""){
             if(!$status && !$util) return "NO Mode selected!";
             if($util == true && empty($utyp)) return "Please Select Util Typ!";
 

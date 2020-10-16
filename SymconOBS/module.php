@@ -78,7 +78,7 @@
         }
 
 
-        public function SetMute($device = null, $value = true)
+        public function SetMute(string $device = null, bool $value = true)
         {
             if($device == null) return;
             $source = str_replace("Mute_", "", $device);
@@ -93,7 +93,7 @@
             $this->SetValue("Mute_".$source, $value);
         }
 
-        public function SetVolume($device = null, $value = 0)
+        public function SetVolume(string $device = null, int $value = 0)
         {
             if($device == null) return;
             $source = str_replace("Audio_", "", $device);
@@ -108,7 +108,7 @@
             $this->SetValue("Audio_".$source, $value);
         }
 
-        public function SetStreaming($value = false)
+        public function SetStreaming(bool $value = false)
         {
             $send_data = array();
             if($value){
@@ -123,7 +123,7 @@
             $this->SetValue("Streaming", $value);
         }
 
-        public function SwitchScenes($scene_name = null){
+        public function SwitchScenes(string $scene_name = null){
             if($scene_name == null) return;
 
             $send_data = array();
@@ -135,7 +135,7 @@
             $this->SendData($send_data);
         }
 
-        public function SetCurrentTransition($transition_name = null){
+        public function SetCurrentTransition(string $transition_name = null){
             if($transition_name == null) return;
 
             $send_data = array();
@@ -148,7 +148,7 @@
         }
 
 
-        public function ListProfiles($retrun_value = false){
+        public function ListProfiles(bool $retrun_value = false){
             $send_data = array();
             $send_data["request-type"] = "GetSourcesList";
             $send_data["message-id"] = "GetSourcesList";
@@ -156,7 +156,7 @@
             $this->SendData($send_data, $retrun_value);
         }
 
-        public function SendData($array = null, $retrun_value = false){
+        public function SendData(array $array = null, bool $retrun_value = false){
             $timeout = $this->ReadPropertyInteger("Timeout")*10;
             if($array == null || count($array) == 0) return;
 

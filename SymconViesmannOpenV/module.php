@@ -2,7 +2,7 @@
 // Klassendefinition
 class ViesmannOpenV extends IPSModule {
 
-    public function __construct($InstanceID) {
+    public function __construct(int $InstanceID) {
         parent::__construct($InstanceID);
     }
 
@@ -95,7 +95,6 @@ class ViesmannOpenV extends IPSModule {
                     if(!$r_only) $this->EnableAction($name);
                 }
             }
-
             $id = IPS_GetObjectIDByIdent($name, $this->InstanceID);
             $this->SendData($HexStamp, $length, true, false, "", $id, $convert);
         }
@@ -108,7 +107,7 @@ class ViesmannOpenV extends IPSModule {
         }
     }
 
-    public function SendData($hexstamp, $bytes, $read_only = true, $return_data = false, $value = "", $ips_id = 0, $convert = 0)
+    public function SendData(string $hexstamp, int $bytes, bool $read_only = true, bool $return_data = false, string $value = "", int $ips_id = 0, string $convert = "")
     {
         $hexstamp = str_replace(' ', '', $hexstamp);
         if(strlen($hexstamp) != 4) return false;
@@ -185,7 +184,7 @@ class ViesmannOpenV extends IPSModule {
 
     }
 
-    public function SendDataToIdent($ident, $read_only = true, $return_data = false, $value = "")
+    public function SendDataToIdent(int $ident, bool $read_only = true, bool $return_data = false, string $value = "")
     {
         if(empty($ident)) return false;
 
@@ -207,7 +206,7 @@ class ViesmannOpenV extends IPSModule {
         return $result;
     }
 
-    protected function String2Hex($string){
+    protected function String2Hex(string $string){
         $hex='';
         for ($i=0; $i < strlen($string); $i++){
             $output = dechex(ord($string[$i]));
@@ -589,7 +588,7 @@ class ViesmannOpenV extends IPSModule {
         return "{\"BaudRate\": \"4800\", \"DataBits\": \"8\", \"StopBits\": \"2\", \"Parity\": \"Even\"}";
     }
 
-    public function ConvertJsonToTimer($jsondata){
+    public function ConvertJsonToTimer(string $jsondata){
         $arr = json_decode($jsondata, true);
         $hexstamp = "";
 
@@ -606,7 +605,7 @@ class ViesmannOpenV extends IPSModule {
         return $hexstamp;
     }
 
-    public function ConvertTimerToJson($hexstamp){
+    public function ConvertTimerToJson(string $hexstamp){
         if (strlen($hexstamp) != 16) return false;
 
         $arr = str_split($hexstamp,2);
@@ -659,7 +658,7 @@ class ViesmannOpenV extends IPSModule {
         return $hex;
     }
 
-    public function ConvertBCDToDatetimeUnixArray($hex){
+    public function ConvertBCDToDatetimeUnixArray(string $hex){
         $hex_arr = str_split($hex, 2);
 
         if(count($hex_arr) < 8) return false;
@@ -693,7 +692,7 @@ class ViesmannOpenV extends IPSModule {
         return $r_arr;
     }
 
-    public function ConvertHexToRealNumbers($hex, $bytes){
+    public function ConvertHexToRealNumbers(string $hex, int $bytes){
         $r_val  = 0;
         $bin = base_convert($hex, 16, 2);
         $len = $bytes * 8;
@@ -719,7 +718,7 @@ class ViesmannOpenV extends IPSModule {
         return $r_val;
     }
 
-    public function ConvertRealNumbersToHex($num, $bytes){
+    public function ConvertRealNumbersToHex(int $num, int $bytes){
         $hex  = 0;
         $len = $bytes * 8;
 

@@ -1,0 +1,104 @@
+{
+    "elements":
+    [
+        { "type": "Label", "label": "Variablen (Boolean)" },
+        { "type": "NumberSpinner", "name": "P_Alarm", "caption": "Punkte" },
+        { "type": "Label", "label": "Priorität" },
+        { "type": "NumberSpinner", "name": "P_Warn", "caption": "Punkte" },
+        {
+            "type": "List",
+            "name": "VarList_Default",
+            "caption": "VarList",
+            "rowCount": 5,
+            "add": true,
+            "delete": true,
+            "sort": {
+                "column": "Name",
+                "direction": "ascending"
+            },
+            "columns": [
+                {
+                    "label": "Name",
+                    "name": "Name",
+                    "width": "200px",
+                    "add": "",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+            }, {
+                    "label": "Variable",
+                    "name": "Variable",
+                    "width": "auto",
+                    "add": "",
+                    "edit": {
+                        "type": "SelectVariable"
+                    }
+            }, {
+                "label": "Typ",
+                "name": "Typ",
+                "width": "100px",
+                "add": "==",
+                "edit": {
+                    "type": "Select",
+                    "options": [
+                        { "label": "==", "value": "==" },
+                        { "label": ">", "value": ">" },
+                        { "label": "<", "value": "<" },
+                        { "label": ">=", "value": ">=" },
+                        { "label": "<=", "value": "<=" },
+                        { "label": "!=", "value": "!=" }]
+                }
+            }, {
+                    "label": "Check",
+                    "name": "check",
+                    "width": "150px",
+                    "add": 1,
+                    "edit": { "type": "ValidationTextBox" }
+            }, {
+                    "label": "Time (Sec)",
+                    "name": "Time",
+                    "width": "120px",
+                    "add": "",
+                    "edit": {
+                        "type": "NumberSpinner"
+                    }
+            }, {
+                    "label": "Punkte",
+                    "name": "Points",
+                    "width": "120px",
+                    "add": 5,
+                    "edit": {
+                      "type": "NumberSpinner"
+                    }
+            }, {
+                    "label": "Exp.",
+                    "name": "Exp",
+                    "width": "80px",
+                    "add": false,
+                    "edit": {
+                      "type": "CheckBox",
+                      "Caption" : "Exponentielle Abnahme"
+                    }
+            }, {
+                "label": "Gruppe",
+                "name": "Group",
+                "width": "100px",
+                "add": 0,
+                "edit": {
+                  "type": "NumberSpinner"
+                }
+            }
+            ]
+        }
+    ],
+    "actions":
+    [
+        { "type": "Button", "label": "Test", "onClick": "echo SymconAlarmSystem_Test($id);" }
+
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Connection Success!" },
+        { "code": 201, "icon": "error", "caption": "Error Invalid parameter" }
+    ]
+}

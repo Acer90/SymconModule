@@ -7,12 +7,12 @@ class SamsungTizen extends IPSModule
 {
     // Buffer sind immer String. Kovertierungen durch integer, float oder bool können Probleme verursachen.
     // Also wird mit serialize immer alles typensicher in einen String gewandelt.
-    public function SetBuffer($Name, $Daten)
+    protected function SetBuffer($Name, $Daten)
     {
         parent::SetBuffer($Name, serialize($Daten));
     }
 
-    public function GetBuffer($Name)
+    protected function GetBuffer($Name)
     {
         return unserialize(parent::GetBuffer($Name));
     }
@@ -201,7 +201,7 @@ class SamsungTizen extends IPSModule
         $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str)));
     }
 
-    public function StartApp($appName)
+    public function StartApp(string $appName)
     {
         $this->SendDebug(__FUNCTION__, '', 0);
         $data = $this->GetValue("VariableApps");
@@ -231,7 +231,7 @@ class SamsungTizen extends IPSModule
         return true;
     }
 
-    public function StartWebpage($url)
+    public function StartWebpage(string $url)
     {
         $this->SendDebug(__FUNCTION__, '', 0);
         $send_str = '{"method":"ms.channel.emit","params":{"event": "ed.apps.launch", "to":"host", "data":{"appId":"org.tizen.browser","action_type":"NATIVE_LAUNCH","metaTag":"' . $url . '"}}}';

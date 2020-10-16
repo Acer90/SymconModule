@@ -9,7 +9,9 @@
     "actions":
     [
         { "type": "Button", "label": "Lade Einstellungen", "onClick": "echo StecaSolarix_Load_LiveProperties($id);" },
-        { "type": "Button", "label": "Lade Live Daten", "onClick": "echo StecaSolarix_Load_LiveData($id);" }
+        { "type": "Button", "label": "Lade Live Daten", "onClick": "echo StecaSolarix_Load_LiveData($id);" },
+        { "type": "Button", "label": "Test!", "onClick": "echo StecaSolarix_Test($id);" }
+
     ],
     "status":
     [

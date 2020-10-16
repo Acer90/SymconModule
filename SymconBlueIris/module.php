@@ -1,12 +1,12 @@
 <?
     // Klassendefinition
     class BlueIris extends IPSModule {
-        public function SetBuffer($Name, $Daten)
+        protected function SetBuffer($Name, $Daten)
         {
             parent::SetBuffer($Name, serialize($Daten));
         }
 
-        public function GetBuffer($Name)
+        protected function GetBuffer($Name)
         {
             return unserialize(parent::GetBuffer($Name));
         }
@@ -183,7 +183,7 @@
             };
         }
 
-        public function AlertList(string $session = null, string $camera = null, integer $startdate = null, bool $reset = null){
+        public function AlertList(string $session = null, string $camera = null, int $startdate = null, bool $reset = null){
             if(is_null($session)){
                 $this->SetStatus(203);
                 return "ERROR";
@@ -233,7 +233,7 @@
             };
         }
 
-        public function CamConfig(string $session = null, string $camera = null, bool $reset = null, bool $enable = null, integer $pause = null, bool $motion = null, bool $schedule = null, bool $ptzcycle = null, bool $ptzevents = null, integer $alerts = null, integer $record = null){
+        public function CamConfig(string $session = null, string $camera = null, bool $reset = null, bool $enable = null, int $pause = null, bool $motion = null, bool $schedule = null, bool $ptzcycle = null, bool $ptzevents = null, int $alerts = null, int $record = null){
             if(is_null($session)){
                 $this->SetStatus(203);
                 return "ERROR";
@@ -438,7 +438,7 @@
             };
         }
 
-        public function PTZ($session = null,  $camera = null, $button = null, $updown = null){
+        public function PTZ(string $session = null,  string $camera = null, string $button = null, string $updown = null){
             if(is_null($session)){
                 $this->SetStatus(203);
                 return "ERROR";
@@ -493,7 +493,7 @@
             };
         }
 
-        public function Status($session = null,$signal = null, $profil = null, $dio = null, $play = null){
+        public function Status(string $session = null, string $signal = null, string $profil = null, string $dio = null, string $play = null){
             if(is_null($session)){
                 $this->SetStatus(203);
                 return "ERROR";

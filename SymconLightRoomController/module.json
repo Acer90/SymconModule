@@ -1,0 +1,11 @@
+{
+  "id": "{5F130E21-12EF-3354-BE6A-FBBFA8ED0223}",
+  "name": "LightRoomController",
+  "type": 3,
+  "vendor": "Swen Babenschneider",
+  "aliases": ["LightRoomController"],
+  "parentRequirements": [],
+  "childRequirements": [],
+  "implemented": [],
+  "prefix": "LightRoomController"
+}

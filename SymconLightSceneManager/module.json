@@ -1,0 +1,11 @@
+{
+  "id": "{2224E8CF-F240-53F7-937A-E732EC4F7EDA}",
+  "name": "LightSceneManager",
+  "type": 4,
+  "vendor": "Swen Babenschneider",
+  "aliases": ["LightSceneManager"],
+  "parentRequirements": [],
+  "childRequirements": [],
+  "implemented": [],
+  "prefix": "LightSceneManager"
+}

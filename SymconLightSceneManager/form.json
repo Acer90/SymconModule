@@ -1,0 +1,67 @@
+{
+    "elements":
+    [
+      { "type": "Label", "label": "Scenen-Liste" },
+      {
+        "type": "List",
+        "name": "SceneList",
+        "caption": "VarList",
+        "rowCount": 10,
+        "add": true,
+        "delete": true,
+        "sort": {
+          "column": "Name",
+          "direction": "ascending"
+        },
+        "columns": [
+          {
+            "label": "Name",
+            "name": "Name",
+            "width": "200px",
+            "add": "",
+            "edit": {
+              "type": "ValidationTextBox"
+            }
+          },
+          {
+            "label": "Variable",
+            "name": "Variable",
+            "width": "auto",
+            "add": "",
+            "edit": {
+              "type": "SelectVariable"
+            }
+          },
+          {
+            "label": "Priorität",
+            "name": "Prio",
+            "width": "auto",
+            "add": "",
+            "edit": {
+              "type": "NumberSpinner"
+            }
+          },
+          {
+            "label": "Aktiv",
+            "name": "Exp",
+            "width": "80px",
+            "add": true,
+            "edit": {
+              "type": "CheckBox",
+              "Caption": "Aktiv"
+            }
+          }
+        ]
+      }
+    ],
+    "actions":
+    [
+        { "type": "Button", "label": "Send Sence", "onClick": "SymconAlarmSystem_Test($id);" }
+
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Connection Success!" },
+        { "code": 201, "icon": "error", "caption": "Error Invalid parameter" }
+    ]
+}

@@ -3,7 +3,7 @@
 class SymconAlarmSystem extends IPSModule
 {
 
-    public function __construct($InstanceID)
+    public function __construct(int $InstanceID)
     {
         parent::__construct($InstanceID);
     }
@@ -223,7 +223,7 @@ class SymconAlarmSystem extends IPSModule
         }
     }
 
-    private function Check($op, $value, $check){
+    private function Check(string $op, string $value, string $check){
         $erg = false;
 
         switch($op){
@@ -310,7 +310,7 @@ class SymconAlarmSystem extends IPSModule
         $this->SetBuffer("Groups", json_encode($arr_groups));
     }
 
-    public function AlarmOn($Value){
+    public function AlarmOn(bool $Value){
         if(!$Value) {
             $this->SetValue("AlarmLevel", 0);
             $this->SetValue("AlarmStatus", -1);
