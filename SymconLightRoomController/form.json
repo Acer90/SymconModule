@@ -93,8 +93,8 @@
     ],
     "actions":
     [
-        { "type": "Button", "label": "Test", "onClick": "echo SymconAlarmSystem_Test($id);" }
-
+        { "type": "Button", "label": "Test", "onClick": "echo LightRoomController_UpdateScene($id);" },
+        { "type": "Button", "label": "Update SceneList", "onClick": "echo LightRoomController_UpdateSceneList($id);" }
     ],
     "status":
     [

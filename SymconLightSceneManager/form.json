@@ -15,7 +15,16 @@
         },
         "columns": [
           {
-            "label": "Name",
+            "caption": "ID",
+            "name": "ID",
+            "width": "40px",
+            "add": 0,
+            "edit": {
+              "type": "NumberSpinner"
+            }
+          },
+          {
+            "caption": "Name",
             "name": "Name",
             "width": "200px",
             "add": "",
@@ -24,31 +33,30 @@
             }
           },
           {
-            "label": "Variable",
+            "caption": "Variable",
             "name": "Variable",
             "width": "auto",
-            "add": "",
+            "add": 0,
             "edit": {
               "type": "SelectVariable"
             }
           },
           {
-            "label": "Priorität",
+            "caption": "Priorität",
             "name": "Prio",
-            "width": "auto",
-            "add": "",
+            "width": "80px",
+            "add": 1,
             "edit": {
               "type": "NumberSpinner"
             }
           },
           {
-            "label": "Aktiv",
-            "name": "Exp",
+            "caption": "Deaktiviert",
+            "name": "disable",
             "width": "80px",
-            "add": true,
+            "add": false,
             "edit": {
-              "type": "CheckBox",
-              "Caption": "Aktiv"
+              "type": "CheckBox"
             }
           }
         ]
@@ -56,8 +64,8 @@
     ],
     "actions":
     [
-        { "type": "Button", "label": "Send Sence", "onClick": "SymconAlarmSystem_Test($id);" }
-
+      { "type": "Button", "label": "Test", "onClick": "echo LightSceneManager_SendData($id);" },
+      { "type": "Button", "label": "Test", "onClick": "echo LightSceneManager_UpdateSceneStatus($id);" }
     ],
     "status":
     [

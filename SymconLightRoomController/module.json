@@ -4,8 +4,8 @@
   "type": 3,
   "vendor": "Swen Babenschneider",
   "aliases": ["LightRoomController"],
-  "parentRequirements": [],
+  "parentRequirements": ["{2B43AAD9-4E36-CFCE-8EE3-C765710C9005}"],
   "childRequirements": [],
-  "implemented": [],
+  "implemented": ["{27F38ACA-F68E-12E5-457A-02E308AAF91F}"],
   "prefix": "LightRoomController"
 }
