@@ -267,13 +267,8 @@ class SamsungTizen extends IPSModule
     }
 
     public function ResetKey(){
-        $SenderID = $this->RegisterParent();
         $this->SetValue("VariableToken", "");
-
-        /*$this->SendDebug("Force close Websocket", $SenderID, 0);
-        $Script = 'IPS_SetProperty(' . $SenderID . ', "Open", false);' . PHP_EOL;
-        $Script .= 'IPS_ApplyChanges(' . $SenderID . ');';
-        IPS_RunScriptText($Script);*/
+        $this->UpdateConfigurationForParent();
     }
 
     public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
@@ -647,7 +642,7 @@ class SamsungTizen extends IPSModule
         if ($useSSL) {
             $origin = "https://" . $ipAdress . ":8002";
             $Query['token'] = $this->GetValue("VariableToken");
-            //$VerifyCertificate = True;
+            $VerifyCertificate = True;
 
             $address = "wss://" . $ipAdress . ":8002/api/v2/channels/samsung.remote.control?" . http_build_query($Query);
         } else {
@@ -657,8 +652,8 @@ class SamsungTizen extends IPSModule
 
         $Config = array(
             "Active"         => $active,
-            "URL"          => $address,
-            "VerifyCertificate"     => $VerifyCertificate
+            "URL"          => $address //,
+            //"VerifyCertificate"     => $VerifyCertificate
         );
 
         return json_encode($Config);
