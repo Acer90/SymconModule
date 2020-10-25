@@ -129,12 +129,11 @@ class LightRoomController extends IPSModule
 
         //nicht gefunden geräte ausschalten
         foreach ($lightsArr as $key => $item){
-            $this->SendDebug("StartScene", "Light Off => ".$item,0);
             if($item == false){
                 $this->SendDebug("StartScene", "Light Off => ".$key,0);
                 $this->ControlLight($key); //licht ausschalten
+                unset($running_lights[$key]);
             }
-            unset($running_lights[$key]);
         }
 
         $this->SetBuffer("RunningLights", json_encode($running_lights));
