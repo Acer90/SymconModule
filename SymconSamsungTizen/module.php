@@ -637,12 +637,10 @@ class SamsungTizen extends IPSModule
         $useSSL = $this->ReadPropertyBoolean("UseSSL");
         $active = $this->ReadPropertyBoolean("Active");
         $Query = array('name' => base64_encode('IPSymconTizen'));
-        $VerifyCertificate = false;
 
         if ($useSSL) {
             $origin = "https://" . $ipAdress . ":8002";
             $Query['token'] = $this->GetValue("VariableToken");
-            $VerifyCertificate = True;
 
             $address = "wss://" . $ipAdress . ":8002/api/v2/channels/samsung.remote.control?" . http_build_query($Query);
         } else {
@@ -652,7 +650,7 @@ class SamsungTizen extends IPSModule
 
         $Config = array(
             "Active"         => $active,
-            "URL"          => $address //,
+            //"URL"          => $address //,
             //"VerifyCertificate"     => $VerifyCertificate
         );
 
