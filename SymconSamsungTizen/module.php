@@ -11,7 +11,6 @@ class SamsungTizen extends IPSModule
     {
         parent::SetBuffer($Name, serialize($Daten));
     }
-
     protected function GetBuffer($Name)
     {
         return unserialize(parent::GetBuffer($Name));
@@ -83,7 +82,7 @@ class SamsungTizen extends IPSModule
         $this->EnableAction("VariableMute");
         $this->EnableAction("VariableInput");
 
-        $this->RequireParent("{3AB77A94-3467-4E66-8A73-840B4AD89582}");
+        $this->RequireParent("{D68FD31F-0E90-7019-F16C-1949BD3079EF}");
 
         //event erstellen
         $this->RegisterTimer("CheckOnline", 0, 'SamsungTizen_CheckOnline($_IPS[\'TARGET\']);');
@@ -178,7 +177,7 @@ class SamsungTizen extends IPSModule
             $keys_data = explode(";", $keys);
             foreach ($keys_data as $value) {
                 $send_str = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"' . $value . '","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
-                $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str)));
+                $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str)));
                 $this->SendDebug(__FUNCTION__, $value, 0);
                 if($value == "KEY_VOLDOWN" || $value == "KEY_VOLUP"){
                     sleep($sleep);
@@ -189,7 +188,7 @@ class SamsungTizen extends IPSModule
             }
         } else {
             $send_str = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"' . $keys . '","Option":"false","TypeOfRemote":"SendRemoteKey"}}';
-            $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str)));
+            $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str)));
             $this->SendDebug(__FUNCTION__, $keys, 0);
         }
     }
@@ -198,7 +197,7 @@ class SamsungTizen extends IPSModule
     {
         $this->SendDebug(__FUNCTION__, '', 0);
         $send_str = '{"method":"ms.channel.emit","params":{"event": "ed.installedApp.get", "to":"host"}}';
-        $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str)));
+        $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str)));
     }
 
     public function StartApp(string $appName)
@@ -227,7 +226,7 @@ class SamsungTizen extends IPSModule
 
         $send_str = '{"method":"ms.channel.emit","params":{"event": "ed.apps.launch", "to":"host", "data":{"appId": "' . $appID . '", "action_type": "' . $actionType . '"}}}';
         $this->SendDebug("msg", $send_str, 0);
-        $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str)));
+        $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str)));
         return true;
     }
 
@@ -235,7 +234,7 @@ class SamsungTizen extends IPSModule
     {
         $this->SendDebug(__FUNCTION__, '', 0);
         $send_str = '{"method":"ms.channel.emit","params":{"event": "ed.apps.launch", "to":"host", "data":{"appId":"org.tizen.browser","action_type":"NATIVE_LAUNCH","metaTag":"' . $url . '"}}}';
-        $this->SendDataToParent(json_encode(Array("DataID" => "{BC49DE11-24CA-484D-85AE-9B6F24D89321}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str)));
+        $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "FrameTyp" => 1, "Fin" => true, "Buffer" => $send_str)));
     }
 
     public function CheckOnline()
@@ -643,10 +642,12 @@ class SamsungTizen extends IPSModule
         $useSSL = $this->ReadPropertyBoolean("UseSSL");
         $active = $this->ReadPropertyBoolean("Active");
         $Query = array('name' => base64_encode('IPSymconTizen'));
+        $VerifyCertificate = false;
 
         if ($useSSL) {
             $origin = "https://" . $ipAdress . ":8002";
             $Query['token'] = $this->GetValue("VariableToken");
+            $VerifyCertificate = True;
 
             $address = "wss://" . $ipAdress . ":8002/api/v2/channels/samsung.remote.control?" . http_build_query($Query);
         } else {
@@ -655,17 +656,9 @@ class SamsungTizen extends IPSModule
         }
 
         $Config = array(
-            "Open"         => $active,
+            "Active"         => $active,
             "URL"          => $address,
-            "Protocol"     => "",
-            "Version"      => 13,
-            "Origin"       => $origin,
-            "PingInterval" => 10,
-            "PingPayload"  => "",
-            "Frame"        => 1,
-            "BasisAuth"    => false,
-            "Username"     => "",
-            "Password"     => ""
+            "VerifyCertificate"     => $VerifyCertificate
         );
 
         return json_encode($Config);
