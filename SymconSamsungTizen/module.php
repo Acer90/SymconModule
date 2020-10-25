@@ -330,12 +330,12 @@ class SamsungTizen extends IPSModule
                           } else {
                           $this->SetTimerInterval("CheckOnline", 0);
                           } */
-                        $this->SendDebug("Force close Websocket", $SenderID, 0);
+                        /*$this->SendDebug("Force close Websocket", $SenderID, 0);
                         // losgelöst vom aktuellen context, damit wir keinen DeathLock haben.
                         // Hierdurch wird wieder MessageSink mit case 104 (inaktiv) getriggert.
                         $Script = 'IPS_SetProperty(' . $SenderID . ', "Open", false);' . PHP_EOL;
                         $Script .= 'IPS_ApplyChanges(' . $SenderID . ');';
-                        IPS_RunScriptText($Script);
+                        IPS_RunScriptText($Script);*/
                         break;
                 }
                 break;
