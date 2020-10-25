@@ -650,7 +650,7 @@ class SamsungTizen extends IPSModule
 
         $Config = array(
             "Active"         => $active,
-            //"URL"          => $address //,
+            "URL"          => $address //,
             //"VerifyCertificate"     => $VerifyCertificate
         );
 
