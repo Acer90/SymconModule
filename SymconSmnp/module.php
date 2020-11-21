@@ -755,7 +755,7 @@
                     if(!array_key_exists($oid, $output)) continue;
                     $value = $output[$oid];
 
-
+                    if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("SyncData","VALUE => ".$value." (".$instanceID.")", 0);
                     if($instanceID === false){
 
                         if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("SyncData","DATATyp => ".gettype($value), 0);
