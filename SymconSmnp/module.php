@@ -755,8 +755,10 @@
                     if(!array_key_exists($oid, $output)) continue;
                     $value = $output[$oid];
 
+
                     if($instanceID === false){
 
+                        if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("SyncData","DATATyp => ".gettype($value), 0);
                         switch (gettype($value)){
                             case "boolean":
                                 //Boolean anlegen
