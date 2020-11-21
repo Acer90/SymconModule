@@ -20,12 +20,17 @@ class LightRoomController extends IPSModule
         parent::Create();
 
         $this->RegisterPropertyString("VarList_Sensors","{}");
+        $this->RegisterPropertyString("VarList_LightSensors","{}");
         $this->RegisterPropertyString("Data_Scenes","{}");
-        $this->ConnectParent("{2224E8CF-F240-53F7-937A-E732EC4F7EDA}");
+        $this->RequireParent("{2224E8CF-F240-53F7-937A-E732EC4F7EDA}");
 
-        $this->UpdateScene();
+        if (IPS_GetKernelRunlevel() == 10103 /* KR_READY */) {
+            $this->UpdateScene();
+        }
         $this->UpdateMessageSink();
+        $this->UpdateLightData();
 
+        $this->SetBuffer("Running", false);
         $this->SetBuffer("currentScene", -1);
         $this->SetBuffer("oldScene", -1);
         $this->RegisterTimer("Update", 1000, 'LightRoomController_UpdateRunningScene($_IPS[\'TARGET\']);');
@@ -35,10 +40,52 @@ class LightRoomController extends IPSModule
         $this->RequireParent("{2224E8CF-F240-53F7-937A-E732EC4F7EDA}");
 
         $this->UpdateMessageSink();
+        $this->UpdateLightData();
+
+        $this->RegisterMessage(0, 10001 /* IPS_KERNELSTARTED */);
+        $this->RegisterMessage($this->InstanceID, 11101 /* FM_CONNECT */);
+        $this->RegisterMessage($this->InstanceID, 11102 /* FM_DISCONNECT */);
+        if (IPS_GetKernelRunlevel() == 10103 /* KR_READY */) {
+            $this->RegisterParent();
+            $this->UpdateScene();
+        }
     }
 
+    protected function RegisterParent()
+    {
+        //$this->SendDebug(__FUNCTION__, '', 0);
+        $OldParentId = $this->GetBuffer("OldParent");
+        $ParentId = @IPS_GetInstance($this->InstanceID)['ConnectionID'];
+        if ($ParentId <> $OldParentId) {
+            if ($OldParentId > 0) {
+                $this->UnregisterMessage($OldParentId, 10505 /* IM_CHANGESTATUS */);
+            }
+            if ($ParentId > 0) {
+                $this->RegisterMessage($ParentId, 10505 /* IM_CHANGESTATUS */);
+            } else {
+                $ParentId = 0;
+            }
+            $this->SetBuffer("OldParent", $ParentId);
+        }
+        return $ParentId;
+    }
     private function UpdateMessageSink(){
         $VarList = json_decode($this->ReadPropertyString("VarList_Sensors"), true);
+        if(!is_array($VarList)) return;
+        foreach($VarList as $item){
+            if($item["Variable"] > 0 && !$item["disable"]){
+                $this->RegisterMessage($item["Variable"], 10603);
+                $this->SendDebug("UpdateMessageSink", "RegisterMessage => " . $item["Variable"] . "(10603)",0);
+            }
+
+            if($item["disable"]){
+                $this->UnregisterMessage($item["Variable"], 10603);
+                $this->SendDebug("UpdateMessageSink", "UnregisterMessage => " . $item["Variable"] . "(10603)",0);
+            }
+        }
+
+        //Lichtsensoren
+        $VarList = json_decode($this->ReadPropertyString("VarList_LightSensors"), true);
         if(!is_array($VarList)) return;
         foreach($VarList as $item){
             if($item["Variable"] > 0 && !$item["disable"]){
@@ -54,14 +101,91 @@ class LightRoomController extends IPSModule
     }
     public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
     {
-        if ($Message == 10603)
-        {
-            //$this->SendDebug("MessageSink", "Sensor " . $SenderID. " satus geändert! => ". print_r($Data),0);
-            if($Data[1] == 1 && $Data[0] == 1){
-                $this->SendDebug("MessageSink", "Sensor " . $SenderID. " => activ",0);
-                $this->StartScene($this->GetCurrentScene());
+        switch($Message) {
+            case 10603:
+                //$this->SendDebug("MessageSink", "Sensor " . $SenderID. " satus geändert! => ". print_r($Data),0);
+                $lightSensorData = json_decode($this->ReadPropertyString("VarList_LightSensors"), true);
+                if(is_array($lightSensorData)) {
+                    $key = array_search($SenderID, array_column($lightSensorData, 'Variable'));
+                    if ($key !== false) {
+                        //LichtSensor
+                        //array("Variable" => $id, "disable" => $SensorData["disable"], "Max_val" => $max, "Current" => $cur ."%");
+
+                        $lightData = json_decode($this->GetBuffer("LightData"), true);
+                        $max = $lightSensorData[$key]["Max_val"];
+                        $cur = $Data[0] / $max * 100;
+                        $lightData[$SenderID] = $cur;
+                        $this->SendDebug("MessageSink", "Lightsensor " . $SenderID . " new Value => " .$cur. " (".$Data[0].")", 0);
+
+                        $this->SetBuffer("LightData", json_encode($lightData));
+                        return;
+                    }
+                }
+
+                $SensorData = json_decode($this->ReadPropertyString("VarList_Sensors"), true);
+                if(is_array($SensorData)) {
+                    if (array_search($SenderID, array_column($SensorData, 'Variable')) !== false) {
+                        //Bewegungsensor
+                        if ($Data[1] == 1 && $Data[0] == 1) {
+                            $this->SendDebug("MessageSink", "Motionsensor " . $SenderID . " => activ", 0);
+                            $this->StartScene($this->GetCurrentScene());
+                        }
+                        return;
+                    }
+                }
+
+                $this->SendDebug("MessageSink", "Ignore Sensor " . $SenderID. " => ". print_r($Data),0);
+                break;
+            case 10505: /* IM_CHANGESTATUS */
+                switch ($Data[0]) {
+                    case 102: //Running
+                        $this->SendDebug("Connection", "IO connection establish", 0);
+                        $this->SetStatus(102);
+                        $this->SetBuffer("Running", true);
+                        break;
+                }
+                break;
+            case 10001: /* IPS_KERNELSTARTED */
+                $this->RegisterParent();
+                $this->UpdateScene();
+                break;
+            case 11101: /* FM_CONNECT */
+                $this->RegisterParent();
+                break;
+            case 11102: /* FM_DISCONNECT */
+                $this->RegisterParent();
+        }
+    }
+    private function UpdateLightData(){
+        $lightSensorData = json_decode($this->ReadPropertyString("VarList_LightSensors"), true);
+
+        $light_values = array();
+        if(is_array($lightSensorData)){
+            foreach ($lightSensorData as $SensorData) {
+                $id = $SensorData["Variable"];
+                $max = $SensorData["Max_val"];
+                $cur = -1;
+
+                if($SensorData["disable"]) continue;
+
+                if (IPS_ObjectExists($id)){
+                    $cur = GetValue($id) / $max * 100;
+                }
+                $light_values[$id] = $cur;
             }
         }
+
+        $this->SetBuffer("LightData", json_encode($light_values));
+    }
+    private function GetLightDataLowestValue(){
+        $lightData = json_decode($this->GetBuffer("LightData"), true);
+        $r_val = 0;
+
+        if(is_array($lightData) && count($lightData) > 0) $r_val = min($lightData);
+        if($r_val > 100) $r_val = 100;
+
+        $this->SendDebug("LightDataGetLowestValue", "Lowest Light Value => ".$r_val. "%", 0);
+        return $r_val;
     }
 
     private function GetCurrentScene(){
@@ -97,7 +221,7 @@ class LightRoomController extends IPSModule
 
         //alle Lichter finden
         $lightsArr = array();
-        $this->SendDebug("StartScene", json_encode($VarList),0);
+        //$this->SendDebug("StartScene", json_encode($VarList),0);
         foreach ($VarList as $scene){
 
             if(!array_key_exists("Scene", $scene)) continue;
@@ -116,11 +240,65 @@ class LightRoomController extends IPSModule
             if(array_key_exists("Scene", $VarList[$key])) {
                 foreach ($VarList[$key]["Scene"] as $light) {
                     //Licht für licht schalten
-                    //$this->SendDebug("StartScene", "Test => " . json_encode($VarList), 0);
+
+                    //aber nur wenn die helligkeit zu kein ist
+                    $lowLight = $this->GetLightDataLowestValue();
+
+                    if($light["Light"] >= $lowLight){
+                        $this->ControlLight($light["Instance"], $light["Zustand_val"], $light["Helligkeit_val"], $light["Temperatur_val"], $light["Farbe_val"]);
+                        $lightsArr[$light["Instance"]] = true;
+
+                        if ($light["Time"] > 0) {
+                            $this->SendDebug("StartScene", "Set Duration ".$light["Instance"]." => " . $light["Time"]. " (Time=" .$now. ")", 0);
+                            $running_lights[$light["Instance"]] = array("Time" => $now, "Duration" => $light["Time"]);
+                        }
+                    }
+                }
+            }
+        }
+
+        //nicht gefunden geräte ausschalten
+        foreach ($lightsArr as $key => $item){
+            if($item == false){
+                $this->SendDebug("StartScene", "Light Off => ".$key,0);
+                $this->ControlLight($key); //licht ausschalten
+                unset($running_lights[$key]);
+            }
+        }
+
+        $this->SetBuffer("RunningLights", json_encode($running_lights));
+    }
+    private function ReloadScene(int $ID){
+        $VarList = json_decode($this->ReadPropertyString("Data_Scenes"), true);
+        $this->SendDebug("ReloadScene", "Reload Scene ID=> ".$ID,0);
+
+        //alle Lichter finden
+        $lightsArr = array();
+        //$this->SendDebug("StartScene", json_encode($VarList),0);
+        foreach ($VarList as $scene){
+
+            if(!array_key_exists("Scene", $scene)) continue;
+
+            foreach ($scene["Scene"] as $item){
+                $lightsArr[$item["Instance"]] = false;
+            }
+        }
+
+        //status lampen abrufen
+        $running_lights = json_decode($this->GetBuffer("RunningLights"), true);
+        $now = time(); //damit für alle lampen gleich!
+
+        $key = array_search($ID, array_column($VarList, 'ID'));
+        if($key !== FALSE){
+            if(array_key_exists("Scene", $VarList[$key])) {
+                foreach ($VarList[$key]["Scene"] as $light) {
+                    //Licht für licht schalten
+
                     $this->ControlLight($light["Instance"], $light["Zustand_val"], $light["Helligkeit_val"], $light["Temperatur_val"], $light["Farbe_val"]);
                     $lightsArr[$light["Instance"]] = true;
 
                     if ($light["Time"] > 0) {
+                        $this->SendDebug("ReloadScene", "Set Duration ".$light["Instance"]." => " . $light["Time"]. " (Time=" .$now. ")", 0);
                         $running_lights[$light["Instance"]] = array("Time" => $now, "Duration" => $light["Time"]);
                     }
                 }
@@ -129,12 +307,11 @@ class LightRoomController extends IPSModule
 
         //nicht gefunden geräte ausschalten
         foreach ($lightsArr as $key => $item){
-            $this->SendDebug("StartScene", "Light Off => ".$item,0);
             if($item == false){
-                $this->SendDebug("StartScene", "Light Off => ".$key,0);
+                $this->SendDebug("ReloadScene", "Light Off => ".$key,0);
                 $this->ControlLight($key); //licht ausschalten
+                unset($running_lights[$key]);
             }
-            unset($running_lights[$key]);
         }
 
         $this->SetBuffer("RunningLights", json_encode($running_lights));
@@ -143,39 +320,49 @@ class LightRoomController extends IPSModule
         $oldScene = $this->GetBuffer("oldScene");
         $currentScene = $this->GetBuffer("currentScene");
 
+
+        $Sensor_activ = false;
+        $VarList = json_decode($this->ReadPropertyString("VarList_Sensors"), true);
+        if(is_array($VarList)) {
+            foreach($VarList as $item){
+                if($item["Variable"] > 0 && !$item["disable"]){
+                    if(GetValueBoolean($item["Variable"]) == true) $Sensor_activ = true;
+                }
+            }
+        }
+
         //$this->SendDebug("UpdateRunningScene",  $oldScene. " == ". $currentScene, 0);
         if($currentScene != $oldScene){
             //Änderungen Update auf neue Scene!
             $this->SendDebug("UpdateRunningScene", "New Scene (".$currentScene.") detected!", 0);
-            $activ = false;
-            $VarList = json_decode($this->ReadPropertyString("VarList_Sensors"), true);
-            if(is_array($VarList)) {
-                foreach($VarList as $item){
-                    if($item["Variable"] > 0 && !$item["disable"]){
-                        if(GetValueBoolean($item["Variable"]) == true) $activ = true;
-                    }
-                }
-            }
 
-            if($activ){
+
+            if($Sensor_activ){
                 //Livechange Scene
-                $this->StartScene($currentScene);
+                $this->ReloadScene($currentScene);
             }
         }
 
         $running_lights = json_decode($this->GetBuffer("RunningLights"), true);
+        //$this->SendDebug("UpdateRunningScene", $this->GetBuffer("RunningLights"), 0);
         if(is_array($running_lights)){
             $now = time();
             foreach ($running_lights as $key => $item){
                 //pürfen ob die Zeit abgelaufen
-
                 $timespan = $now - $item["Time"];
-
                 if($timespan >= $item["Duration"]){
-                    //Licht ausschalten
-                    $this->SendDebug("UpdateRunningScene", "Licht => ". $key ." auschalten", 0);
-                    unset($running_lights[$key]);
-                    $this->ControlLight($key);
+
+                    if($Sensor_activ){
+                        //Prüfen ob Sensor noch Aktiv, dann Zeit von vorn!
+                        $running_lights[$key]["Time"] = $now;
+                        $this->SendDebug("UpdateRunningScene", "Licht ID=".$key." einschaltzeit verlängert (".$item["Duration"].")", 0);
+                    }else{
+                        //Sonst Licht ausschalten
+                        $this->SendDebug("UpdateRunningScene", "Licht => ". $key ." auschalten", 0);
+                        unset($running_lights[$key]);
+                        $this->ControlLight($key);
+                    }
+
                 }
             }
         }
@@ -212,6 +399,10 @@ class LightRoomController extends IPSModule
             case "{C47C8889-02C4-40A2-B18A-DBD9E47CE23D}":
                 //huelight
                 //hueGroup
+                if($helligkeit > 0) $helligkeit = round((254 / 100) * $helligkeit);
+
+                $this->SendDebug("TEST", "T=". $temperatur . " H=".$helligkeit, 0);
+
                 if($mode == 0) HUE_SetValues($instance, array("STATE" => $zustand));
                 if($mode == 1) HUE_SetValues($instance, array("STATE" => $zustand, "BRIGHTNESS" => $helligkeit));
                 if($mode == 2) HUE_SetValues($instance, array("STATE" => $zustand, "COLOR_TEMPERATURE" => $temperatur, "BRIGHTNESS" => $helligkeit));
@@ -240,11 +431,28 @@ class LightRoomController extends IPSModule
     public function GetConfigurationForm(){
         parent::GetConfigurationForm();
         $sceneData = json_decode($this->GetBuffer("sceneData"), true);
-        if(!is_array($sceneData)) return "";
+        $lightSensorData = json_decode($this->ReadPropertyString("VarList_LightSensors"), true);
+
+        $form = array("elements" => array(), "actions" => array(), "status" => array());
+        if(!is_array($sceneData)) return json_encode($form);
 
         $values = array();
         foreach ($sceneData as $scene){
-            $values[] = array("ID" => $scene["ID"], "Name" => $scene["Name"], "Prio" => $scene["Prio"], "Scenes" => array()); //
+            $values[] = array("ID" => $scene["ID"], "Name" => $scene["Name"], "Prio" => $scene["Prio"], "Scenes" => array(array("Instance" => 0, "Zustand_val" => false, "Helligkeit_val" => 0, "Temperatur_val" => 0, "Farbe_val" => 0, "Time" => 0, "Licht" => 0))); //
+        }
+
+        $light_values = array();
+        if(is_array($lightSensorData)){
+            $lightData = json_decode($this->GetBuffer("LightData"), true);
+            foreach ($lightSensorData as $SensorData) {
+                $id = $SensorData["Variable"];
+                $max = $SensorData["Max_val"];
+                $cur = "---";
+
+                if(array_key_exists($id, $lightData)) $cur = $lightData[$id] ."%";
+
+                $light_values[] = array("Variable" => $id, "disable" => $SensorData["disable"], "Max_val" => $max, "Current" => $cur);
+            }
         }
 
         $form = array("elements" => array(), "actions" => array(), "status" => array());
@@ -254,7 +462,7 @@ class LightRoomController extends IPSModule
         $form["elements"][] = json_decode('{
             "type": "List",
             "name": "VarList_Sensors",
-            "caption": "Sensoren",
+            "caption": "Bewegungsmelder",
             "rowCount": 3,
             "add": true,
             "delete": true,
@@ -284,9 +492,55 @@ class LightRoomController extends IPSModule
 
         $form["elements"][] = json_decode('{
             "type": "List",
+            "name": "VarList_LightSensors",
+            "caption": "Lichtsensoren",
+            "rowCount": 3,
+            "add": true,
+            "delete": true,
+            "sort": {
+                "column": "Variable",
+                "direction": "ascending"
+            },
+            "columns": [
+            {
+                "label": "Variable",
+                "name": "Variable",
+                "width": "auto",
+                "add": 0,
+                "edit": {
+                    "type": "SelectVariable"
+                }
+            }, {
+                "label": "Max",
+                "name": "Max_val",
+                "width": "80px",
+                "add": 0,
+                "edit": {
+                    "type": "NumberSpinner",
+                    "minimum": 0
+                }
+            }, {
+                    "caption": "Deaktiviert",
+                    "name": "disable",
+                    "width": "120px",
+                    "add": false,
+                    "edit": {
+                      "type": "CheckBox"
+                }
+           }, {
+                "caption": "Current",
+                "name": "Current",
+                "width": "80px",
+                "add": ""
+            }],
+            "values": '.json_encode($light_values).'   
+        }', true);
+
+        $form["elements"][] = json_decode('{
+            "type": "List",
             "name": "Data_Scenes",
             "caption": "Scenen",
-            "rowCount": 5,
+            "rowCount": 10,
             "sort": {
                 "column": "Prio",
                 "direction": "descending"
@@ -318,7 +572,7 @@ class LightRoomController extends IPSModule
                 "delete": true,
                 "edit": {
                     "type": "List",
-                    "rowCount": 10,
+                    "rowCount": 5,
                     "add": true,
                     "delete": true,
                     "sort": {
@@ -346,9 +600,12 @@ class LightRoomController extends IPSModule
                         "label": "Helligkeit",
                         "name": "Helligkeit_val",
                         "width": "80px",
-                        "add": 0,
+                        "add": 100,
                         "edit": {
-                            "type": "NumberSpinner"
+                            "type": "NumberSpinner",
+                            "minimum": 0,
+                            "maximum": 100,
+                            "suffix": "%"
                         }
                     }, {
                         "label": "Temperatur",
@@ -367,12 +624,25 @@ class LightRoomController extends IPSModule
                             "type": "SelectColor"
                         }
                     }, {
-                    "label": "Time (Sec)",
+                    "label": "Time",
                     "name": "Time",
                     "width": "120px",
                     "add": 0,
                     "edit": {
-                        "type": "NumberSpinner"
+                        "type": "NumberSpinner",
+                            "minimum": 0,
+                            "suffix": "Sek."
+                        }
+                    }, {
+                    "label": "min. Licht",
+                    "name": "Light",
+                    "width": "120px",
+                    "add": 0,
+                    "edit": {
+                        "type": "NumberSpinner",
+                            "minimum": 0,
+                            "maximum": 100,
+                            "suffix": "%"
                         }
                     }]
                 }
@@ -380,12 +650,13 @@ class LightRoomController extends IPSModule
            "values": '.json_encode($values).'        
            }', true);
 
-
-
+        $form["actions"][] = json_decode('{ "type": "Button", "label": "Update", "onClick": "echo LightRoomController_UpdateConfigurationForm($id);" }', true);
         $form["actions"][] = json_decode('{ "type": "Button", "label": "Update SceneList", "onClick": "echo LightRoomController_UpdateScene($id);" }', true);
 
-
         return json_encode($form);
+    }
+    public function UpdateConfigurationForm(){
+        $this->ReloadForm();
     }
 
     private function UpdateSceneList(){

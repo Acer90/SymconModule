@@ -1,0 +1,54 @@
+{
+    "elements":
+    [
+        { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
+        { "type": "IntervalBox", "name": "Interval", "caption": "Sek."},
+        {
+            "type": "List",
+            "name": "List_Actions",
+            "caption": "Actions",
+            "rowCount": 10,
+            "add": true,
+            "delete": true,
+            "sort": {
+                "column": "oid",
+                "direction": "ascending"
+            },
+            "columns": [{
+                "label": "Object",
+                "name": "Object",
+                "width": "auto",
+                "add": "",
+                "edit": {
+                    "type": "SelectObject"
+                }
+            }, {
+                "label": "Value",
+                "name": "typ",
+                "width": "70px",
+                "add": "",
+                "edit": {
+                    "type": "ValidationTextBox"
+                }
+            }, {
+                "label": "Time",
+                "name": "Time",
+                "width": "50px",
+                "add": 0,
+                "edit": {
+                    "type": "NumberSpinner",
+                    "Suffix": "Sek."
+                }
+            }
+            ]
+        }
+    ],
+    "actions":
+    [
+        { "type": "Button", "label": "Test", "onClick": " echo 'Name: '.IPSSNMP_ReadSNMP($id, '.1.3.6.1.2.1.1.5.0')['.1.3.6.1.2.1.1.5.0'];" }
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Status OK!" }
+    ]
+}
