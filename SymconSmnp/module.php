@@ -187,6 +187,7 @@
                     if(count($new_oid_array)> 0) {
                         if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP","Bulk-Request => ".json_encode($new_oid_array), 0);
                         $out = $snmp->bulk_get($SNMPIPAddress, $new_oid_array, $snmp_sdata);
+                        if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP","OUTPUT => ".json_encode($out), 0);
                     }
                 }
             }
