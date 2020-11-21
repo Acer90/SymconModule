@@ -512,6 +512,7 @@
                 if (IPS_VariableExists($instanceID) && !empty($this->GetBuffer($instanceID . "-lastchange"))) $lastchange = $this->GetBuffer($instanceID . "-lastchange"); else $lastchange = 0;
                 if (isset($Device["speed"])) $speed = $Device["speed"]; else $speed = 100;
 
+                if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("SyncData","OID => ".$oid, 0);
                 if (stristr($oid, '|')) {
 
                     $strarr = explode("|", $oid);
