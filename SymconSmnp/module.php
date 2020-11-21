@@ -751,9 +751,10 @@
                             continue 2;
                     }
                 } else {
+                    if(substr( $oid, 0, 1 ) != ".") $oid = "." . $oid;
+
                     if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("SyncData","OID => ".$oid ."TYP OID", 0);
                     if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("SyncData",json_encode($output), 0);
-                    if (substr( $oid, 0, 1 ) != ".") $oid = "." . $oid;
 
                     if(!array_key_exists($oid, $output)) continue;
                     $value = $output[$oid];
