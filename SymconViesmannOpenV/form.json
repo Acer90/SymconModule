@@ -6,7 +6,8 @@
         { "type": "Label", "label": "Timeout" },
         { "type": "NumberSpinner", "name": "Timeout", "caption": "Sek" },
         { "type": "Label", "label": "Sendeversuche" },
-        { "type": "NumberSpinner", "name": "ReTry", "caption": "Versuche" },
+        { "type": "NumberSpinner", "name": "ReTry", "caption": "Empfangsversuche" },
+        { "type": "NumberSpinner", "name": "ReTrySend", "caption": "Sendeversuche" },
         { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
         { "type": "Label", "label": "Werte" },
         {

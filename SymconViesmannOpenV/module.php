@@ -172,7 +172,7 @@ class ViesmannOpenV extends IPSModule {
 
                 $i++;
                 if($i >= $t_i){
-                    $this->SendDebug("ERROR", "Timeout", 0);
+                    $this->SendDebug("ERROR", "Timeout on Hex => ".$hexstamp, 0);
                     return false;
                 }
 
