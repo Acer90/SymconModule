@@ -1,0 +1,11 @@
+{
+  "translations": {
+    "de": {
+      "Password": "Passwort",
+      "Local Address": "Lokale Adresse",
+      "Remote Address": "Remote Adresse",
+      "Template Category": "Vorlagen Kategorie",
+      "Local IPs": "lokale IP-Adressbereiche"
+    }
+  }
+}
