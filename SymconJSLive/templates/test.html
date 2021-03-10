@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{TITLE_TEXT}</title>
+</head>
+<script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
+<script src="{ADDRESS}/hook/JSLive/js/chartjs/Chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@0.1.1"></script>
+
+<body>
+<div id="data"></div>
+
+<canvas id="myChart"></canvas>
+
+<script>
+
+    var socket =
+
+
+    varID = 10102;
+    varID2 = 48277;
+    let myChart;
+    max = 1000.0;
+    max2 = 800.0;
+
+    config = {
+        type: 'line',
+        data: {
+            datasets: [{
+                    label: 'Test2',
+                    borderColor: 'rgba(0, 255, 0, 0.5)',
+                    backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                    borderWidth: 1,
+                    type: 'bar'
+                },{
+                    label: 'Test1',
+                    borderColor: 'rgba(255, 0, 0, 0.5)',
+                    backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                    borderWidth: 1,
+                    pointRadius: 0,
+                    pointHitRadius: 10,
+                    type: 'line',
+                    lineTension: 0
+            }]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        unit: 'second',
+                        tooltipFormat: 'DD.MM.YYYY HH:mm:ss',
+                        stepSize: 60,
+                        displayFormats: {
+                            second: 'HH:mm',
+                            minute: 'HH:mm',
+                            hour: 'HH',
+                            day: 'DD.MM',
+                            week: 'll',
+                            month: 'MMM YYYY',
+                            quarter: '[Q]Q - YYYY',
+                            year: 'YYYY'
+                        }
+
+                    }
+                }]
+            }
+        }
+    };
+
+
+
+
+    function connect() {
+        var ws = new WebSocket('{WSADDRESS}', [encodeURIComponent(btoa('webfront:{WEBFRONTPASSWORD}'))]);
+        ws.onopen = function() {
+            // subscribe to some channels
+            //ws.send(JSON.stringify({
+                //.... some message the I must send when I connect ....
+            //}));
+        };
+
+        ws.onmessage = function(e) {
+            data = JSON.parse(e.data);
+            if(data.Message != 10603) return;
+
+            console.log('Message:', e.data);
+
+            isUpdated = false;
+
+
+
+            if(data.SenderID == varID){
+                //document.getElementById("data").innerHTML = event.data;
+                val = data.Data[0];
+                date = new Date(data.Data[3] * 1000);
+                test = {
+                    x: date,
+                    y: val
+                }
+                myChart.data.datasets[0].data.push(test);
+
+
+                isUpdated = true;
+            }
+
+            if(data.SenderID == varID2){
+                val = data.Data[0];
+                date = new Date(data.Data[3] * 1000);
+                test = {
+                    x: date,
+                    y: val
+                }
+                myChart.data.datasets[1].data.push(test);
+
+                isUpdated = true;
+            }
+
+            if(isUpdated){
+                //alert(data.Data[3]);
+                myChart.update();
+            }
+        };
+
+        ws.onclose = function(e) {
+            console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+            setTimeout(function() {
+                connect();
+            }, 1000);
+        };
+
+        ws.onerror = function(err) {
+            console.error('Socket encountered error: ', err.message, 'Closing socket');
+            ws.close();
+        };
+    }
+    connect();
+
+    window.onload = function() {
+        var ctx = document.getElementById('myChart');
+        myChart = new Chart(ctx, config);
+    }
+
+</script>
+</body>
+</html>

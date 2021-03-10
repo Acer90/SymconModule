@@ -1,0 +1,17 @@
+{
+  "translations": {
+    "de": {
+      "Periode": "Zeitraum",
+      "Decade": "Dekade",
+      "Year": "Jahr",
+      "Quarter": "Quartal",
+      "Month": "Monat",
+      "Week": "Woche",
+      "Day": "Tag",
+      "Hour": "Stunde",
+      "Minute": "Minute",
+      "Start Date": "Start Datum",
+      "Now:": "Jetzt"
+    }
+  }
+}

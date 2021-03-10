@@ -1,0 +1,55 @@
+{
+    "elements":
+    [
+        { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
+        { "type": "PasswordTextBox", "name": "Password", "caption": "Passwort" },
+        { "type": "SelectInstance", "name": "WebfrontInstanceID", "caption": "WebfrontID" },
+
+        { "type": "ValidationTextBox", "name": "LocalAddress", "caption": "Local Address" },
+        { "type": "ValidationTextBox", "name": "RemoteAddress", "caption": "Remote Address" },
+
+        { "type": "SelectCategory", "name": "TemplateCategoryID", "caption": "Template Category" },
+        {
+            "type": "List",
+            "name": "LocalIps",
+            "caption": "Local IPs",
+            "rowCount": 5,
+            "add": true,
+            "delete": true,
+            "sort": {
+                "column": "NetID",
+                "direction": "ascending"
+            },
+            "columns": [
+                {
+                    "caption": "NetID",
+                    "name": "NetID",
+                    "width": "200px",
+                    "add": "192.168.178.0",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                },
+                {
+                    "caption": "Subnetmask",
+                    "name": "Subnetmask",
+                    "width": "200px",
+                    "add": "255.255.255.0",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                }
+            ]
+        }
+
+
+    ],
+    "actions":
+    [
+        { "type": "Button", "label": "Update Templates", "onClick": " echo SymconJSLive_UpdateTemplates($id);" }
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Status OK!" }
+    ]
+}

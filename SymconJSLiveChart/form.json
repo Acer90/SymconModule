@@ -1,0 +1,223 @@
+{
+    "elements":
+    [
+        { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
+        { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script" },
+        { "type": "ValidationTextBox", "name": "title_text", "caption": "Title" },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Title",
+            "items": [
+                { "type": "CheckBox", "name": "title_display", "caption": "Display"},
+                { "type": "Select", "name": "title_position", "caption": "Position",
+                    "options": [
+                        { "caption": "top", "value": "top" },
+                        { "caption": "left", "value": "left" },
+                        { "caption": "bottom", "value": "bottom" },
+                        { "caption": "right", "value": "right" }
+                    ]
+                },
+                { "type": "NumberSpinner", "name": "title_fontSize", "caption": "FontSize" },
+                { "type": "SelectColor", "name": "title_fontColor", "caption": "FontColor" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Axes",
+            "items": [
+                { "type": "CheckBox", "name": "axes_display", "caption": "Display"},
+                { "type": "NumberSpinner", "name": "axes_lineWidth", "caption": "LineWidth" },
+                { "type": "SelectColor", "name": "axes_color", "caption": "Color" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Legend",
+            "items": [
+                { "type": "CheckBox", "name": "legend_display", "caption": "Display"},
+                { "type": "Select", "name": "legend_position", "caption": "Position",
+                    "options": [
+                        { "caption": "top", "value": "top" },
+                        { "caption": "left", "value": "left" },
+                        { "caption": "bottom", "value": "bottom" },
+                        { "caption": "right", "value": "right" }
+                    ]
+                },
+                { "type": "Select", "name": "legend_align", "caption": "Align",
+                    "options": [
+                        { "caption": "start", "value": "start" },
+                        { "caption": "center", "value": "center" },
+                        { "caption": "end", "value": "end" }
+                    ]
+                },
+                { "type": "NumberSpinner", "name": "legend_fontSize", "caption": "FontSize" },
+                { "type": "SelectColor", "name": "legend_fontColor", "caption": "FontColor" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Tooltips",
+            "items": [
+                { "type": "CheckBox", "name": "tooltips_enabled", "caption": "Enabled"},
+                { "type": "Select", "name": "tooltips_position", "caption": "Position",
+                    "options": [
+                        { "caption": "average", "value": "average" },
+                        { "caption": "nearest", "value": "nearest" }
+                    ]
+                },
+                { "type": "Select", "name": "tooltips_mode", "caption": "Mode",
+                    "options": [
+                        { "caption": "index", "value": "index" },
+                        { "caption": "dataset", "value": "dataset" },
+                        { "caption": "point", "value": "point" }
+                    ]
+                },
+                { "type": "NumberSpinner", "name": "tooltips_fontSize", "caption": "FontSize" },
+                { "type": "SelectColor", "name": "tooltips_fontColor", "caption": "FontColor" },
+                { "type": "SelectColor", "name": "tooltips_backgroundColor", "caption": "FontColor" },
+                { "type": "NumberSpinner", "name": "tooltips_cornerRadius", "caption": "CornerRadius" }
+
+            ]
+        },
+        {
+            "type": "List",
+            "name": "Datasets",
+            "caption": "Datasets",
+            "rowCount": 5,
+            "add": true,
+            "delete": true,
+            "sort": {
+                "column": "Title",
+                "direction": "ascending"
+            },
+            "columns": [
+                {
+                    "caption": "Type",
+                    "name": "Type",
+                    "width": "80px",
+                    "add": "line",
+                    "edit": {
+                        "type": "Select",
+                        "options": [
+                            {
+                                "caption": "Line",
+                                "value": "line"
+                            },
+                            {
+                                "caption": "Bar",
+                                "value": "bar"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "caption": "Variable",
+                    "name": "Variable",
+                    "width": "75px",
+                    "add": 0,
+                    "edit": {
+                        "type": "SelectVariable"
+                    }
+                },
+                {
+                    "caption": "Title",
+                    "name": "Title",
+                    "width": "auto",
+                    "add": "",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                },
+                {
+                    "caption": "Profil",
+                    "name": "Profil",
+                    "width": "75px",
+                    "add": 0,
+                    "edit": {
+                        "type": "SelectProfile"
+                    }
+                },
+                {
+                    "caption": "Side",
+                    "name": "Side",
+                    "width": "50px",
+                    "add": "left",
+                    "edit": {
+                        "type": "Select",
+                        "options": [
+                            {
+                                "caption": "Left",
+                                "value": "left"
+                            },
+                            {
+                                "caption": "Right",
+                                "value": "right"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "caption": "Offset",
+                    "name": "Offset",
+                    "width": "50px",
+                    "add": 0,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 0,
+                        "minimum": 0
+                    }
+                },
+                {
+                    "caption": "BackgroundColor",
+                    "name": "BackgroundColor",
+                    "width": "80px",
+                    "add": "New!",
+                    "edit": {
+                        "type": "SelectColor"
+                    }
+                },
+                {
+                    "caption": "BorderColor",
+                    "name": "BorderColor",
+                    "width": "80px",
+                    "add": 0,
+                    "edit": {
+                        "type": "SelectColor"
+                    }
+                },
+                {
+                    "caption": "BackgroundColor Alpha",
+                    "name": "BackgroundColor_Alpha",
+                    "width": "75px",
+                    "add": 1.0,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 2,
+                        "maximum": 1,
+                        "minimum": 0
+                    }
+                },
+                {
+                    "caption": "BorderColor Alpha",
+                    "name": "BorderColor_Alpha",
+                    "width": "75px",
+                    "add": 1.0,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 2,
+                        "maximum": 1,
+                        "minimum": 0
+                    }
+                }
+            ]
+        }
+    ],
+    "actions":
+    [
+        { "type": "Button", "label": "Update Templates", "onClick": " echo SymconJSLive_UpdateTemplates($id);" }
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Status OK!" }
+    ]
+}
