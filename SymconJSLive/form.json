@@ -4,7 +4,7 @@
         { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
         { "type": "PasswordTextBox", "name": "Password", "caption": "Passwort" },
         { "type": "SelectInstance", "name": "WebfrontInstanceID", "caption": "WebfrontID" },
-
+        { "type": "SelectCategory", "name": "TemplateCategoryID", "caption": "Template Category" },
         { "type": "ValidationTextBox", "name": "LocalAddress", "caption": "Local Address" },
         { "type": "ValidationTextBox", "name": "RemoteAddress", "caption": "Remote Address" }
 
