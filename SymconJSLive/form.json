@@ -6,42 +6,7 @@
         { "type": "SelectInstance", "name": "WebfrontInstanceID", "caption": "WebfrontID" },
 
         { "type": "ValidationTextBox", "name": "LocalAddress", "caption": "Local Address" },
-        { "type": "ValidationTextBox", "name": "RemoteAddress", "caption": "Remote Address" },
-
-        { "type": "SelectCategory", "name": "TemplateCategoryID", "caption": "Template Category" },
-        {
-            "type": "List",
-            "name": "LocalIps",
-            "caption": "Local IPs",
-            "rowCount": 5,
-            "add": true,
-            "delete": true,
-            "sort": {
-                "column": "NetID",
-                "direction": "ascending"
-            },
-            "columns": [
-                {
-                    "caption": "NetID",
-                    "name": "NetID",
-                    "width": "200px",
-                    "add": "192.168.178.0",
-                    "edit": {
-                        "type": "ValidationTextBox"
-                    }
-                },
-                {
-                    "caption": "Subnetmask",
-                    "name": "Subnetmask",
-                    "width": "200px",
-                    "add": "255.255.255.0",
-                    "edit": {
-                        "type": "ValidationTextBox"
-                    }
-                }
-            ]
-        }
-
+        { "type": "ValidationTextBox", "name": "RemoteAddress", "caption": "Remote Address" }
 
     ],
     "actions":

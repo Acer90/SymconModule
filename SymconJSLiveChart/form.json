@@ -3,12 +3,12 @@
     [
         { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
         { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script" },
-        { "type": "ValidationTextBox", "name": "title_text", "caption": "Title" },
         {
             "type": "ExpansionPanel",
             "caption": "Title",
             "items": [
                 { "type": "CheckBox", "name": "title_display", "caption": "Display"},
+                { "type": "ValidationTextBox", "name": "title_text", "caption": "Text" },
                 { "type": "Select", "name": "title_position", "caption": "Position",
                     "options": [
                         { "caption": "top", "value": "top" },
@@ -26,8 +26,40 @@
             "caption": "Axes",
             "items": [
                 { "type": "CheckBox", "name": "axes_display", "caption": "Display"},
+                { "type": "CheckBox", "name": "axes_showLabel", "caption": "Show Label"},
+                { "type": "CheckBox", "name": "axes_drawBorder", "caption": "Draw Border"},
+                { "type": "Select", "name": "axes_labelText", "caption": "Label",
+                    "options": [
+                        { "caption": "Profilname", "value": 0 },
+                        { "caption": "Profilname + Suffix", "value": 1 },
+                        { "caption": "Suffix", "value": 2 }
+                    ]
+                },
                 { "type": "NumberSpinner", "name": "axes_lineWidth", "caption": "LineWidth" },
-                { "type": "SelectColor", "name": "axes_color", "caption": "Color" }
+                { "type": "SelectColor", "name": "axes_color", "caption": "Color" },
+                { "type": "NumberSpinner", "name": "axes_colorAlpha", "caption": "Color Alpha", "maximum": 1, "minimum": 0, "digits": 2}
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Points",
+            "items": [
+                { "type": "NumberSpinner", "name": "point_radius", "caption": "Point Radius" },
+                { "type": "NumberSpinner", "name": "point_hoverRadius", "caption": "Point Hover-Radius"},
+                { "type": "Select", "name": "points_Style", "caption": "Style",
+                    "options": [
+                        { "caption": "circle", "value": "circle" },
+                        { "caption": "cross", "value": "cross" },
+                        { "caption": "crossRot", "value": "crossRot" },
+                        { "caption": "dash", "value": "dash" },
+                        { "caption": "line", "value": "line" },
+                        { "caption": "rect", "value": "rect" },
+                        { "caption": "rectRounded", "value": "rectRounded" },
+                        { "caption": "rectRot", "value": "rectRot" },
+                        { "caption": "star", "value": "star" },
+                        { "caption": "triangle", "value": "triangle" }
+                    ]
+                }
             ]
         },
         {
@@ -51,7 +83,9 @@
                     ]
                 },
                 { "type": "NumberSpinner", "name": "legend_fontSize", "caption": "FontSize" },
-                { "type": "SelectColor", "name": "legend_fontColor", "caption": "FontColor" }
+                { "type": "SelectColor", "name": "legend_fontColor", "caption": "FontColor" },
+                { "type": "NumberSpinner", "name": "legend_boxWidth", "caption": "Box Width" }
+
             ]
         },
         {
@@ -72,11 +106,18 @@
                         { "caption": "point", "value": "point" }
                     ]
                 },
-                { "type": "NumberSpinner", "name": "tooltips_fontSize", "caption": "FontSize" },
-                { "type": "SelectColor", "name": "tooltips_fontColor", "caption": "FontColor" },
-                { "type": "SelectColor", "name": "tooltips_backgroundColor", "caption": "FontColor" },
-                { "type": "NumberSpinner", "name": "tooltips_cornerRadius", "caption": "CornerRadius" }
+                { "type": "NumberSpinner", "name": "tooltips_fontSize", "caption": "Font Size" },
+                { "type": "SelectColor", "name": "tooltips_fontColor", "caption": "Font Color" },
+                { "type": "SelectColor", "name": "tooltips_backgroundColor", "caption": "Background Color" },
+                { "type": "NumberSpinner", "name": "tooltips_cornerRadius", "caption": "Corner Radius" }
 
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Data",
+            "items": [
+                { "type": "NumberSpinner", "name": "data_highResSteps", "caption": "HighResolution Steps" }
             ]
         },
         {
@@ -87,10 +128,21 @@
             "add": true,
             "delete": true,
             "sort": {
-                "column": "Title",
+                "column": "Order",
                 "direction": "ascending"
             },
             "columns": [
+                {
+                    "caption": "Order",
+                    "name": "Order",
+                    "width": "50px",
+                    "add": 0,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 0,
+                        "minimum": 0
+                    }
+                },
                 {
                     "caption": "Type",
                     "name": "Type",
@@ -129,10 +181,10 @@
                     }
                 },
                 {
-                    "caption": "Profil",
-                    "name": "Profil",
+                    "caption": "Profile",
+                    "name": "Profile",
                     "width": "75px",
-                    "add": 0,
+                    "add": "",
                     "edit": {
                         "type": "SelectProfile"
                     }
@@ -167,6 +219,7 @@
                         "minimum": 0
                     }
                 },
+
                 {
                     "caption": "BackgroundColor",
                     "name": "BackgroundColor",
@@ -189,7 +242,7 @@
                     "caption": "BackgroundColor Alpha",
                     "name": "BackgroundColor_Alpha",
                     "width": "75px",
-                    "add": 1.0,
+                    "add": 0.5,
                     "edit": {
                         "type": "NumberSpinner",
                         "digits": 2,
@@ -208,13 +261,63 @@
                         "maximum": 1,
                         "minimum": 0
                     }
+                },
+                {
+                    "caption": "Border Width",
+                    "name": "BorderWidth",
+                    "width": "50px",
+                    "add": 2,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 0,
+                        "minimum": 0
+                    }
+                },
+                {
+                    "caption": "Dash",
+                    "name": "Dash",
+                    "width": "50px",
+                    "add": "",
+                    "edit": {
+                        "type": "ValidationTextBox",
+                        "caption": "Border-Dash (E.g [5,5])"
+                    }
+                },
+                {
+                    "caption": "HighRes",
+                    "name": "HighRes",
+                    "width": "80px",
+                    "add": 7,
+                    "edit": {
+                        "type": "Select",
+                        "caption": "High-Res from",
+                        "options": [
+                            { "caption": "minute", "value": 7 },
+                            { "caption": "hour", "value": 6 },
+                            { "caption": "day", "value": 5 },
+                            { "caption": "week", "value": 4 },
+                            { "caption": "month", "value": 3 },
+                            { "caption": "quarter", "value": 2 },
+                            { "caption": "year", "value": 1 },
+                            { "caption": "decade", "value": 0 }
+                        ]
+                    }
                 }
             ]
         }
     ],
     "actions":
     [
-        { "type": "Button", "label": "Update Templates", "onClick": " echo SymconJSLive_UpdateTemplates($id);" }
+        {
+            "type": "RowLayout",
+            "items": [
+                { "type": "Button", "label": "Get Link (Local)", "onClick": " echo SymconJSLiveChart_GetLink($id, True);" },
+                { "type": "Button", "label": "Get Link (Remote)", "onClick": " echo SymconJSLiveChart_GetLink($id, False);" }
+            ]
+        },
+        { "type": "Label", "caption": "Load Configuration from other Modul or Media-Chart" },
+        { "type": "SelectObject", "name": "ObjectID", "caption": "Chart/Modul" },
+        { "type": "Button", "label": "Load Confiuration", "onClick": " echo SymconJSLiveChart_LoadOtherConfiguration($id, $ObjectID);" }
     ],
     "status":
     [
