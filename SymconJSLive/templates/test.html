@@ -37,6 +37,7 @@
     let last_update = Date.now();
     let period_endDate = GetEndDate(Date.now());
     let offset_isSet = false;
+    let last_reload = 0;
 
 
     function updateChartconfig(){
@@ -192,9 +193,6 @@
                 RemoveOldData();
             });
 
-
-
-
             myChart.update({
                 preservation: true
             });
@@ -204,9 +202,11 @@
     function ReloadChart(data){
         //console.log("test: ", update_vars);
         if(data.Message != 10603) return;
+        //deoppelten Reload verhinden!
+        if(last_reload == data.Data[3]) return;
         if(!update_vars.includes(data.SenderID)) return;
 
-
+        last_reload = data.Data[3];
 
         $.getJSON( "{ADDRESS}/hook/JSLive/update?Instance={INSTANCE}&pw={PASSWORD}", function( data ) {
             config_dataset = data.DATASETS;
