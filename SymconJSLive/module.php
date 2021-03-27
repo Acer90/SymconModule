@@ -151,12 +151,13 @@ class SymconJSLive extends WebHookModule {
             }
 
 
-            if (!key_exists("instance", $queryData)) return ""; //wenn instance Parameter nicht gefunden
-
-            //reduce any relative paths. this also checks for file existence
-            $this->SendDebug('WebHook', 'Instance => ' . $queryData["instance"], 0);
-            $this->SendDebug('WebHook', 'Array QUERY_STRING: ' . print_r($queryData, true), 0);
-            $this->SendDebug('WebHook', 'Array Server: ' . print_r($_SERVER, true), 0);
+            if (!key_exists("instance", $queryData)) {
+                $this->SendDebug('WebHook', 'INSTANCE NOT SET!', 0);
+                return ""; //wenn instance Parameter nicht gefunden
+            }
+            $this->SendDebug('WebHook', 'INSTANCE:'. $queryData["instance"], 0);
+            //$this->SendDebug('WebHook', 'Array QUERY_STRING: ' . print_r($queryData, true), 0);
+            //$this->SendDebug('WebHook', 'Array Server: ' . print_r($_SERVER, true), 0);
 
             header("Content-Type: text/html");
 
@@ -166,6 +167,8 @@ class SymconJSLive extends WebHookModule {
                 'DataID' => "{79D59629-E9C5-44F1-0F34-0FBC5C88F307}",
                 'Buffer' => utf8_encode(json_encode($sendData))
             ]));
+
+            $this->SendDebug('WebHook', 'Contend Array: '. json_encode($contend), 0);
 
             if (count($contend) == 0) return ""; //wenn instance nicht gefunden
 
