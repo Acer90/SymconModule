@@ -158,16 +158,22 @@ class SymconJSLiveChart extends IPSModule{
     }
     public function GetWebpage(){
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
-        if(!IPS_ScriptExists($scriptID)){
-            $this->SendDebug('GetWebpage', 'SCRIPT NOT FOUND!', 0);
-            return "";
+        if(empty($scriptID)){
+            $this->SendDebug('GetWebpage', 'load default template!', 0);
+            $scriptData = file_get_contents (__DIR__ ."/../SymconJSLive/templates/test.html");
+        }else{
+            if(!IPS_ScriptExists($scriptID)){
+                $this->SendDebug('GetWebpage', 'Template NOT FOUND!', 0);
+                return "";
+            }
+
+            $scriptData = IPS_GetScriptContent($scriptID);
+            if($scriptData = ""){
+                $this->SendDebug('GetWebpage', 'Template IS EMPTY!', 0);
+            }
         }
 
-        $scriptData = IPS_GetScriptContent($scriptID);
-        if($scriptData = ""){
-            $this->SendDebug('GetWebpage', 'SCRIPT IS EMPTY!', 0);
-        }
-
+        $this->SendDebug('GetWebpage', $scriptData, 0);
         $scriptData = $this->ReplacePlaceholder($scriptData);
 
         return $scriptData;

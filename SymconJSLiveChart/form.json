@@ -2,7 +2,6 @@
     "elements":
     [
         { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
-        { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script" },
         {
             "type": "ExpansionPanel",
             "caption": "Title",
@@ -304,7 +303,8 @@
                     }
                 }
             ]
-        }
+        },
+        { "type": "SelectScript", "name": "TemplateScriptID", "caption": "(Expert) Template Script" }
     ],
     "actions":
     [
