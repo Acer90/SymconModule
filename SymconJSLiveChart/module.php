@@ -164,6 +164,10 @@ class SymconJSLiveChart extends IPSModule{
         }
 
         $scriptData = IPS_GetScriptContent($scriptID);
+        if($scriptData = ""){
+            $this->SendDebug('GetWebpage', 'SCRIPT IS EMPTY!', 0);
+        }
+
         $scriptData = $this->ReplacePlaceholder($scriptData);
 
         return $scriptData;
@@ -1016,7 +1020,6 @@ class SymconJSLiveChart extends IPSModule{
 
         return array("start" => $date_start->getTimestamp(), "end" => $date_end->getTimestamp(), "interval" => $seconds);
     }
-
 
 
     private function json_encode_advanced(array $arr, $sequential_keys = false, $quotes = false, $beautiful_json = true) {
