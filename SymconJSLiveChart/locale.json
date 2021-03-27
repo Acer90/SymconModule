@@ -11,7 +11,9 @@
       "Hour": "Stunde",
       "Minute": "Minute",
       "Start Date": "Start Datum",
-      "Now:": "Jetzt"
+      "Now": "Jetzt",
+      "Offset": "Versatz",
+      "Relativ": "Relativ Anzeigen"
     }
   }
 }
