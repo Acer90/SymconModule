@@ -179,12 +179,6 @@ class SymconJSLiveChart extends IPSModule{
         return $scriptData;
     }
     public function GetUpdate(){
-        $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
-        if(!IPS_ScriptExists($scriptID)){
-            $this->SendDebug('GetWebpage', 'SCRIPT NOT FOUND!', 0);
-            return "";
-        }
-
         $updateData = array();
 
         $data = $this->GenerateDataSet();
