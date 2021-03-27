@@ -230,7 +230,7 @@ class SymconJSLive extends WebHookModule {
     }
 
     private function CheckIfLocal(string $address){
-        $r_address = parse_url($this->ReadPropertyString("RemoteAddress"));
+        /*$r_address = parse_url($this->ReadPropertyString("RemoteAddress"));
 
         $chk_address = $r_address["host"];
         if(array_key_exists("port", $r_address)){
@@ -238,7 +238,7 @@ class SymconJSLive extends WebHookModule {
         }
 
         //$this->SendDebug("CheckIfLocal", $address. "|". $chk_address, 0);
-        if($address == $chk_address) return false;
+        if($address == $chk_address) return false;*/
 
         return true;
     }
