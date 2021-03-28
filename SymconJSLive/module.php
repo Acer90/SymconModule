@@ -42,7 +42,7 @@ class SymconJSLive extends WebHookModule {
             $subpath = substr($_SERVER['SCRIPT_NAME'], strlen("/hook/JSLive/"));
             $path = __DIR__ . "/" . $subpath;
             if (!file_exists($path)) {
-                echo "";
+                echo "404 file not found!";
                 return;
             }
 
@@ -72,7 +72,7 @@ class SymconJSLive extends WebHookModule {
                     $queryData[strtolower($p_arr[0])] = strtolower($p_arr[1]);
                 }
             }
-            if (!key_exists("instance", $queryData)) return "";
+            if (!key_exists("instance", $queryData)) return "INSTANCE NOT SET!";
 
             header("Content-Type: text/html");
 
@@ -82,7 +82,7 @@ class SymconJSLive extends WebHookModule {
                 'Buffer' => utf8_encode(json_encode($sendData))
             ]));
 
-            if (count($contend) == 0) return "";
+            if (count($contend) == 0) return "CONTEND EMPTY!";
             $contend = $contend[0];
             //check if local
             $isLocal = $this->CheckIfLocal($_SERVER["HTTP_HOST"]);
@@ -110,7 +110,7 @@ class SymconJSLive extends WebHookModule {
                     $queryData[strtolower($p_arr[0])] = strtolower($p_arr[1]);
                 }
             }
-            if (!key_exists("instance", $queryData)) return "";
+            if (!key_exists("instance", $queryData)) return "INSTANCE NOT SET!";
 
             header("Content-Type: text/html");
 
@@ -120,7 +120,7 @@ class SymconJSLive extends WebHookModule {
                 'Buffer' => utf8_encode(json_encode($sendData))
             ]));
 
-            if (count($contend) == 0) return "";
+            if (count($contend) == 0) return "CONTEND EMPTY!";
             $contend = $contend[0];
             //check if local
             $isLocal = $this->CheckIfLocal($_SERVER["HTTP_HOST"]);
@@ -130,6 +130,7 @@ class SymconJSLive extends WebHookModule {
             header("ETag: " . $etag);
             if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && (trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag)) {
                 http_response_code(304);
+                echo "ETAG NOT SET!";
                 return;
             }
 
