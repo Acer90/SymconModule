@@ -175,7 +175,7 @@ class SymconJSLiveChart extends IPSModule{
             }
         }
 
-        $this->SendDebug('GetWebpage', $scriptData, 0);
+        //$this->SendDebug('GetWebpage', $scriptData, 0);
         $scriptData = $this->ReplacePlaceholder($scriptData);
 
         return $scriptData;
@@ -198,16 +198,19 @@ class SymconJSLiveChart extends IPSModule{
         $datasets = json_decode($this->ReadPropertyString("Datasets"), true);
         if(!array_key_exists("var", $querydata)) {
             $this->SendDebug("GetData", "PARAMETER VARIABLE NOT SET!(" . json_encode($querydata). ")", 0);
+            return "PARAMETER VARIABLE NOT SET!(" . json_encode($querydata). ")";
             return json_encode($output);
         }
         if(!IPS_VariableExists($querydata["var"])){
             $this->SendDebug("GetData", "VARIABLE NOT EXIST!", 0);
+            return "VARIABLE NOT EXIST!";
             return json_encode($output);
         }
 
         $key = array_search($querydata["var"], array_column($datasets, 'Variable'));
         if($key === false){
             $this->SendDebug("GetData", "VARIABLE NOT IN INSTANCE!", 0);
+            return "VARIABLE NOT IN INSTANCE!";
             return json_encode($output);
         }
 
@@ -265,7 +268,6 @@ class SymconJSLiveChart extends IPSModule{
         }
     }
 
-
     private function ReplacePlaceholder($htmlData){
         $htmlData = str_replace("{TITLE_TEXT}", $this->ReadPropertyString("title_text"), $htmlData);
 
@@ -276,6 +278,8 @@ class SymconJSLiveChart extends IPSModule{
         $data = $this->GenerateDataSet();
         $htmlData = str_replace("{DATASETS}", $this->json_encode_advanced($data["datasets"]), $htmlData);
         $htmlData = str_replace("{AXES}", $this->json_encode_advanced($data["charts"]), $htmlData);
+
+        if(count($data["charts"]) == 0) return "NO CHARTS DEFINE!";
 
         //Legend
         $htmlData = str_replace("{LEGEND}", $this->json_encode_advanced($this->GenerateLegendData()), $htmlData);
@@ -353,7 +357,10 @@ class SymconJSLiveChart extends IPSModule{
         $output["datasets"] = array();
         $output["charts"] = array();
         $datasets = json_decode($this->ReadPropertyString("Datasets"),true);
-        if(!is_array($datasets)) return "{}";
+        if(!is_array($datasets)){
+            $this->SendDebug("GenerateDataSet", "No Variables set!", 0);
+            return "{}";
+        }
 
         foreach($datasets as $item){
             $singelOutput = array();
