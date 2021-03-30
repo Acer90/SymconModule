@@ -11,6 +11,7 @@
     ],
     "actions":
     [
+        { "type": "Button", "label": "Load Connect Address", "onClick": " echo SymconJSLive_LoadConnectAddress($id);" },
         { "type": "Button", "label": "Update Templates", "onClick": " echo SymconJSLive_UpdateTemplates($id);" }
     ],
     "status":

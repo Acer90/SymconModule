@@ -35,10 +35,8 @@
     update_vars.push(confiuration.ID_Relativ);
 
     let last_update = Date.now();
-    let period_endDate = GetEndDate(Date.now());
     let offset_isSet = false;
-    let last_reload = 0;
-
+    let last_reload = 0; //Damit der Chart nur einmal neugeladen wird!
 
     function updateChartconfig(){
         //modify dataset
@@ -71,9 +69,23 @@
                 scales: {
                     xAxes: config_xaxes,
                     yAxes: config_axes
+                },
+                layout: {
+                    padding: {
+                        left: 0,
+                        right: 0,
+                        top: 0,
+                        bottom: 0
+                    }
                 }
             }
         };
+
+        //add function tooltip
+        t_callpack = {
+                label: UpdateTooltipLabel
+            };
+        config.options.tooltips.callbacks = t_callpack;
 
         return config;
     }
@@ -106,7 +118,6 @@
         };
     }
 
-
     function UpdateChart(data){
         //wenn nicht Now dann kein Update durchführen!
         if(!confiuration.Now) return;
@@ -136,21 +147,12 @@
                     itemDate = UpdateDate(data.Data[3] * 1000, highRes);
 
                     if (highRes <= period) {
-                        lastIndex = -1;
-                        myChart.data.datasets[part].data.forEach(function (dpart, dindex) {
-                            if (!dpart.dummy) {
-                                lastIndex = dindex;
-                            } else {
-                                //console.log("index", dindex);
-                                //console.log("lindex", lastIndex);
-                            }
-                        });
-
+                        //highres Update
                         dataPoint = {
                             x: itemDate.getTime(),
                             y: val
                         }
-                        myChart.data.datasets[part].data.insert(lastIndex + 1, dataPoint);
+                        myChart.data.datasets[part].data.push(dataPoint);
 
                     } else {
                         //check Timestamp vorhanden
@@ -161,36 +163,27 @@
 
                         if (results.length > 0) {
                             //ja alten updaten
+                            c = 1;
+                            if (typeof myChart.data.datasets[part].data[results[0]].c != "undefined") {
+                                oldval = myChart.data.datasets[part].data[results[0]].y;
+                                c = myChart.data.datasets[part].data[results[0]].c;
+                                val = Math.round(((oldval * c) + val) / (c + 1) * 100) / 100;
+                                c++;
+                            }
+
                             myChart.data.datasets[part].data[results[0]].y = val;
+                            myChart.data.datasets[part].data[results[0]].c = c;
                         } else {
-                            lastIndex = -1;
-                            myChart.data.datasets[part].data.forEach(function (dpart, dindex) {
-                                if (!dpart.dummy) {
-                                    lastIndex = dindex;
-                                }
-                            });
-
-                            //if(myChart.data.datasets[part].data[(lastIndex+1)].x <=)
-
-                            //nein neuen anlegen!
                             dataPoint = {
                                 x: itemDate.getTime(),
-                                y: val
+                                y: val,
+                                c: 1
                             }
-                            myChart.data.datasets[part].data.insert(lastIndex + 1, dataPoint);
-                            //myChart.data.datasets[part].data.push(dataPoint);
+                            myChart.data.datasets[part].data.push(dataPoint);
                         }
 
                     }
                 }
-
-                if(offset_isSet){
-                    //update offset async
-                    UpdateOffsetData(data.Data[3] * 1000);
-                }
-
-                //Asyncones löschen alter Daten
-                RemoveOldData();
             });
 
             myChart.update({
@@ -198,7 +191,6 @@
             });
         }
     }
-
     function ReloadChart(data){
         //console.log("test: ", update_vars);
         if(data.Message != 10603) return;
@@ -231,15 +223,31 @@
                 });
             }
             last_update = Date.now();
+            offset_isSet = checkOffsetisSet();
         });
     }
+    async function UpdateConfiguration() {
+        while (true){
+            try {
+                UpdateTimeScale();
+                if(confiuration.Relativ && offset_isSet){
+                    UpdateOffsetData_Relativ();
+                }
+
+                RemoveOldData()
+            }catch (e) {
+                console.log("UpdateOffsetData_Relativ => ", e);
+            }
+            await sleep(1000);
+        }
+    }
+
     function UpdateDate(date, highRes = 7){
         let period = confiuration["Period"];
         let oldDate = new Date(date);
         let newDate = new Date();
 
         if(highRes <= period){
-            //High Resolution => LiveData
             newDate = oldDate;
         }else{
             switch(period){
@@ -286,12 +294,29 @@
         //console.log("newDate:", newDate);
         return newDate;
     }
+    function UpdateTimeScale(){
+        //nur wenn live ausführen!
+        if(!confiuration.Now) return;
 
-    async function RemoveOldData() {
-        //ab hier Pürfen und löschen aller Alten Charts
-        //aber nur wenn nicht realtime
-        itemDate = Date.now();
+        curDate = Date.now();
+        old_endDate = myChart.options.scales.xAxes[0].time.max;
+
+        if(curDate > old_endDate){
+            dateData = GetStartEndDate(curDate);
+            myChart.options.scales.xAxes[0].time.min = dateData.start;
+            myChart.options.scales.xAxes[0].time.max = dateData.end;
+
+            if(!confiuration.Relativ){
+                //update offset Absolut
+                UpdateOffsetData_Absolute(curDate);
+            }
+        }
+    }
+
+    function RemoveOldData() {
         if (myChart.options.scales.xAxes[0].type != "realtime") {
+            itemDate = myChart.options.scales.xAxes[0].time.min;
+
             //löschdatum holen
             myChart.data.datasets.forEach(function (part, index) {
                 rDate = GetRemoveDate(UpdateDate(itemDate, part.highRes));
@@ -304,106 +329,139 @@
                         //console.log("lösche Index:", sindex);
                         myChart.data.datasets[index].data.splice(sindex, 1);
                     }
-
-                    //löschen aller veralteten dummys
-                    if (spart.dummy && spart.x <= itemDate) {
-                        //löschen wenn älter
-                        //console.log("lösche Index:", sindex);
-                        myChart.data.datasets[index].data.splice(sindex, 1);
-                    }
-
                 });
             });
         }
-
     }
-    async function UpdateOffsetData(curDate){
-            isUpdated = false;
-            if (confiuration.Relativ) {
-                // Update charts mit offset
-                myChart.data.datasets.forEach(function (part, index) {
-                    offset = part.offset;
-                    c = part.data.length - 1;
+    function UpdateOffsetData_Relativ() {
+        if (confiuration.Relativ) {
+            curDate = Date.now();
 
-                    if (offset > 0 && c > 0) {
+            myChart.data.datasets.forEach(function (part, index) {
+                offset = part.offset;
+                c = part.data.length - 1;
 
-                        start = Math.floor(part.data[c].x / 1000);
-                        end = Math.floor(curDate / 1000);
+                if (offset > 0 && c > 0) {
 
-                        highRes = part.highRes;
-                        $.getJSON("{ADDRESS}/hook/JSLive/getdata?Instance={INSTANCE}&pw={PASSWORD}&var=" + part.variable + "&offset=" + offset + "&hires=" + highRes + "&start=" + start + "&end=" + end, function (data) {
-                            //console.log("update Offset: ", data);
+                    start = Math.floor((part.data[c].x) / 1000);
+                    end = Math.floor((curDate) / 1000);
 
-                            data.archiv.forEach(function (apart, aindex) {
-                                myChart.data.datasets[index].data.push(apart);
-                                isUpdated = true;
-                            });
+                    highRes = part.highRes;
+                    $.getJSON("{ADDRESS}/hook/JSLive/getdata?Instance={INSTANCE}&pw={PASSWORD}&var=" + part.variable + "&offset=" + offset + "&hires=" + highRes + "&start=" + start + "&end=" + end, function (data) {
+                        //console.log("update Offset: ", data);
+
+                        data.archiv.forEach(function (apart, aindex) {
+                            myChart.data.datasets[index].data.push(apart);
+                            isUpdated = true;
                         });
-                    }
-
-                });
-            }else{
-                //absolut modus
-                if(curDate >  period_endDate){
-                    start = Math.floor(period_endDate / 1000) + 1;
-
-                    period_endDate = GetEndDate(curDate);
-                    end = Math.floor( period_endDate / 1000);
-
-                    myChart.data.datasets.forEach(function (part, index) {
-                        offset = part.offset;
-                        c = part.data.length - 1;
-
-                        if (offset > 0 && c > 0) {
-
-                            highRes = part.highRes;
-                            $.getJSON("{ADDRESS}/hook/JSLive/getdata?Instance={INSTANCE}&pw={PASSWORD}&var=" + part.variable + "&offset=" + offset + "&hires=" + highRes + "&start=" + start + "&end=" + end, function (data) {
-                                //console.log("update Offset: ", data);
-
-                                data.archiv.forEach(function (apart, aindex) {
-                                    myChart.data.datasets[index].data.push(apart);
-                                    isUpdated = true;
-                                });
-                            });
-                        }
-
                     });
                 }
-            }
 
-        if(isUpdated){
+            });
+
             myChart.update(0);
         }
+    }
+    async function UpdateOffsetData_Absolute(curDate) {
+        //absolute Mode
+        console.log("UpdateOffsetData_Absolute");
+        dateData = GetStartEndDate(Date.now());
+        start = Math.floor(dateData.start / 1000);
+        end = Math.floor(dateData.end / 1000) + 1000;
 
+        myChart.data.datasets.forEach(function (part, index) {
+            offset = part.offset;
+            c = part.data.length - 1;
+
+            if (offset > 0 && c > 0) {
+
+                highRes = part.highRes;
+                $.getJSON("{ADDRESS}/hook/JSLive/getdata?Instance={INSTANCE}&pw={PASSWORD}&var=" + part.variable + "&offset=" + offset + "&hires=" + highRes + "&start=" + start + "&end=" + end, function (data) {
+                    //console.log("update Offset: ", data);
+
+                    data.archiv.forEach(function (apart, aindex) {
+                        myChart.data.datasets[index].data.push(apart);
+                        isUpdated = true;
+                    });
+                });
+            }
+
+        });
+
+        myChart.update(0);
     }
 
-    function GetEndDate(date) {
+    function GetStartEndDate(date) {
         period = confiuration.Period;
         is_relativ = confiuration.Relativ;
         oldDate = new Date(date);
+
         eDate = new Date();
+        sDate = new Date();
 
         if(is_relativ){
             eDate = oldDate;
+            switch(period){
+                case 0:
+                    //dekade
+                    sDate = new Date((oldDate.getFullYear()-10), oldDate.getMonth(), oldDate.getDate(), oldDate.getHours(), oldDate.getMinutes(), oldDate.getSeconds());
+                    break;
+                case 1:
+                    //Jahr
+                    sDate = new Date((oldDate.getFullYear()-1), oldDate.getMonth(), oldDate.getDate(), oldDate.getHours(), oldDate.getMinutes(), oldDate.getSeconds());
+                    break;
+                case 2:
+                    //quartal
+                    sDate = new Date(oldDate.getFullYear(), (oldDate.getMonth()-3), oldDate.getDate(), oldDate.getHours(), oldDate.getMinutes(), oldDate.getSeconds());
+                    break;
+                case 3:
+                    //Monat
+                    sDate = new Date(oldDate.getFullYear(), (oldDate.getMonth()-1), oldDate.getDate(), oldDate.getHours(), oldDate.getMinutes(), oldDate.getSeconds());
+                    break;
+                case 4:
+                    //woche
+                    //immer montag starten
+                    sDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), (oldDate.getDate()-7), oldDate.getHours(), oldDate.getMinutes(), oldDate.getSeconds());
+                    break;
+                case 5:
+                    //tag
+                    sDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), (oldDate.getDate()-1), oldDate.getHours(), oldDate.getMinutes(), oldDate.getSeconds());
+                    break;
+                case 6:
+                    //stunde
+                    sDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate(), (oldDate.getHours()-1), oldDate.getMinutes(), oldDate.getSeconds());
+                    break;
+                case 7:
+                    //minute
+                    sDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate(), oldDate.getHours(), (oldDate.getMinutes()-1), oldDate.getSeconds());
+                    break;
+                default:
+                    sDate = oldDate;
+                    break;
+            }
         }else{
             switch(period){
                 case 0:
                     //dekade
                     startyear = parseInt(oldDate.getFullYear() / 10) * 10;
-                    eDate = new Date((startyear+10), 0, 0, 0, 0, -1);
+                    sDate = new Date(startyear, 0, 0, 0, 0, 0);
+                    eDate = new Date((startyear+10), 0, 0, 0, 0, 0);
                     break;
                 case 1:
                     //Jahr
-                    eDate = new Date((oldDate.getFullYear()+1), 0, 0, 0, 0, -1);
+                    sDate = new Date(oldDate.getFullYear(), 0, 0, 0, 0, 0);
+                    eDate = new Date((oldDate.getFullYear()+1), 0, 0, 0, 0, 0);
                     break;
                 case 2:
                     //quartal
                     starmonth = parseInt(oldDate.getMonth() / 3) * 3;
-                    eDate = new Date(oldDate.getFullYear(), (starmonth+3), 0, 0, 0, -1);
+                    sDate = new Date(oldDate.getFullYear(), starmonth, 0, 0, 0, 0);
+                    eDate = new Date(oldDate.getFullYear(), (starmonth+3), 0, 0, 0, 0);
                     break;
                 case 3:
                     //Monat
-                    eDate = new Date(oldDate.getFullYear(), (oldDate.getMonth()+1), 0, 0, 0, -1);
+                    sDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), 0, 0, 0, 0);
+                    eDate = new Date(oldDate.getFullYear(), (oldDate.getMonth()+1), 0, 0, 0, 0);
                     break;
                 case 4:
                     //woche
@@ -411,27 +469,35 @@
                     var day = oldDate.getDay(),
                         diff = d.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
                     oldDate = oldDate.setDate(diff);
-                    eDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), (oldDate.getDate()+7), 0, 0, -1);
+                    sDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate(), 0, 0, 0);
+                    eDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), (oldDate.getDate()+7), 0, 0, 0);
                     break;
                 case 5:
                     //tag
-                    eDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), (oldDate.getDate()+1), 0, 0, -1);
+                    sDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate(), 0, 0, 0);
+                    eDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), (oldDate.getDate()+1), 0, 0, 0);
                     break;
                 case 6:
                     //stunde
-                    eDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate(), (oldDate.getHours()+1), 0, -1);
+                    sDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate(), oldDate.getHours(), 0, 0);
+                    eDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate(), (oldDate.getHours()+1), 0, 0);
                     break;
                 case 7:
                     //minute
-                    eDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate(), oldDate.getHours(), (oldDate.getMinutes()+1), -1);
+                    sDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate(), oldDate.getHours(), oldDate.getMinutes(), 0);
+                    eDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate(), oldDate.getHours(), (oldDate.getMinutes()+1), 0);
                     break;
                 default:
                     eDate = oldDate;
+                    sDate = oldDate;
                     break;
             }
         }
-        console.log("eDate:", eDate);
-        return eDate;
+        //console.log("sDate:", sDate);
+        //console.log("eDate:", eDate);
+
+
+        return { "start": sDate, "end": eDate};
     }
     function GetRemoveDate(date){
         period = confiuration.Period;
@@ -554,7 +620,37 @@
             if(offset > 0) isSet = true;
         });
 
-        offset_isSet = isSet;
+        return isSet;
+    }
+    function UpdateTooltipLabel(tooltipItem, data){
+        let dataset = data.datasets[tooltipItem.datasetIndex];
+
+        let Suffix = "";
+        let Prefix = "";
+        let blocks = [];
+
+
+        required = {id: data.datasets[tooltipItem.datasetIndex].yAxisID};
+        AxisData = [];
+        Axiskeys = getMatchingKeys(config_axes, required);
+
+
+        Axiskeys.forEach(function(part, index) {
+            Suffix = config_axes[part].Suffix;
+            Prefix = config_axes[part].Prefix;
+        });
+
+        if (dataset.label) {
+            blocks.push(dataset.label + ': ');
+        }
+        if (Prefix !== "") {
+            blocks.push(Prefix);
+        }
+        blocks.push(dataset.data[tooltipItem.index].y)
+        if (Suffix !== "") {
+            blocks.push(Suffix);
+        }
+        return blocks.join('');
     }
 
     function filterKeys(obj, func) {
@@ -586,8 +682,9 @@
     window.onload = function() {
         var ctx = document.getElementById('myChart');
         myChart = new Chart(ctx, updateChartconfig());
-        checkOffsetisSet();
+        offset_isSet = checkOffsetisSet();
         connect();
+        //UpdateConfiguration();
     }
 </script>
 </body>

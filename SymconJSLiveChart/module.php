@@ -262,7 +262,7 @@ class SymconJSLiveChart extends IPSModule{
                 }
             }
 
-            $output["archiv"] = $this->GetArchivData($querydata["var"], $hires, $offset, $start, $end, $Aggregationsstufe, false);
+            $output["archiv"] = $this->GetArchivData($querydata["var"], $hires, $offset, $start, $end, $Aggregationsstufe, 0, false);
 
             return json_encode($output);
         }
@@ -362,6 +362,11 @@ class SymconJSLiveChart extends IPSModule{
             return "{}";
         }
 
+        $starData = $this->GetCorrectStartDate();
+        $date_start = $starData["start"];
+        $date_end = $starData["end"];
+        $Aggregationsstufe = $starData["stufe"];
+
         foreach($datasets as $item){
             $singelOutput = array();
             $singelOutput["variable"] = $item["Variable"];
@@ -380,9 +385,8 @@ class SymconJSLiveChart extends IPSModule{
             $singelOutput["offset"] = $item["Offset"];
 
             //datenabrufen
-            $singelOutput["data"] = $this->GetArchivData($item["Variable"], $item["HighRes"], $item["Offset"]);
+            $singelOutput["data"] = $this->GetArchivData($item["Variable"], $item["HighRes"], $item["Offset"], $date_start, $date_end, $Aggregationsstufe, $starData["datasets"]);
             //$singelOutput["data"][] = array("x" => 1615732860000, "y" => 658,78);
-            //$singelOutput["data"][] = array("x" => 1615732900000, "y" => 758,78);
 
             if(!empty($item["Dash"])){
                 $dashData = @json_decode($item["Dash"], true);
@@ -401,7 +405,8 @@ class SymconJSLiveChart extends IPSModule{
             $singelOutput["pointStyle"] = $this->ReadPropertyString("points_Style");
 
             //falls noch nicht vorhanden anlegen
-            if(!key_exists($item["Profile"], $output["charts"])){
+            $key = array_search($item["Profile"], array_column($output["charts"], 'id'));
+            if($key === FALSE){
                 $axisoutput = array();
                 $axisoutput["type"] = "linear";
                 $axisoutput["display"] = $this->ReadPropertyBoolean("axes_display");
@@ -410,6 +415,9 @@ class SymconJSLiveChart extends IPSModule{
 
                 $axisoutput["MinValue"] = 0;
                 $axisoutput["MaxValue"] = 0;
+
+                $axisoutput["Prefix"] = "";
+                $axisoutput["Suffix"] = "";
 
                 if($this->ReadPropertyInteger("axes_color") >= 0){
                     $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("axes_color"));
@@ -430,6 +438,9 @@ class SymconJSLiveChart extends IPSModule{
 
                         $axisoutput["MinValue"] = $profilData["MaxValue"];
                         $axisoutput["MaxValue"] = $profilData["MinValue"];
+
+                        $axisoutput["Prefix"] = $profilData["Prefix"];
+                        $axisoutput["Suffix"] = $profilData["Suffix"];
                     }
 
                     if($profilData["StepSize"] > 0){
@@ -543,28 +554,22 @@ class SymconJSLiveChart extends IPSModule{
         $output["time"]["displayFormats"]["quarter"] = "[Q]Q - YYYY";
         $output["time"]["displayFormats"]["year"] = "YYYY";
 
+
+        $starData = $this->GetCorrectStartDate();
+        $output["time"]["min"] = ($starData["start"] * 1000);
+        $output["time"]["max"] = (($starData["end"] + 1) * 1000);
+
         //$output["realtime"]["pause"] = false;
         //$output["realtime"]["refresh"] = 180000;
 
 
         return array($output);
     }
-    private function GetArchivData($varId, $highRes, $offset = 0, $startdate = 0, $enddate = 0, $agstufe = 7, $jsconfig = true){
+    private function GetArchivData($varId, $highRes, $offset, $date_start, $date_end, $Aggregationsstufe, $lastDatasets = 0, $jsconfig = true){
         $archiveControlID = IPS_GetInstanceListByModuleID('{43192F0B-135B-4CE7-A0A7-1475603F3060}')[0];
         $period = $this->GetValue("Period");
         $relativ = $this->GetValue("Relativ");
         $highResSteps = $this->ReadPropertyInteger("data_highResSteps");
-
-        if($startdate > 0 && $enddate > 0){
-            $date_start = $startdate;
-            $date_end = $enddate;
-            $Aggregationsstufe = $agstufe;
-        }else{
-            $starData = $this->GetCorrectStartDate();
-            $date_start = $starData["start"];
-            $date_end = $starData["end"];
-            $Aggregationsstufe = $starData["stufe"];
-        }
 
         if($this->ReadPropertyBoolean("Debug")) $this->SendDebug("GetArchivData", "Start_Date: ".$date_start. " | End_Date: ".$date_end, 0);
 
@@ -601,7 +606,7 @@ class SymconJSLiveChart extends IPSModule{
 
             //highres datenreduktion
             if($mode == "Value" && $period != 7 && $i < $highResSteps){
-                $this->SendDebug("GetArchivData", "(". $i . "|".$highResSteps.") Skip Data: " .date('d.m.Y H:i:s', $item["TimeStamp"]) . " => " . $item[$mode],0);
+                //$this->SendDebug("GetArchivData", "(". $i . "|".$highResSteps.") Skip Data: " .date('d.m.Y H:i:s', $item["TimeStamp"]) . " => " . $item[$mode],0);
                 continue;
             }
 
@@ -622,11 +627,18 @@ class SymconJSLiveChart extends IPSModule{
         $arr_timestamp = array_column($output, 'x');
         array_multisort($arr_timestamp, SORT_ASC , $output);
 
-        if(count($archivData) > 0){
+        //count datensets zum letzten datensatz hinzufügen
+        if(count($output) > 0 && $highRes > $period){
+            $output[count($output) - 1]["c"] = $lastDatasets;
+        }
+
+        //$this->SendDebug("GetArchivData", json_encode($output), 0);
+
+        /*if(count($archivData) > 0){
             if(!$relativ){
                 $output = array_merge($output, $this->FillUpData($archivData[0]["TimeStamp"] , $date_end));
             }
-        }
+        }*/
 
         return $output;
     }
@@ -845,10 +857,47 @@ class SymconJSLiveChart extends IPSModule{
                     break;
             }
         }
+
+        $s = new DateTime('NOW');
+        $curVales = 0;
+
+        //get durchschnitswert
+        switch ($period){
+            case 0:
+                //Dekade
+                $curVales = (int)$s->format("z")*24*60*60;
+                break;
+            case 1:
+            case 2:
+                //Jahr
+                //Quartal
+                $curVales = (int)$s->format("j")*60*60;
+                break;
+            case 3:
+            case 4:
+                //Monat
+                //Woche
+                $curVales = (int)$s->format("G")*60;
+                break;
+            case 5:
+                //Tag
+                $curVales = (int)$s->format("i")*60;
+                break;
+            case 6:
+                //Stunde
+                $curVales = (int)$s->format("s");
+                break;
+            case 7:
+                //Minute
+                $curVales = 0;
+                break;
+        }
+
+
         if($this->ReadPropertyBoolean("Debug"))
             $this->SendDebug("GetCorrectStartDate", "Realtiv: ".$relativ." | Period: ".$period." | Start_Date: ".$date_start->format('d.m.Y H:i:s'). " | End_Date: ".$date_end->format('d.m.Y H:i:s'), 0);
 
-        return array("start" => $date_start->getTimestamp(), "end" => $date_end->getTimestamp(), "stufe" => $Aggregationsstufe);
+        return array("start" => $date_start->getTimestamp(), "end" => $date_end->getTimestamp(), "stufe" => $Aggregationsstufe, "datasets" => $curVales);
     }
     private function FillUpData($start_unixTimeStamp, $end_unixTimeStamp){
         $period = $this->GetValue("Period");
