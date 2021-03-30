@@ -1,5 +1,4 @@
 <?
-
 include_once (__DIR__ . '/libs/WebHookModule.php');
 
 class SymconJSLive extends WebHookModule {
@@ -20,13 +19,14 @@ class SymconJSLive extends WebHookModule {
         $this->RegisterPropertyString("LocalAddress", "");
         $this->RegisterPropertyString("RemoteAddress", $this->GetConnectAddress());
 
+        //da das direkte reinladen ja nicht geht!
+        $this->LoadConnectAddress();
     }
 
     public function ApplyChanges() {
         //Never delete this line!
         parent::ApplyChanges();
     }
-
 
 
     /**
@@ -231,7 +231,9 @@ class SymconJSLive extends WebHookModule {
     }
 
     private function CheckIfLocal(string $address){
-        /*$r_address = parse_url($this->ReadPropertyString("RemoteAddress"));
+        if(empty($this->ReadPropertyString("RemoteAddress"))) return true;
+
+        $r_address = parse_url($this->ReadPropertyString("RemoteAddress"));
 
         $chk_address = $r_address["host"];
         if(array_key_exists("port", $r_address)){
@@ -239,7 +241,7 @@ class SymconJSLive extends WebHookModule {
         }
 
         //$this->SendDebug("CheckIfLocal", $address. "|". $chk_address, 0);
-        if($address == $chk_address) return false;*/
+        if($address == $chk_address) return false;
 
         return true;
     }
@@ -339,6 +341,17 @@ class SymconJSLive extends WebHookModule {
         }
 
 
+    }
+    public function LoadConnectAddress($start = false){
+        if(!$start || !empty($this->ReadPropertyString("RemoteAddress"))) return;
+
+        $confData = json_decode(IPS_GetConfiguration($this->InstanceID), true);
+
+        //bestimmte aktuelle einstellungen beibehalten
+        $confData["RemoteAddress"] = $this->GetConnectAddress();
+
+        IPS_SetConfiguration($this->InstanceID, json_encode($confData));
+        IPS_ApplyChanges($this->InstanceID);
     }
 }
 
