@@ -1,18 +1,50 @@
 {
     "elements":
     [
-        { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
         { "type": "PasswordTextBox", "name": "Password", "caption": "Passwort" },
         { "type": "SelectInstance", "name": "WebfrontInstanceID", "caption": "WebfrontID" },
-        { "type": "SelectCategory", "name": "TemplateCategoryID", "caption": "Template Category" },
         { "type": "ValidationTextBox", "name": "LocalAddress", "caption": "Local Address" },
-        { "type": "ValidationTextBox", "name": "RemoteAddress", "caption": "Remote Address" }
-
+        { "type": "ValidationTextBox", "name": "RemoteAddress", "caption": "Remote Address" },
+        { "type": "Select", "name": "localDataMode", "caption": "Local Data Mode",
+            "options": [
+                { "caption": "Pull", "value": 0 },
+                { "caption": "Webfront-Websocket", "value": 1 }
+            ]
+        },
+        { "type": "Select", "name": "RemoteDataMode", "caption": "Remote Data Mode",
+            "options": [
+                { "caption": "Pull", "value": 0 },
+                { "caption": "Webfront-Websocket", "value": 1 }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Pull Data Settings",
+            "items": [
+                { "type": "NumberSpinner", "name": "localRefreshTime", "caption": "Local Refresh Time" },
+                { "type": "NumberSpinner", "name": "remoteRefreshTime", "caption": "Remote Refresh Time" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Expert",
+            "items": [
+                { "type": "CheckBox", "name": "Debug", "caption": "Debug"}
+            ]
+        }
     ],
     "actions":
     [
         { "type": "Button", "label": "Load Connect Address", "onClick": " echo SymconJSLive_LoadConnectAddress($id);" },
-        { "type": "Button", "label": "Update Templates", "onClick": " echo SymconJSLive_UpdateTemplates($id);" }
+
+        {
+            "type": "ExpansionPanel",
+            "caption": "Load Custome Templates",
+            "items": [
+                { "type": "SelectCategory", "name": "TemplateCategoryID", "caption": "Template Category" },
+                { "type": "Button", "label": "Load Templates", "onClick": " echo SymconJSLive_UpdateTemplates($id, $TemplateCategoryID);" }
+            ]
+        }
     ],
     "status":
     [

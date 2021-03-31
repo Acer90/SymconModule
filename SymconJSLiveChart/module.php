@@ -1,6 +1,7 @@
 <?
+include_once (__DIR__ . '/../SymconJSLive/libs/WebHookModule.php');
 
-class SymconJSLiveChart extends IPSModule{
+class SymconJSLiveChart extends JSLiveModule{
 
     public function Create() {
         //Never delete this line!
@@ -148,13 +149,16 @@ class SymconJSLiveChart extends IPSModule{
         if($buffer["instance"] != $this->InstanceID) return;
 
 
-        switch($buffer['cmd']){
+        switch($buffer['cmd']) {
             case "getContend":
                 return $this->GetWebpage();
             case "getUpdate":
-                return  $this->GetUpdate();
+                return $this->GetUpdate();
             case "getData":
                 return $this->GetData($buffer['querydata']);
+            default:
+                $this->SendDebug("ReceiveData", "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
+                break;
         }
 
     }
@@ -367,12 +371,16 @@ class SymconJSLiveChart extends IPSModule{
         $date_end = $starData["end"];
         $Aggregationsstufe = $starData["stufe"];
 
+        $emptyGrpID = 0;
+
         foreach($datasets as $item){
+            $emptyGrpID--;
             $singelOutput = array();
             $singelOutput["variable"] = $item["Variable"];
             $singelOutput["label"] = $item["Title"];
             $singelOutput["type"] = $item["Type"];
             $singelOutput["order"] = $item["Order"];
+
 
             $rgbdata = $this->HexToRGB($item["BackgroundColor"]);
             $singelOutput["backgroundColor"] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($item["BackgroundColor_Alpha"], 2, '.', '').")";
@@ -395,6 +403,16 @@ class SymconJSLiveChart extends IPSModule{
                 }
             }
 
+            //stackerd Chart
+            $isStacked = false;
+            if($item["StackGroup"] > 0){
+                $singelOutput["stack"] = $item["Profile"]."-" .$item["StackGroup"];
+                $isStacked = true;
+            }else{
+                $singelOutput["stack"] = "Stack " .$emptyGrpID;
+            }
+
+
             //Axis
             $singelOutput["yAxisID"] = $item["Profile"];
             $digits = 2;
@@ -403,6 +421,11 @@ class SymconJSLiveChart extends IPSModule{
             $singelOutput["pointRadius"] = $this->ReadPropertyInteger("point_radius");
             $singelOutput["pointHoverRadius"] = $this->ReadPropertyInteger("point_hoverRadius");
             $singelOutput["pointStyle"] = $this->ReadPropertyString("points_Style");
+
+            if(IPS_GetVariable($item["Variable"])["VariableType"] == 0){
+                //nur bei Bool variablen!
+                $singelOutput["steppedLine"] = "before";
+            }
 
             //falls noch nicht vorhanden anlegen
             $key = array_search($item["Profile"], array_column($output["charts"], 'id'));
@@ -418,6 +441,9 @@ class SymconJSLiveChart extends IPSModule{
 
                 $axisoutput["Prefix"] = "";
                 $axisoutput["Suffix"] = "";
+
+                //vor Stacked Charts!
+                $axisoutput["stacked"] = $isStacked;
 
                 if($this->ReadPropertyInteger("axes_color") >= 0){
                     $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("axes_color"));
@@ -446,6 +472,7 @@ class SymconJSLiveChart extends IPSModule{
                     if($profilData["StepSize"] > 0){
                         $axisoutput["ticks"]["stepSize"] = $profilData["StepSize"];
                     }
+
 
                     $digits = $profilData["Digits"];
 
@@ -479,7 +506,9 @@ class SymconJSLiveChart extends IPSModule{
     private function GenerateXAxesData(){
         $output = array();
 
-        //
+        //vor Stacked Charts!
+        //$output["stacked"] = true;
+
         //$output["distribution"] = "series";
         $output["time"]["tooltipFormat"] = "DD.MM.YYYY HH:mm:ss";
 
@@ -565,6 +594,7 @@ class SymconJSLiveChart extends IPSModule{
 
         return array($output);
     }
+
     private function GetArchivData($varId, $highRes, $offset, $date_start, $date_end, $Aggregationsstufe, $lastDatasets = 0, $jsconfig = true){
         $archiveControlID = IPS_GetInstanceListByModuleID('{43192F0B-135B-4CE7-A0A7-1475603F3060}')[0];
         $period = $this->GetValue("Period");
@@ -899,73 +929,6 @@ class SymconJSLiveChart extends IPSModule{
 
         return array("start" => $date_start->getTimestamp(), "end" => $date_end->getTimestamp(), "stufe" => $Aggregationsstufe, "datasets" => $curVales);
     }
-    private function FillUpData($start_unixTimeStamp, $end_unixTimeStamp){
-        $period = $this->GetValue("Period");
-        $date_start = new DateTime();
-        $date_end = new DateTime();
-        $intval = new DateInterval("P10Y");
-        $output = array();
-
-        $date_start->setTimestamp($start_unixTimeStamp);
-        $date_end->setTimestamp($end_unixTimeStamp);
-
-
-        //bereiingen des letzten eintrages und intervall bestimmen
-        switch($period){
-            case 0:
-                //Dekade
-                $date_start->setDate(($date_start->format('Y') + 1), 1, 1);
-                $date_start->setTime(0, 0, 0);
-                $intval = new DateInterval("P1Y");
-                break;
-            case 1:
-            case 2:
-                //Jahr
-                //Quartal
-                $date_start->setDate(($date_end->format('Y')), ($date_start->format('m') + 1), 1);
-                $date_start->setTime(0, 0, 0);
-                $intval = new DateInterval("P1M");
-                break;
-            case 3:
-            case 4:
-                //Monat
-                //Woche
-                $date_start->setDate(($date_end->format('Y')), $date_start->format('m'), ($date_start->format('d') + 1));
-                $date_start->setTime(0, 0, 0);
-                $intval = new DateInterval("P1D");
-                break;
-            case 5:
-                //Tag
-                $date_start->setDate(($date_end->format('Y')), $date_start->format('m'), $date_start->format('d'));
-                $date_start->setTime(($date_start->format('H') + 1), 0, 0);
-                $intval = new DateInterval("PT1H");
-                break;
-            case 6:
-                //Stunde
-                $date_start->setDate(($date_end->format('Y')), $date_start->format('m'), $date_start->format('d'));
-                $date_start->setTime($date_start->format('H'), ($date_start->format('i') + 1), 0);
-                $intval = new DateInterval("PT1M");
-                break;
-            case 7:
-                //Minute
-                $date_start->setDate(($date_end->format('Y')), $date_start->format('m'), $date_start->format('d'));
-                $date_start->setTime($date_start->format('H'), $date_start->format('i'), ($date_start->format('s')+ 1));
-                $intval = new DateInterval("PT1S");
-                break;
-        }
-
-        if($this->ReadPropertyBoolean("Debug")) $this->SendDebug("FillUpData", "Start_Date: ".$date_start->format('d.m.Y H:i:s')."(".$date_start->getTimestamp().") | End_Date".$date_end->format('d.m.Y H:i:s')."(".$date_end->getTimestamp().")", 0);
-
-        while($date_start <= $date_end){
-            //array füllen
-            $output[] = array("x" => ($date_start->getTimestamp() * 1000), "y" => 0, "dummy" => true);
-
-            //datum inkrementieren
-            $date_start->add($intval);
-        }
-
-        return $output;
-    }
     private function GetOffsetDate($start_unixTimeStamp, $end_unixTimeStamp, $offset){
         $period = $this->GetValue("Period");
         $relativ = $this->GetValue("Relativ");
@@ -996,6 +959,7 @@ class SymconJSLiveChart extends IPSModule{
             case 3:
                 //Monat
                 $intval = new DateInterval("P".$offset."M");
+                break;
             case 4:
                 //Woche
                 $offset = $offset * 7;
@@ -1077,51 +1041,6 @@ class SymconJSLiveChart extends IPSModule{
             $this->SendDebug("GetOffsetDate", "Start_Date: ".$date_start->format('d.m.Y H:i:s')."(".$date_start->getTimestamp().") | End_Date: ".$date_end->format('d.m.Y H:i:s')."(".$date_end->getTimestamp().") | Interval: " .$seconds, 0);
 
         return array("start" => $date_start->getTimestamp(), "end" => $date_end->getTimestamp(), "interval" => $seconds);
-    }
-
-
-    private function json_encode_advanced(array $arr, $sequential_keys = false, $quotes = false, $beautiful_json = true) {
-
-        $output = $this->isAssoc($arr) ? "{" : "[";
-        $count = 0;
-        foreach ($arr as $key => $value) {
-
-            if ($this->isAssoc($arr) || (!$this->isAssoc($arr) && $sequential_keys == true )) {
-                $output .= ($quotes ? '"' : '') . $key . ($quotes ? '"' : '') . ' : ';
-            }
-
-            if (is_array($value)) {
-                $output .= $this->json_encode_advanced($value, $sequential_keys, $quotes, $beautiful_json);
-            }
-            else if (is_bool($value)) {
-                $output .= ($value ? 'true' : 'false');
-            }
-            else if (is_numeric($value)) {
-                $output .= $value;
-            }
-            else {
-                $output .= ($quotes || $beautiful_json ? '"' : '') . $value . ($quotes || $beautiful_json ? '"' : '');
-            }
-
-            if (++$count < count($arr)) {
-                $output .= ', ';
-            }
-        }
-
-        $output .= $this->isAssoc($arr) ? "}" : "]";
-
-        return $output;
-    }
-    private function isAssoc(array $arr) {
-        if (array() === $arr) return false;
-        return array_keys($arr) !== range(0, count($arr) - 1);
-    }
-    private function HexToRGB(int $Hex){
-        $r   = floor($Hex/65536);
-        $g  = floor(($Hex-($r*65536))/256);
-        $b = $Hex-($g*256)-($r*65536);
-
-        return array("R" => $r, "G" => $g, "B" => $b);
     }
 
     public function LoadOtherConfiguration($id){

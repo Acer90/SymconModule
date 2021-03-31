@@ -300,6 +300,17 @@
                             { "caption": "decade", "value": 0 }
                         ]
                     }
+                },
+                {
+                    "caption": "Stack Group",
+                    "name": "StackGroup",
+                    "width": "50px",
+                    "add": 0,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 0,
+                        "minimum": 0
+                    }
                 }
             ]
         },

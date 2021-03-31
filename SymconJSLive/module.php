@@ -12,15 +12,24 @@ class SymconJSLive extends WebHookModule {
         //Never delete this line!
         parent::Create();
 
+        $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyString("Password", $this->GenerateRandomPassword());
         $this->RegisterPropertyInteger("WebfrontInstanceID", 0);
-        $this->RegisterPropertyInteger("TemplateCategoryID", 0);
 
         $this->RegisterPropertyString("LocalAddress", "");
         $this->RegisterPropertyString("RemoteAddress", $this->GetConnectAddress());
 
+        $this->RegisterPropertyInteger("localDataMode", 1);
+        $this->RegisterPropertyInteger("RemoteDataMode", 0);
+
+        $this->RegisterPropertyInteger("localRefreshTime", 1);
+        $this->RegisterPropertyInteger("remoteRefreshTime", 5);
+
+
+
         //da das direkte reinladen ja nicht geht!
         $this->LoadConnectAddress();
+        $this->SetRandomPassword();
     }
 
     public function ApplyChanges() {
@@ -34,18 +43,15 @@ class SymconJSLive extends WebHookModule {
      */
     protected function ProcessHookData() {
         $pos = strpos($_SERVER['SCRIPT_NAME'], "/hook/JSLive/js");
-        $pos2 = strpos($_SERVER['SCRIPT_NAME'], "/hook/JSLive/update");
-        $pos3 = strpos($_SERVER['SCRIPT_NAME'], "/hook/JSLive/getdata");
 
         if ($pos !== false) {
-            //get javaskript
+            //get javascript files load from webhook
             $subpath = substr($_SERVER['SCRIPT_NAME'], strlen("/hook/JSLive/"));
             $path = __DIR__ . "/" . $subpath;
             if (!file_exists($path)) {
                 echo "404 file not found!";
                 return;
             }
-
 
             header("Content-Type: text/html");
 
@@ -61,109 +67,50 @@ class SymconJSLive extends WebHookModule {
             header("Content-Encoding: gzip");
             header("Content-Length: " . strlen($compressed));
             echo $compressed;
-        }elseif ($pos2 !== false) {
-            ///update Data
-            $queryData = array();
-            foreach (explode("&", $_SERVER['QUERY_STRING']) as $item) {
-                $pos2 = strpos($item, '=');
-                if ($pos2 !== false) {
-                    $p_arr = explode("=", $item);
-                    if (count($p_arr) > 2) continue;
-                    $queryData[strtolower($p_arr[0])] = strtolower($p_arr[1]);
-                }
-            }
-            if (!key_exists("instance", $queryData)) return "INSTANCE NOT SET!";
-
-            header("Content-Type: text/html");
-
-            $sendData = array("cmd" => "getUpdate", "instance" => $queryData["instance"]);
-            $contend = $this->SendDataToChildren(json_encode([
-                'DataID' => "{79D59629-E9C5-44F1-0F34-0FBC5C88F307}",
-                'Buffer' => utf8_encode(json_encode($sendData))
-            ]));
-
-            if (count($contend) == 0) return "CONTEND EMPTY!";
-            $contend = $contend[0];
-            //check if local
-            $isLocal = $this->CheckIfLocal($_SERVER["HTTP_HOST"]);
-
-            //Add caching support
-            $etag = md5($contend);
-            header("ETag: " . $etag);
-            if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && (trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag)) {
-                http_response_code(304);
-                return;
-            }
-
-            $compressed = gzencode($contend);
-            header("Content-Encoding: gzip");
-            header("Content-Length: " . strlen($compressed));
-            echo $compressed;
-        }elseif ($pos3 !== false) {
-            ///get Data from
-            $queryData = array();
-            foreach (explode("&", $_SERVER['QUERY_STRING']) as $item) {
-                $pos2 = strpos($item, '=');
-                if ($pos2 !== false) {
-                    $p_arr = explode("=", $item);
-                    if (count($p_arr) > 2) continue;
-                    $queryData[strtolower($p_arr[0])] = strtolower($p_arr[1]);
-                }
-            }
-            if (!key_exists("instance", $queryData)) return "INSTANCE NOT SET!";
-
-            header("Content-Type: text/html");
-
-            $sendData = array("cmd" => "getData", "instance" => $queryData["instance"], "querydata" => $queryData);
-            $contend = $this->SendDataToChildren(json_encode([
-                'DataID' => "{79D59629-E9C5-44F1-0F34-0FBC5C88F307}",
-                'Buffer' => utf8_encode(json_encode($sendData))
-            ]));
-
-            if (count($contend) == 0) return "CONTEND EMPTY!";
-            $contend = $contend[0];
-            //check if local
-            $isLocal = $this->CheckIfLocal($_SERVER["HTTP_HOST"]);
-
-            //Add caching support
-            $etag = md5($contend);
-            header("ETag: " . $etag);
-            if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && (trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag)) {
-                http_response_code(304);
-                echo "ETAG NOT SET!";
-                return;
-            }
-
-            $compressed = gzencode($contend);
-            header("Content-Encoding: gzip");
-            header("Content-Length: " . strlen($compressed));
-            echo $compressed;
         }else{
-            //getdata
-            //$instanceID = substr($_SERVER['SCRIPT_NAME'], strlen("/hook/JSLive/"));
+            //Daten vom Modul Laden
+            $Type = substr($_SERVER['SCRIPT_NAME'], strlen("/hook/JSLive/"));
+            if(empty($Type)) $Type = "getContend";
+
             $queryData = array();
             foreach (explode("&", $_SERVER['QUERY_STRING']) as $item) {
                 $pos2 = strpos($item, '=');
                 if ($pos2 !== false) {
                     $p_arr = explode("=", $item);
                     if (count($p_arr) > 2) continue;
-                    $queryData[strtolower($p_arr[0])] = strtolower($p_arr[1]);
+                    $queryData[strtolower($p_arr[0])] = $p_arr[1];
                 }
             }
-
 
             if (!key_exists("instance", $queryData)) {
                 $this->SendDebug('WebHook', 'INSTANCE NOT SET!', 0);
                 return ""; //wenn instance Parameter nicht gefunden
             }
-            $this->SendDebug('WebHook', 'INSTANCE:'. $queryData["instance"], 0);
+
+
+
+            //password prüfen!
+            if(!empty($this->ReadPropertyString("Password"))){
+                $password = "";
+                if (key_exists("pw", $queryData)) {
+                    $password = $queryData["pw"];
+                }
+                if($this->ReadPropertyString("Password") != $password){
+                    $this->SendDebug("WebHook", "WRONG PASSWORD!", 0);
+                    echo "";
+                    return;
+                }
+            }
+
+
+            //$this->SendDebug('WebHook', 'INSTANCE:'. $queryData["instance"], 0);
             //$this->SendDebug('WebHook', 'Array QUERY_STRING: ' . print_r($queryData, true), 0);
             //$this->SendDebug('WebHook', 'Array Server: ' . print_r($_SERVER, true), 0);
 
             header("Content-Type: text/html");
 
 
-            $sendData = array("cmd" => "getContend", "instance" => $queryData["instance"]);
+            $sendData = array("cmd" => $Type, "instance" => $queryData["instance"]);
             $contend = $this->SendDataToChildren(json_encode([
                 'DataID' => "{79D59629-E9C5-44F1-0F34-0FBC5C88F307}",
                 'Buffer' => utf8_encode(json_encode($sendData))
@@ -254,7 +201,7 @@ class SymconJSLive extends WebHookModule {
         }
         $wsaddress = $this->GetWebsocket($address, $webfrontid);
 
-
+        $htmlData = str_replace("{GLOBAL}",  $this->json_encode_advanced($this->GetConfigurationData()), $htmlData);
         $htmlData = str_replace("{ADDRESS}", $address, $htmlData);
         $htmlData = str_replace("{WSADDRESS}", $wsaddress , $htmlData);
         $htmlData = str_replace("{REMOTE_ADDRESS}", $this->ReadPropertyString("RemoteAddress"), $htmlData);
@@ -311,8 +258,15 @@ class SymconJSLive extends WebHookModule {
         }
         return implode($pass); //turn the array into a string
     }
+    private function GetConfigurationData(){
+        $output = json_decode(IPS_GetConfiguration($this->InstanceID), true);
+        $output["InstanceID"] = $this->InstanceID;
 
-    public function UpdateTemplates(){
+        return $output;
+    }
+
+
+    public function UpdateTemplates($category){
         $templates = glob(__DIR__ ."/templates/*.html");
         $category = $this->ReadPropertyInteger("TemplateCategoryID");
 
@@ -349,6 +303,17 @@ class SymconJSLive extends WebHookModule {
 
         //bestimmte aktuelle einstellungen beibehalten
         $confData["RemoteAddress"] = $this->GetConnectAddress();
+
+        IPS_SetConfiguration($this->InstanceID, json_encode($confData));
+        IPS_ApplyChanges($this->InstanceID);
+    }
+    public function SetRandomPassword($start = false){
+        if(!$start || !empty($this->ReadPropertyString("Password"))) return;
+
+        $confData = json_decode(IPS_GetConfiguration($this->InstanceID), true);
+
+        //bestimmte aktuelle einstellungen beibehalten
+        $confData["Password"] = $this->GenerateRandomPassword();
 
         IPS_SetConfiguration($this->InstanceID, json_encode($confData));
         IPS_ApplyChanges($this->InstanceID);

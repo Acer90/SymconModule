@@ -1,6 +1,7 @@
 <?php
-
 declare(strict_types=1);
+
+include_once (__DIR__ . '/JSLiveModule.php');
 
 //Constants will be defined with IP-Symcon 5.0 and newer
 if (!defined('IPS_KERNELMESSAGE')) {
@@ -10,7 +11,7 @@ if (!defined('KR_READY')) {
     define('KR_READY', 10103);
 }
 
-class WebHookModule extends IPSModule
+class WebHookModule extends JSLiveModule
 {
     private $hook = '';
 
