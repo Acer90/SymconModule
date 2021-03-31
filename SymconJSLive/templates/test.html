@@ -31,6 +31,7 @@
     let confiuration = {CONFIG};
 
     let update_vars = [];
+    let update_vars_Values = [];
     update_vars.push(confiuration.ID_Period);
     update_vars.push(confiuration.ID_Now);
     update_vars.push(confiuration.ID_StartDate);
@@ -103,8 +104,10 @@
 
         ws.onmessage = function(e) {
             data = JSON.parse(e.data);
-            UpdateChart(data);
-            ReloadChart(data);
+            if(data.Message == 10603) {
+                UpdateChart(data.SenderID, data.Data[3], data.Data[0]);
+                ReloadChart(data.SenderID, data.Data[3]);
+            }
         };
 
         ws.onclose = function(e) {
@@ -120,18 +123,13 @@
         };
     }
 
-    function UpdateChart(data){
+    function UpdateChart(id_val, dt_val, value){
         //wenn nicht Now dann kein Update durchführen!
         if(!confiuration.Now) return;
 
-        //nur update bei Variablen änderung!
-        if(data.Message != 10603) return;
-
-        //console.log('Message:', e.data);
-
         isUpdated = false;
 
-        required = {variable: data.SenderID};
+        required = {variable: id_val};
         results = [];
         results = getMatchingKeys(config_dataset, required);
 
@@ -144,12 +142,24 @@
                 //nur daten ohne Offset hier updaten
                 offset = myChart.data.datasets[part].offset;
                 if(offset == 0) {
-                    val = data.Data[0];
+                    val = value;
                     highRes = myChart.data.datasets[part].highRes;
-                    itemDate = UpdateDate(data.Data[3] * 1000, highRes);
+                    itemDate = UpdateDate(dt_val * 1000, highRes);
+
+                    counter = myChart.data.datasets[part].counter;
+                    if(counter){
+
+                        val = val - myChart.data.datasets[part].lastValue;
+                        val = Math.floor(val * 100000) / 100000;
+                        if(val < 0) val = val * -1.0;
+
+                        myChart.data.datasets[part].lastValue = Math.floor(value * 100000) / 100000;
+                    }
 
                     if (highRes <= period) {
                         //highres Update
+
+
                         dataPoint = {
                             x: itemDate.getTime(),
                             y: val
@@ -165,16 +175,21 @@
 
                         if (results.length > 0) {
                             //ja alten updaten
-                            c = 1;
-                            if (typeof myChart.data.datasets[part].data[results[0]].c != "undefined") {
-                                oldval = myChart.data.datasets[part].data[results[0]].y;
-                                c = myChart.data.datasets[part].data[results[0]].c;
-                                val = Math.round(((oldval * c) + val) / (c + 1) * 100) / 100;
-                                c++;
-                            }
+                            if(counter) {
+                                old = myChart.data.datasets[part].data[results[0]].y;
+                                myChart.data.datasets[part].data[results[0]].y = old + val;
+                            }else{
+                                c = 1;
+                                if (typeof myChart.data.datasets[part].data[results[0]].c != "undefined") {
+                                    oldval = myChart.data.datasets[part].data[results[0]].y;
+                                    c = myChart.data.datasets[part].data[results[0]].c;
+                                    val = Math.round(((oldval * c) + val) / (c + 1) * 100) / 100;
+                                    c++;
+                                }
 
-                            myChart.data.datasets[part].data[results[0]].y = val;
-                            myChart.data.datasets[part].data[results[0]].c = c;
+                                myChart.data.datasets[part].data[results[0]].y = val;
+                                myChart.data.datasets[part].data[results[0]].c = c;
+                            }
                         } else {
                             dataPoint = {
                                 x: itemDate.getTime(),
@@ -193,14 +208,12 @@
             });
         }
     }
-    function ReloadChart(data){
-        //console.log("test: ", update_vars);
-        if(data.Message != 10603) return;
+    function ReloadChart(id_val, dt_val){
         //deoppelten Reload verhinden!
-        if(last_reload == data.Data[3]) return;
-        if(!update_vars.includes(data.SenderID)) return;
+        if(last_reload == dt_val) return;
+        if(!update_vars.includes(id_val)) return;
 
-        last_reload = data.Data[3];
+        last_reload = dt_val;
 
         $.getJSON( "{ADDRESS}/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}", function( data ) {
             config_dataset = data.DATASETS;
@@ -365,7 +378,7 @@
     }
     async function UpdateOffsetData_Absolute(curDate) {
         //absolute Mode
-        console.log("UpdateOffsetData_Absolute");
+        //console.log("UpdateOffsetData_Absolute");
         dateData = GetStartEndDate(Date.now());
         start = Math.floor(dateData.start / 1000);
         end = Math.floor(dateData.end / 1000) + 1000;
@@ -390,6 +403,49 @@
         });
 
         myChart.update(0);
+    }
+    async function PullNewData(refreshRate){
+        refreshRate = refreshRate * 1000;
+        while (true){
+            try {
+                //console.log("PullNewData => ", Date.now());
+                dt_val = Math.floor(Date.now() / 1000);
+
+                //akutaliesieren der daten
+                myChart.data.datasets.forEach(function (part, index) {
+                    if(part.offset == 0){
+                        PullSingleData(part.variable, dt_val);
+                    }
+                });
+
+                update_vars.forEach(function (part, index){
+                    PullSingleData(part, dt_val, true);
+                });
+                //Control Variables
+            }catch (e) {
+                console.log("PullNewData => ", e);
+            }
+            await sleep(refreshRate);
+        }
+    }
+    async function PullSingleData(id_val, dt_val, UpdateVar = false){
+        //console.log("PullSingleData: Var => "+ id_val + " Updatetyp: " + UpdateVar );
+        $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}&var=" + id_val, function (data) {
+            //console.log("PullSingleData: " + id_val + " => " +data.Value);
+            if(!UpdateVar){
+                UpdateChart(id_val, dt_val, data.Value);
+            }else{
+                if(id_val in update_vars_Values){
+                    //prüfen ob änderung und gegbfalls daten aktuallieseren
+                    if(update_vars_Values[id_val] != data.Value){
+                        update_vars_Values[id_val] = data.Value;
+                        ReloadChart(id_val, dt_val);
+                    }
+                }else{
+                    update_vars_Values[id_val] = data.Value;
+                }
+            }
+        });
     }
 
     function GetStartEndDate(date) {
@@ -675,7 +731,6 @@
     Array.prototype.insert = function ( index, item ) {
         this.splice( index, 0, item );
     };
-
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
@@ -683,9 +738,27 @@
     window.onload = function() {
         var ctx = document.getElementById('myChart');
         myChart = new Chart(ctx, updateChartconfig());
+
+        //check load after Startup
+        if(confiuration.data_loadAfterStartup){
+            dt_val = Math.floor(Date.now() / 1000);
+            ReloadChart(update_vars[0], dt_val);
+        }
+
         offset_isSet = checkOffsetisSet();
-        connect();
         UpdateConfiguration();
+
+        if(config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0){
+            //pullup Mode local
+            refreshRate = config_global.LocalRefreshTime;
+            PullNewData(refreshRate);
+        }else if(config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0){
+            //pullup Mode remote
+            refreshRate = config_global.RemoteRefreshTime;
+            PullNewData(refreshRate);
+        }else{
+            connect();
+        }
     }
 </script>
 </body>

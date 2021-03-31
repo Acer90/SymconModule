@@ -19,11 +19,11 @@ class SymconJSLive extends WebHookModule {
         $this->RegisterPropertyString("LocalAddress", "");
         $this->RegisterPropertyString("RemoteAddress", $this->GetConnectAddress());
 
-        $this->RegisterPropertyInteger("localDataMode", 1);
+        $this->RegisterPropertyInteger("LocalDataMode", 1);
         $this->RegisterPropertyInteger("RemoteDataMode", 0);
 
-        $this->RegisterPropertyInteger("localRefreshTime", 1);
-        $this->RegisterPropertyInteger("remoteRefreshTime", 5);
+        $this->RegisterPropertyInteger("LocalRefreshTime", 3);
+        $this->RegisterPropertyInteger("RemoteRefreshTime", 10);
 
 
 
@@ -87,8 +87,6 @@ class SymconJSLive extends WebHookModule {
                 return ""; //wenn instance Parameter nicht gefunden
             }
 
-
-
             //password prüfen!
             if(!empty($this->ReadPropertyString("Password"))){
                 $password = "";
@@ -110,19 +108,22 @@ class SymconJSLive extends WebHookModule {
             header("Content-Type: text/html");
 
 
-            $sendData = array("cmd" => $Type, "instance" => $queryData["instance"]);
+            $sendData = array("cmd" => $Type, "instance" => $queryData["instance"], "queryData" => $queryData);
             $contend = $this->SendDataToChildren(json_encode([
                 'DataID' => "{79D59629-E9C5-44F1-0F34-0FBC5C88F307}",
                 'Buffer' => utf8_encode(json_encode($sendData))
             ]));
 
-            $this->SendDebug('WebHook', 'Contend Array: '. json_encode($contend), 0);
+            if (count($contend) == 0){
+                $this->SendDebug("WebHook", "NO INSTANCE FOUND!", 0);
+                return ""; //wenn instance nicht gefunden
+            }
 
-            if (count($contend) == 0) return ""; //wenn instance nicht gefunden
-
-            //check if local
-            $isLocal = $this->CheckIfLocal($_SERVER["HTTP_HOST"]);
-            $contend = $this->ReplacePlaceholder($contend[0], $isLocal, $queryData["instance"]);
+            if($Type = "getContend") {
+                //check if local
+                $isLocal = $this->CheckIfLocal($_SERVER["HTTP_HOST"]);
+                $contend = $this->ReplacePlaceholder($contend[0], $isLocal, $queryData["instance"]);
+            }
 
             //Add caching support
             $etag = md5($contend);
@@ -131,6 +132,7 @@ class SymconJSLive extends WebHookModule {
                 http_response_code(304);
                 return;
             }
+            if($this->ReadPropertyBoolean("Debug")) $this->SendDebug("WebHook", $contend, 0);
 
             $compressed = gzencode($contend);
             header("Content-Encoding: gzip");
@@ -264,7 +266,6 @@ class SymconJSLive extends WebHookModule {
 
         return $output;
     }
-
 
     public function UpdateTemplates($category){
         $templates = glob(__DIR__ ."/templates/*.html");
