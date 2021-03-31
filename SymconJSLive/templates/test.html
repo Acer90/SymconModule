@@ -19,6 +19,8 @@
 <script>
     let myChart;
 
+    let config_global = {GLOBAL};
+
     let config_dataset = {DATASETS};
     let config_axes = {AXES};
     let config_legend = {LEGEND};
@@ -200,7 +202,7 @@
 
         last_reload = data.Data[3];
 
-        $.getJSON( "{ADDRESS}/hook/JSLive/update?Instance={INSTANCE}&pw={PASSWORD}", function( data ) {
+        $.getJSON( "{ADDRESS}/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}", function( data ) {
             config_dataset = data.DATASETS;
             config_axes = data.AXES;
             config_xaxes =  data.XAXES;
@@ -289,7 +291,6 @@
             }
         }
 
-
         //console.log("oldDate:", oldDate);
         //console.log("newDate:", newDate);
         return newDate;
@@ -347,7 +348,7 @@
                     end = Math.floor((curDate) / 1000);
 
                     highRes = part.highRes;
-                    $.getJSON("{ADDRESS}/hook/JSLive/getdata?Instance={INSTANCE}&pw={PASSWORD}&var=" + part.variable + "&offset=" + offset + "&hires=" + highRes + "&start=" + start + "&end=" + end, function (data) {
+                    $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}&var=" + part.variable + "&offset=" + offset + "&hires=" + highRes + "&start=" + start + "&end=" + end, function (data) {
                         //console.log("update Offset: ", data);
 
                         data.archiv.forEach(function (apart, aindex) {
@@ -376,7 +377,7 @@
             if (offset > 0 && c > 0) {
 
                 highRes = part.highRes;
-                $.getJSON("{ADDRESS}/hook/JSLive/getdata?Instance={INSTANCE}&pw={PASSWORD}&var=" + part.variable + "&offset=" + offset + "&hires=" + highRes + "&start=" + start + "&end=" + end, function (data) {
+                $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}&var=" + part.variable + "&offset=" + offset + "&hires=" + highRes + "&start=" + start + "&end=" + end, function (data) {
                     //console.log("update Offset: ", data);
 
                     data.archiv.forEach(function (apart, aindex) {
@@ -684,7 +685,7 @@
         myChart = new Chart(ctx, updateChartconfig());
         offset_isSet = checkOffsetisSet();
         connect();
-        //UpdateConfiguration();
+        UpdateConfiguration();
     }
 </script>
 </body>
