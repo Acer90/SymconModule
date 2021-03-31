@@ -2,7 +2,6 @@
 include_once (__DIR__ . '/../SymconJSLive/libs/WebHookModule.php');
 
 class SymconJSLiveChart extends JSLiveModule{
-
     public function Create() {
         //Never delete this line!
         parent::Create();
@@ -54,10 +53,11 @@ class SymconJSLiveChart extends JSLiveModule{
 
         //Data
         $this->RegisterPropertyInteger("data_highResSteps", 1);
-
+        $this->RegisterPropertyBoolean("data_loadAfterStartup", true);
 
         //dataset
         $this->RegisterPropertyString("Datasets", "[]");
+
 
     }
     public function ApplyChanges() {
@@ -94,6 +94,15 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->EnableAction("Now");
         $this->EnableAction("StartDate");
         $this->EnableAction("Relativ");
+
+        $identIdlist = array();
+        $identIdlist[] = IPS_GetObjectIDByIdent("Period", $this->InstanceID);
+        $identIdlist[] = IPS_GetObjectIDByIdent("Offset", $this->InstanceID);
+        $identIdlist[] = IPS_GetObjectIDByIdent("Now", $this->InstanceID);
+        $identIdlist[] = IPS_GetObjectIDByIdent("StartDate", $this->InstanceID);
+        $identIdlist[] = IPS_GetObjectIDByIdent("Relativ", $this->InstanceID);
+
+        $this->SetBuffer("IdentIDList", json_encode($identIdlist));
     }
     public function RequestAction($Ident, $Value) {
 
@@ -144,10 +153,10 @@ class SymconJSLiveChart extends JSLiveModule{
     public function ReceiveData($JSONString) {
         $jsonData = json_decode($JSONString, true);
         $buffer = json_decode($jsonData['Buffer'], true);
-        //$this->SendDebug("ReceiveData", $jsonData['Buffer']. " =>" . $buffer["instance"], 0);
+
 
         if($buffer["instance"] != $this->InstanceID) return;
-
+        //$this->SendDebug("ReceiveData", $jsonData['Buffer']. " =>" . $this->InstanceID, 0);
 
         switch($buffer['cmd']) {
             case "getContend":
@@ -155,7 +164,7 @@ class SymconJSLiveChart extends JSLiveModule{
             case "getUpdate":
                 return $this->GetUpdate();
             case "getData":
-                return $this->GetData($buffer['querydata']);
+                return $this->GetData($buffer['queryData']);
             default:
                 $this->SendDebug("ReceiveData", "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
                 break;
@@ -211,8 +220,10 @@ class SymconJSLiveChart extends JSLiveModule{
             return json_encode($output);
         }
 
+
+        $identIdlist = json_decode($this->GetBuffer("IdentIDList"), true);
         $key = array_search($querydata["var"], array_column($datasets, 'Variable'));
-        if($key === false){
+        if($key === false && !in_array($querydata["var"], $identIdlist)){
             $this->SendDebug("GetData", "VARIABLE NOT IN INSTANCE!", 0);
             return "VARIABLE NOT IN INSTANCE!";
             return json_encode($output);
@@ -267,9 +278,8 @@ class SymconJSLiveChart extends JSLiveModule{
             }
 
             $output["archiv"] = $this->GetArchivData($querydata["var"], $hires, $offset, $start, $end, $Aggregationsstufe, 0, false);
-
-            return json_encode($output);
         }
+        return json_encode($output);
     }
 
     private function ReplacePlaceholder($htmlData){
@@ -279,19 +289,24 @@ class SymconJSLiveChart extends JSLiveModule{
         $htmlData = str_replace("{TITLE}", $this->json_encode_advanced($this->GenerateTitleData()), $htmlData);
 
         //datasets and axis
-        $data = $this->GenerateDataSet();
-        $htmlData = str_replace("{DATASETS}", $this->json_encode_advanced($data["datasets"]), $htmlData);
-        $htmlData = str_replace("{AXES}", $this->json_encode_advanced($data["charts"]), $htmlData);
+        if($this->ReadPropertyBoolean("data_loadAfterStartup")){
+            $htmlData = str_replace("{DATASETS}", $this->json_encode_advanced(array()), $htmlData);
+            $htmlData = str_replace("{AXES}", $this->json_encode_advanced(array()), $htmlData);
+        }else{
+            $data = $this->GenerateDataSet();
+            $htmlData = str_replace("{DATASETS}", $this->json_encode_advanced($data["datasets"]), $htmlData);
+            $htmlData = str_replace("{AXES}", $this->json_encode_advanced($data["charts"]), $htmlData);
 
-        if(count($data["charts"]) == 0) return "NO CHARTS DEFINE!";
+            if(count($data["charts"]) == 0) return "NO CHARTS DEFINE!";
+        }
 
         //Legend
         $htmlData = str_replace("{LEGEND}", $this->json_encode_advanced($this->GenerateLegendData()), $htmlData);
 
-        //Legend
+        //Tooltipdata
         $htmlData = str_replace("{TOOLTIPS}", $this->json_encode_advanced($this->GenerateTooltipData()), $htmlData);
 
-        //Legend
+        //configuration Data
         $htmlData = str_replace("{CONFIG}", $this->json_encode_advanced($this->GetConfigurationData()), $htmlData);
 
         //xAxes
@@ -358,6 +373,7 @@ class SymconJSLiveChart extends JSLiveModule{
 
     }
     private function GenerateDataSet(){
+        $archiveControlID = IPS_GetInstanceListByModuleID('{43192F0B-135B-4CE7-A0A7-1475603F3060}')[0];
         $output["datasets"] = array();
         $output["charts"] = array();
         $datasets = json_decode($this->ReadPropertyString("Datasets"),true);
@@ -374,9 +390,15 @@ class SymconJSLiveChart extends JSLiveModule{
         $emptyGrpID = 0;
 
         foreach($datasets as $item){
+            if(!IPS_VariableExists($item["Variable"])) {
+                $this->SendDebug("GenerateDataSet", "VARIABLE " .$item["Variable"] . " NOT EXIST!", 0);
+                continue;
+            }
+
             $emptyGrpID--;
             $singelOutput = array();
             $singelOutput["variable"] = $item["Variable"];
+
             $singelOutput["label"] = $item["Title"];
             $singelOutput["type"] = $item["Type"];
             $singelOutput["order"] = $item["Order"];
@@ -391,6 +413,13 @@ class SymconJSLiveChart extends JSLiveModule{
 
             $singelOutput["highRes"] = $item["HighRes"];
             $singelOutput["offset"] = $item["Offset"];
+
+            $singelOutput["counter"] = false;
+            if(AC_GetAggregationType($archiveControlID, $item["Variable"]) == 1){
+                $singelOutput["counter"] = true;
+                $singelOutput["lastValue"] = number_format(GetValue($item["Variable"]), 5, '.', '');
+            }
+
 
             //datenabrufen
             $singelOutput["data"] = $this->GetArchivData($item["Variable"], $item["HighRes"], $item["Offset"], $date_start, $date_end, $Aggregationsstufe, $starData["datasets"]);
@@ -411,7 +440,6 @@ class SymconJSLiveChart extends JSLiveModule{
             }else{
                 $singelOutput["stack"] = "Stack " .$emptyGrpID;
             }
-
 
             //Axis
             $singelOutput["yAxisID"] = $item["Profile"];
@@ -600,6 +628,13 @@ class SymconJSLiveChart extends JSLiveModule{
         $period = $this->GetValue("Period");
         $relativ = $this->GetValue("Relativ");
         $highResSteps = $this->ReadPropertyInteger("data_highResSteps");
+        $counter = false;
+        $precision = 2;
+        if(AC_GetAggregationType($archiveControlID, $varId) == 1){
+            $precision = 5;
+            $counter = true;
+        }
+
 
         if($this->ReadPropertyBoolean("Debug")) $this->SendDebug("GetArchivData", "Start_Date: ".$date_start. " | End_Date: ".$date_end, 0);
 
@@ -628,6 +663,9 @@ class SymconJSLiveChart extends JSLiveModule{
         }
 
         $i = $highResSteps;
+        $oldVal = 0;
+
+
         foreach ($archivData as $item) {
             $i--;
             if($i <= 0){
@@ -640,10 +678,26 @@ class SymconJSLiveChart extends JSLiveModule{
                 continue;
             }
 
+            //counterdatenverabeitung
+            $val = $item[$mode];
+            if($counter && $mode == "Value"){
+                if($oldVal > 0.0){
+                    $val = $oldVal - $item[$mode];
+                    $this->SendDebug("TEST", "cur=>" . $item[$mode]. " | OV=>" . $oldVal . " | val=>" . $val, 0);
+                }else{
+                    $cur = GetValue($varId);
+                    $val = $val - $cur;
+                }
+                if($val < 0) $val = $val * -1;
+
+                $oldVal = $item[$mode];
+            }
+
+
             if ($jsconfig){
-                $val = number_format($item[$mode], 2, '.', '');
+                $val = number_format($val, $precision, '.', '');
             }else{
-                $val = round($item[$mode], 2);
+                $val = round($val, $precision);
             }
 
 
@@ -1123,7 +1177,6 @@ class SymconJSLiveChart extends JSLiveModule{
     }
     public function GetLink(bool $local = true){
         $sendData = array("InstanceID" => $this->InstanceID, "Type" => "GetLink", "local" => $local);
-
         $pData = $this->SendDataToParent(json_encode([
             'DataID' => "{751AABD7-E31D-024C-5CC0-82AC15B84095}",
             'Buffer' => utf8_encode(json_encode($sendData)),

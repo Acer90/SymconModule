@@ -115,7 +115,8 @@
             "type": "ExpansionPanel",
             "caption": "Data",
             "items": [
-                { "type": "NumberSpinner", "name": "data_highResSteps", "caption": "HighResolution Steps" }
+                { "type": "NumberSpinner", "name": "data_highResSteps", "caption": "HighResolution Steps" },
+                { "type": "CheckBox", "name": "data_loadAfterStartup", "caption": "load data after start"}
             ]
         },
         {
