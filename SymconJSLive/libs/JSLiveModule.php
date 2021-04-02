@@ -2,7 +2,7 @@
 
 class JSLiveModule extends IPSModule
 {
-    protected function json_encode_advanced(array $arr, $sequential_keys = false, $quotes = false, $beautiful_json = true) {
+    protected function json_encode_advanced(array $arr, $sequential_keys = false, $quotes = false, $beautiful_json = true, $decimals = 2) {
 
         $output = $this->isAssoc($arr) ? "{" : "[";
         $count = 0;
@@ -19,7 +19,11 @@ class JSLiveModule extends IPSModule
                 $output .= ($value ? 'true' : 'false');
             }
             else if (is_numeric($value)) {
-                $output .= $value;
+                if(is_float($value)){
+                    $output .= number_format($value, $decimals, '.', '');
+                }else{
+                    $output .= $value;
+                }
             }
             else {
                 $output .= ($quotes || $beautiful_json ? '"' : '') . $value . ($quotes || $beautiful_json ? '"' : '');
