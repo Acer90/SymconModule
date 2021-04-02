@@ -7,13 +7,13 @@ class SymconJSLiveChart extends JSLiveModule{
         parent::Create();
 
         $this->ConnectParent("{9FFF3FC0-FD51-C289-FA36-BC1C370946CF}");
+
+        //Expert
         $this->RegisterPropertyBoolean("Debug", false);
-
-
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
-        $this->RegisterPropertyString("title_text", "");
 
         //title
+        $this->RegisterPropertyString("title_text", "");
         $this->RegisterPropertyBoolean("title_display", false);
         $this->RegisterPropertyString("title_position", "top");
         $this->RegisterPropertyInteger("title_fontSize", 12);
@@ -50,13 +50,22 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->RegisterPropertyString("tooltips_position", "average");
         $this->RegisterPropertyString("tooltips_mode", "index");
         $this->RegisterPropertyInteger("tooltips_fontSize", 12);
-        $this->RegisterPropertyInteger("tooltips_fontColor", 65535);
+        $this->RegisterPropertyInteger("tooltips_fontColor", -1);
         $this->RegisterPropertyInteger("tooltips_backgroundColor", 0);
         $this->RegisterPropertyInteger("tooltips_cornerRadius", 5);
 
         //Data
         $this->RegisterPropertyInteger("data_highResSteps", 1);
         $this->RegisterPropertyBoolean("data_loadAfterStartup", true);
+
+        //Datalabels
+        $this->RegisterPropertyBoolean("datalabels_enabled", true);
+        $this->RegisterPropertyString("datalabels_anchoring", "start");
+        $this->RegisterPropertyString("datalabels_align", "center");
+        $this->RegisterPropertyBoolean("datalabels_clamp", false);
+        $this->RegisterPropertyInteger("datalabels_fontSize", 12);
+        $this->RegisterPropertyInteger("datalabels_fontColor", 0);
+        $this->RegisterPropertyInteger("datalabels_borderRadius", 12);
 
         //dataset
         $this->RegisterPropertyString("Datasets", "[]");
