@@ -26,6 +26,8 @@
                 { "type": "CheckBox", "name": "axes_display", "caption": "Display"},
                 { "type": "CheckBox", "name": "axes_showLabel", "caption": "Show Label"},
                 { "type": "CheckBox", "name": "axes_drawBorder", "caption": "Draw Border"},
+                { "type": "CheckBox", "name": "axes_drawTicks", "caption": "Draw Ticks"},
+                { "type": "CheckBox", "name": "axes_drawOnChartArea", "caption": "Draw On Chart Area"},
                 { "type": "Select", "name": "axes_labelText", "caption": "Label",
                     "options": [
                         { "caption": "Profilname", "value": 0 },
@@ -35,7 +37,8 @@
                 },
                 { "type": "NumberSpinner", "name": "axes_lineWidth", "caption": "LineWidth" },
                 { "type": "SelectColor", "name": "axes_color", "caption": "Color" },
-                { "type": "NumberSpinner", "name": "axes_colorAlpha", "caption": "Color Alpha", "maximum": 1, "minimum": 0, "digits": 2}
+                { "type": "NumberSpinner", "name": "axes_colorAlpha", "caption": "Color Alpha", "maximum": 1, "minimum": 0, "digits": 2},
+                { "type": "SelectColor", "name": "axes_fontColor", "caption": "Font Color" }
             ]
         },
         {
@@ -134,7 +137,7 @@
                 {
                     "caption": "Order",
                     "name": "Order",
-                    "width": "50px",
+                    "width": "150px",
                     "add": 0,
                     "edit": {
                         "type": "NumberSpinner",
@@ -145,7 +148,7 @@
                 {
                     "caption": "Type",
                     "name": "Type",
-                    "width": "80px",
+                    "width": "100px",
                     "add": "line",
                     "edit": {
                         "type": "Select",
@@ -164,7 +167,7 @@
                 {
                     "caption": "Variable",
                     "name": "Variable",
-                    "width": "75px",
+                    "width": "155px",
                     "add": 0,
                     "edit": {
                         "type": "SelectVariable"
@@ -182,7 +185,7 @@
                 {
                     "caption": "Profile",
                     "name": "Profile",
-                    "width": "75px",
+                    "width": "120px",
                     "add": "",
                     "edit": {
                         "type": "SelectProfile"
@@ -191,7 +194,7 @@
                 {
                     "caption": "Side",
                     "name": "Side",
-                    "width": "50px",
+                    "width": "100px",
                     "add": "left",
                     "edit": {
                         "type": "Select",
@@ -210,7 +213,7 @@
                 {
                     "caption": "Offset",
                     "name": "Offset",
-                    "width": "50px",
+                    "width": "70px",
                     "add": 0,
                     "edit": {
                         "type": "NumberSpinner",
@@ -222,7 +225,7 @@
                 {
                     "caption": "BackgroundColor",
                     "name": "BackgroundColor",
-                    "width": "80px",
+                    "width": "130px",
                     "add": "New!",
                     "edit": {
                         "type": "SelectColor"
@@ -231,7 +234,7 @@
                 {
                     "caption": "BorderColor",
                     "name": "BorderColor",
-                    "width": "80px",
+                    "width": "120px",
                     "add": 0,
                     "edit": {
                         "type": "SelectColor"
@@ -240,7 +243,7 @@
                 {
                     "caption": "BackgroundColor Alpha",
                     "name": "BackgroundColor_Alpha",
-                    "width": "75px",
+                    "width": "180px",
                     "add": 0.5,
                     "edit": {
                         "type": "NumberSpinner",
@@ -252,7 +255,7 @@
                 {
                     "caption": "BorderColor Alpha",
                     "name": "BorderColor_Alpha",
-                    "width": "75px",
+                    "width": "150px",
                     "add": 1.0,
                     "edit": {
                         "type": "NumberSpinner",
@@ -264,7 +267,7 @@
                 {
                     "caption": "Border Width",
                     "name": "BorderWidth",
-                    "width": "50px",
+                    "width": "120px",
                     "add": 2,
                     "edit": {
                         "type": "NumberSpinner",
@@ -275,7 +278,7 @@
                 {
                     "caption": "Dash",
                     "name": "Dash",
-                    "width": "50px",
+                    "width": "100px",
                     "add": "",
                     "edit": {
                         "type": "ValidationTextBox",
@@ -285,7 +288,7 @@
                 {
                     "caption": "HighRes",
                     "name": "HighRes",
-                    "width": "80px",
+                    "width": "150px",
                     "add": 7,
                     "edit": {
                         "type": "Select",
@@ -305,7 +308,7 @@
                 {
                     "caption": "Stack Group",
                     "name": "StackGroup",
-                    "width": "50px",
+                    "width": "140px",
                     "add": 0,
                     "edit": {
                         "type": "NumberSpinner",
