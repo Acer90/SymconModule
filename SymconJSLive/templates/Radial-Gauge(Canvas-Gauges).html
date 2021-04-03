@@ -21,7 +21,7 @@
 
 
     function LoadGauge(){
-        var gauge = new RadialGauge({
+        gauge = new RadialGauge({
             renderTo: 'gauge',
             width: 400,
             height: 400,
@@ -29,7 +29,7 @@
 
             value: 0,
             minValue: 0,
-            maxValue: 100,
+            maxValue: 2500,
 
 
             //
@@ -42,14 +42,14 @@
             tickSide: 'left', //“right”, “both”. => nur bei linear
             numberSide: 'left', //“right”, “both”. => nur bei linear
             majorTicks: [
-                '0','10','40','60','80','100'
+                '0','500','1000','1500','2000','2500'
             ],
             minorTicks: 5,
             strokeTicks: true,
             highlights: [
-                { from: 0, to: 30, color: 'rgba(0,255,0,1)' },
-                { from: 30, to: 80, color: 'rgba(255,255,0,0)' },
-                { from: 80, to: 100, color: 'rgba(255,255,0,1)' },
+                { from: 0, to: 500, color: 'rgba(0,255,0,1)' },
+                { from: 500, to: 2000, color: 'rgba(255,255,0,0)' },
+                { from: 2000, to: 2500, color: 'rgba(255,0,0,1)' },
                 //{ from: 100, to: 150, color: 'rgba(255,30,0,.25)' },
                 //{ from: 150, to: 200, color: 'rgba(255,0,225,.25)' },
                 //{ from: 200, to: 220, color: 'rgba(0,0,255,.25)' }
@@ -58,7 +58,7 @@
             colorMajorTicks: '#f5f5f5',
             colorMinorTicks: '#ddd',
             startAngle: 0, //=> nur bei Radial
-            ticksAngle: 180,//=> nur bei Radial
+            ticksAngle: 270,//=> nur bei Radial
 
 
             //colorPlate: 'rgba(255,0,0,1)',
@@ -126,9 +126,9 @@
     function UpdateGauge(id_val, val){
         isUpdated = false;
 
-        if(id_val = confiuration.variable){
-            console.log(val);
-            //gauge.value = val;
+        if(id_val == confiuration.variable){
+            //console.log(val);
+            gauge.value = val;
         }
     }
 
