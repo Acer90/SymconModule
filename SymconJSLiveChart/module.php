@@ -530,16 +530,19 @@ class SymconJSLiveChart extends JSLiveModule{
 
                 if(IPS_VariableProfileExists($item["Profile"])){
                     $profilData = IPS_GetVariableProfile($item["Profile"]);
-                    if($profilData["MaxValue"] != 0 || $profilData["MinValue"]  != 0){
+                    if($profilData["MaxValue"] != 0 || $profilData["MinValue"]  != 0 && $item["DynScale"]){
+
                         $axisoutput["ticks"]["suggestedMax"] = $profilData["MaxValue"];
                         $axisoutput["ticks"]["suggestedMin"] = $profilData["MinValue"];
 
                         $axisoutput["MinValue"] = $profilData["MaxValue"];
                         $axisoutput["MaxValue"] = $profilData["MinValue"];
 
-                        $axisoutput["Prefix"] = $profilData["Prefix"];
-                        $axisoutput["Suffix"] = $profilData["Suffix"];
+
                     }
+
+                    $axisoutput["Prefix"] = $profilData["Prefix"];
+                    $axisoutput["Suffix"] = $profilData["Suffix"];
 
                     if($profilData["StepSize"] > 0){
                         $axisoutput["ticks"]["stepSize"] = $profilData["StepSize"];
