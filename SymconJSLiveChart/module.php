@@ -221,76 +221,92 @@ class SymconJSLiveChart extends JSLiveModule{
     }
     public function GetData($querydata){
         $output = array();
+        $load_vars = array();
         $datasets = json_decode($this->ReadPropertyString("Datasets"), true);
+
+
+
         if(!array_key_exists("var", $querydata)) {
-            $this->SendDebug("GetData", "PARAMETER VARIABLE NOT SET!(" . json_encode($querydata). ")", 0);
-            return "PARAMETER VARIABLE NOT SET!(" . json_encode($querydata). ")";
-            return json_encode($output);
-        }
-        if(!IPS_VariableExists($querydata["var"])){
-            $this->SendDebug("GetData", "VARIABLE NOT EXIST!", 0);
-            return "VARIABLE NOT EXIST!";
-            return json_encode($output);
-        }
+            //$this->SendDebug("GetData", "PARAMETER VARIABLE NOT SET!(" . json_encode($querydata). ")", 0);
+            //load all variables
+            $load_vars = json_decode($this->GetBuffer("IdentIDList"), true);
 
-
-        $identIdlist = json_decode($this->GetBuffer("IdentIDList"), true);
-        $key = array_search($querydata["var"], array_column($datasets, 'Variable'));
-        if($key === false && !in_array($querydata["var"], $identIdlist)){
-            $this->SendDebug("GetData", "VARIABLE NOT IN INSTANCE!", 0);
-            return "VARIABLE NOT IN INSTANCE!";
-            return json_encode($output);
-        }
-
-        $output["Value"] = GetValue($querydata["var"]);
-
-        if($this->ReadPropertyBoolean("Debug"))
-            $this->SendDebug("GetData", json_encode($querydata), 0);
-
-        if(array_key_exists("start", $querydata) && array_key_exists("end", $querydata)){
-            $hires = 7;
-            $offset = 0;
-            $start = 0;
-            $end = 0;
-            $Aggregationsstufe = 7;
-            $period = $this->GetValue("Period");
-
-            if(array_key_exists("hires", $querydata)) $hires = $querydata["hires"];
-            if(array_key_exists("offset", $querydata)) $offset = $querydata["offset"];
-            if(array_key_exists("start", $querydata)) $start = $querydata["start"];
-            if(array_key_exists("end", $querydata)) $end = $querydata["end"];
-
-            if($hires != 7){
-                switch ($period){
-                    case 0:
-                        //Dekade
-                        $Aggregationsstufe = 4;
-                        break;
-                    case 1:
-                    case 2:
-                        //Jahr
-                        //Quartal
-                        $Aggregationsstufe = 3;
-                        break;
-                    case 3:
-                    case 4:
-                        //Monat
-                        //Woche
-                        $Aggregationsstufe = 1;
-                        break;
-                    case 5:
-                        //Tag
-                        $Aggregationsstufe = 0;
-                        break;
-                    case 6:
-                        //Stunde
-                        $Aggregationsstufe = 6;
-                        break;
-
+            foreach ($datasets as $item) {
+                if (!in_array($item["Variable"], $load_vars)) {
+                    $load_vars[] = $item["Variable"];
                 }
             }
+        }else{
+            $load_vars[] = $querydata["var"];
+        }
 
-            $output["archiv"] = $this->GetArchivData($querydata["var"], $hires, $offset, $start, $end, $Aggregationsstufe, 0, false);
+        foreach($load_vars as $var) {
+            $o_item = array();
+            $o_item["Variable"] = $var;
+            if (!IPS_VariableExists($var)) {
+                $this->SendDebug("GetData", "VARIABLE NOT EXIST!", 0);
+                continue;
+            }
+
+
+            $identIdlist = json_decode($this->GetBuffer("IdentIDList"), true);
+            $key = array_search($var, array_column($datasets, 'Variable'));
+            if ($key === false && !in_array($var, $identIdlist)) {
+                $this->SendDebug("GetData", "VARIABLE NOT IN INSTANCE!", 0);
+                continue;
+            }
+
+            $o_item["Value"] = GetValue($var);
+
+            if ($this->ReadPropertyBoolean("Debug"))
+                $this->SendDebug("GetData", json_encode($querydata), 0);
+
+            if (array_key_exists("start", $querydata) && array_key_exists("end", $querydata)) {
+                $hires = 7;
+                $offset = 0;
+                $start = 0;
+                $end = 0;
+                $Aggregationsstufe = 7;
+                $period = $this->GetValue("Period");
+
+                if (array_key_exists("hires", $querydata)) $hires = $querydata["hires"];
+                if (array_key_exists("offset", $querydata)) $offset = $querydata["offset"];
+                if (array_key_exists("start", $querydata)) $start = $querydata["start"];
+                if (array_key_exists("end", $querydata)) $end = $querydata["end"];
+
+                if ($hires != 7) {
+                    switch ($period) {
+                        case 0:
+                            //Dekade
+                            $Aggregationsstufe = 4;
+                            break;
+                        case 1:
+                        case 2:
+                            //Jahr
+                            //Quartal
+                            $Aggregationsstufe = 3;
+                            break;
+                        case 3:
+                        case 4:
+                            //Monat
+                            //Woche
+                            $Aggregationsstufe = 1;
+                            break;
+                        case 5:
+                            //Tag
+                            $Aggregationsstufe = 0;
+                            break;
+                        case 6:
+                            //Stunde
+                            $Aggregationsstufe = 6;
+                            break;
+
+                    }
+                }
+
+                $o_item["archiv"] = $this->GetArchivData($var, $hires, $offset, $start, $end, $Aggregationsstufe, 0, false);
+            }
+            $output[] = $o_item;
         }
         return json_encode($output);
     }

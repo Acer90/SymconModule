@@ -1,13 +1,14 @@
 <?
 include_once (__DIR__ . '/../SymconJSLive/libs/WebHookModule.php');
 
-class SymconJSLiveDoughnutPie extends JSLiveModule{
+class SymconJSLiveGauge extends JSLiveModule{
     public function Create() {
         //Never delete this line!
         parent::Create();
 
         $this->ConnectParent("{9FFF3FC0-FD51-C289-FA36-BC1C370946CF}");
 
+        $this->RegisterPropertyInteger("variable", 0);
         $this->RegisterPropertyString("type", "doughnut");
 
         //Expert
@@ -85,7 +86,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         if(empty($scriptID)){
             if($this->ReadPropertyBoolean("Debug"))
                 $this->SendDebug('GetWebpage', 'load default template!', 0);
-            $scriptData = file_get_contents (__DIR__ ."/../SymconJSLive/templates/Doughnut-PIE.html");
+            $scriptData = file_get_contents (__DIR__ ."/../SymconJSLive/templates/Radial-Gauge(Canvas-Gauges).html");
         }else{
             if(!IPS_ScriptExists($scriptID)){
                 $this->SendDebug('GetWebpage', 'Template NOT FOUND!', 0);
