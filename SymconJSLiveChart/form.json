@@ -129,6 +129,7 @@
             "rowCount": 5,
             "add": true,
             "delete": true,
+            "edit": true,
             "sort": {
                 "column": "Order",
                 "direction": "ascending"
@@ -167,7 +168,7 @@
                 {
                     "caption": "Variable",
                     "name": "Variable",
-                    "width": "155px",
+                    "width": "100px",
                     "add": 0,
                     "edit": {
                         "type": "SelectVariable"
@@ -194,7 +195,7 @@
                 {
                     "caption": "Side",
                     "name": "Side",
-                    "width": "100px",
+                    "width": "50px",
                     "add": "left",
                     "edit": {
                         "type": "Select",
@@ -213,7 +214,7 @@
                 {
                     "caption": "Offset",
                     "name": "Offset",
-                    "width": "70px",
+                    "width": "50px",
                     "add": 0,
                     "edit": {
                         "type": "NumberSpinner",
@@ -243,7 +244,7 @@
                 {
                     "caption": "BackgroundColor Alpha",
                     "name": "BackgroundColor_Alpha",
-                    "width": "180px",
+                    "width": "50px",
                     "add": 0.5,
                     "edit": {
                         "type": "NumberSpinner",
@@ -255,7 +256,7 @@
                 {
                     "caption": "BorderColor Alpha",
                     "name": "BorderColor_Alpha",
-                    "width": "150px",
+                    "width": "50px",
                     "add": 1.0,
                     "edit": {
                         "type": "NumberSpinner",
@@ -308,12 +309,21 @@
                 {
                     "caption": "Stack Group",
                     "name": "StackGroup",
-                    "width": "140px",
+                    "width": "50px",
                     "add": 0,
                     "edit": {
                         "type": "NumberSpinner",
                         "digits": 0,
                         "minimum": 0
+                    }
+                },
+                {
+                    "caption": "Dyn. Scale",
+                    "name": "DynScale",
+                    "width": "50px",
+                    "add": false,
+                    "edit": {
+                        "type": "CheckBox"
                     }
                 }
             ]
