@@ -9,7 +9,9 @@ class SymconJSLiveGauge extends JSLiveModule{
         $this->ConnectParent("{9FFF3FC0-FD51-C289-FA36-BC1C370946CF}");
 
         $this->RegisterPropertyInteger("variable", 0);
-        $this->RegisterPropertyString("type", "doughnut");
+        $this->RegisterPropertyInteger("min", 0);
+        $this->RegisterPropertyInteger("max", 1000);
+        $this->RegisterPropertyString("type", "radial");
 
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
@@ -18,42 +20,64 @@ class SymconJSLiveGauge extends JSLiveModule{
         //title
         $this->RegisterPropertyString("title_text", "");
         $this->RegisterPropertyBoolean("title_display", false);
-        $this->RegisterPropertyString("title_position", "top");
-        $this->RegisterPropertyInteger("title_fontSize", 12);
+        $this->RegisterPropertyInteger("title_fontSize", 20);
         $this->RegisterPropertyInteger("title_fontColor", 0);
 
-        //Legend
-        $this->RegisterPropertyBoolean("legend_display", true);
-        $this->RegisterPropertyString("legend_position", "top");
-        $this->RegisterPropertyString("legend_align", "center");
-        $this->RegisterPropertyInteger("legend_fontSize", 12);
-        $this->RegisterPropertyInteger("legend_fontColor", 0);
-        $this->RegisterPropertyInteger("legend_boxWidth", 40);
+        //Plate
+        $this->RegisterPropertyBoolean("plate_display", false);
+        $this->RegisterPropertyString("plate_unit", "");
+        $this->RegisterPropertyInteger("plate_colorPlate", 16777215);
+        $this->RegisterPropertyInteger("plate_colorPlate_Alpha", 1);
+        $this->RegisterPropertyInteger("plate_colorPlateEnd", 16777215);
+        $this->RegisterPropertyInteger("plate_colorPlateEnd_Alpha", 1);
 
-        //Tooltips
-        $this->RegisterPropertyBoolean("tooltips_enabled", true);
-        $this->RegisterPropertyString("tooltips_position", "average");
-        $this->RegisterPropertyString("tooltips_mode", "index");
-        $this->RegisterPropertyInteger("tooltips_fontSize", 12);
-        $this->RegisterPropertyInteger("tooltips_fontColor", 65535);
-        $this->RegisterPropertyInteger("tooltips_backgroundColor", 0);
-        $this->RegisterPropertyInteger("tooltips_cornerRadius", 5);
+        //Needle
+        $this->RegisterPropertyBoolean("needle_display", false);
+        $this->RegisterPropertyString("needle_Type", "arrow"); //"line"
+        $this->RegisterPropertyInteger("needle_fontSize", 14);
+        $this->RegisterPropertyInteger("needle_start", 0);
+        $this->RegisterPropertyInteger("needle_end", 80);
+        $this->RegisterPropertyInteger("needle_width", 2);
+        $this->RegisterPropertyInteger("needle_colorNeedle", 0);
+        $this->RegisterPropertyInteger("needle_colorNeedle_Alpha", 1);
+        $this->RegisterPropertyInteger("needle_colorNeedleEnd", 0);
+        $this->RegisterPropertyInteger("needle_colorNeedleEnd_Alpha", 1);
 
-        //Raotation
-        $this->RegisterPropertyInteger("rotation_start", 180);
-        $this->RegisterPropertyInteger("rotation_length", 360);
+        //Valuebox
+        $this->RegisterPropertyBoolean("valuebox_display", false);
+        $this->RegisterPropertyInteger("valuebox_fontSize", 14);
+        $this->RegisterPropertyInteger("valuebox_colorValueBoxBackground", 0);
+        $this->RegisterPropertyInteger("valuebox_colorValueBoxBackground_Alpha", 1);
 
-        //Datalabels
-        $this->RegisterPropertyBoolean("datalabels_enabled", true);
-        $this->RegisterPropertyString("datalabels_anchoring", "center");
-        $this->RegisterPropertyString("datalabels_align", "center");
-        $this->RegisterPropertyBoolean("datalabels_clamp", false);
-        $this->RegisterPropertyInteger("datalabels_fontSize", 12);
-        $this->RegisterPropertyInteger("datalabels_fontColor", 0);
-        $this->RegisterPropertyInteger("datalabels_borderRadius", 12);
+        //Progressbar
+        $this->RegisterPropertyBoolean("progressbar_display", false);
+        $this->RegisterPropertyInteger("progressbar_barWidth", 5);
+        $this->RegisterPropertyInteger("progressbar_barShadow", 1);
+        $this->RegisterPropertyInteger("progressbar_colorBar", 0);
+        $this->RegisterPropertyInteger("progressbar_colorBar_Alpha", 1);
+        $this->RegisterPropertyInteger("progressbar_colorBarProgress", 0);
+        $this->RegisterPropertyInteger("progressbar_colorBarProgress_Alpha", 1);
 
-        //dataset
-        $this->RegisterPropertyString("Datasets", "[]");
+        //Ticks
+        $this->RegisterPropertyBoolean("ticks_strokeTicks", false);
+        $this->RegisterPropertyInteger("ticks_highlightsWidth", 5);
+        $this->RegisterPropertyInteger("ticks_minorTicks", 5);
+        $this->RegisterPropertyInteger("ticks_colorMajorTick", 0);
+        $this->RegisterPropertyInteger("ticks_colorMinorTicks", 0);
+        $this->RegisterPropertyInteger("ticks_colorUnits", 0);
+        $this->RegisterPropertyInteger("ticks_colorNumbers", 0);
+
+        $this->RegisterPropertyString("Ticks", "[]");
+        $this->RegisterPropertyString("Highlights", "[]");
+
+        //Radialgauge settings
+        $this->RegisterPropertyInteger("radial_startAngle", 60);
+        $this->RegisterPropertyInteger("radial_ticksAngle", 270);
+
+        //linearsettings
+        $this->RegisterPropertyString("linear_tickSide", "both");
+        $this->RegisterPropertyString("linear_numberSide", "both");
+        $this->RegisterPropertyString("linear_needleSide", "both");
     }
     public function ApplyChanges() {
         //Never delete this line!
@@ -71,8 +95,6 @@ class SymconJSLiveGauge extends JSLiveModule{
         switch($buffer['cmd']) {
             case "getContend":
                 return $this->GetWebpage();
-            case "getUpdate":
-                return $this->GetUpdate();
             case "getData":
                 return $this->GetData($buffer['queryData']);
             default:
@@ -103,19 +125,6 @@ class SymconJSLiveGauge extends JSLiveModule{
         $scriptData = $this->ReplacePlaceholder($scriptData);
 
         return $scriptData;
-    }
-    public function GetUpdate(){
-        $updateData = array();
-
-        $data = $this->GenerateDataSet();
-        $updateData["DATASETS"] = $data["datasets"];
-        $updateData["AXES"] = $data["charts"];
-        $updateData["CONFIG"] = $this->GetConfigurationData();
-
-        $updateData["XAXES"] = $this->GenerateXAxesData();
-
-
-        return json_encode($updateData);
     }
     public function GetData($querydata){
         $output = array();
@@ -169,211 +178,56 @@ class SymconJSLiveGauge extends JSLiveModule{
     private function ReplacePlaceholder($htmlData){
         $htmlData = str_replace("{TITLE_TEXT}", $this->ReadPropertyString("title_text"), $htmlData);
 
-        //Title
-        $htmlData = str_replace("{TITLE}", $this->json_encode_advanced($this->GenerateTitleData()), $htmlData);
-
-        //data
-        $htmlData = str_replace("{DATA}", $this->json_encode_advanced($this->GenerateDataSet()), $htmlData);
-
-        //Legend
-        $htmlData = str_replace("{LEGEND}", $this->json_encode_advanced($this->GenerateLegendData()), $htmlData);
-
-        //Tooltipdata
-        $htmlData = str_replace("{TOOLTIPS}", $this->json_encode_advanced($this->GenerateTooltipData()), $htmlData);
-
         //configuration Data
         $htmlData = str_replace("{CONFIG}", $this->json_encode_advanced($this->GetConfigurationData()), $htmlData);
+
+        //ticks
+        $htmlData = str_replace("{TICKS}", $this->json_encode_advanced($this->GenerateTicks()), $htmlData);
+
+        //tHighlights
+        $htmlData = str_replace("{HIGHLIGHTS}", $this->json_encode_advanced($this->GenerateHighlights()), $htmlData);
+
+        //VALUE
+        $val = 0;
+        if(IPS_VariableExists($this->ReadPropertyInteger("variable"))){
+            $val = GetValue($this->ReadPropertyInteger("variable"));
+        }else{
+            $this->SendDebug("ReplacePlaceholder", "Variable (".$this->ReadPropertyInteger("variable").") NOT EXIST!", 0);
+        }
+        $htmlData = str_replace("{VALUE}", number_format($val, 2, '.', ''), $htmlData);
 
         return $htmlData;
     }
 
-    private function GenerateTitleData(){
-        $output = array();
-        $output["text"] = $this->ReadPropertyString("title_text");
-        $output["position"] = $this->ReadPropertyString("title_position");
-        $output["fontSize"] = $this->ReadPropertyInteger("title_fontSize");
+    private function GenerateTicks(){
+        $ticks = json_decode($this->ReadPropertyString("Ticks"), true);
+        $min = $this->ReadPropertyInteger("min");
+        $max = $this->ReadPropertyInteger("max");
+        $majorticks = array();
 
-        $output["display"] = $this->ReadPropertyBoolean("title_display");
-
-        if($this->ReadPropertyInteger("title_fontColor") >= 0) {
-            $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("title_fontColor"));
-            $output["fontColor"] = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
+        $majorticks[] = $min;
+        foreach ($ticks as $tick) {
+            $majorticks[] = $tick["Value"];
         }
-
-        return $output;
+        $majorticks[] = $max;
+        return $majorticks;
     }
-    private function GenerateTooltipData(){
-        $output = array();
-        $output["enabled"] = $this->ReadPropertyBoolean("tooltips_enabled");
-        $output["position"] = $this->ReadPropertyString("tooltips_position");
-        $output["mode"] = $this->ReadPropertyString("tooltips_mode");
 
-        $output["titleFontSize"] = $this->ReadPropertyInteger("tooltips_fontSize");
-        $output["bodyFontSize"] = $this->ReadPropertyInteger("tooltips_fontSize");
-        $output["footerFontSize"] = $this->ReadPropertyInteger("tooltips_fontSize");
+    private function GenerateHighlights(){
+        $arr = json_decode($this->ReadPropertyString("Highlights"), true);
+        $highlights = array();
 
-        $output["cornerRadius"] = $this->ReadPropertyInteger("tooltips_cornerRadius");
+        foreach ($arr as $item){
+            $highlight_item = array();
+            $highlight_item["from"] = $item["From"];
+            $highlight_item["to"] = $item["To"];
 
-        if($this->ReadPropertyInteger("tooltips_fontColor") >= 0){
-            $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("tooltips_fontColor"));
-            $output["titleFontColor"] = "rgb(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"]. ")";
-            $output["bodyFontColor"] = "rgb(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"]. ")";
-            $output["footerFontColor"] = "rgb(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"]. ")";
+            $rgbdata = $this->HexToRGB($item["HighlightColor"]);
+            $highlight_item["color"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["HighlightColor_Alpha"], 2, '.', '') . ")";
+
+            $highlights[] = $highlight_item;
         }
-        if($this->ReadPropertyInteger("tooltips_backgroundColor") >= 0) {
-            $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("tooltips_backgroundColor"));
-            $output["backgroundColor"] = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
-        }
-
-        return $output;
-
-    }
-    private function GenerateLegendData(){
-        $output = array();
-        $output["display"] = $this->ReadPropertyBoolean("legend_display");
-        $output["position"] = $this->ReadPropertyString("legend_position");
-        $output["align"] = $this->ReadPropertyString("legend_align");
-
-        if($this->ReadPropertyInteger("legend_fontColor") >= 0){
-            $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("legend_fontColor"));
-            $output["labels"]["fontColor"] = "rgb(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"]. ")";
-        }
-        $output["labels"]["fontSize"] = $this->ReadPropertyInteger("legend_fontSize");
-        $output["labels"]["boxWidth"] = $this->ReadPropertyInteger("legend_boxWidth");
-
-        return $output;
-
-    }
-    private function GenerateDataSet(){
-        $archiveControlID = IPS_GetInstanceListByModuleID('{43192F0B-135B-4CE7-A0A7-1475603F3060}')[0];
-        $output["datasets"] = array();
-        $output["labels"] = array();
-        $output["suffix"] = array();
-        $output["prefix"] = array();
-        $i = 0;
-        $datasets = json_decode($this->ReadPropertyString("Datasets"),true);
-
-        //sortieren aufsteigend nach order
-        $arr_order = array_column($datasets, 'Order');
-        array_multisort($arr_order, SORT_ASC , $datasets);
-
-
-        if(!is_array($datasets)){
-            $this->SendDebug("GenerateDataSet", "No Datasets set!", 0);
-            return "{}";
-        }
-        foreach($datasets as $item){
-            if(count($item["Variables"]) == 0){
-                $this->SendDebug("GenerateDataSet", "No Variables set! Jump to next Dataset!", 0);
-                continue;
-            }
-
-            $singelOutput = array();
-            $singelOutput["order"] = $item["Order"];
-
-            //beim richtigen index starten
-            for($n = 0; $n < $i; $n++){
-                $singelOutput["variables"][] = null;
-                $singelOutput["data"][] = null;
-                $singelOutput["borderWidth"][] = null;
-                $singelOutput["backgroundColor"][] = null;
-                $singelOutput["borderColor"][] = null;
-            }
-
-            //Variablen sortieren aufsteigend nach order
-            $arr_order = array_column($item["Variables"], 'Order');
-            array_multisort($arr_order, SORT_ASC , $item["Variables"]);
-
-            foreach($item["Variables"] as $varitem){
-                if(!IPS_VariableExists($varitem["Variable"])) {
-                    $this->SendDebug("GenerateDataSet", "VARIABLE " .$item["Variable"] . " NOT EXIST!", 0);
-                    continue;
-                }
-
-                if(in_array($varitem["Label"], $output["labels"])){
-                    $key = array_search($varitem["Label"], $output["labels"]);
-                    $singelOutput["variables"][$key] = $varitem["Variable"];
-                    $singelOutput["data"][$key] = GetValue($varitem["Variable"]);
-
-                    $rgbdata = $this->HexToRGB($varitem["BackgroundColor"]);
-                    $singelOutput["backgroundColor"][$key] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($varitem["BackgroundColor_Alpha"], 2, '.', '').")";
-
-                    $rgbdata = $this->HexToRGB($varitem["BorderColor"]);
-                    $singelOutput["borderColor"][] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($varitem["BorderColor_Alpha"], 2, '.', '').")";
-
-
-                    if(IPS_VariableProfileExists($varitem["Profile"])) {
-                        $profilData = IPS_GetVariableProfile($varitem["Profile"]);
-                        $output["prefix"][] = $profilData["Prefix"];
-                        $output["suffix"][] = $profilData["Suffix"];
-                    }
-                }else{
-                    $output["labels"][] = $varitem["Label"];
-
-                    $singelOutput["variables"][] = $varitem["Variable"];
-                    $singelOutput["data"][] = GetValue($varitem["Variable"]);
-
-                    $rgbdata = $this->HexToRGB($varitem["BackgroundColor"]);
-                    $singelOutput["backgroundColor"][] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($varitem["BackgroundColor_Alpha"], 2, '.', '').")";
-
-                    $rgbdata = $this->HexToRGB($varitem["BorderColor"]);
-                    $singelOutput["borderColor"][] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($varitem["BorderColor_Alpha"], 2, '.', '').")";
-
-                    $singelOutput["borderWidth"][] = $varitem["BorderWidth"];
-                    if(IPS_VariableProfileExists($varitem["Profile"])) {
-                        $profilData = IPS_GetVariableProfile($varitem["Profile"]);
-                        $output["prefix"][] = $profilData["Prefix"];
-                        $output["suffix"][] = $profilData["Suffix"];
-                    }
-                    $i++;
-                }
-            }
-
-            $output["datasets"][] = $singelOutput;
-        }
-
-        //datasets auffüllen mit 0
-        $start = 0;
-        $c = 0;
-        $end = 0;
-        foreach($output["datasets"] as $key => $val){
-            for($n = count($val["variables"]); $n < $i; $n++){
-                if($c >= count($output["datasets"])){
-                    //Reslichen überspringen
-                    continue;
-                }
-
-                if($end <= $start){
-                    $start = count($output["datasets"][$c]["variables"]);
-                    $c++;
-
-                    if((count($output["datasets"])-1) >= $c){
-                        //$this->SendDebug("VAR", json_encode($output["datasets"][$c]["variables"]), 0);
-                        $end = count($output["datasets"][$c]["variables"]) - 1;
-                    }else{
-                        $end = $start;
-                    }
-                }else{
-                    $start++;
-                }
-                if($c >= count($output["datasets"])){
-                    //Reslichen überspringen
-                    continue;
-                }
-
-                $output["datasets"][$key]["variables"][] = null;
-                $output["datasets"][$key]["data"][] = null;
-
-                //$this->SendDebug("Count", "C=".$c ." | Start=" . $start . " | END=". $end, 0);
-                //$this->SendDebug("Test", json_encode($output["datasets"][$c]["backgroundColor"]), 0);
-                //$this->SendDebug("Test", $output["datasets"][$c]["backgroundColor"][$start], 0);
-
-                $output["datasets"][$key]["borderWidth"][] = $output["datasets"][$c]["borderWidth"][$start];
-                $output["datasets"][$key]["backgroundColor"][] = $output["datasets"][$c]["backgroundColor"][$start];
-                $output["datasets"][$key]["borderColor"][] = $output["datasets"][$c]["borderColor"][$start];
-            }
-        }
-        return $output;
+        return $highlights;
     }
 
     private function GetConfigurationData(){
@@ -383,16 +237,29 @@ class SymconJSLiveGauge extends JSLiveModule{
 
         //alle colorvariablen umwandeln!
         foreach($output as $key => $val){
-            $pos = strpos($key, "Color");
-            if ($pos !== false) {
-                $rgbdata = $this->HexToRGB($val);
-                $output[$key] = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
+            $pos = strpos(strtolower($key), "color");
+            $pos2 = strpos(strtolower($key), "alpha");
+            if ($pos !== false && $pos2 === false) {
+
+                if(array_key_exists($key."_Alpha", $output)){
+                    $rgbdata = $this->HexToRGB($val);
+                    $output[$key] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", ".$output[$key."_Alpha"].")";
+                }else{
+                    $rgbdata = $this->HexToRGB($val);
+                    $output[$key] = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
+                }
             }
         }
 
-        //remove Dataset
-        unset($output["Datasets"]);
 
+
+        if(!$this->ReadPropertyBoolean("plate_display")){
+            $output["plate_colorPlate"] = "rgba(0, 0, 0, 0)";
+            $output["plate_colorPlateEnd"] = "rgba(0, 0, 0, 0)";
+        }
+
+        unset($output["Ticks"]);
+        unset($output["Highlights"]);
         return $output;
     }
 
