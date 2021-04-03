@@ -433,11 +433,16 @@ class SymconJSLiveChart extends JSLiveModule{
             $singelOutput["order"] = $item["Order"];
 
 
-            $rgbdata = $this->HexToRGB($item["BackgroundColor"]);
-            $singelOutput["backgroundColor"] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($item["BackgroundColor_Alpha"], 2, '.', '').")";
+            if($item["BackgroundColor"] >= 0) {
+                $rgbdata = $this->HexToRGB($item["BackgroundColor"]);
+                $singelOutput["backgroundColor"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["BackgroundColor_Alpha"], 2, '.', '') . ")";
+            }
 
-            $rgbdata = $this->HexToRGB($item["BorderColor"]);
-            $singelOutput["borderColor"] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($item["BorderColor_Alpha"], 2, '.', '').")";
+            if($item["BorderColor"] >= 0) {
+                $rgbdata = $this->HexToRGB($item["BorderColor"]);
+                $singelOutput["borderColor"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["BorderColor_Alpha"], 2, '.', '') . ")";
+            }
+
             $singelOutput["borderWidth"] = $item["BorderWidth"];
 
             $singelOutput["highRes"] = $item["HighRes"];

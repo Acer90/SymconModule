@@ -23,9 +23,10 @@
     function LoadGauge(){
         gauge = new RadialGauge({
             renderTo: 'gauge',
-            width: 400,
-            height: 400,
-            units: 'Km/h',
+
+
+            height: window.innerHeight-20,
+            units: 'Wh',
 
             value: 0,
             minValue: 0,
@@ -49,21 +50,23 @@
             highlights: [
                 { from: 0, to: 500, color: 'rgba(0,255,0,1)' },
                 { from: 500, to: 2000, color: 'rgba(255,255,0,0)' },
+                { from: 1800, to: 2000, color: 'rgba(255,255,0,1)' },
                 { from: 2000, to: 2500, color: 'rgba(255,0,0,1)' },
                 //{ from: 100, to: 150, color: 'rgba(255,30,0,.25)' },
                 //{ from: 150, to: 200, color: 'rgba(255,0,225,.25)' },
                 //{ from: 200, to: 220, color: 'rgba(0,0,255,.25)' }
             ],
             highlightsWidth: 5,
-            colorMajorTicks: '#f5f5f5',
-            colorMinorTicks: '#ddd',
-            startAngle: 0, //=> nur bei Radial
-            ticksAngle: 270,//=> nur bei Radial
+            colorMajorTicks: '#000',
+            colorMinorTicks: '#000',
+            startAngle: 30, //=> nur bei Radial
+            ticksAngle: 300,//=> nur bei Radial
 
 
             //colorPlate: 'rgba(255,0,0,1)',
             //colorPlateEnd: 'rgba(255,0,0,1)',
             borderShadowWidth: 0,
+            borderOuterWidth: 0,
             borders: false,
 
             needle: true,//show needle
@@ -83,11 +86,27 @@
 
 
             //valuebox
-            valueBox: false,
+            valueBox: true,
+            colorValueBoxBackground: 'rgba(255, 0, 122, 0)',
+            colorValueBoxShadow: false,//'rgba(255, 0, 122, 0)'
+
+            valueBoxBorderRadius: 0,
+            valueTextShadow: false,
+            valueBoxStroke: 0,
+            valueBoxWidth: 10,
 
 
 
-            animationRule: 'bounce',
+            //progressbar
+            colorBar: 'rgb(86,12,50)',
+            colorBarProgress:  'rgb(202,22,104)',
+
+            barShadow: 1,
+            barWidth: 20,
+            //barStartPosition: 'right',
+
+
+            animationRule: 'linear', //”, “quad”, “quint”, “cycle”, “bounce”, “elastic”  “dequad”, “dequint”, “decycle”, “debounce”, “delastic”.
             animationDuration: 500
         });
 
