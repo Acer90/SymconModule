@@ -8,7 +8,7 @@
 <script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
 <script src="{ADDRESS}/hook/JSLive/js/canvas-gauges/gauge.min.js"></script>
 
-<body>
+<body style="text-align: center;">
 <canvas id="gauge"></canvas>
 
 <script>
@@ -28,84 +28,68 @@
         gauge_config = {
             renderTo: 'gauge',
             height: window.innerHeight-20,
+            minValue: 0,
+            maxValue: 360,
+            majorTicks: [
+                "N",
+                "NE",
+                "E",
+                "SE",
+                "S",
+                "SW",
+                "W",
+                "NW",
+                "N"
+            ],
+            minorTicks: 22,
+            ticksAngle: 360,
+            startAngle: 180,
+            strokeTicks: false,
+            highlights: false,
 
-            units: confiuration.plate_unit,
-
-            value: {VALUE},
-            minValue: confiuration.min,
-            maxValue: confiuration.max,
-
-            //title
             title: confiuration.title_text, //false deaktiviert!
             colorTitle: confiuration.title_fontColor,
             fontTitleSize: confiuration.title_fontSize,
+            units: confiuration.plate_unit,
 
-            //plate
             colorPlate: confiuration.plate_colorPlate,
             colorPlateEnd: confiuration.plate_colorPlateEnd,
-            borderShadowWidth: 0,
-            borderOuterWidth: 0,
-            borders: false,
 
-            //needle
-            needle: confiuration.needle_display,//show needle
-            needleType: confiuration.needle_Type, // arrow
-            needleStart: confiuration.needle_start, //in %
-            needleEnd: confiuration.needle_end,//in %
-            needleWidth: confiuration.needle_width, //in Px
-            colorNeedle: confiuration.needle_colorNeedle,
-            colorNeedleEnd: confiuration.needle_colorNeedleEnd,
-            needleSide: confiuration.linear_needleSide, //“right”, “both” => nur bei linear
-
-            //valuebox
-            valueBox: confiuration.valuebox_display,
-            colorValueBoxBackground: confiuration.valuebox_colorValueBoxBackground,
-            colorValueBoxShadow: false,//'rgba(255, 0, 122, 0)'
-
-            valueBoxBorderRadius: 0,
-            valueTextShadow: false,
-            valueBoxStroke: 0,
-            valueBoxWidth: 10,
-
-            //progressbar
-            colorBar: confiuration.progressbar_colorBar,
-            colorBarProgress:  confiuration.progressbar_colorBarProgress,
-            barShadow: confiuration.progressbar_barShadow,
-            barWidth: confiuration.progressbar_barWidth,
-            barBeginCircle: false,
-            //barStartPosition: 'right',
-
-            //Ticks
-            tickSide: confiuration.linear_tickSide, //“right”, “both”. => nur bei linear
-            numberSide: confiuration.linear_numberSide, //“right”, “both”. => nur bei linear
-            startAngle: confiuration.radial_startAngle, //=> nur bei Radial
-            ticksAngle: confiuration.radial_ticksAngle,//=> nur bei Radial
             colorMajorTicks: confiuration.ticks_colorMajorTick,
             colorMinorTicks: confiuration.ticks_colorMinorTicks,
             colorUnits: confiuration.ticks_colorUnits,
             colorNumbers: confiuration.ticks_colorNumbers,
-            minorTicks: confiuration.ticks_minorTicks,
-            strokeTicks: confiuration.ticks_strokeTicks,
-            highlightsWidth: confiuration.ticks_highlightsWidth,
-            highlights: config_highlights,
-            majorTicks: config_ticks,
 
+            colorNeedle: confiuration.needle_colorNeedle,
+            colorNeedleEnd: confiuration.needle_colorNeedleEnd,
+            valueBox: false,
+            valueTextShadow: false,
+            colorCircleInner: "#fff",
+            colorNeedleCircleOuter: "#ccc",
+            needleCircleSize: 15,
+            needleCircleOuter: false,
 
+            animationRule: "linear",
+            needleType: "line",
+            needleStart: 75,
+            needleEnd: 99,
+            needleWidth: 3,
 
-            animationRule: 'linear', //”, “quad”, “quint”, “cycle”, “bounce”, “elastic”  “dequad”, “dequint”, “decycle”, “debounce”, “delastic”.
-            animationDuration: 500
+            borders: true,
+            borderInnerWidth: 0,
+            borderMiddleWidth: 0,
+            borderOuterWidth: 10,
+            colorBorderOuter: "#ccc",
+            colorBorderOuterEnd: "#ccc",
+            colorNeedleShadowDown: "#222",
+            borderShadowWidth: 0,
+            animationTarget: "plate",
+            animationDuration: 1500
         }
 
-        switch (confiuration.type){
-            case "radial":
-                gauge = new RadialGauge(gauge_config);
-                break;
-            case "linear":
-                gauge = new LinearGauge(gauge_config);
-                break;
-        }
-
+        gauge = new RadialGauge(gauge_config);
         gauge.draw();
+        gauge.value = curValue;
     }
 
     function connect() {

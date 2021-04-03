@@ -4,10 +4,12 @@
         { "type": "SelectVariable", "name": "variable", "caption": "Variable" },
         { "type": "NumberSpinner", "name": "min", "caption": "Min" ,"digits": 2 },
         { "type": "NumberSpinner", "name": "max", "caption": "Max" ,"digits": 2 },
-        { "type": "Select", "name": "type", "caption": "Type",
+        { "type": "Select", "name": "template", "caption": "Template",
             "options": [
-                { "caption": "Radial", "value": "radial" },
-                { "caption": "Linear", "value": "linear" }
+                { "caption": "CanvasGauges-Radial", "value": "CanvasGauges-Radial" },
+                { "caption": "CanvasGauges-Linear", "value": "CanvasGauges-Linear" },
+                { "caption":  "CanvasGauges-Linear(vertical)", "value":  "CanvasGauges-Linear(vertical)"},
+                { "caption":  "CanvasGauges-Compass", "value":  "CanvasGauges-Compass"}
             ]
         },
         {
