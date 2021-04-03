@@ -50,7 +50,7 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->RegisterPropertyString("tooltips_position", "average");
         $this->RegisterPropertyString("tooltips_mode", "index");
         $this->RegisterPropertyInteger("tooltips_fontSize", 12);
-        $this->RegisterPropertyInteger("tooltips_fontColor", -1);
+        $this->RegisterPropertyInteger("tooltips_fontColor", 16777215);
         $this->RegisterPropertyInteger("tooltips_backgroundColor", 0);
         $this->RegisterPropertyInteger("tooltips_cornerRadius", 5);
 
