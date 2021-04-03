@@ -135,10 +135,10 @@
             try {
                 //console.log("PullNewData => ", Date.now());
                 dt_val = Math.floor(Date.now() / 1000);
-
-                //akutaliesieren der daten
-                myChart.data.datasets.forEach(function (part, index) {
-                    PullSingleData(part.variable, dt_val);
+                $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                    data.forEach(function (part, index) {
+                        UpdateChart(part.Variable, dt_val, part.Value);
+                    });
                 });
 
                 //Control Variables
@@ -147,14 +147,6 @@
             }
             await sleep(refreshRate);
         }
-    }
-    async function PullSingleData(id_val, dt_val, UpdateVar = false){
-        //console.log("PullSingleData: Var => "+ id_val + " Updatetyp: " + UpdateVar );
-        $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}&var=" + id_val, function (data) {
-            //console.log("PullSingleData: " + id_val + " => " +data.Value);
-
-            UpdateChart(id_val, dt_val, data.Value);
-        });
     }
 
     function UpdateTooltipLabel(tooltipItem, data){

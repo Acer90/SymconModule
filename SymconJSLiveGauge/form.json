@@ -1,0 +1,103 @@
+{
+    "elements":
+    [
+        { "type": "SelectVariable", "name": "variable", "caption": "Variable" },
+        { "type": "Select", "name": "template", "caption": "Template",
+            "options": [
+                { "caption": "Pie", "value": "pie" },
+                { "caption": "Doughnut", "value": "doughnut" }
+            ]
+        },
+        { "type": "NumberSpinner", "name": "width", "caption": "Width", "suffix": "px"},
+        { "type": "NumberSpinner", "name": "height", "caption": "Height", "suffix": "px"},
+        {
+            "type": "ExpansionPanel",
+            "caption": "Title",
+            "items": [
+                { "type": "CheckBox", "name": "title_display", "caption": "Display"},
+                { "type": "ValidationTextBox", "name": "title_text", "caption": "Text" },
+                { "type": "NumberSpinner", "name": "title_fontSize", "caption": "FontSize" },
+                { "type": "SelectColor", "name": "title_fontColor", "caption": "FontColor" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Radial Gauge Settings",
+            "items": [
+                { "type": "NumberSpinner", "name": "radial_startAngle", "caption": "Start Angle", "suffix": "°"},
+                { "type": "NumberSpinner", "name": "radial_ticksAngle", "caption": "Ticks Angle", "suffix": "°"}
+            ]
+        },
+        {
+            "type": "List",
+            "name": "Ticks",
+            "caption": "Ticks",
+            "rowCount": 5,
+            "add": true,
+            "delete": true,
+            "sort": {
+                "column": "Value",
+                "direction": "ascending"
+            },
+            "columns": [
+                {
+                    "caption": "Value",
+                    "name": "Value",
+                    "width": "150px",
+                    "add": 0,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 0,
+                        "minimum": 0
+                    }
+                },
+                {
+                    "caption": "HighlightColor",
+                    "name": "HighlightColor",
+                    "width": "130px",
+                    "add": -1,
+                    "edit": {
+                        "type": "SelectColor"
+                    }
+                },
+                {
+                    "caption": "HighlightColor Alpha",
+                    "name": "HighlightColor_Alpha",
+                    "width": "180px",
+                    "add": 1.0,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 2,
+                        "maximum": 1,
+                        "minimum": 0
+                    }
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Expert",
+            "items": [
+                { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
+                { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script"}
+            ]
+        }
+    ],
+    "actions":
+    [
+        {
+            "type": "RowLayout",
+            "items": [
+                { "type": "Button", "label": "Get Link (Local)", "onClick": " echo SymconJSLiveGauge_GetLink($id, True);" },
+                { "type": "Button", "label": "Get Link (Remote)", "onClick": " echo SymconJSLiveGauge_GetLink($id, False);" }
+            ]
+        },
+        { "type": "Label", "caption": "Load Configuration from other Modul" },
+        { "type": "SelectObject", "name": "ObjectID", "caption": "Chart/Modul" },
+        { "type": "Button", "label": "Load Confiuration", "onClick": " echo SymconJSLiveGauge_LoadOtherConfiguration($id, $ObjectID);" }
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Status OK!" }
+    ]
+}

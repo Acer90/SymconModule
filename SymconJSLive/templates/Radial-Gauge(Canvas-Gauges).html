@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{TITLE_TEXT}</title>
+</head>
+<script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
+<script src="{ADDRESS}/hook/JSLive/js/canvas-gauges/gauge.min.js"></script>
+
+<body>
+<canvas id="gauge"></canvas>
+
+<script>
+    let gauge;
+
+    let config_global = {GLOBAL};
+    let confiuration = {CONFIG};
+
+    let config_data = {DATA};
+
+
+    function LoadGauge(){
+        var gauge = new RadialGauge({
+            renderTo: 'gauge',
+            width: 400,
+            height: 400,
+            units: 'Km/h',
+
+            value: 0,
+            minValue: 0,
+            maxValue: 100,
+
+
+            //
+            title: "test", //false deaktiviert!
+            colorTitle: '#000',
+            fontTitleSize: 20,
+
+
+            //ticks
+            tickSide: 'left', //“right”, “both”. => nur bei linear
+            numberSide: 'left', //“right”, “both”. => nur bei linear
+            majorTicks: [
+                '0','10','40','60','80','100'
+            ],
+            minorTicks: 5,
+            strokeTicks: true,
+            highlights: [
+                { from: 0, to: 30, color: 'rgba(0,255,0,1)' },
+                { from: 30, to: 80, color: 'rgba(255,255,0,0)' },
+                { from: 80, to: 100, color: 'rgba(255,255,0,1)' },
+                //{ from: 100, to: 150, color: 'rgba(255,30,0,.25)' },
+                //{ from: 150, to: 200, color: 'rgba(255,0,225,.25)' },
+                //{ from: 200, to: 220, color: 'rgba(0,0,255,.25)' }
+            ],
+            highlightsWidth: 5,
+            colorMajorTicks: '#f5f5f5',
+            colorMinorTicks: '#ddd',
+            startAngle: 0, //=> nur bei Radial
+            ticksAngle: 180,//=> nur bei Radial
+
+
+            //colorPlate: 'rgba(255,0,0,1)',
+            //colorPlateEnd: 'rgba(255,0,0,1)',
+            borderShadowWidth: 0,
+            borders: false,
+
+            needle: true,//show needle
+            needleType: "line", // arrow
+            needleStart: 0, //in %
+            needleEnd: 100,//in %
+            needleWidth: 1, //in Px
+            colorNeedle: 'rgba(240, 128, 128, 1)',
+            colorNeedleEnd: 'rgba(255, 0, 122, 1)',
+            needleSide: 'left', //“right”, “both” => nur bei linear
+
+
+
+
+            colorUnits: '#ccc',
+            colorNumbers: '#000',
+
+
+            //valuebox
+            valueBox: false,
+
+
+
+            animationRule: 'bounce',
+            animationDuration: 500
+        });
+
+        gauge.draw();
+    }
+
+    function connect() {
+        var ws = new WebSocket('{WSADDRESS}', [encodeURIComponent(btoa('webfront:{WEBFRONTPASSWORD}'))]);
+        ws.onopen = function() {
+            // subscribe to some channels
+            //ws.send(JSON.stringify({
+            //.... some message the I must send when I connect ....
+            //}));
+        };
+
+        ws.onmessage = function(e) {
+            data = JSON.parse(e.data);
+            if(data.Message == 10603) {
+                UpdateGauge(data.SenderID, data.Data[0]);
+            }
+        };
+
+        ws.onclose = function(e) {
+            console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+            setTimeout(function() {
+                connect();
+            }, 1000);
+        };
+
+        ws.onerror = function(err) {
+            console.error('Socket encountered error: ', err.message, 'Closing socket');
+            ws.close();
+        };
+    }
+
+    function UpdateGauge(id_val, val){
+        isUpdated = false;
+
+        if(id_val = confiuration.variable){
+            console.log(val);
+            //gauge.value = val;
+        }
+    }
+
+    async function PullNewData(refreshRate){
+        refreshRate = refreshRate * 1000;
+        while (true){
+            try {
+                $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                    data.forEach(function (part, index) {
+                        UpdateGauge(part.Variable, part.Value);
+                    });
+                });
+
+                //Control Variables
+            }catch (e) {
+                console.log("PullNewData => ", e);
+            }
+            await sleep(refreshRate);
+        }
+    }
+
+    function filterKeys(obj, func) {
+        return Array.prototype.filter.call(Object.keys(obj), func, obj);
+    }
+    function someKeys(obj, func) {
+        return Array.prototype.some.call(Object.keys(obj), func, obj);
+    }
+    function atLeastOnePropertyMatches(obj, requiredProp) {
+        return someKeys(obj, function (prop) {
+            if (requiredProp.hasOwnProperty(prop)) {
+                return this[prop] === requiredProp[prop];
+            }
+        });
+    }
+    function getMatchingKeys(obj, requiredProp) {
+        return filterKeys(obj, function (prop) {
+            return atLeastOnePropertyMatches(this[prop], required);
+        });
+    }
+    Array.prototype.insert = function ( index, item ) {
+        this.splice( index, 0, item );
+    };
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    window.onload = function() {
+        LoadGauge();
+
+        if(config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0){
+            //pullup Mode local
+            refreshRate = config_global.LocalRefreshTime;
+            PullNewData(refreshRate);
+        }else if(config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0){
+            //pullup Mode remote
+            refreshRate = config_global.RemoteRefreshTime;
+            PullNewData(refreshRate);
+        }else{
+            connect();
+        }
+    }
+</script>
+</body>
+</html>

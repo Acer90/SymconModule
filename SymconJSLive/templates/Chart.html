@@ -408,44 +408,29 @@
         refreshRate = refreshRate * 1000;
         while (true){
             try {
-                //console.log("PullNewData => ", Date.now());
                 dt_val = Math.floor(Date.now() / 1000);
+                $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                    data.forEach(function (part, index) {
+                        UpdateChart(part.Variable, dt_val, part.Value);
 
-                //akutaliesieren der daten
-                myChart.data.datasets.forEach(function (part, index) {
-                    if(part.offset == 0){
-                        PullSingleData(part.variable, dt_val);
-                    }
+                        if(update_vars.includes(part.Variable)) {
+                            if(part.Variable in update_vars_Values){
+                                //prüfen ob änderung und gegbfalls daten aktuallieseren
+                                if(update_vars_Values[part.Variable] != part.Value){
+                                    update_vars_Values[part.Variable] = part.Value;
+                                    ReloadChart(part.Variable, dt_val);
+                                }
+                            }else{
+                                update_vars_Values[part.Variable] = part.Value;
+                            }
+                        }
+                    });
                 });
-
-                update_vars.forEach(function (part, index){
-                    PullSingleData(part, dt_val, true);
-                });
-                //Control Variables
             }catch (e) {
                 console.log("PullNewData => ", e);
             }
             await sleep(refreshRate);
         }
-    }
-    async function PullSingleData(id_val, dt_val, UpdateVar = false){
-        //console.log("PullSingleData: Var => "+ id_val + " Updatetyp: " + UpdateVar );
-        $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}&var=" + id_val, function (data) {
-            //console.log("PullSingleData: " + id_val + " => " +data.Value);
-            if(!UpdateVar){
-                UpdateChart(id_val, dt_val, data.Value);
-            }else{
-                if(id_val in update_vars_Values){
-                    //prüfen ob änderung und gegbfalls daten aktuallieseren
-                    if(update_vars_Values[id_val] != data.Value){
-                        update_vars_Values[id_val] = data.Value;
-                        ReloadChart(id_val, dt_val);
-                    }
-                }else{
-                    update_vars_Values[id_val] = data.Value;
-                }
-            }
-        });
     }
 
     function GetStartEndDate(date) {
