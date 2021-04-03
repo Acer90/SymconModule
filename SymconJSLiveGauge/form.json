@@ -4,12 +4,10 @@
         { "type": "SelectVariable", "name": "variable", "caption": "Variable" },
         { "type": "Select", "name": "template", "caption": "Template",
             "options": [
-                { "caption": "Pie", "value": "pie" },
-                { "caption": "Doughnut", "value": "doughnut" }
+                { "caption": "Radial", "value": "radial" },
+                { "caption": "Linear", "value": "linear" }
             ]
         },
-        { "type": "NumberSpinner", "name": "width", "caption": "Width", "suffix": "px"},
-        { "type": "NumberSpinner", "name": "height", "caption": "Height", "suffix": "px"},
         {
             "type": "ExpansionPanel",
             "caption": "Title",
@@ -22,10 +20,62 @@
         },
         {
             "type": "ExpansionPanel",
-            "caption": "Radial Gauge Settings",
+            "caption": "Plate",
             "items": [
-                { "type": "NumberSpinner", "name": "radial_startAngle", "caption": "Start Angle", "suffix": "°"},
-                { "type": "NumberSpinner", "name": "radial_ticksAngle", "caption": "Ticks Angle", "suffix": "°"}
+                { "type": "CheckBox", "name": "plate_display", "caption": "Display"},
+                { "type": "SelectColor", "name": "plate_colorPlate", "caption": "color Plate" },
+                { "type": "HorizontalSlider", "name": "plate_colorPlate_Alpha", "caption": "Color Plate Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 },
+                { "type": "SelectColor", "name": "plate_colorPlateEnd", "caption": "Color Plate End" },
+                { "type": "HorizontalSlider", "name": "plate_colorPlateEnd_Alpha", "caption": "Color Plate End Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Needle",
+            "items": [
+                { "type": "CheckBox", "name": "needle_display", "caption": "Display"},
+                { "type": "ValidationTextBox", "name": "needle_text", "caption": "Text" },
+                { "type": "NumberSpinner", "name": "needle_fontSize", "caption": "FontSize" },
+                { "type": "SelectColor", "name": "needle_colorNeedle", "caption": "Color Needle" },
+                { "type": "HorizontalSlider", "name": "needle_colorNeedle_Alpha", "caption": "Color Needle Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 },
+                { "type": "SelectColor", "name": "needle_colorNeedleEnd", "caption": "Color Needle End" },
+                { "type": "HorizontalSlider", "name": "needle_colorNeedleEnd_Alpha", "caption": "Color Needle End Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Valuebox",
+            "items": [
+                { "type": "CheckBox", "name": "valuebox_display", "caption": "Display"},
+                { "type": "NumberSpinner", "name": "valuebox_fontSize", "caption": "FontSize" },
+                { "type": "SelectColor", "name": "valuebox_colorValueBoxBackground", "caption": "Background Color" },
+                { "type": "HorizontalSlider", "name": "valuebox_colorValueBoxBackground_Alpha", "caption": "Background Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Progressbar",
+            "items": [
+                { "type": "CheckBox", "name": "progressbar_display", "caption": "Display"},
+                { "type": "SelectColor", "name": "progressbar_colorBar", "caption": "Color" },
+                { "type": "HorizontalSlider", "name": "progressbar_colorBar", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 },
+                { "type": "SelectColor", "name": "progressbar_colorBarProgress", "caption": "Color Progress" },
+                { "type": "HorizontalSlider", "name": "progressbar_colorBarProgress", "caption": "Color Progress Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Ticks Settings",
+            "items": [
+                { "type": "CheckBox", "name": "ticks_strokeTicks", "caption": "Stroke Ticks"},
+                { "type": "NumberSpinner", "name": "ticks_highlightsWidth", "caption": "Highlights Width" },
+                { "type": "NumberSpinner", "name": "ticks_minorTicks", "caption": "Minor Ticks" },
+                { "type": "SelectColor", "name": "ticks_fontColor", "caption": "FontColor" },
+                { "type": "SelectColor", "name": "ticks_colorMajorTick", "caption": "Color Major Tick" },
+                { "type": "SelectColor", "name": "ticks_colorMinorTicks", "caption": "Color Minor Ticks" },
+                { "type": "SelectColor", "name": "ticks_colorUnits", "caption": "color Units" },
+                { "type": "SelectColor", "name": "ticks_colorNumbers", "caption": "color Numbers" }
             ]
         },
         {
@@ -71,6 +121,41 @@
                         "maximum": 1,
                         "minimum": 0
                     }
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Radial Gauge Settings",
+            "items": [
+                { "type": "NumberSpinner", "name": "radial_startAngle", "caption": "Start Angle", "suffix": "°"},
+                { "type": "NumberSpinner", "name": "radial_ticksAngle", "caption": "Ticks Angle", "suffix": "°"}
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Linear Gauge Settings",
+            "items": [
+                { "type": "Select", "name": "linear_tickSide", "caption": "Tick Side",
+                    "options": [
+                        { "caption": "Left", "value": "left" },
+                        { "caption": "Right", "value": "right" },
+                        { "caption": "Both", "value": "both" }
+                    ]
+                },
+                { "type": "Select", "name": "linear_numberSide", "caption": "Number Side",
+                    "options": [
+                        { "caption": "Left", "value": "left" },
+                        { "caption": "Right", "value": "right" },
+                        { "caption": "Both", "value": "both" }
+                    ]
+                },
+                { "type": "Select", "name": "linear_needleSide", "caption": "Needle Side",
+                    "options": [
+                        { "caption": "Left", "value": "left" },
+                        { "caption": "Right", "value": "right" },
+                        { "caption": "Both", "value": "both" }
+                    ]
                 }
             ]
         },

@@ -86,7 +86,7 @@ class SymconJSLiveGauge extends JSLiveModule{
         if(empty($scriptID)){
             if($this->ReadPropertyBoolean("Debug"))
                 $this->SendDebug('GetWebpage', 'load default template!', 0);
-            $scriptData = file_get_contents (__DIR__ ."/../SymconJSLive/templates/Radial-Gauge(Canvas-Gauges).html");
+            $scriptData = file_get_contents (__DIR__ ."/../SymconJSLive/templates/Gauge(Canvas-Gauges).html");
         }else{
             if(!IPS_ScriptExists($scriptID)){
                 $this->SendDebug('GetWebpage', 'Template NOT FOUND!', 0);
