@@ -16,7 +16,7 @@ class SymconJSLive extends WebHookModule {
         $this->RegisterPropertyString("Password", $this->GenerateRandomPassword());
         $this->RegisterPropertyInteger("WebfrontInstanceID", 0);
 
-        $this->RegisterPropertyString("LocalAddress", "");
+        $this->RegisterPropertyString("LocalAddress", "http://127.0.0.1:3777");
         $this->RegisterPropertyString("RemoteAddress", $this->GetConnectAddress());
 
         $this->RegisterPropertyInteger("LocalDataMode", 1);

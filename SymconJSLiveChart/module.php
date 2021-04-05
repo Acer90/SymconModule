@@ -708,7 +708,6 @@ class SymconJSLiveChart extends JSLiveModule{
             $counter = true;
         }
 
-
         if($this->ReadPropertyBoolean("Debug")) $this->SendDebug("GetArchivData", "Start_Date: ".$date_start. " | End_Date: ".$date_end, 0);
 
         $output = array();
