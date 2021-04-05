@@ -418,6 +418,9 @@ class SymconJSLiveChart extends JSLiveModule{
         $emptyGrpID = 0;
 
         foreach($datasets as $item){
+            if($this->ReadPropertyBoolean("Debug"))
+                $this->SendDebug("GenerateDataSet", "ITEM " .json_encode($item), 0);
+
             if(!IPS_VariableExists($item["Variable"])) {
                 $this->SendDebug("GenerateDataSet", "VARIABLE " .$item["Variable"] . " NOT EXIST!", 0);
                 continue;
@@ -433,6 +436,9 @@ class SymconJSLiveChart extends JSLiveModule{
 
 
             if($item["BackgroundColor"] >= 0) {
+                if($this->ReadPropertyBoolean("Debug"))
+                    $this->SendDebug("GenerateDataSet", "BackgroundColor => " .$item["BackgroundColor"], 0);
+
                 $rgbdata = $this->HexToRGB($item["BackgroundColor"]);
                 $singelOutput["backgroundColor"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["BackgroundColor_Alpha"], 2, '.', '') . ")";
             }
@@ -572,6 +578,8 @@ class SymconJSLiveChart extends JSLiveModule{
 
                 }
                 $output["charts"][] = $axisoutput;
+            }else{
+
             }
 
             $singelOutput["digits"] = $digits;
