@@ -48,10 +48,15 @@ class SymconJSLive extends WebHookModule {
             //get javascript files load from webhook
             $subpath = substr($_SERVER['SCRIPT_NAME'], strlen("/hook/JSLive/"));
             $path = __DIR__ . "/" . $subpath;
+
+            $this->SendDebug('WebHook', 'JS PATH =>' . $path, 0);
+
             if (!file_exists($path)) {
                 echo "404 file not found!";
                 return;
             }
+
+
 
             header("Content-Type: text/html");
 
@@ -103,7 +108,7 @@ class SymconJSLive extends WebHookModule {
 
             //$this->SendDebug('WebHook', 'INSTANCE:'. $queryData["instance"], 0);
             //$this->SendDebug('WebHook', 'Array QUERY_STRING: ' . print_r($queryData, true), 0);
-            $this->SendDebug('WebHook', 'Array Server: ' . print_r($_SERVER, true), 0);
+            //$this->SendDebug('WebHook', 'Array Server: ' . print_r($_SERVER, true), 0);
 
             header("Content-Type: text/html");
 
