@@ -43,6 +43,7 @@ class SymconJSLive extends WebHookModule {
      */
     protected function ProcessHookData() {
         $pos = strpos($_SERVER['SCRIPT_NAME'], "/hook/JSLive/js");
+        $this->SendDebug('WebHook', 'Array Server: ' . print_r($_SERVER, true), 0);
 
         if ($pos !== false) {
             //get javascript files load from webhook
