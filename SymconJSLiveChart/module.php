@@ -747,7 +747,8 @@ class SymconJSLiveChart extends JSLiveModule{
 
             //highres datenreduktion
             if($mode == "Value" && $period != 7 && $i < $highResSteps){
-                //$this->SendDebug("GetArchivData", "(". $i . "|".$highResSteps.") Skip Data: " .date('d.m.Y H:i:s', $item["TimeStamp"]) . " => " . $item[$mode],0);
+                if($this->ReadPropertyBoolean("Debug"))
+                    $this->SendDebug("GetArchivData", "(". $i . "|".$highResSteps.") Skip Data: " .date('d.m.Y H:i:s', $item["TimeStamp"]) . " => " . $item[$mode],0);
                 continue;
             }
 
