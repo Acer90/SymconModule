@@ -790,6 +790,9 @@ class SymconJSLiveChart extends JSLiveModule{
                 $output = array_merge($output, $this->FillUpData($archivData[0]["TimeStamp"] , $date_end));
             }
         }*/
+        if($this->ReadPropertyBoolean("Debug"))
+            $this->SendDebug("GetArchivData", "OUTPUT " .json_encode($output), 0);
+
 
         return $output;
     }
