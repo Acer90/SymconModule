@@ -103,7 +103,7 @@ class SymconJSLive extends WebHookModule {
 
             //$this->SendDebug('WebHook', 'INSTANCE:'. $queryData["instance"], 0);
             //$this->SendDebug('WebHook', 'Array QUERY_STRING: ' . print_r($queryData, true), 0);
-            //$this->SendDebug('WebHook', 'Array Server: ' . print_r($_SERVER, true), 0);
+            $this->SendDebug('WebHook', 'Array Server: ' . print_r($_SERVER, true), 0);
 
             header("Content-Type: text/html");
 
@@ -122,7 +122,7 @@ class SymconJSLive extends WebHookModule {
             if($Type = "getContend") {
                 //check if local
                 $isLocal = $this->CheckIfLocal($_SERVER["HTTP_HOST"]);
-                $contend = $this->ReplacePlaceholder($contend[0], $isLocal, $queryData["instance"]);
+                $contend = $this->ReplacePlaceholder($contend[0], $isLocal, $queryData["instance"], $_SERVER);
             }
 
             //Add caching support
@@ -194,22 +194,22 @@ class SymconJSLive extends WebHookModule {
 
         return true;
     }
-    private function ReplacePlaceholder(string $htmlData, bool $isLocal, $IntID){
+    private function ReplacePlaceholder(string $htmlData, bool $isLocal, int $IntID, array $server){
         $webfrontid = $this->ReadPropertyInteger("WebfrontInstanceID");
         $address = $this->ReadPropertyString("RemoteAddress");
 
         if($isLocal || empty($address)){
             $address = $this->ReadPropertyString("LocalAddress");
         }
-        $wsaddress = $this->GetWebsocket($address, $webfrontid);
+        $wsaddress = $this->GetWebsocket($server, $webfrontid);
 
         $htmlData = str_replace("{GLOBAL}",  $this->json_encode_advanced($this->GetConfigurationData()), $htmlData);
         $htmlData = str_replace("{ADDRESS}", $address, $htmlData);
         $htmlData = str_replace("{WSADDRESS}", $wsaddress , $htmlData);
         $htmlData = str_replace("{REMOTE_ADDRESS}", $this->ReadPropertyString("RemoteAddress"), $htmlData);
-        $htmlData = str_replace("{REMOTE_WSADDRESS}", $this->GetWebsocket($this->ReadPropertyString("RemoteAddress"), $webfrontid), $htmlData);
+        $htmlData = str_replace("{REMOTE_WSADDRESS}", $this->ReadPropertyString("RemoteAddress"), $htmlData);
         $htmlData = str_replace("{LOCAL_ADDRESS}", $this->ReadPropertyString("LocalAddress"), $htmlData);
-        $htmlData = str_replace("{LOCAL_WSADDRESS}", $this->GetWebsocket($this->ReadPropertyString("LocalAddress"), $webfrontid), $htmlData);
+        $htmlData = str_replace("{LOCAL_WSADDRESS}", $this->ReadPropertyString("LocalAddress"), $htmlData);
         $htmlData = str_replace("{PASSWORD}", $this->ReadPropertyString("Password"), $htmlData);
         $htmlData = str_replace("{WEBFRONTPASSWORD}", $this->GetWebfrontPassword($webfrontid), $htmlData);
         $htmlData = str_replace("{WEBFRONTID}", $webfrontid, $htmlData);
@@ -224,20 +224,19 @@ class SymconJSLive extends WebHookModule {
         if(count($connectID) == 0){} return "";
         return CC_GetUrl($connectID);
     }
-    private function GetWebsocket(string $url_str, int $webfrontid){
-        if(empty($url_str)) return;
-        return "ws://" . $url_str .  "/wfc/". $webfrontid ."/api/";
+    private function GetWebsocket(array $server, int $webfrontid){
+        if(empty($server)) return;
 
-        $url_str = strtolower($url_str);
-        $url = parse_url($url_str);
+        //$url_str = strtolower($url_str);
+        //$url = parse_url($url_str);
 
         $port = "";
-        if(key_exists("port", $url)) $port = ":" . $url["port"];
+        //if(key_exists("port", $url)) $port = ":" . $url["port"];
 
-        if($url['scheme'] == 'https'){
-            return "wss://" . $url["host"]. $port . "/wfc/". $webfrontid ."/api/";
+        if(!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'){
+            return "wss://" . $server["HTTP_HOST"]. "/wfc/". $webfrontid ."/api/";
         }else{
-            return "ws://" . $url["host"]. $port .  "/wfc/". $webfrontid ."/api/";
+            return "ws://" . $server["HTTP_HOST"].  "/wfc/". $webfrontid ."/api/";
         }
     }
     private function GetWebfrontPassword(int $webfrontid){
