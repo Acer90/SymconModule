@@ -239,10 +239,10 @@ class SymconJSLive extends WebHookModule {
         //$url_str = strtolower($url_str);
         //$url = parse_url($url_str);
 
-        $port = "";
+        //$port = "";
         //if(key_exists("port", $url)) $port = ":" . $url["port"];
 
-        if(!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'){
+        if($this->isHttps($server)){
             return "wss://" . $server["HTTP_HOST"]. "/wfc/". $webfrontid ."/api/";
         }else{
             return "ws://" . $server["HTTP_HOST"].  "/wfc/". $webfrontid ."/api/";
@@ -274,6 +274,22 @@ class SymconJSLive extends WebHookModule {
         $output["InstanceID"] = $this->InstanceID;
 
         return $output;
+    }
+    public static function isHttps($server)
+    {
+        if (array_key_exists("HTTPS", $server) && 'on' === $server["HTTPS"]) {
+            return true;
+        }
+        if (array_key_exists("SERVER_PORT", $server) && 443 === (int)$server["SERVER_PORT"]) {
+            return true;
+        }
+        if (array_key_exists("HTTP_X_FORWARDED_SSL", $server) && 'on' === $server["HTTP_X_FORWARDED_SSL"]) {
+            return true;
+        }
+        if (array_key_exists("HTTP_X_FORWARDED_PROTO", $server) && 'https' === $server["HTTP_X_FORWARDED_PROTO"]) {
+            return true;
+        }
+        return false;
     }
 
     public function UpdateTemplates($category){
