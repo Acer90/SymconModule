@@ -435,15 +435,12 @@ class SymconJSLiveChart extends JSLiveModule{
             $singelOutput["order"] = $item["Order"];
 
 
-            if($item["BackgroundColor"] >= 0) {
-                if($this->ReadPropertyBoolean("Debug"))
-                    $this->SendDebug("GenerateDataSet", "BackgroundColor => " .$item["BackgroundColor"], 0);
-
+            if(is_numeric($item["BackgroundColor"]) && $item["BackgroundColor"] >= 0) {
                 $rgbdata = $this->HexToRGB($item["BackgroundColor"]);
                 $singelOutput["backgroundColor"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["BackgroundColor_Alpha"], 2, '.', '') . ")";
             }
 
-            if($item["BorderColor"] >= 0) {
+            if(is_numeric($item["BorderColor"]) && $item["BorderColor"] >= 0) {
                 $rgbdata = $this->HexToRGB($item["BorderColor"]);
                 $singelOutput["borderColor"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["BorderColor_Alpha"], 2, '.', '') . ")";
             }
