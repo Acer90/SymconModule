@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset='utf-8'/>
+    <meta name="viewport" content="width=device-width, initial-scale=2">
+    <title>{TITLE_TEXT}</title>
+</head>
+<script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
+<script src="{ADDRESS}/hook/JSLive/js/chartjs/2.8.0/Chart.js"></script>
+
+<body>
+<canvas id="myChart"></canvas>
+
+<script>
+    let myChart;
+
+    let config_global = {GLOBAL};
+
+    let config_dataset = {DATASETS};
+    let config_legend = {LEGEND};
+    let config_tooltips = {TOOLTIPS};
+    let config_title = {TITLE};
+    let config_labels = {LABELS};
+
+    let confiuration = {CONFIG};
+
+    let update_vars = [];
+    let update_vars_Values = [];
+    update_vars.push(confiuration.ID_Period);
+    update_vars.push(confiuration.ID_Relativ);
+
+    let last_update = Date.now();
+    let offset_isSet = false;
+    let last_reload = 0; //Damit der Chart nur einmal neugeladen wird!
+    let period_EndDate = GetStartEndDate(Date.now()).end;
+
+    function updateChartconfig(){
+
+        let config = {
+            type: 'radar',
+            data: {
+                labels: config_labels,
+                datasets: config_dataset
+            },
+            options: {
+                animation: {
+                    duration: 500,                   // general animation time
+                    easing: 'linear',
+                },
+                hover: {
+                    animationDuration: 0           // duration of animations when hovering an item
+                },
+                responsive: true,
+                aspectRatio: 1.1,
+                responsiveAnimationDuration: 500,    // animation duration after a resize
+                title: config_title,
+                legend: config_legend,
+                tooltips: config_tooltips,
+                scale: {
+                    pointLabels: {
+                        display: confiuration.axes_pointLabels_display,
+                        color: confiuration.axes_pointLabels_color,
+                        fontSize: confiuration.axes_pointLabels_fontSize
+                    },
+                    gridLines:{
+                        display: confiuration.axes_gridLines_display,
+                        color: confiuration.axes_gridLines_color,
+                        LineWidth: confiuration.axes_gridLines_lineWidth,
+                        drawTicks: confiuration.axes_gridLines_drawTicks
+                    },
+                    angleLines: {
+                        display: confiuration.axes_angleLines_display,
+                        color: confiuration.axes_angleLines_color,
+                        lineWidth: confiuration.axes_angleLines_lineWidth
+                    },
+                    ticks: {
+                        fontColor: confiuration.axes_ticks_fontColor,
+                        fontSize: confiuration.axes_ticks_fontSize,
+                        backdropColor: confiuration.axes_ticks_backdropColor,
+                    },
+
+                    display: confiuration.axes_display
+                },
+                layout: {
+                    padding: {
+                        left: 0,
+                        right: 0,
+                        top: 0,
+                        bottom: 0
+                    }
+                }
+            }
+        };
+
+        //add function tooltip
+        t_callpack = {
+                label: UpdateTooltipLabel
+            };
+        config.options.tooltips.callbacks = t_callpack;
+
+        return config;
+    }
+
+    function connect() {
+        var ws = new WebSocket('{WSADDRESS}', [encodeURIComponent(btoa('webfront:{WEBFRONTPASSWORD}'))]);
+        ws.onopen = function() {
+            // subscribe to some channels
+            //ws.send(JSON.stringify({
+            //.... some message the I must send when I connect ....
+            //}));
+        };
+
+        ws.onmessage = function(e) {
+            data = JSON.parse(e.data);
+            if(data.Message == 10603) {
+                UpdateChart(data.SenderID, data.Data[3], data.Data[0]);
+                ReloadChart(dt_val, data.SenderID);
+            }
+        };
+
+        ws.onclose = function(e) {
+            console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+            setTimeout(function() {
+                connect();
+            }, 1000);
+        };
+
+        ws.onerror = function(err) {
+            console.error('Socket encountered error: ', err.message, 'Closing socket');
+            ws.close();
+        };
+    }
+    function UpdateChart(id_val, dt_val, value){
+        if(!confiuration.CustomVars.includes(id_val)) return;
+        //wird nur bei customevariablen ausgeführt!
+
+        required = {variable: id_val};
+        results = [];
+        results = getMatchingKeys(config_dataset, required);
+        //nur Updaten wenn ID in Chart exestiert
+        if(results.length == 0) return;
+
+        $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+
+            results.forEach(function(part, index) {
+                curVar = myChart.data.datasets[part].variable;
+
+                data.forEach(function (j_part, j_index) {
+                    //UpdateChart(part.Variable, dt_val, part.Value);
+                    if (j_part.Variable === curVar) {
+                        if (curVar in update_vars_Values) {
+                            //prüfen ob änderung und gegbfalls daten aktuallieseren
+                            if (JSON.stringify(update_vars_Values[curVar]) != JSON.stringify(j_part.Value)) {
+                                update_vars_Values[curVar] = j_part.Value;
+
+                                myChart.data.datasets[part].data = j_part.Value;
+                                myChart.update();
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    }
+    function ReloadChart(dt_val, id_val = 0){
+        if(last_reload === dt_val) return;
+        if(!update_vars.includes(id_val) && id_val !== 0) return;
+
+        $.getJSON( "{ADDRESS}/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}", function( data ) {
+            config_dataset = data.DATASETS;
+            config_labels = data.LABELS;
+            confiuration =  data.CONFIG;
+
+            myChart.data.labels = config_labels;
+            myChart.data.datasets = config_dataset;
+
+            console.log("RELOAD CHART!");
+            myChart.update();
+
+            last_reload = Date.now();
+            UpdateLastValue();
+        });
+    }
+    async function PullNewData(refreshRate, isWebsocket){
+        refreshRate = refreshRate * 1000;
+        while (true){
+            dt_val = Math.floor(Date.now() / 1000);
+            try {
+                //Aktuaisieren nach zeit!
+                curDate = new Date();
+                if(curDate > period_EndDate){
+                    period_EndDate = GetStartEndDate(Date.now()).end;
+
+                    ReloadChart(dt_val);
+                }
+
+                if(!isWebsocket){
+                    $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                        isUpdated = false;
+
+                        data.forEach(function (part, index) {
+                            //UpdateChart(part.Variable, dt_val, part.Value);
+
+                            if(update_vars.includes(part.Variable)) {
+                                //reloaden wenn es ein Attribut war
+                                if(part.Variable in update_vars_Values){
+                                    //prüfen ob änderung und gegbfalls daten aktuallieseren
+                                    if(update_vars_Values[part.Variable] != part.Value){
+                                        update_vars_Values[part.Variable] = part.Value;
+                                        ReloadChart(part.Variable, dt_val);
+                                    }
+                                }else{
+                                    update_vars_Values[part.Variable] = part.Value;
+                                }
+                            }else{
+                                //customdata Reloade!
+
+                            }
+                        });
+
+                        if(isUpdated){
+                            period_EndDate = GetStartEndDate(Date.now()).end;
+                        }
+                    });
+                }
+
+            }catch (e) {
+                console.log("PullNewData => ", e);
+            }
+            await sleep(refreshRate);
+        }
+    }
+
+    function GetStartEndDate(date) {
+        period = confiuration.Period;
+        is_relativ = confiuration.Relativ;
+        oldDate = new Date(date);
+
+        eDate = new Date();
+        sDate = new Date();
+
+        if(is_relativ){
+            sDate = oldDate;
+            switch(period){
+                case 0:
+                    //dekade
+                    //Jahr
+                    eDate.setFullYear(eDate.getFullYear()+1);
+                    break;
+                case 2:
+                case 3:
+                    //quartal
+                    //Monat
+                    eDate.setMonth(eDate.getMonth()+1);
+                    break;
+                case 4:
+                case 5:
+                    //woche
+                    //tag
+                    eDate.setDate(eDate.getDate()+1);
+                    break;
+                default:
+                    //stunde
+                    eDate.setHours(eDate.getHours()+1);
+                    break;
+            }
+        }else{
+            switch(period){
+                case 0:
+                    //dekade
+                    startyear = parseInt(oldDate.getFullYear() / 10) * 10;
+                    sDate = new Date(startyear, 0, 0, 0, 0, 0);
+                    eDate = new Date((startyear+10), 0, 0, 0, 0, 0);
+                    break;
+                case 1:
+                    //Jahr
+                    sDate = new Date(oldDate.getFullYear(), 0, 0, 0, 0, 0);
+                    eDate = new Date((oldDate.getFullYear()+1), 0, 0, 0, 0, 0);
+                    break;
+                case 2:
+                    //quartal
+                    starmonth = parseInt(oldDate.getMonth() / 3) * 3;
+                    sDate = new Date(oldDate.getFullYear(), starmonth, 0, 0, 0, 0);
+                    eDate = new Date(oldDate.getFullYear(), (starmonth+3), 0, 0, 0, 0);
+                    break;
+                case 3:
+                    //Monat
+                    sDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), 0, 0, 0, 0);
+                    eDate = new Date(oldDate.getFullYear(), (oldDate.getMonth()+1), 0, 0, 0, 0);
+                    break;
+                case 4:
+                    //woche
+                    //immer montag starten
+                    var day = oldDate.getDay(),
+                        diff = d.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
+                    oldDate = oldDate.setDate(diff);
+                    sDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate(), 0, 0, 0);
+                    eDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), (oldDate.getDate()+7), 0, 0, 0);
+                    break;
+                case 5:
+                    //tag
+                    sDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate(), 0, 0, 0);
+                    eDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), (oldDate.getDate()+1), 0, 0, 0);
+                    break;
+                case 6:
+                    //stunde
+                    sDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate(), oldDate.getHours(), 0, 0);
+                    eDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate(), (oldDate.getHours()+1), 0, 0);
+                    break;
+                case 7:
+                    //minute
+                    sDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate(), oldDate.getHours(), oldDate.getMinutes(), 0);
+                    eDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate(), oldDate.getHours(), (oldDate.getMinutes()+1), 0);
+                    break;
+                default:
+                    eDate = oldDate;
+                    sDate = oldDate;
+                    break;
+            }
+        }
+        //console.log("sDate:", sDate);
+        //console.log("eDate:", eDate);
+
+
+        return { "start": sDate, "end": eDate};
+    }
+    function UpdateTooltipLabel(tooltipItem, data){
+        let dataset = data.datasets[tooltipItem.datasetIndex];
+
+        let Suffix = "";
+        let Prefix = "";
+        let blocks = [];
+
+
+        /*required = {id: data.datasets[tooltipItem.datasetIndex].yAxisID};
+        AxisData = [];
+        Axiskeys = getMatchingKeys(config_axes, required);
+
+
+        Axiskeys.forEach(function(part, index) {
+            Suffix = config_axes[part].Suffix;
+            Prefix = config_axes[part].Prefix;
+        });*/
+
+        if (dataset.label) {
+            blocks.push(dataset.label + ': ');
+        }
+        if (Prefix !== "") {
+            blocks.push(Prefix);
+        }
+        blocks.push(dataset.data[tooltipItem.index].y)
+        if (Suffix !== "") {
+            blocks.push(Suffix);
+        }
+        return blocks.join('');
+    }
+    function UpdateLastValue(){
+        config_dataset.forEach(function (part, index) {
+            update_vars_Values[part.variable] = part.data;
+        });
+    }
+
+    function filterKeys(obj, func) {
+        return Array.prototype.filter.call(Object.keys(obj), func, obj);
+    }
+    function someKeys(obj, func) {
+        return Array.prototype.some.call(Object.keys(obj), func, obj);
+    }
+    function atLeastOnePropertyMatches(obj, requiredProp) {
+        return someKeys(obj, function (prop) {
+            if (requiredProp.hasOwnProperty(prop)) {
+                return this[prop] === requiredProp[prop];
+            }
+        });
+    }
+    function getMatchingKeys(obj, requiredProp) {
+        return filterKeys(obj, function (prop) {
+            return atLeastOnePropertyMatches(this[prop], required);
+        });
+    }
+    Array.prototype.insert = function ( index, item ) {
+        this.splice( index, 0, item );
+    };
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    window.onload = function() {
+        var ctx = document.getElementById('myChart');
+        myChart = new Chart(ctx, updateChartconfig());
+        refreshRate = 60;
+        isWebsocket = false;
+
+        if(config_global.LocalAddress == "{ADDRESS}"){
+            //pullup Mode local
+            refreshRate = config_global.LocalRefreshTime;
+
+            if(config_global.LocalDataMode != 0) {
+                connect();
+                isWebsocket = true;
+            }
+        }else{ //(config_global.RemoteAddress == "{ADDRESS}")
+            //pullup Mode remote
+            refreshRate = config_global.RemoteRefreshTime;
+
+            if(config_global.RemoteDataMode != 0) {
+                connect();
+                isWebsocket = true;
+            }
+        }
+        UpdateLastValue();
+        PullNewData(refreshRate, isWebsocket);
+    }
+</script>
+</body>
+</html>

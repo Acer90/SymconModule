@@ -10,6 +10,7 @@
                 { "caption": "CanvasGauges-Linear", "value": "CanvasGauges-Linear" },
                 { "caption":  "CanvasGauges-Linear(vertical)", "value":  "CanvasGauges-Linear(vertical)"},
                 { "caption":  "CanvasGauges-Compass", "value":  "CanvasGauges-Compass"}
+
             ]
         },
         {

@@ -1,0 +1,318 @@
+{
+    "elements":
+    [
+        {
+            "type": "ExpansionPanel",
+            "caption": "Title",
+            "items": [
+                { "type": "CheckBox", "name": "title_display", "caption": "Display"},
+                { "type": "ValidationTextBox", "name": "title_text", "caption": "Text" },
+                { "type": "Select", "name": "title_position", "caption": "Position",
+                    "options": [
+                        { "caption": "top", "value": "top" },
+                        { "caption": "left", "value": "left" },
+                        { "caption": "bottom", "value": "bottom" },
+                        { "caption": "right", "value": "right" }
+                    ]
+                },
+                { "type": "NumberSpinner", "name": "title_fontSize", "caption": "FontSize" },
+                { "type": "SelectColor", "name": "title_fontColor", "caption": "FontColor" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Axes",
+            "items": [
+                { "type": "CheckBox", "name": "axes_display", "caption": "Display"},
+
+                { "type": "CheckBox", "name": "axes_gridLines_display", "caption": "Display GridLines"},
+                { "type": "CheckBox", "name": "axes_gridLines_drawTicks", "caption": "GridLines Draw Ticks"},
+                { "type": "NumberSpinner", "name": "axes_gridLines_lineWidth", "caption": "GridLines LineWidth", "minimum": 0, "digits": 0},
+                { "type": "SelectColor", "name": "axes_gridLines_color", "caption": "GridLines Color" },
+
+                { "type": "CheckBox", "name": "axes_angleLines_display", "caption": "Display AngleLines"},
+                { "type": "NumberSpinner", "name": "axes_angleLines_lineWidth", "caption": "AngleLines LineWidth", "minimum": 0, "digits": 0},
+                { "type": "SelectColor", "name": "axes_angleLines_color", "caption": "AngleLines Color" },
+
+                { "type": "CheckBox", "name": "axes_pointLabels_display", "caption": "Display PointLabels"},
+                { "type": "NumberSpinner", "name": "axes_pointLabels_fontSize", "caption": "PointLabels FontSize", "minimum": 0, "digits": 0},
+                { "type": "SelectColor", "name": "axes_pointLabels_color", "caption": "PointLabels Color" },
+
+                { "type": "NumberSpinner", "name": "axes_ticks_fontSize", "caption": "Ticks FontSize", "minimum": 0, "digits": 0},
+                { "type": "SelectColor", "name": "axes_ticks_fontColor", "caption": "Ticks Font Color" },
+                { "type": "SelectColor", "name": "axes_ticks_backdropColor", "caption": "Ticks BackdropColor Font Color" },
+                { "type": "HorizontalSlider", "name": "axes_ticks_backdropColor_Alpha", "caption": "Ticks BackdropColor Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Points",
+            "items": [
+                { "type": "NumberSpinner", "name": "point_radius", "caption": "Point Radius" },
+                { "type": "NumberSpinner", "name": "point_hoverRadius", "caption": "Point Hover-Radius"},
+                { "type": "Select", "name": "points_Style", "caption": "Style",
+                    "options": [
+                        { "caption": "circle", "value": "circle" },
+                        { "caption": "cross", "value": "cross" },
+                        { "caption": "crossRot", "value": "crossRot" },
+                        { "caption": "dash", "value": "dash" },
+                        { "caption": "line", "value": "line" },
+                        { "caption": "rect", "value": "rect" },
+                        { "caption": "rectRounded", "value": "rectRounded" },
+                        { "caption": "rectRot", "value": "rectRot" },
+                        { "caption": "star", "value": "star" },
+                        { "caption": "triangle", "value": "triangle" }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Legend",
+            "items": [
+                { "type": "CheckBox", "name": "legend_display", "caption": "Display"},
+                { "type": "Select", "name": "legend_position", "caption": "Position",
+                    "options": [
+                        { "caption": "top", "value": "top" },
+                        { "caption": "left", "value": "left" },
+                        { "caption": "bottom", "value": "bottom" },
+                        { "caption": "right", "value": "right" }
+                    ]
+                },
+                { "type": "Select", "name": "legend_align", "caption": "Align",
+                    "options": [
+                        { "caption": "start", "value": "start" },
+                        { "caption": "center", "value": "center" },
+                        { "caption": "end", "value": "end" }
+                    ]
+                },
+                { "type": "NumberSpinner", "name": "legend_fontSize", "caption": "FontSize" },
+                { "type": "SelectColor", "name": "legend_fontColor", "caption": "FontColor" },
+                { "type": "NumberSpinner", "name": "legend_boxWidth", "caption": "Box Width" }
+
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Tooltips",
+            "items": [
+                { "type": "CheckBox", "name": "tooltips_enabled", "caption": "Enabled"},
+                { "type": "Select", "name": "tooltips_position", "caption": "Position",
+                    "options": [
+                        { "caption": "average", "value": "average" },
+                        { "caption": "nearest", "value": "nearest" }
+                    ]
+                },
+                { "type": "Select", "name": "tooltips_mode", "caption": "Mode",
+                    "options": [
+                        { "caption": "index", "value": "index" },
+                        { "caption": "dataset", "value": "dataset" },
+                        { "caption": "point", "value": "point" }
+                    ]
+                },
+                { "type": "NumberSpinner", "name": "tooltips_fontSize", "caption": "Font Size" },
+                { "type": "SelectColor", "name": "tooltips_fontColor", "caption": "Font Color" },
+                { "type": "SelectColor", "name": "tooltips_backgroundColor", "caption": "Background Color" },
+                { "type": "NumberSpinner", "name": "tooltips_cornerRadius", "caption": "Corner Radius" }
+
+            ]
+        },
+        { "type": "NumberSpinner", "name": "data_minValue", "caption": "Minimum Value"},
+        { "type": "NumberSpinner", "name": "data_maxValue", "caption": "Maximum Value"},
+        { "type": "NumberSpinner", "name": "data_sections", "caption": "Sections" , "minimum": 0, "digits": 0},
+        { "type": "NumberSpinner", "name": "data_precision", "caption": "Precision", "minimum": 0, "digits": 0},
+        {
+            "type": "List",
+            "name": "Datasets",
+            "caption": "Datasets",
+            "rowCount": 5,
+            "add": true,
+            "delete": true,
+            "edit": true,
+            "sort": {
+                "column": "Order",
+                "direction": "ascending"
+            },
+            "columns": [
+                {
+                    "caption": "Order",
+                    "name": "Order",
+                    "width": "150px",
+                    "add": 0,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 0,
+                        "minimum": 0
+                    }
+                },
+                {
+                    "caption": "Variable",
+                    "name": "Variable",
+                    "width": "100px",
+                    "add": 0,
+                    "edit": {
+                        "type": "SelectVariable"
+                    }
+                },
+                {
+                    "caption": "Title",
+                    "name": "Title",
+                    "width": "auto",
+                    "add": "",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                },
+                {
+                    "caption": "Offset",
+                    "name": "Offset",
+                    "width": "50px",
+                    "add": 0,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 0,
+                        "minimum": 0
+                    }
+                },
+                {
+                    "caption": "BackgroundColor",
+                    "name": "BackgroundColor",
+                    "width": "130px",
+                    "add": "New!",
+                    "edit": {
+                        "type": "SelectColor"
+                    }
+                },
+                {
+                    "caption": "BorderColor",
+                    "name": "BorderColor",
+                    "width": "120px",
+                    "add": 0,
+                    "edit": {
+                        "type": "SelectColor"
+                    }
+                },
+                {
+                    "caption": "BackgroundColor Alpha",
+                    "name": "BackgroundColor_Alpha",
+                    "width": "50px",
+                    "add": 0.5,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 2,
+                        "maximum": 1,
+                        "minimum": 0
+                    }
+                },
+                {
+                    "caption": "BorderColor Alpha",
+                    "name": "BorderColor_Alpha",
+                    "width": "50px",
+                    "add": 1.0,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 2,
+                        "maximum": 1,
+                        "minimum": 0
+                    }
+                },
+                {
+                    "caption": "Border Width",
+                    "name": "BorderWidth",
+                    "width": "120px",
+                    "add": 2,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 0,
+                        "minimum": 0
+                    }
+                },
+                {
+                    "caption": "Dash",
+                    "name": "Dash",
+                    "width": "100px",
+                    "add": "",
+                    "edit": {
+                        "type": "ValidationTextBox",
+                        "caption": "Border-Dash (E.g [5,5])"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Expert",
+            "items": [
+                { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
+                { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script"},
+                { "type": "Select", "name": "customScale_mode", "caption": "Mode",
+                    "options": [
+                        { "caption": "Override", "value": true },
+                        { "caption": "Replace", "value": false }
+                    ]
+                },
+                {
+                    "type": "List",
+                    "name": "customScale",
+                    "caption": "Custom Scale",
+                    "rowCount": 5,
+                    "add": true,
+                    "delete": true,
+                    "edit": true,
+                    "sort": {
+                        "column": "Order",
+                        "direction": "ascending"
+                    },
+                    "columns": [
+                        {
+                            "caption": "Order",
+                            "name": "Order",
+                            "width": "150px",
+                            "add": 0,
+                            "edit": {
+                                "type": "NumberSpinner",
+                                "digits": 0,
+                                "minimum": 0
+                            }
+                        },
+                        {
+                            "caption": "Value",
+                            "name": "Value",
+                            "width": "200px",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Alias",
+                            "name": "Alias",
+                            "width": "auto",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "actions":
+    [
+        {
+            "type": "RowLayout",
+            "items": [
+                { "type": "Button", "label": "Get Link (Local)", "onClick": " echo SymconJSLiveRadarChart_GetLink($id, True);" },
+                { "type": "Button", "label": "Get Link (Remote)", "onClick": " echo SymconJSLiveRadarChart_GetLink($id, False);" }
+            ]
+        },
+        { "type": "Label", "caption": "Load Configuration from other Modul" },
+        { "type": "SelectObject", "name": "ObjectID", "caption": "Chart/Modul" },
+        { "type": "Button", "label": "Load Confiuration", "onClick": " echo SymconJSLiveRadarChart_LoadOtherConfiguration($id, $ObjectID);" }
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Status OK!" }
+    ]
+}
