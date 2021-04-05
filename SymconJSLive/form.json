@@ -35,7 +35,7 @@
     ],
     "actions":
     [
-        { "type": "Button", "label": "Load Connect Address", "onClick": " echo SymconJSLive_LoadConnectAddress($id);" },
+        { "type": "Button", "label": "Load Connect Address", "onClick": " echo SymconJSLive_LoadConnectAddress($id, false);" },
 
         {
             "type": "ExpansionPanel",
