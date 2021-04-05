@@ -226,6 +226,7 @@ class SymconJSLive extends WebHookModule {
     }
     private function GetWebsocket(string $url_str, int $webfrontid){
         if(empty($url_str)) return;
+        return "ws://" . $url_str .  "/wfc/". $webfrontid ."/api/";
 
         $url_str = strtolower($url_str);
         $url = parse_url($url_str);
