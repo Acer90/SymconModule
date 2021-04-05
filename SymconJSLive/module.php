@@ -43,14 +43,17 @@ class SymconJSLive extends WebHookModule {
      */
     protected function ProcessHookData() {
         $pos = strpos($_SERVER['SCRIPT_NAME'], "/hook/JSLive/js");
-        $this->SendDebug('WebHook', 'Array Server: ' . print_r($_SERVER, true), 0);
+
+        if($this->ReadPropertyBoolean("Debug"))
+            $this->SendDebug('WebHook', '$_SERVER: ' . print_r($_SERVER, true), 0);
 
         if ($pos !== false) {
             //get javascript files load from webhook
             $subpath = substr($_SERVER['SCRIPT_NAME'], strlen("/hook/JSLive/"));
             $path = __DIR__ . "/" . $subpath;
 
-            $this->SendDebug('WebHook', 'JS PATH =>' . $path, 0);
+            if($this->ReadPropertyBoolean("Debug"))
+                $this->SendDebug('WebHook', 'JS PATH =>' . $path, 0);
 
             if (!file_exists($path)) {
                 echo "404 file not found!";
