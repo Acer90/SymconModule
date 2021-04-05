@@ -204,7 +204,7 @@
                                 "caption": "BackgroundColor",
                                 "name": "BackgroundColor",
                                 "width": "130px",
-                                "add": "New!",
+                                "add": 0,
                                 "edit": {
                                     "type": "SelectColor"
                                 }
