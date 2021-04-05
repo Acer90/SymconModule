@@ -27,6 +27,8 @@
 
         gauge_config = {
             renderTo: 'gauge',
+
+            width: window.innerWidth-20,
             height: window.innerHeight-20,
 
             units: confiuration.plate_unit,
@@ -90,6 +92,17 @@
             highlights: config_highlights,
             majorTicks: config_ticks,
 
+            needleCircleSize: 50,
+            needleCircleOuter: 10,
+            colorNeedleCircleOuter: 'rgba(0,0,0,0)',
+            colorNeedleShadowDown: 'rgba(0,0,0,0)',
+            needleCircleOuter: true,
+            needleCircleInner: false,
+            colorNeedleShadowDown: 'rgba(0,0,0,0)',
+            colorNeedleCircleOuter: 'rgba(0,0,0,0)',
+            colorNeedleCircleOuterEnd: 'rgba(0,0,0,0)',
+            colorNeedleCircleInner: 'rgba(255,255,255,1)',
+            colorNeedleCircleInnerEnd: 'rgba(255,255,255,1)',
 
 
             animationRule: 'linear', //”, “quad”, “quint”, “cycle”, “bounce”, “elastic”  “dequad”, “dequint”, “decycle”, “debounce”, “delastic”.
