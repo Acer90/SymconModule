@@ -281,4 +281,3 @@ if(''!==$MAC && '' != $IP) {
 // Keep the message or make it an empty string
 if(!$MESSAGE) $MESSAGE = '';
 
-?>

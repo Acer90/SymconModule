@@ -807,4 +807,4 @@
             return "{\"BaudRate\": \"2400\", \"DataBits\": \"8\", \"StopBits\": \"1\", \"Parity\": \"None\"}";
         }
     }
-?>
+

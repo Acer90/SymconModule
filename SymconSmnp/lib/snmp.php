@@ -576,4 +576,4 @@ class ipssnmpclass
     return ((float)$usec + (float)$sec);
   }
 }
-?>
+

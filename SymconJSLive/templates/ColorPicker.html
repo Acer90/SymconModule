@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{TITLE_TEXT}</title>
+    <title>ColorPicker</title>
 </head>
 <script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
 <script src="{ADDRESS}/hook/JSLive/js/iro/5.5.0/iro.js"></script>
@@ -12,31 +12,98 @@
 <div id="picker"></div>
 
 <script>
-    let curValue = {VALUE};
     let config_global = {GLOBAL};
-    let config_ticks = {TICKS};
-    let config_highlights = {HIGHLIGHTS};
+    let config_variabels = {VARIABELS};
+    let config_layout = {LAYOUT};
     let confiuration = {CONFIG};
+
+    let colors_ids = [];
+    let colorsTemperatures_ids = [];
+    let colorsTemperaturesMode_ids = [];
 
     let colorPicker = new iro.ColorPicker("#picker",  LoadPicker());
 
     function LoadPicker(){
-        if(!confiuration.title_display) confiuration.title_text = false;
-        if(!confiuration.plate_unit) confiuration.plate_unit = false;
-        if(!confiuration.progressbar_display) confiuration.progressbar_barWidth = 0;
+
 
         config = {
-            // Set the size of the color picker
+            layoutDirection: confiuration.layout_Direction,
+            layout: GenerateLayoutData(),
+            colors: GenerateColorData(),
             width: window.innerHeight-20,
-            colors: [
-                'rgb(100%, 0, 0)', // pure red
-                'rgb(0, 100%, 0)', // pure green
-                'rgb(0, 0, 100%)', // pure blue
-            ]
+            borderColor: confiuration.style_borderColor,
+            borderWidth: confiuration.style_borderWidth,
+            handleRadius: confiuration.style_handleRadius
+
         };
 
         return config;
     }
+
+    function GenerateLayoutData(){
+        var output = [];
+
+        config_layout.forEach(function (part, index){
+            item = {};
+            options = {};
+
+            switch(part.Layout){
+                default:
+                case "Wheel":
+                    item["component"] = iro.ui.Wheel;
+                    break;
+                case "Box":
+                    item["component"] = iro.ui.Box;
+                    break;
+                case "Slider":
+                    item["component"] = iro.ui.Slider;
+                    options["sliderType"] = part.sliderType;
+                    options["sliderSize"] = part.sliderSize;
+                    break;
+            }
+            item["component"]
+
+            item["options"] = options;
+            output.push(item);
+        });
+
+        return output;
+    }
+
+    function GenerateColorData(){
+        var output = [];
+
+        colors_ids = [];
+        colorsTemperatures_ids = [];
+        colorsTemperaturesMode_ids = [];
+
+        config_variabels.forEach(function (part, index){
+            if(part.Color.Variable === 0 || part.Temperature.Variable === 0){
+                console.log("Überspinge Farbe => keine avriable gesetzt!");
+            }else{
+                if(part.Mode.Variable > 0 && part.Mode.Value){
+                    //temperture Mode
+                    temp = part.Temperature.Value;
+
+                    if(part.Temperature.isMired){
+                        temp = MiredToKelvin(temp);
+                    }
+                    output.push(colorTemperatureToRGB(temp));
+                }else{
+                    //color Mode
+                    output.push(hexToRgb(part.Color.Value));
+                }
+
+                colors_ids.push(part.Color.Variable);
+                colorsTemperatures_ids.push(part.Temperature.Variable);
+                colorsTemperaturesMode_ids.push(part.Mode.Variable);
+
+            }
+        });
+
+        return output;
+    }
+
 
     colorPicker.on('color:change', function(color) {
         console.log(color.index, color.rgb);
@@ -54,7 +121,7 @@
         ws.onmessage = function(e) {
             data = JSON.parse(e.data);
             if(data.Message == 10603) {
-                UpdateGauge(data.SenderID, data.Data[0]);
+                UpdateColorPicker(data.SenderID, data.Data[0]);
             }
         };
 
@@ -71,12 +138,40 @@
         };
     }
 
-    function UpdateGauge(id_val, val){
+    function UpdateColorPicker(id_val, val){
         isUpdated = false;
 
-        if(id_val == confiuration.variable){
-            //console.log(val);
-            gauge.value = val;
+        if(colors_ids.includes(id_val)){
+            //änderung farbe
+            index = colors_ids.indexOf(id_val);
+
+            if(config_variabels[index].Color.Value !== val){
+                config_variabels[index].Color.Value = val;
+                isUpdated = true;
+            }
+        }
+
+        if(colorsTemperatures_ids.includes(id_val)){
+            //änderung temperture!!
+            index = colorsTemperatures_ids.indexOf(id_val);
+
+            if(config_variabels[index].Temperature.Value !== val){
+                config_variabels[index].Temperature.Value = val;
+                isUpdated = true;
+            }
+        }
+
+        if(colorsTemperaturesMode_ids.includes(id_val)){
+            //änderung des Moduses
+            index =  colorsTemperaturesMode_ids.indexOf(id_val);
+
+            if(config_variabels[index].Mode.Value !== val){
+                config_variabels[index].Mode.Value = val;
+            }
+        }
+
+        if(isUpdated){
+            colorPicker.setColors(GenerateColorData());
         }
     }
 
@@ -86,7 +181,7 @@
             try {
                 $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
                     data.forEach(function (part, index) {
-                        UpdateGauge(part.Variable, part.Value);
+                        UpdateColorPicker(part.Variable, part.Value);
                     });
                 });
 
@@ -122,6 +217,59 @@
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
+
+    function colorTemperatureToRGB(kelvin){
+        var temp = kelvin / 100;
+        var red, green, blue;
+
+        if( temp <= 66 ){
+            red = 255;
+            green = temp;
+            green = 99.4708025861 * Math.log(green) - 161.1195681661;
+
+            if( temp <= 19){
+                blue = 0;
+            } else {
+                blue = temp-10;
+                blue = 138.5177312231 * Math.log(blue) - 305.0447927307;
+            }
+        } else {
+            red = temp - 60;
+            red = 329.698727446 * Math.pow(red, -0.1332047592);
+
+            green = temp - 60;
+            green = 288.1221695283 * Math.pow(green, -0.0755148492 );
+
+            blue = 255;
+        }
+
+        return {
+            r : clamp(red,   0, 255),
+            g : clamp(green, 0, 255),
+            b : clamp(blue,  0, 255)
+        }
+    }
+    function clamp( x, min, max ) {
+        if(x<min){ return min; }
+        if(x>max){ return max; }
+
+        return x;
+    }
+    function hexToRgb(bigint) {
+        var r = (bigint >> 16) & 255;
+        var g = (bigint >> 8) & 255;
+        var b = bigint & 255;
+
+        return {"r": r, "g": g, "b": b};
+    }
+
+    function KelvinToMired(value){
+        return Math.floor(1000000 / value);
+    }
+    function MiredToKelvin(value){
+        return Math.floor(1000000 / value);
+    }
+
 
     window.onload = function() {
         LoadPicker();

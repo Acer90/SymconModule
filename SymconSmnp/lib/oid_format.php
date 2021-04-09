@@ -89,4 +89,4 @@
     if($ret_type == 'array') return $oid;
     return '.' . join('.', $oid);
   }
-?>
+
