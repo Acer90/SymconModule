@@ -503,4 +503,4 @@ class rfc3412_ScopedPDU extends rfc1155_Sequence
     return $this;
   }
 }
-?>
+

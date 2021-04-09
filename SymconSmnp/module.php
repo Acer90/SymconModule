@@ -908,4 +908,3 @@
             return "Load Complete! Please restart the Instance-Menu.";
         }
     }
-?>

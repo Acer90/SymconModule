@@ -67,5 +67,5 @@ The SNMP extension requires building yet another extension into PHP.
   $uptime = 123;
 
   $snmp->trap($ip, $community, $varbind, $enterprise, $agent, $trap_type, $specific_trap_type, $uptime);
-?>
+
 ```

@@ -8,76 +8,23 @@ class SymconJSLiveColorPicker extends JSLiveModule{
 
         $this->ConnectParent("{9FFF3FC0-FD51-C289-FA36-BC1C370946CF}");
 
-        $this->RegisterPropertyInteger("variable", 0);
-        $this->RegisterPropertyInteger("min", 0);
-        $this->RegisterPropertyInteger("max", 1000);
-        $this->RegisterPropertyString("template", "CanvasGauges-Radial");
-
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
+        $this->RegisterPropertyInteger("DataUpdateRate", 50);
 
-        //title
-        $this->RegisterPropertyString("title_text", "");
-        $this->RegisterPropertyBoolean("title_display", false);
-        $this->RegisterPropertyInteger("title_fontSize", 20);
-        $this->RegisterPropertyInteger("title_fontColor", 0);
+        //style
+        $this->RegisterPropertyInteger("style_borderWidth", 2);
+        $this->RegisterPropertyInteger("style_borderColor", 0);
+        $this->RegisterPropertyInteger("style_handleRadius", 8);
 
-        //Plate
-        $this->RegisterPropertyBoolean("plate_display", false);
-        $this->RegisterPropertyString("plate_unit", "");
-        $this->RegisterPropertyInteger("plate_colorPlate", 16777215);
-        $this->RegisterPropertyInteger("plate_colorPlate_Alpha", 1);
-        $this->RegisterPropertyInteger("plate_colorPlateEnd", 16777215);
-        $this->RegisterPropertyInteger("plate_colorPlateEnd_Alpha", 1);
+        //layout
+        $this->RegisterPropertyString("layout_Direction", "horizontal");
+        $this->RegisterPropertyString("Layout", "[]");
 
-        //Needle
-        $this->RegisterPropertyBoolean("needle_display", false);
-        $this->RegisterPropertyString("needle_Type", "arrow"); //"line"
-        $this->RegisterPropertyInteger("needle_fontSize", 14);
-        $this->RegisterPropertyInteger("needle_start", 0);
-        $this->RegisterPropertyInteger("needle_end", 80);
-        $this->RegisterPropertyInteger("needle_width", 2);
-        $this->RegisterPropertyInteger("needle_colorNeedle", 0);
-        $this->RegisterPropertyInteger("needle_colorNeedle_Alpha", 1);
-        $this->RegisterPropertyInteger("needle_colorNeedleEnd", 0);
-        $this->RegisterPropertyInteger("needle_colorNeedleEnd_Alpha", 1);
+        //variables
+        $this->RegisterPropertyString("Variables", "[]");
 
-        //Valuebox
-        $this->RegisterPropertyBoolean("valuebox_display", false);
-        $this->RegisterPropertyInteger("valuebox_fontSize", 14);
-        $this->RegisterPropertyInteger("valuebox_colorValueBoxBackground", 0);
-        $this->RegisterPropertyInteger("valuebox_colorValueBoxBackground_Alpha", 1);
-
-        //Progressbar
-        $this->RegisterPropertyBoolean("progressbar_display", false);
-        $this->RegisterPropertyInteger("progressbar_barWidth", 5);
-        $this->RegisterPropertyInteger("progressbar_barShadow", 1);
-        $this->RegisterPropertyInteger("progressbar_colorBar", 0);
-        $this->RegisterPropertyInteger("progressbar_colorBar_Alpha", 1);
-        $this->RegisterPropertyInteger("progressbar_colorBarProgress", 0);
-        $this->RegisterPropertyInteger("progressbar_colorBarProgress_Alpha", 1);
-
-        //Ticks
-        $this->RegisterPropertyBoolean("ticks_strokeTicks", false);
-        $this->RegisterPropertyInteger("ticks_highlightsWidth", 5);
-        $this->RegisterPropertyInteger("ticks_minorTicks", 5);
-        $this->RegisterPropertyInteger("ticks_colorMajorTick", 0);
-        $this->RegisterPropertyInteger("ticks_colorMinorTicks", 0);
-        $this->RegisterPropertyInteger("ticks_colorUnits", 0);
-        $this->RegisterPropertyInteger("ticks_colorNumbers", 0);
-
-        $this->RegisterPropertyString("Ticks", "[]");
-        $this->RegisterPropertyString("Highlights", "[]");
-
-        //Radialgauge settings
-        $this->RegisterPropertyInteger("radial_startAngle", 60);
-        $this->RegisterPropertyInteger("radial_ticksAngle", 270);
-
-        //linearsettings
-        $this->RegisterPropertyString("linear_tickSide", "both");
-        $this->RegisterPropertyString("linear_numberSide", "both");
-        $this->RegisterPropertyString("linear_needleSide", "both");
     }
     public function ApplyChanges() {
         //Never delete this line!
@@ -97,6 +44,8 @@ class SymconJSLiveColorPicker extends JSLiveModule{
                 return $this->GetWebpage();
             case "getData":
                 return $this->GetData($buffer['queryData']);
+            case "setData":
+                return ""; //$this->GetData($buffer['queryData']);
             default:
                 $this->SendDebug("ReceiveData", "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
                 break;
@@ -127,107 +76,53 @@ class SymconJSLiveColorPicker extends JSLiveModule{
         return $scriptData;
     }
     public function GetData($querydata){
-        $output = array();
-        $load_vars = array();
-        $registered_vars = array();
-        $datasets = json_decode($this->ReadPropertyString("Datasets"), true);
-
-        //load all variables
-        foreach ($datasets as $item){
-            foreach ($item["Variables"] as $vars){
-                if(!in_array($vars["Variable"], $load_vars)){
-                    $registered_vars[] = $vars["Variable"];
-                }
-            }
-        }
-
-        if(!array_key_exists("var", $querydata)) {
-            //$this->SendDebug("GetData", "PARAMETER VARIABLE NOT SET!(" . json_encode($querydata). ")", 0);
-            $load_vars = $registered_vars;
-        }else{
-            $load_vars[] = $querydata["var"];
-        }
-
-
-        foreach($load_vars as $var){
-            $o_item = array();
-            $o_item["Variable"] = $var;
-            if(!IPS_VariableExists($var)){
-                $this->SendDebug("GetData", "VARIABLE NOT EXIST!", 0);
-                continue;
-            }
-
-
-            $key = array_search($var, array_column($registered_vars, 'Variable'));
-            if(!in_array($var, $registered_vars)){
-                $this->SendDebug("GetData", "VARIABLE NOT IN INSTANCE!", 0);
-                continue;
-            }
-
-            $o_item["Value"] = GetValue($var);
-
-            if($this->ReadPropertyBoolean("Debug"))
-                $this->SendDebug("GetData", json_encode($querydata), 0);
-
-            $output[] = $o_item;
-        }
-
-        return json_encode($output);
+        return json_encode($this->GenerateVariabels());
     }
 
     private function ReplacePlaceholder($htmlData){
-        $htmlData = str_replace("{TITLE_TEXT}", $this->ReadPropertyString("title_text"), $htmlData);
-
         //configuration Data
         $htmlData = str_replace("{CONFIG}", $this->json_encode_advanced($this->GetConfigurationData()), $htmlData);
 
-        //ticks
-        $htmlData = str_replace("{TICKS}", $this->json_encode_advanced($this->GenerateTicks()), $htmlData);
+        //variables
+        $htmlData = str_replace("{VARIABELS}", $this->json_encode_advanced($this->GenerateVariabels()), $htmlData);
 
-        //tHighlights
-        $htmlData = str_replace("{HIGHLIGHTS}", $this->json_encode_advanced($this->GenerateHighlights()), $htmlData);
-
-        //VALUE
-        $val = 0;
-        if(IPS_VariableExists($this->ReadPropertyInteger("variable"))){
-            $val = GetValue($this->ReadPropertyInteger("variable"));
-        }else{
-            $this->SendDebug("ReplacePlaceholder", "Variable (".$this->ReadPropertyInteger("variable").") NOT EXIST!", 0);
-        }
-        $htmlData = str_replace("{VALUE}", number_format($val, 2, '.', ''), $htmlData);
+        //Layout
+        $htmlData = str_replace("{LAYOUT}", $this->json_encode_advanced($this->GenerateLayout()), $htmlData);
 
         return $htmlData;
     }
 
-    private function GenerateTicks(){
-        $ticks = json_decode($this->ReadPropertyString("Ticks"), true);
-        $min = $this->ReadPropertyInteger("min");
-        $max = $this->ReadPropertyInteger("max");
-        $majorticks = array();
+    private function GenerateVariabels(){
+        $output = array();
+        $variables = json_decode($this->ReadPropertyString("Variables"), true);
 
-        $majorticks[] = $min;
-        foreach ($ticks as $tick) {
-            $majorticks[] = $tick["Value"];
+        //load all variables
+        foreach ($variables as $item){
+            $s_output = array();
+            $s_output["Color"]["Variable"] = $item["Color"];
+            $s_output["Color"]["Value"] = GetValue($item["Color"]);
+
+            $s_output["Temperature"]["Variable"] = $item["ColorTemperature"];
+            $s_output["Temperature"]["Value"] = GetValue($item["ColorTemperature"]);
+            $s_output["Temperature"]["isMired"] = $item["isMired"];
+
+            $s_output["Mode"]["Variable"] = $item["SwitchTemperature"];
+            $s_output["Mode"]["Value"]  = boolval(GetValue($item["SwitchTemperature"]));
+            //$this->SendDebug("Test", "Val => ". $s_output["Mode"]["Value"]. " |ITEM => ". GetValue($item["SwitchTemperature"]),0 );
+
+            $output[] = $s_output;
         }
-        $majorticks[] = $max;
-        return $majorticks;
+
+        return $output;
     }
 
-    private function GenerateHighlights(){
-        $arr = json_decode($this->ReadPropertyString("Highlights"), true);
-        $highlights = array();
+    private function GenerateLayout(){
+        $layout_data = json_decode($this->ReadPropertyString("Layout"),true);
 
-        foreach ($arr as $item){
-            $highlight_item = array();
-            $highlight_item["from"] = $item["From"];
-            $highlight_item["to"] = $item["To"];
+        $arr_order = array_column($layout_data, 'Order');
+        array_multisort($arr_order, SORT_ASC , $layout_data);
 
-            $rgbdata = $this->HexToRGB($item["HighlightColor"]);
-            $highlight_item["color"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["HighlightColor_Alpha"], 2, '.', '') . ")";
-
-            $highlights[] = $highlight_item;
-        }
-        return $highlights;
+        return $layout_data;
     }
 
     private function GetConfigurationData(){
@@ -251,15 +146,8 @@ class SymconJSLiveColorPicker extends JSLiveModule{
             }
         }
 
-
-
-        if(!$this->ReadPropertyBoolean("plate_display")){
-            $output["plate_colorPlate"] = "rgba(0, 0, 0, 0)";
-            $output["plate_colorPlateEnd"] = "rgba(0, 0, 0, 0)";
-        }
-
-        unset($output["Ticks"]);
-        unset($output["Highlights"]);
+        unset($output["Layout"]);
+        unset($output["Variables"]);
         return $output;
     }
 
@@ -274,8 +162,7 @@ class SymconJSLiveColorPicker extends JSLiveModule{
             $confData = json_decode(IPS_GetConfiguration($id), true);
 
             //bestimmte aktuelle einstellungen beibehalten
-            $confData["title_text"] = $this->ReadPropertyString("title_text");
-            $confData["Datasets"]= $this->ReadPropertyString("Datasets");
+            $confData["Variables"]= $this->ReadPropertyString("Variables");
 
             IPS_SetConfiguration($this->InstanceID, json_encode($confData));
             IPS_ApplyChanges($this->InstanceID);

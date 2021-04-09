@@ -560,4 +560,4 @@ class rfc1157_TrapPDU extends rfc1155_Sequence
     return $this;
   }
 }
-?>
+

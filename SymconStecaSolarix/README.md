@@ -63,7 +63,7 @@ Infos über die einzeln Variablen findest du im Handbuch des Wechselrichters
   
   StecaSolarix_Load_LiveProperties(59067 /*[StecaSolarix]*/);
   //Aktualisiert alle Parameter-Variablen
-?>
+
 ```
 
 ## 7. Parameter / Modul-Infos

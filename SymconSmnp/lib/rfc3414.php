@@ -271,4 +271,4 @@ class rfc3414_USM extends rfc1155_Sequence
     return $ret;
   }
 }
-?>
+
