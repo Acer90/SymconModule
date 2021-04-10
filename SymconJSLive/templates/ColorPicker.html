@@ -243,7 +243,8 @@
 
     function UpdateColorPicker(id_val, val){
         isUpdated = false;
-        if(running || (last_update + confiuration.DataUpdateRate) <= Date.now()) return;
+        now = Date.now();
+        if(running ) return;
 
         if(colors_ids.includes(id_val)){
             //änderung farbe
@@ -288,7 +289,9 @@
             try {
                 $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
                     data.forEach(function (part, index) {
-                        UpdateColorPicker(part.Variable, part.Value);
+                        UpdateColorPicker(part.Color.Variable, part.Color.Value);
+                        UpdateColorPicker(part.Temperature.Variable, part.Temperature.Value);
+                        UpdateColorPicker(part.Mode.Variable, part.Mode.Value);
                     });
                 });
 
