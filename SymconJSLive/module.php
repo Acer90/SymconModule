@@ -62,7 +62,7 @@ class SymconJSLive extends WebHookModule {
             }
 
 
-            header("HTTP/1.0 200 OK");
+            //header("HTTP/1.0 200 OK");
             header("Content-Type: text/html");
 
             //Add caching support
@@ -115,7 +115,7 @@ class SymconJSLive extends WebHookModule {
             //$this->SendDebug('WebHook', 'Array QUERY_STRING: ' . print_r($queryData, true), 0);
             //$this->SendDebug('WebHook', 'Array Server: ' . print_r($_SERVER, true), 0);
 
-            header("HTTP/1.0 200 OK");
+            //header("HTTP/1.0 200 OK");
             header("Content-Type: text/html");
 
 

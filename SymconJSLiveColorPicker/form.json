@@ -30,8 +30,8 @@
             "items": [
                 { "type": "Select", "name": "layout_Direction", "caption": "Layout Direction",
                     "options": [
-                        { "caption": "Horizontal", "value": "horizontal" },
-                        { "caption": "Vertical", "value": "vertical" }
+                        { "caption": "Side by side", "value": "horizontal" },
+                        { "caption": "One below the other", "value": "vertical" }
                     ]
                 },
                 {
