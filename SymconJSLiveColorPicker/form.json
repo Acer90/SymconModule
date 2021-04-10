@@ -12,6 +12,20 @@
         },
         {
             "type": "ExpansionPanel",
+            "caption": "Wheel",
+            "items": [
+                { "type": "CheckBox", "name": "wheel_Lightness", "caption": "Lightness"},
+                { "type": "NumberSpinner", "name": "wheel_Angle", "caption": "Angle", "suffix": "°", "digits": 0, "minimum": 0, "maximum": 360 },
+                { "type": "Select", "name": "wheel_Direction", "caption": "Direction",
+                    "options": [
+                        { "caption": "Anticlockwise", "value": "anticlockwise" },
+                        { "caption": "Clockwise", "value": "clockwise" }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
             "caption": "Layout",
             "items": [
                 { "type": "Select", "name": "layout_Direction", "caption": "Layout Direction",

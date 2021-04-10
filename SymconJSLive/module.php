@@ -56,12 +56,13 @@ class SymconJSLive extends WebHookModule {
                 $this->SendDebug('WebHook', 'JS PATH =>' . $path, 0);
 
             if (!file_exists($path)) {
+                header("HTTP/1.0 404 Not Found");
                 echo "404 file not found!";
                 return;
             }
 
 
-
+            header("HTTP/1.0 200 OK");
             header("Content-Type: text/html");
 
             //Add caching support
@@ -114,6 +115,7 @@ class SymconJSLive extends WebHookModule {
             //$this->SendDebug('WebHook', 'Array QUERY_STRING: ' . print_r($queryData, true), 0);
             //$this->SendDebug('WebHook', 'Array Server: ' . print_r($_SERVER, true), 0);
 
+            header("HTTP/1.0 200 OK");
             header("Content-Type: text/html");
 
 
