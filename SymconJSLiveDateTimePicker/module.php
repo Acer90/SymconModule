@@ -22,7 +22,6 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
         $this->RegisterPropertyInteger("style_borderWidth", 2);
         $this->RegisterPropertyInteger("style_borderColor", 0);
         $this->RegisterPropertyInteger("style_handleRadius", 8);
-
     }
     public function ApplyChanges() {
         //Never delete this line!
