@@ -18,6 +18,11 @@ class SymconJSLiveColorPicker extends JSLiveModule{
         $this->RegisterPropertyInteger("style_borderColor", 0);
         $this->RegisterPropertyInteger("style_handleRadius", 8);
 
+        //wheel
+        $this->RegisterPropertyBoolean("wheel_Lightness", true);
+        $this->RegisterPropertyInteger("wheel_Angle", 0);
+        $this->RegisterPropertyString("wheel_Direction", "anticlockwise");
+
         //layout
         $this->RegisterPropertyString("layout_Direction", "horizontal");
         $this->RegisterPropertyString("Layout", "[]");
