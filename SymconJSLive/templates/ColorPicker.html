@@ -149,7 +149,7 @@
 
     colorPicker.on('color:change', function(color) {
 
-        console.log(color.index, color.rgb);
+        console.log(Date.now() + " >> ChangeColor (" + color.index + ") => " + color.rgb);
 
         id = config_variabels[color.index].Color.Variable;
         val = hexToInt(color.rgb);
@@ -168,7 +168,6 @@
 
         }
 
-
         if(updateId.includes(id)){
             //updaten
             index = updateId.indexOf(id);
@@ -179,7 +178,7 @@
             updateVal.push(val);
         }
 
-        console.log("UpdateWorker => "+ JSON.stringify(updateVal));
+        console.log(Date.now() + " >> ChangeColor => "+ JSON.stringify(updateVal));
 
         if(!running) UpdateWorker();
     });
@@ -194,10 +193,11 @@
                     last_update = Date.now();
                     //console.log("UpdateWorker => "+ JSON.stringify(updateVal) + " | " + JSON.stringify(updateId));
 
-                    for (let i in updateVal) {
-                        //console.log(Date.now() + " >> UpdateWorker | Update " + updateId[i] + " => " + updateVal[i] + " " );
+                    for (i = 0; i < updateVal.length; i++) {
+                        console.log(Date.now() + " >> UpdateWorker | Update " + JSON.stringify(updateVal) + " | " + JSON.stringify(updateId));
+                        console.log(Date.now() + " >> UpdateWorker | URL: {ADDRESS}/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&var=" +updateId[i]+ "&val="+updateVal[i]);
                         var response = await fetch("{ADDRESS}/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&var=" +updateId[i]+ "&val="+updateVal[i]);
-                        console.log(Date.now() + " >> Response => " + response.statusText + " (" + response.status + ")");
+                        console.log(Date.now() + " >> UpdateWorker Response => " + response.statusText + " (" + response.status + ")");
                     }
 
                     updateVal = [];
@@ -371,7 +371,7 @@
     }
     function hexToInt(rgb){
         var erg = rgb.r*256*256 + rgb.g*256 + rgb.b;
-        console.log("hexToInt => " + JSON.stringify(rgb) + " | " + erg);
+        console.log(Date.now() + " >> hexToInt => " + JSON.stringify(rgb) + " | " + erg);
         return erg;
     }
 
