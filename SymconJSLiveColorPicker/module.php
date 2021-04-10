@@ -75,8 +75,10 @@ class SymconJSLiveColorPicker extends JSLiveModule{
             }
         }
 
-        //$this->SendDebug('GetWebpage', $scriptData, 0);
         $scriptData = $this->ReplacePlaceholder($scriptData);
+
+        if($this->ReadPropertyBoolean("Debug"))
+            $this->SendDebug('GetWebpage', $scriptData, 0);
 
         return $scriptData;
     }
@@ -112,6 +114,7 @@ class SymconJSLiveColorPicker extends JSLiveModule{
     }
 
     private function ReplacePlaceholder($htmlData){
+
         //configuration Data
         $htmlData = str_replace("{CONFIG}", $this->json_encode_advanced($this->GetConfigurationData()), $htmlData);
 

@@ -133,7 +133,8 @@ class SymconJSLive extends WebHookModule {
 
             if (count($contend) == 0){
                 $this->SendDebug("WebHook", "NO INSTANCE FOUND!", 0);
-                return ""; //wenn instance nicht gefunden
+                $this->SendDebug("WebHook", print_r($contend, true), 0);
+                return "NO INSTANCE FOUND!"; //wenn instance nicht gefunden
             }
 
             if($Type = "getContend") {
