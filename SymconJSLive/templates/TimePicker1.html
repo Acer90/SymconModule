@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ColorPicker</title>
+    <link href="{ADDRESS}/hook/JSLive/js/css/TimePicker1.css" />
+</head>
+<script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
+
+<body style="text-align: center;">
+<input type="time" name="time" id="time" />
+
+<script>
+    let config_global = {GLOBAL};
+    //let config_variabels = {VALUE};
+    let confiuration = {CONFIG};
+
+
+    function Load(){
+        document.querySelector("#time").addEventListener("input", function(e) {
+            const reTime = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
+            const time = this.value;
+            if (reTime.exec(time)) {
+                const minute = Number(time.substring(3,5));
+                const hour = Number(time.substring(0,2)) % 12 + (minute / 60);
+                this.style.backgroundImage = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><circle cx='20' cy='20' r='18.5' fill='none' stroke='%23222' stroke-width='3' /><path d='M20,4 20,8 M4,20 8,20 M36,20 32,20 M20,36 20,32' stroke='%23bbb' stroke-width='1' /><circle cx='20' cy='20' r='2' fill='%23222' stroke='%23222' stroke-width='2' /></svg>"), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M18.5,24.5 19.5,4 20.5,4 21.5,24.5 Z' fill='%23222' style='transform:rotate(${360 * minute / 60}deg); transform-origin: 50% 50%;' /></svg>"), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M18.5,24.5 19.5,8.5 20.5,8.5 21.5,24.5 Z' style='transform:rotate(${360 * hour / 12}deg); transform-origin: 50% 50%;' /></svg>")`;
+            }
+        });
+    }
+
+    async function UpdateWorker(){
+        running = true;
+        while (running){
+            await sleep(1);
+            try {
+                //console.log("UpdateWorker => "+ updateVal.length + " | " + updateId.length);
+                if((last_update + confiuration.DataUpdateRate) <= Date.now() && updateVal.length > 0 && updateId.length > 0){
+                    last_update = Date.now();
+                    //console.log("UpdateWorker => "+ JSON.stringify(updateVal) + " | " + JSON.stringify(updateId));
+
+                    for (i = 0; i < updateVal.length; i++) {
+                        console.log(Date.now() + " >> UpdateWorker | Update " + JSON.stringify(updateVal) + " | " + JSON.stringify(updateId));
+                        console.log(Date.now() + " >> UpdateWorker | URL: {ADDRESS}/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&var=" +updateId[i]+ "&val="+updateVal[i]);
+                        var response = await fetch("{ADDRESS}/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&var=" +updateId[i]+ "&val="+updateVal[i]);
+                        console.log(Date.now() + " >> UpdateWorker Response => " + response.statusText + " (" + response.status + ")");
+                    }
+
+                    updateVal = [];
+                    updateId = [];
+
+                    console.log(Date.now() + " >> UpdateWorker => CLOSE");
+                    running = false;
+                }
+            }catch (e) {
+                console.log(Date.now() + " >> UpdateWorker => ", e);
+            }
+        }
+    }
+    function connect() {
+        var ws = new WebSocket('{WSADDRESS}', [encodeURIComponent(btoa('webfront:{WEBFRONTPASSWORD}'))]);
+        ws.onopen = function() {
+            // subscribe to some channels
+            //ws.send(JSON.stringify({
+            //.... some message the I must send when I connect ....
+            //}));
+        };
+
+        ws.onmessage = function(e) {
+            data = JSON.parse(e.data);
+            if(data.Message == 10603) {
+                //UpdateTimePicker(data.SenderID, data.Data[0]);
+            }
+        };
+
+        ws.onclose = function(e) {
+            console.log(Date.now() + ' >> Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+            setTimeout(function() {
+                connect();
+            }, 1000);
+        };
+
+        ws.onerror = function(err) {
+            console.error(Date.now() + ' >> Socket encountered error: ', err.message, 'Closing socket');
+            ws.close();
+        };
+    }
+
+    function Update(id_val, val){
+        isUpdated = false;
+        now = Date.now();
+        if(running ) return;
+
+        if(colors_ids.includes(id_val)){
+            //änderung farbe
+            index = colors_ids.indexOf(id_val);
+
+            if(config_variabels[index].Color.Value !== val){
+                console.log(Date.now() + " >> UpdateColorPicker (Color)" + index + " => " + val+ " (" + config_variabels[index].Color.Value + ")");
+                config_variabels[index].Color.Value = val;
+                isUpdated = true;
+            }
+        }
+
+        if(colorsTemperatures_ids.includes(id_val)){
+            //änderung temperture!!
+            index = colorsTemperatures_ids.indexOf(id_val);
+
+            if(config_variabels[index].Temperature.Value !== val){
+                config_variabels[index].Temperature.Value = val;
+                console.log(Date.now() + " >> UpdateColorPicker (Temp)" + index + " => " + val+ " (" + config_variabels[index].Temperature.Value + ")");
+                isUpdated = true;
+            }
+        }
+
+        if(colorsTemperaturesMode_ids.includes(id_val)){
+            //änderung des Moduses
+            index =  colorsTemperaturesMode_ids.indexOf(id_val);
+
+            if(config_variabels[index].Mode.Value !== val){
+                config_variabels[index].Mode.Value = val;
+                console.log(Date.now() + " >> UpdateColorPicker (Mode)" + index + " => " + val + " (" + config_variabels[index].Mode.Value + ")");
+            }
+        }
+
+        if(isUpdated){
+            colorPicker.setColors(GenerateColorData());
+        }
+    }
+    async function PullNewData(refreshRate){
+        refreshRate = refreshRate * 1000;
+        while (true){
+            try {
+                $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                    data.forEach(function (part, index) {
+                        UpdateColorPicker(part.Color.Variable, part.Color.Value);
+                        UpdateColorPicker(part.Temperature.Variable, part.Temperature.Value);
+                        UpdateColorPicker(part.Mode.Variable, part.Mode.Value);
+                    });
+                });
+
+                //Control Variables
+            }catch (e) {
+                console.log(Date.now() + " >> PullNewData => ", e);
+            }
+            await sleep(refreshRate);
+        }
+    }
+
+    function filterKeys(obj, func) {
+        return Array.prototype.filter.call(Object.keys(obj), func, obj);
+    }
+    function someKeys(obj, func) {
+        return Array.prototype.some.call(Object.keys(obj), func, obj);
+    }
+    function atLeastOnePropertyMatches(obj, requiredProp) {
+        return someKeys(obj, function (prop) {
+            if (requiredProp.hasOwnProperty(prop)) {
+                return this[prop] === requiredProp[prop];
+            }
+        });
+    }
+    function getMatchingKeys(obj, requiredProp) {
+        return filterKeys(obj, function (prop) {
+            return atLeastOnePropertyMatches(this[prop], required);
+        });
+    }
+    Array.prototype.insert = function ( index, item ) {
+        this.splice( index, 0, item );
+    };
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    window.onload = function() {
+        Load();
+
+        if(config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0){
+            //pullup Mode local
+            refreshRate = config_global.LocalRefreshTime;
+            PullNewData(refreshRate);
+        }else if(config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0){
+            //pullup Mode remote
+            refreshRate = config_global.RemoteRefreshTime;
+            PullNewData(refreshRate);
+        }else{
+            connect();
+        }
+    }
+</script>
+</body>
+</html>

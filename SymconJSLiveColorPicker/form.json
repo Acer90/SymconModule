@@ -100,6 +100,19 @@
                                 "digits": 0,
                                 "minimum": 0
                             }
+                        },
+                        {
+                            "caption": "Slider Shape",
+                            "name": "sliderShape",
+                            "width": "150px",
+                            "add": "circle",
+                            "edit": {
+                                "type": "Select",
+                                "options": [
+                                    { "caption": "Default", "value": "" },
+                                    { "caption": "Circle", "value": "circle" }
+                                ]
+                            }
                         }
                     ]
                 }
