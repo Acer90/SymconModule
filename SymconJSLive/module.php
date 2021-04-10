@@ -63,7 +63,13 @@ class SymconJSLive extends WebHookModule {
 
 
             //header("HTTP/1.0 200 OK");
-            header("Content-Type: text/html");
+            $path_parts = pathinfo($path);
+            if(strtolower($path_parts["extension"]) == "css"){
+                header("Content-Type: text/css");
+            }else{
+                header("Content-Type: text/html");
+            }
+
 
             //Add caching support
             $etag = md5_file($path);
