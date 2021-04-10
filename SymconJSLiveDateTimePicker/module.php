@@ -33,7 +33,6 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
         $jsonData = json_decode($JSONString, true);
         $buffer = json_decode($jsonData['Buffer'], true);
 
-
         if($buffer["instance"] != $this->InstanceID) return;
         //$this->SendDebug("ReceiveData", $jsonData['Buffer']. " =>" . $this->InstanceID, 0);
 
@@ -48,14 +47,13 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
                 $this->SendDebug("ReceiveData", "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
                 break;
         }
-
     }
     public function GetWebpage(){
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
         if(empty($scriptID)){
             if($this->ReadPropertyBoolean("Debug"))
                 $this->SendDebug('GetWebpage', 'load default template!', 0);
-            $scriptData = file_get_contents (__DIR__ ."/../SymconJSLive/templates/".$this->ReadPropertyString("Template"). ".html");
+            $scriptData = file_get_contents(__DIR__ ."/../SymconJSLive/templates/".$this->ReadPropertyString("Template"). ".html");
         }else{
             if(!IPS_ScriptExists($scriptID)){
                 $this->SendDebug('GetWebpage', 'Template NOT FOUND!', 0);
