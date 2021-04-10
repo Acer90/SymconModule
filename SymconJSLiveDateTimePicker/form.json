@@ -1,0 +1,50 @@
+{
+    "elements":
+    [
+        { "type": "SelectVariable", "name": "Variable", "caption": "Variable"},
+        { "type": "Select", "name": "Template", "caption": "Template",
+            "options": [
+                { "caption": "TimePicker 1", "value": "TimePicker1" }
+            ]
+        },
+
+        {
+            "type": "ExpansionPanel",
+            "caption": "Style",
+            "items": [
+                { "type": "SelectColor", "name": "style_backgroundColor", "caption": "Background Color" },
+
+                { "type": "NumberSpinner", "name": "style_borderRadius", "caption": "Border Radius", "suffix": "px" },
+                { "type": "NumberSpinner", "name": "style_borderWidth", "caption": "Border Width", "suffix": "px" },
+                { "type": "SelectColor", "name": "style_borderColor", "caption": "Border Color" },
+                { "type": "NumberSpinner", "name": "style_handleRadius", "caption": "Handle Radius", "suffix": "px" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Expert",
+            "items": [
+                { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
+                { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script"},
+                { "type": "NumberSpinner", "name": "DataUpdateRate", "caption": "Data Update Rate", "minimum": 0, "suffix": "ms", "digits": 0 }
+            ]
+        }
+    ],
+    "actions":
+    [
+        {
+            "type": "RowLayout",
+            "items": [
+                { "type": "Button", "label": "Get Link (Local)", "onClick": " echo SymconJSLiveDateTimePicker_GetLink($id, True);" },
+                { "type": "Button", "label": "Get Link (Remote)", "onClick": " echo SymconJSLiveDateTimePicker_GetLink($id, False);" }
+            ]
+        },
+        { "type": "Label", "caption": "Load Configuration from other Modul" },
+        { "type": "SelectObject", "name": "ObjectID", "caption": "Chart/Modul" },
+        { "type": "Button", "label": "Load Confiuration", "onClick": " echo SymconJSLiveDateTimePicker_LoadOtherConfiguration($id, $ObjectID);" }
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Status OK!" }
+    ]
+}
