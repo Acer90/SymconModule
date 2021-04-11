@@ -115,6 +115,8 @@ class SymconJSLiveChart extends JSLiveModule{
         $identIdlist[] = IPS_GetObjectIDByIdent("Relativ", $this->InstanceID);
 
         $this->SetBuffer("IdentIDList", json_encode($identIdlist));
+
+        $this->SetReceiveDataFilter('.*instance\\\":[ \\\"]*'.$this->InstanceID.'[\\\”]*.*');
     }
     public function RequestAction($Ident, $Value) {
 
@@ -167,7 +169,7 @@ class SymconJSLiveChart extends JSLiveModule{
         $buffer = json_decode($jsonData['Buffer'], true);
 
 
-        if($buffer["instance"] != $this->InstanceID) return;
+        //if($buffer["instance"] != $this->InstanceID) return;
         //$this->SendDebug("ReceiveData", $jsonData['Buffer']. " =>" . $this->InstanceID, 0);
 
         switch($buffer['cmd']) {

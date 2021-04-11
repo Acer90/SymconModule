@@ -34,6 +34,8 @@ class SymconJSLiveColorPicker extends JSLiveModule{
     public function ApplyChanges() {
         //Never delete this line!
         parent::ApplyChanges();
+
+        $this->SetReceiveDataFilter('.*instance\\\":[ \\\"]*'.$this->InstanceID.'[\\\”]*.*');
     }
 
     public function ReceiveData($JSONString) {
@@ -41,7 +43,7 @@ class SymconJSLiveColorPicker extends JSLiveModule{
         $buffer = json_decode($jsonData['Buffer'], true);
 
 
-        if($buffer["instance"] != $this->InstanceID) return;
+        //if($buffer["instance"] != $this->InstanceID) return;
         //$this->SendDebug("ReceiveData", $jsonData['Buffer']. " =>" . $this->InstanceID, 0);
 
         switch($buffer['cmd']) {
@@ -66,11 +68,12 @@ class SymconJSLiveColorPicker extends JSLiveModule{
         }else{
             if(!IPS_ScriptExists($scriptID)){
                 $this->SendDebug('GetWebpage', 'Template NOT FOUND!', 0);
-                return "";
+                return 'Template NOT FOUND!';
             }
 
             $scriptData = IPS_GetScriptContent($scriptID);
             if($scriptData = ""){
+                return 'Template IS EMPTY!';
                 $this->SendDebug('GetWebpage', 'Template IS EMPTY!', 0);
             }
         }
