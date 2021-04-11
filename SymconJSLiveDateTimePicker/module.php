@@ -16,13 +16,25 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyInteger("DataUpdateRate", 50);
 
-        //style
+        //colors
         $this->RegisterPropertyInteger("style_backgroundColor", 0);
         $this->RegisterPropertyFloat("style_backgroundColor_Alpha", 0);
+        $this->RegisterPropertyInteger("style_highlightColor1", 0);
+        $this->RegisterPropertyFloat("style_highlightColor1_Alpha", 1);
+        $this->RegisterPropertyInteger("style_highlightColor2", 0);
+        $this->RegisterPropertyFloat("style_highlightColor2_Alpha", 1);
+        $this->RegisterPropertyInteger("style_highlightColor3", 0);
+        $this->RegisterPropertyFloat("style_highlightColor3_Alpha", 1);
+        $this->RegisterPropertyInteger("style_highlightColor4", 0);
+        $this->RegisterPropertyFloat("style_highlightColor4_Alpha", 1);
+        $this->RegisterPropertyInteger("style_highlightColor5", 0);
+        $this->RegisterPropertyFloat("style_highlightColor5_Alpha", 1);
 
+        //fonts
         $this->RegisterPropertyInteger("style_fontSize", 12);
         $this->RegisterPropertyInteger("style_fontColor", 0);
 
+        //border
         $this->RegisterPropertyInteger("style_borderRadius", 10);
         $this->RegisterPropertyInteger("style_borderWidth", 2);
         $this->RegisterPropertyInteger("style_borderColor", 0);
@@ -110,7 +122,13 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
         $timeVal->sub(new DateInterval('PT' . $timeVal->getOffset() . 'S'));
 
         $this->SendDebug("SetData", "Update Variable " . $querydata["var"] ." => " . $timeVal->format('Y-m-d H:i:s')." (".$timeVal->getTimestamp()."/".$querydata["val"].")", 0 );
-        RequestAction($querydata["var"], $timeVal->getTimestamp());
+
+        if(IPS_GetVariable($querydata["var"])["VariableAction"] > 0){
+            RequestAction($querydata["var"], $timeVal->getTimestamp());
+        }else{
+            SetValue($querydata["var"], $timeVal->getTimestamp());
+        }
+
         return "OK";
     }
 
