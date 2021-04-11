@@ -153,9 +153,9 @@ class SymconJSLive extends WebHookModule {
             if($this->ReadPropertyBoolean("Debug")) $this->SendDebug("WebHook", $contend, 0);
 
             $compressed = gzencode($contend);
-            header("Content-Encoding: gzip");
-            header("Content-Length: " . strlen($compressed));
-            echo $compressed;
+            //header("Content-Encoding: gzip");
+            //header("Content-Length: " . strlen($compressed));
+            echo $contend;
         }
     }
 
