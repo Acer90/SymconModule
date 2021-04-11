@@ -2,14 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86, user-scalable=no">
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">-->
     <title>ColorPicker</title>
 </head>
 <script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
 <script src="{ADDRESS}/hook/JSLive/js/iro/5.5.0/iro.js"></script>
 
 
-<body style="text-align: center;">
+<body style="text-align: center; display: -webkit-flex;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;">
 <div id="picker"></div>
 
 <script>
@@ -37,11 +44,17 @@
             wdh = window.innerWidth-20;
         }
 
+        if(confiuration.manWidth > 0){
+            wdh = confiuration.manWidth;
+        }
+
+        //alert("Breite: " + wdh);
+
         if(confiuration.layout_Direction === "vertical"){
             wdh = wdh - laydata.width_s;
 
             if(laydata.counter_wheelbox > 0){
-                wdh = (wdh / laydata.counter_wheelbox) - 10;
+                wdh = (wdh / laydata.counter_wheelbox ) - (laydata.counter_wheelbox * 10);
             }
         }
 
@@ -83,7 +96,13 @@
                     break;
                 case "Slider":
                     item["component"] = iro.ui.Slider;
-                    width_s = width_s + part.sliderSize + 10;
+                    if(part.sliderShape === "circle"){
+                        counter_wheelbox++;
+                    }else{
+                        width_s = width_s + part.sliderSize + 10;
+                    }
+
+
                     options["sliderType"] = part.sliderType;
                     options["sliderSize"] = part.sliderSize;
                     options["sliderShape"] = part.sliderShape;
