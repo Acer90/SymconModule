@@ -1,0 +1,53 @@
+body, html {
+    --color: #945;
+    --size: 2rem;
+    --border: calc(var(--size) * 0.125);
+    --borderRadius: calc(var(--size) * 0.5);
+    --labelSize: calc(var(--size) * 0.75);
+    --margin: calc(var(--size) * 0.25);
+    --marginLeft: calc(var(--size) + calc(var(--size) * 0.5));
+    background: var(--bgColor);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    font-family: helvetica, arial, sans-serif;
+}
+
+label {
+    color: var(--color);
+    font-size: var(--labelSize);
+    font-weight: bold;
+}
+
+input {
+    color: #222;
+    font-size: var(--size);
+    padding: var(--margin) var(--margin) var(--margin) var(--margin);
+}
+
+div#divbox {
+     text-align: center;
+     padding: var(--margin) var(--margin) var(--margin) var(--margin);
+     border: var(--border) solid var(--color);
+     border-radius: var(--borderRadius);
+ }
+
+div#timebox{
+    /*transition: backgroundImage 0.25s;
+    background-size: var(--size) var(--size);*/
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    height: 150px;
+    padding-bottom: 10px;
+    /*background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><circle cx='50' cy='50' r='18.5' fill='none' stroke='%23222' stroke-width='3' /><path d='M20,4 20,8 M4,20 8,20 M36,20 32,20 M20,36 20,32' stroke='%23bbb' stroke-width='1' /><circle cx='50' cy='50' r='2' fill='%23222' stroke='%23222' stroke-width='2' /></svg>"), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M18.5,24.5 19.5,4 20.5,4 21.5,24.5 Z' fill='%23222' style='transform:rotate(120deg); transform-origin: 50% 50%;' /></svg>"), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M18.5,24.5 19.5,8.5 20.5,8.5 21.5,24.5 Z' style='transform:rotate(20deg); transform-origin: 50% 50%;' /></svg>");
+*/
+}
+
+/*input:focus {
+    outline: 2px dashed #945;
+    outline-offset: 3px;
+}*/
