@@ -57,6 +57,8 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
     public function ApplyChanges() {
         //Never delete this line!
         parent::ApplyChanges();
+
+        $this->SetReceiveDataFilter('.*instance\\\":[ \\\"]*'.$this->InstanceID.'[\\\”]*.*');
     }
 
     public function ReceiveData($JSONString) {
@@ -64,7 +66,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         $buffer = json_decode($jsonData['Buffer'], true);
 
 
-        if($buffer["instance"] != $this->InstanceID) return;
+        //if($buffer["instance"] != $this->InstanceID) return;
         //$this->SendDebug("ReceiveData", $jsonData['Buffer']. " =>" . $this->InstanceID, 0);
 
         switch($buffer['cmd']) {
