@@ -18,10 +18,14 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
 
         //style
         $this->RegisterPropertyInteger("style_backgroundColor", 0);
+        $this->RegisterPropertyFloat("style_backgroundColor_Alpha", 0);
+
+        $this->RegisterPropertyInteger("style_fontSize", 12);
+        $this->RegisterPropertyInteger("style_fontColor", 0);
+
         $this->RegisterPropertyInteger("style_borderRadius", 10);
         $this->RegisterPropertyInteger("style_borderWidth", 2);
         $this->RegisterPropertyInteger("style_borderColor", 0);
-        $this->RegisterPropertyInteger("style_handleRadius", 8);
     }
     public function ApplyChanges() {
         //Never delete this line!
@@ -73,7 +77,15 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
         return $scriptData;
     }
     public function GetData($querydata){
-        return json_encode($this->GenerateVariabels());
+        $output = array();
+        $output["Variable"] = $this->ReadPropertyInteger("Variable");
+        if(IPS_VariableExists($this->ReadPropertyInteger("Variable"))){
+            $output["Value"] =  GetValue($this->ReadPropertyInteger("Variable"));
+        }else{
+            $this->SendDebug('SetData', "VARIABLE NOT EXIST!", 0);
+            $output["Value"] = 0;
+        }
+        return json_encode($output);
     }
     public function SetData($querydata){
         if(!array_key_exists("var", $querydata) || !array_key_exists("val", $querydata)){
@@ -81,24 +93,24 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
             return "NO VARIABLE, OR VALUE SET!";
         }
 
-        $var_data = json_decode($this->ReadPropertyString("Variables"),true);
-        $var_ids = array();
-        foreach ($var_data as $varItem){
-            if($varItem["Color"] > 0)
-                $var_ids[] = $varItem["Color"];
-
-            if($varItem["ColorTemperature"] > 0)
-                $var_ids[] = $varItem["ColorTemperature"];
+        if($querydata["var"] != $this->ReadPropertyInteger("Variable")){
+            $this->SendDebug('SetData', "VARIABLE NOT SET!", 0);
+            return "VARIABLE NOT SET!";
         }
 
-        if(!in_array($querydata["var"], $var_ids)){
-            $this->SendDebug('SetData', "VARIABLE NOT IN LIST SET!", 0);
-            return "VARIABLE NOT IN LIST SET!";
+        if(!IPS_VariableExists($this->ReadPropertyInteger("Variable"))){
+            $this->SendDebug('SetData', "VARIABLE NOT EXIST!", 0);
+            return "VARIABLE NOT EXIST!";
         }
 
-        $this->SendDebug("SetData", "Update Variable " . $querydata["var"] ." => " .$querydata["val"], 0 );
-        RequestAction($querydata["var"], $querydata["val"]);
-        $this->SendDebug("SetData", "Update Variable => OK", 0 );
+
+        $curTimezone = new DateTime();
+        $timeVal = new DateTime();
+        $timeVal->setTimestamp($querydata["val"]);
+        $timeVal->sub(new DateInterval('PT' . $timeVal->getOffset() . 'S'));
+
+        $this->SendDebug("SetData", "Update Variable " . $querydata["var"] ." => " . $timeVal->format('Y-m-d H:i:s')." (".$timeVal->getTimestamp()."/".$querydata["val"].")", 0 );
+        RequestAction($querydata["var"], $timeVal->getTimestamp());
         return "OK";
     }
 
@@ -110,17 +122,16 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
         if(IPS_VariableExists($this->ReadPropertyInteger("Variable"))){
             $htmlData = str_replace("{VALUE}", GetValue($this->ReadPropertyInteger("Variable")), $htmlData);
         }else{
-            $htmlData = str_replace("{VALUE}", "", $htmlData);
+            $this->SendDebug('SetData', "VARIABLE NOT EXIST!", 0);
+            $htmlData = str_replace("{VALUE}", 0, $htmlData);
         }
 
         //Layout
         //$htmlData = str_replace("{LAYOUT}", $this->json_encode_advanced($this->GenerateLayout()), $htmlData);
-
         return $htmlData;
     }
     private function GetConfigurationData(){
         $output = json_decode(IPS_GetConfiguration($this->InstanceID), true);
-
         $output["InstanceID"] = $this->InstanceID;
 
         //alle colorvariablen umwandeln!

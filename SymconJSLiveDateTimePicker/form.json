@@ -13,11 +13,14 @@
             "caption": "Style",
             "items": [
                 { "type": "SelectColor", "name": "style_backgroundColor", "caption": "Background Color" },
+                { "type": "HorizontalSlider", "name": "style_backgroundColor_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 },
+
+                { "type": "NumberSpinner", "name": "style_fontSize", "caption": "Font Size", "suffix": "px" },
+                { "type": "SelectColor", "name": "style_fontColor", "caption": "Font Color" },
 
                 { "type": "NumberSpinner", "name": "style_borderRadius", "caption": "Border Radius", "suffix": "px" },
                 { "type": "NumberSpinner", "name": "style_borderWidth", "caption": "Border Width", "suffix": "px" },
-                { "type": "SelectColor", "name": "style_borderColor", "caption": "Border Color" },
-                { "type": "NumberSpinner", "name": "style_handleRadius", "caption": "Handle Radius", "suffix": "px" }
+                { "type": "SelectColor", "name": "style_borderColor", "caption": "Border Color" }
             ]
         },
         {
