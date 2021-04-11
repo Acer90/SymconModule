@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DateTimePicker</title>
+    <link rel="stylesheet" href="{ADDRESS}/hook/JSLive/js/css/TimePicker3.css">
+</head>
+<script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
+
+<body style="text-align: center;">
+<input type="time" name="time" id="time" />
+
+<script>
+    let config_global = {GLOBAL};
+    let value = {VALUE};
+    let confiuration = {CONFIG};
+
+    running = false;
+    last_update = Date.now();
+
+    function Load(){
+        obj = document.querySelector("#time");
+        obj.value = unixTimeToString(value);
+        document.querySelector("#time").addEventListener("input", updateValue);
+
+
+        //Style
+        obj.style.backgroundColor = confiuration.style_backgroundColor;
+        obj.style.borderWidth = confiuration.style_borderWidth;
+        obj.style.borderColor = confiuration.style_borderColor;
+        obj.style.borderRadius = confiuration.style_borderRadius;
+
+        obj.style.color = confiuration.style_fontColor;
+        obj.style.fontSize = confiuration.style_fontSize+"px";
+
+
+    }
+
+    function updateValue(e) {
+        const reTime = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
+        const time = this.value;
+        i = stringToUnixTime(this.value);
+        if(i >= 0){
+            value = i;
+            if(!running) UpdateWorker();
+        }
+    }
+
+    async function UpdateWorker(){
+        running = true;
+        last_update = Date.now();
+        while (running){
+            await sleep(1);
+            try {
+                if((last_update + confiuration.DataUpdateRate) <= Date.now()){
+                    last_update = Date.now();
+
+                    console.log(Date.now() + " >> UpdateWorker | Update " + confiuration.Variable + " => " + value);
+                    var response = await fetch("{ADDRESS}/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&var=" +confiuration.Variable+ "&val="+value);
+                    console.log(Date.now() + " >> UpdateWorker Response => " + response.statusText + " (" + response.status + ")");
+
+                    console.log(Date.now() + " >> UpdateWorker => CLOSE");
+                    running = false;
+                }
+            }catch (e) {
+                console.log(Date.now() + " >> UpdateWorker => ", e);
+            }
+        }
+    }
+    function connect() {
+        var ws = new WebSocket('{WSADDRESS}', [encodeURIComponent(btoa('webfront:{WEBFRONTPASSWORD}'))]);
+        ws.onopen = function() {
+            // subscribe to some channels
+            //ws.send(JSON.stringify({
+            //.... some message the I must send when I connect ....
+            //}));
+        };
+
+        ws.onmessage = function(e) {
+            data = JSON.parse(e.data);
+            if(data.Message == 10603) {
+                Update(data.SenderID, data.Data[0]);
+            }
+        };
+
+        ws.onclose = function(e) {
+            console.log(Date.now() + ' >> Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+            setTimeout(function() {
+                connect();
+            }, 1000);
+        };
+
+        ws.onerror = function(err) {
+            console.error(Date.now() + ' >> Socket encountered error: ', err.message, 'Closing socket');
+            ws.close();
+        };
+    }
+
+    function Update(id_val, val){
+        isUpdated = false;
+        now = Date.now();
+        if(running ) return;
+
+        if(id_val === confiuration.Variable && value !== val){
+            value = val;
+
+            obj = document.querySelector("#time");
+            obj.value = unixTimeToString(value);
+            UpdateIcon(obj.value);
+        }
+    }
+
+    async function PullNewData(refreshRate){
+        refreshRate = refreshRate * 1000;
+        while (true){
+            try {
+                $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                    Update(data.Variable, data.Value);
+                });
+
+                //Control Variables
+            }catch (e) {
+                console.log(Date.now() + " >> PullNewData => ", e);
+            }
+            await sleep(refreshRate);
+        }
+    }
+
+    function filterKeys(obj, func) {
+        return Array.prototype.filter.call(Object.keys(obj), func, obj);
+    }
+    function someKeys(obj, func) {
+        return Array.prototype.some.call(Object.keys(obj), func, obj);
+    }
+    function atLeastOnePropertyMatches(obj, requiredProp) {
+        return someKeys(obj, function (prop) {
+            if (requiredProp.hasOwnProperty(prop)) {
+                return this[prop] === requiredProp[prop];
+            }
+        });
+    }
+    function getMatchingKeys(obj, requiredProp) {
+        return filterKeys(obj, function (prop) {
+            return atLeastOnePropertyMatches(this[prop], required);
+        });
+    }
+    Array.prototype.insert = function ( index, item ) {
+        this.splice( index, 0, item );
+    };
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function unixTimeToString(intVal){
+        dateObj = new Date(intVal * 1000);
+        return dateObj.toLocaleTimeString();
+    }
+    function stringToUnixTime(str){
+        try{
+            const minute = Number(str.substring(3,5));
+            const hour = Number(str.substring(0,2));
+
+            return (hour * 3600) + (minute * 60);
+        }catch(e) {
+            console.log(Date.now() + " >> stringToUnixTime | " + e);
+            return -1;
+        }
+    }
+
+    window.onload = function() {
+        Load();
+
+        if(config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0){
+            //pullup Mode local
+            refreshRate = config_global.LocalRefreshTime;
+            PullNewData(refreshRate);
+        }else if(config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0){
+            //pullup Mode remote
+            refreshRate = config_global.RemoteRefreshTime;
+            PullNewData(refreshRate);
+        }else{
+            connect();
+        }
+    }
+</script>
+</body>
+</html>

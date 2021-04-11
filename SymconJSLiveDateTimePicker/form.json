@@ -4,7 +4,11 @@
         { "type": "SelectVariable", "name": "Variable", "caption": "Variable"},
         { "type": "Select", "name": "Template", "caption": "Template",
             "options": [
-                { "caption": "TimePicker 1", "value": "TimePicker1" }
+                { "caption": "TimePicker 1", "value": "TimePicker1" },
+                { "caption": "TimePicker 2", "value": "TimePicker2" },
+                { "caption": "TimePicker 3", "value": "TimePicker3" },
+                { "caption": "DatePicker 1", "value": "DatePicker1" },
+                { "caption": "DateTimePicker 1", "value": "DateTimePicker1" }
             ]
         },
 

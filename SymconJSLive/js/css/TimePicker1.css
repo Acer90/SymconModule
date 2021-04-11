@@ -36,7 +36,7 @@ input {
     transition: backgroundImage 0.25s;
 }
 
-input:focus {
+/*input:focus {
     outline: 2px dashed #945;
     outline-offset: 3px;
-}
+}*/

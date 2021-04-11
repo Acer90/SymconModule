@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DateTimePicker</title>
+    <link rel="stylesheet" href="{ADDRESS}/hook/JSLive/js/css/TimePicker2.css">
+</head>
+<script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
+
+<body style="text-align: center;">
+<div name="divbox" id="divbox">
+    <div name="timebox" id="timebox" height="200px"></div>
+<input type="time" name="time" id="time" />
+</div>
+
+<script>
+    let config_global = {GLOBAL};
+    let value = {VALUE};
+    let confiuration = {CONFIG};
+
+    running = false;
+    last_update = Date.now();
+
+    function Load(){
+        obj = document.querySelector("#time");
+        obj.value = unixTimeToString(value);
+        UpdateIcon(obj.value);
+        document.querySelector("#time").addEventListener("input", updateValue);
+
+
+
+        obj = document.querySelector("#divbox");
+        //Style
+        obj.style.backgroundColor = confiuration.style_backgroundColor;
+        obj.style.borderWidth = confiuration.style_borderWidth;
+        obj.style.borderColor = confiuration.style_borderColor;
+        obj.style.borderRadius = confiuration.style_borderRadius;
+
+        obj.style.color = confiuration.style_fontColor;
+        obj.style.fontSize = confiuration.style_fontSize+"px";
+
+
+    }
+
+    function updateValue(e) {
+        const reTime = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
+        const time = this.value;
+        UpdateIcon(time);
+        i = stringToUnixTime(this.value);
+        if(i >= 0){
+            value = i;
+            if(!running) UpdateWorker();
+        }
+    }
+
+    async function UpdateWorker(){
+        running = true;
+        last_update = Date.now();
+        while (running){
+            await sleep(1);
+            try {
+                if((last_update + confiuration.DataUpdateRate) <= Date.now()){
+                    last_update = Date.now();
+
+                    console.log(Date.now() + " >> UpdateWorker | Update " + confiuration.Variable + " => " + value);
+                    var response = await fetch("{ADDRESS}/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&var=" +confiuration.Variable+ "&val="+value);
+                    console.log(Date.now() + " >> UpdateWorker Response => " + response.statusText + " (" + response.status + ")");
+
+                    console.log(Date.now() + " >> UpdateWorker => CLOSE");
+                    running = false;
+                }
+            }catch (e) {
+                console.log(Date.now() + " >> UpdateWorker => ", e);
+            }
+        }
+    }
+    function connect() {
+        var ws = new WebSocket('{WSADDRESS}', [encodeURIComponent(btoa('webfront:{WEBFRONTPASSWORD}'))]);
+        ws.onopen = function() {
+            // subscribe to some channels
+            //ws.send(JSON.stringify({
+            //.... some message the I must send when I connect ....
+            //}));
+        };
+
+        ws.onmessage = function(e) {
+            data = JSON.parse(e.data);
+            if(data.Message == 10603) {
+                Update(data.SenderID, data.Data[0]);
+            }
+        };
+
+        ws.onclose = function(e) {
+            console.log(Date.now() + ' >> Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+            setTimeout(function() {
+                connect();
+            }, 1000);
+        };
+
+        ws.onerror = function(err) {
+            console.error(Date.now() + ' >> Socket encountered error: ', err.message, 'Closing socket');
+            ws.close();
+        };
+    }
+
+    function Update(id_val, val){
+        isUpdated = false;
+        now = Date.now();
+        if(running ) return;
+
+        if(id_val === confiuration.Variable && value !== val){
+            value = val;
+
+            obj = document.querySelector("#time");
+            obj.value = unixTimeToString(value);
+            UpdateIcon(obj.value);
+        }
+    }
+    function UpdateIcon(value){
+        obj = document.querySelector("#timebox");
+
+        const reTime = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
+        const reTime2 = /^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/;
+        if (reTime.exec(value) || reTime2.exec(value)) {
+            const minute = Number(value.substring(3,5));
+            const hour = Number(value.substring(0,2)) % 12 + (minute / 60);
+            obj.style.backgroundImage = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150px' height='150px' viewBox='0 0 40 40'><circle cx='20' cy='20' r='18.5' fill='none' stroke='`+confiuration.style_highlightColor1+`' stroke-width='1' /><path d='M20,2 20,6 M2,20 6,20 M38,20 34,20 M20,38 20,34' stroke='`+confiuration.style_highlightColor2+`' stroke-width='1' /><circle cx='20' cy='20' r='2' fill='`+confiuration.style_highlightColor3+`' stroke='`+confiuration.style_highlightColor3+`' stroke-width='1' /></svg>"), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150px' height='150px' viewBox='0 0 40 40'><path d='M18.5,24.5 19.5,4 20.5,4 21.5,24.5 Z' fill='`+confiuration.style_highlightColor3+`' style='transform:rotate(${360 * minute / 60}deg); transform-origin: 50% 50%;' /></svg>"), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150px' height='150px' viewBox='0 0 40 40'><path d='M18.5,24.5 19.5,8.5 20.5,8.5 21.5,24.5 Z' fill='`+confiuration.style_highlightColor4+`' style='transform:rotate(${360 * hour / 12}deg); transform-origin: 50% 50%;' /></svg>")`;
+        }
+    }
+
+    async function PullNewData(refreshRate){
+        refreshRate = refreshRate * 1000;
+        while (true){
+            try {
+                $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                    Update(data.Variable, data.Value);
+                });
+
+                //Control Variables
+            }catch (e) {
+                console.log(Date.now() + " >> PullNewData => ", e);
+            }
+            await sleep(refreshRate);
+        }
+    }
+
+    function filterKeys(obj, func) {
+        return Array.prototype.filter.call(Object.keys(obj), func, obj);
+    }
+    function someKeys(obj, func) {
+        return Array.prototype.some.call(Object.keys(obj), func, obj);
+    }
+    function atLeastOnePropertyMatches(obj, requiredProp) {
+        return someKeys(obj, function (prop) {
+            if (requiredProp.hasOwnProperty(prop)) {
+                return this[prop] === requiredProp[prop];
+            }
+        });
+    }
+    function getMatchingKeys(obj, requiredProp) {
+        return filterKeys(obj, function (prop) {
+            return atLeastOnePropertyMatches(this[prop], required);
+        });
+    }
+    Array.prototype.insert = function ( index, item ) {
+        this.splice( index, 0, item );
+    };
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function unixTimeToString(intVal){
+        dateObj = new Date(intVal * 1000);
+        return dateObj.toLocaleTimeString();
+    }
+    function stringToUnixTime(str){
+        try{
+            const minute = Number(str.substring(3,5));
+            const hour = Number(str.substring(0,2));
+
+            return (hour * 3600) + (minute * 60);
+        }catch(e) {
+            console.log(Date.now() + " >> stringToUnixTime | " + e);
+            return -1;
+        }
+    }
+
+    window.onload = function() {
+        Load();
+
+        if(config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0){
+            //pullup Mode local
+            refreshRate = config_global.LocalRefreshTime;
+            PullNewData(refreshRate);
+        }else if(config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0){
+            //pullup Mode remote
+            refreshRate = config_global.RemoteRefreshTime;
+            PullNewData(refreshRate);
+        }else{
+            connect();
+        }
+    }
+</script>
+</body>
+</html>
