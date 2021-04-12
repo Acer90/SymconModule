@@ -12,7 +12,6 @@ class SymconJSLive extends WebHookModule {
         //Never delete this line!
         parent::Create();
 
-        $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyString("Password", $this->GenerateRandomPassword());
         $this->RegisterPropertyInteger("WebfrontInstanceID", 0);
 
@@ -21,11 +20,13 @@ class SymconJSLive extends WebHookModule {
 
         $this->RegisterPropertyInteger("LocalDataMode", 1);
         $this->RegisterPropertyInteger("RemoteDataMode", 0);
-
         $this->RegisterPropertyInteger("LocalRefreshTime", 3);
         $this->RegisterPropertyInteger("RemoteRefreshTime", 10);
 
-
+        //expert
+        $this->RegisterPropertyBoolean("Debug", false);
+        $this->RegisterPropertyBoolean("enableCache", false);
+        $this->RegisterPropertyBoolean("enableCompression", true);
 
         //da das direkte reinladen ja nicht geht!
         $this->LoadConnectAddress();
@@ -71,20 +72,24 @@ class SymconJSLive extends WebHookModule {
                 header("Content-Type: text/html");
             }
 
+            if($this->ReadPropertyBoolean("enableCache")) {
+                //Add caching support
+                $etag = md5_file($path);
+                header("ETag: " . $etag);
+                if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && (trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag)) {
+                    http_response_code(304);
+                    return;
+                }
+            }
 
-            //Add caching support
-            /*$etag = md5_file($path);
-            header("ETag: " . $etag);
-            if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && (trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag)) {
-                http_response_code(304);
-                return;
-            }*/
-
-            //$compressed = gzencode(file_get_contents($path));
-            //header("Content-Encoding: gzip");
-            //header("Content-Length: " . strlen($compressed));
-            //echo $compressed;
-            echo file_get_contents($path);
+            if($this->ReadPropertyBoolean("enableCompression")) {
+                $compressed = gzencode(file_get_contents($path));
+                header("Content-Encoding: gzip");
+                header("Content-Length: " . strlen($compressed));
+                echo $compressed;
+            }else{
+                echo file_get_contents($path);
+            }
         }else{
             //Daten vom Modul Laden
             $Type = substr($_SERVER['SCRIPT_NAME'], strlen("/hook/JSLive/"));
@@ -145,21 +150,26 @@ class SymconJSLive extends WebHookModule {
                 $contend = $this->ReplacePlaceholder($contend[0], $isLocal, $queryData["instance"], $_SERVER);
             }
 
-            //Add caching support
-            /*
-            $etag = md5($contend);
-            header("ETag: " . $etag);
-            if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && (trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag)) {
-                http_response_code(304);
-                return;
+            if($this->ReadPropertyBoolean("enableCache")) {
+                //Add caching support
+                $etag = md5($contend);
+                header("ETag: " . $etag);
+                if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && (trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag)) {
+                    http_response_code(304);
+                    return;
+                }
             }
-            */
+
             if($this->ReadPropertyBoolean("Debug")) $this->SendDebug("WebHook", $contend, 0);
 
-            $compressed = gzencode($contend);
-            //header("Content-Encoding: gzip");
-            //header("Content-Length: " . strlen($compressed));
-            echo $contend;
+            if($this->ReadPropertyBoolean("enableCompression")) {
+                $compressed = gzencode($contend);
+                header("Content-Encoding: gzip");
+                header("Content-Length: " . strlen($compressed));
+                echo $compressed;
+            }else {
+                echo $contend;
+            }
         }
     }
 
