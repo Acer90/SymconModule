@@ -150,7 +150,7 @@ class SymconJSLive extends WebHookModule {
                 $contend = $this->ReplacePlaceholder($contend[0], $isLocal, $queryData["instance"], $_SERVER);
             }
 
-            if($this->ReadPropertyBoolean("enableCache")) {
+            /*if($this->ReadPropertyBoolean("enableCache")) {
                 //Add caching support
                 $etag = md5($contend);
                 header("ETag: " . $etag);
@@ -158,7 +158,7 @@ class SymconJSLive extends WebHookModule {
                     http_response_code(304);
                     return;
                 }
-            }
+            }*/
 
             if($this->ReadPropertyBoolean("Debug")) $this->SendDebug("WebHook", $contend, 0);
 
@@ -368,4 +368,5 @@ class SymconJSLive extends WebHookModule {
         IPS_ApplyChanges($this->InstanceID);
     }
 }
+
 ?>
