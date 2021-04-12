@@ -136,7 +136,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
             }
 
             $scriptData = IPS_GetScriptContent($scriptID);
-            if($scriptData = ""){
+            if($scriptData == ""){
                 $this->SendDebug('GetWebpage', 'Template IS EMPTY!', 0);
             }
         }
