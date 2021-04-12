@@ -77,7 +77,7 @@
 
             return config;
         }catch (e){
-            alert(e);
+            alert("Colorpicker | ",e);
         }
     }
 
@@ -421,18 +421,22 @@
 
 
     window.onload = function() {
-        LoadPicker();
+        try {
+            LoadPicker();
 
-        if(config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0){
-            //pullup Mode local
-            refreshRate = config_global.LocalRefreshTime;
-            PullNewData(refreshRate);
-        }else if(config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0){
-            //pullup Mode remote
-            refreshRate = config_global.RemoteRefreshTime;
-            PullNewData(refreshRate);
-        }else{
-            connect();
+            if (config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0) {
+                //pullup Mode local
+                refreshRate = config_global.LocalRefreshTime;
+                PullNewData(refreshRate);
+            } else if (config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0) {
+                //pullup Mode remote
+                refreshRate = config_global.RemoteRefreshTime;
+                PullNewData(refreshRate);
+            } else {
+                connect();
+            }
+        }catch (e) {
+            alert("Colorpicker | ", e);
         }
     }
 </script>

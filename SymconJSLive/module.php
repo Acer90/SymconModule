@@ -63,6 +63,7 @@ class SymconJSLive extends WebHookModule {
 
 
             header("HTTP/1.0 200 X");
+            //http_response_code(200);
             $path_parts = pathinfo($path);
             if(strtolower($path_parts["extension"]) == "css"){
                 header("Content-Type: text/css");
@@ -72,17 +73,18 @@ class SymconJSLive extends WebHookModule {
 
 
             //Add caching support
-            $etag = md5_file($path);
+            /*$etag = md5_file($path);
             header("ETag: " . $etag);
             if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && (trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag)) {
                 http_response_code(304);
                 return;
-            }
+            }*/
 
-            $compressed = gzencode(file_get_contents($path));
-            header("Content-Encoding: gzip");
-            header("Content-Length: " . strlen($compressed));
-            echo $compressed;
+            //$compressed = gzencode(file_get_contents($path));
+            //header("Content-Encoding: gzip");
+            //header("Content-Length: " . strlen($compressed));
+            //echo $compressed;
+            echo file_get_contents($path);
         }else{
             //Daten vom Modul Laden
             $Type = substr($_SERVER['SCRIPT_NAME'], strlen("/hook/JSLive/"));
@@ -144,12 +146,14 @@ class SymconJSLive extends WebHookModule {
             }
 
             //Add caching support
+            /*
             $etag = md5($contend);
             header("ETag: " . $etag);
             if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && (trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag)) {
                 http_response_code(304);
                 return;
             }
+            */
             if($this->ReadPropertyBoolean("Debug")) $this->SendDebug("WebHook", $contend, 0);
 
             $compressed = gzencode($contend);

@@ -345,7 +345,13 @@ class SymconJSLiveRadarChart extends JSLiveModule{
             $singelOutput = array();
             $singelOutput["variable"] = $item["Variable"];
 
-            $singelOutput["label"] = $item["Title"];
+            if(empty($item["Title"])){
+                //Load Variablen Name wenn label leer ist
+                $singelOutput["label"] = IPS_GetVariableIDByName($item["Variable"]);
+            }else{
+                $singelOutput["label"] = $item["Title"];
+            }
+
             $singelOutput["order"] = $item["Order"];
 
 

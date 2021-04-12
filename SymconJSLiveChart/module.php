@@ -432,7 +432,13 @@ class SymconJSLiveChart extends JSLiveModule{
             $singelOutput = array();
             $singelOutput["variable"] = $item["Variable"];
 
-            $singelOutput["label"] = $item["Title"];
+            if(empty($item["Title"])){
+                //Load Variablen Name wenn label leer ist
+                $singelOutput["label"] = IPS_GetVariableIDByName($item["Variable"]);
+            }else{
+                $singelOutput["label"] = $item["Title"];
+            }
+
             $singelOutput["type"] = $item["Type"];
             $singelOutput["order"] = $item["Order"];
 
@@ -541,8 +547,6 @@ class SymconJSLiveChart extends JSLiveModule{
 
                         $axisoutput["MinValue"] = $profilData["MaxValue"];
                         $axisoutput["MaxValue"] = $profilData["MinValue"];
-
-
                     }
 
                     $axisoutput["Prefix"] = $profilData["Prefix"];
@@ -551,7 +555,6 @@ class SymconJSLiveChart extends JSLiveModule{
                     if($profilData["StepSize"] > 0){
                         $axisoutput["ticks"]["stepSize"] = $profilData["StepSize"];
                     }
-
 
                     $digits = $profilData["Digits"];
 
