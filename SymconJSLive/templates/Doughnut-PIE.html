@@ -27,56 +27,57 @@
     let confiuration = {CONFIG};
 
     function updateChartconfig(){
+        try {
+            let config = {
+                type: confiuration.type,
+                data: config_data,
+                options: {
+                    animation: {
+                        duration: 500,                   // general animation time
+                        easing: 'linear',
+                    },
+                    hover: {
+                        animationDuration: 0           // duration of animations when hovering an item
+                    },
+                    responsiveAnimationDuration: 500,    // animation duration after a resize
+                    title: config_title,
+                    legend: config_legend,
+                    tooltips: config_tooltips,
+                    layout: {
+                        padding: {
+                            left: 0,
+                            right: 0,
+                            top: 0,
+                            bottom: 0
+                        }
+                    },
+                    plugins: {
+                        datalabels: {
+                            display: confiuration.datalabels_enabled,
+                            color: confiuration.datalabels_fontColor,
+                            font: {
+                                size: confiuration.datalabels_fontSize
+                            },
+                            clamp: confiuration.datalabels_clamp,
+                            align: confiuration.datalabels_align,
+                            anchor: confiuration.datalabels_anchoring
+                        }
+                    },
+                    circumference: Math.PI * (confiuration.rotation_length / 180),
+                    rotation: Math.PI * (confiuration.rotation_start / 180)
+                }
+            };
 
+            //add function tooltip
+            t_callpack = {
+                label: UpdateTooltipLabel
+            };
+            config.options.tooltips.callbacks = t_callpack;
 
-
-        let config = {
-            type: confiuration.type,
-            data: config_data,
-            options: {
-                animation: {
-                    duration: 500,                   // general animation time
-                    easing: 'linear',
-                },
-                hover: {
-                    animationDuration: 0           // duration of animations when hovering an item
-                },
-                responsiveAnimationDuration: 500,    // animation duration after a resize
-                title: config_title,
-                legend: config_legend,
-                tooltips: config_tooltips,
-                layout: {
-                    padding: {
-                        left: 0,
-                        right: 0,
-                        top: 0,
-                        bottom: 0
-                    }
-                },
-                plugins: {
-                    datalabels: {
-                        display: confiuration.datalabels_enabled,
-                        color: confiuration.datalabels_fontColor,
-                        font: {
-                            size: confiuration.datalabels_fontSize
-                        },
-                        clamp: confiuration.datalabels_clamp,
-                        align: confiuration.datalabels_align,
-                        anchor: confiuration.datalabels_anchoring
-                    }
-                },
-                circumference: Math.PI*(confiuration.rotation_length / 180),
-                rotation: Math.PI*(confiuration.rotation_start / 180)
-            }
-        };
-
-        //add function tooltip
-        t_callpack = {
-            label: UpdateTooltipLabel
-        };
-        config.options.tooltips.callbacks = t_callpack;
-
-        return config;
+            return config;
+        } catch (e) {
+            alert(e);
+        }
     }
 
     function connect() {
@@ -198,19 +199,23 @@
     }
 
     window.onload = function() {
-        var ctx = document.getElementById('myChart');
-        myChart = new Chart(ctx, updateChartconfig());
+        try {
+            var ctx = document.getElementById('myChart');
+            myChart = new Chart(ctx, updateChartconfig());
 
-        if(config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0){
-            //pullup Mode local
-            refreshRate = config_global.LocalRefreshTime;
-            PullNewData(refreshRate);
-        }else if(config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0){
-            //pullup Mode remote
-            refreshRate = config_global.RemoteRefreshTime;
-            PullNewData(refreshRate);
-        }else{
-            connect();
+            if (config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0) {
+                //pullup Mode local
+                refreshRate = config_global.LocalRefreshTime;
+                PullNewData(refreshRate);
+            } else if (config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0) {
+                //pullup Mode remote
+                refreshRate = config_global.RemoteRefreshTime;
+                PullNewData(refreshRate);
+            } else {
+                connect();
+            }
+        }catch (e) {
+            alert(e);
         }
     }
 </script>

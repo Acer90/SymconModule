@@ -62,7 +62,7 @@ class SymconJSLive extends WebHookModule {
             }
 
 
-            //header("HTTP/1.0 200 OK");
+            header("HTTP/1.0 200 X");
             $path_parts = pathinfo($path);
             if(strtolower($path_parts["extension"]) == "css"){
                 header("Content-Type: text/css");
@@ -121,7 +121,7 @@ class SymconJSLive extends WebHookModule {
             //$this->SendDebug('WebHook', 'Array QUERY_STRING: ' . print_r($queryData, true), 0);
             //$this->SendDebug('WebHook', 'Array Server: ' . print_r($_SERVER, true), 0);
 
-            //header("HTTP/1.0 200 OK");
+            header("HTTP/1.0 200 X");
             header("Content-Type: text/html");
 
 

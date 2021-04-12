@@ -21,84 +21,87 @@
     let confiuration = {CONFIG};
 
     function LoadGauge(){
-        if(!confiuration.title_display) confiuration.title_text = false;
-        if(!confiuration.plate_unit) confiuration.plate_unit = false;
-        if(!confiuration.progressbar_display) confiuration.progressbar_barWidth = 0;
+        try {
+            if (!confiuration.title_display) confiuration.title_text = false;
+            if (!confiuration.plate_unit) confiuration.plate_unit = false;
+            if (!confiuration.progressbar_display) confiuration.progressbar_barWidth = 0;
 
-        gauge_config = {
-            renderTo: 'gauge',
-            height: window.innerHeight-20,
-            width:  ((window.innerHeight-20)/4),
+            gauge_config = {
+                renderTo: 'gauge',
+                height: window.innerHeight - 20,
+                width: ((window.innerHeight - 20) / 4),
 
-            units: confiuration.plate_unit,
+                units: confiuration.plate_unit,
 
-            value: {VALUE},
-            minValue: confiuration.min,
-            maxValue: confiuration.max,
+                value: {VALUE},
+                minValue: confiuration.min,
+                maxValue: confiuration.max,
 
-            //title
-            title: confiuration.title_text, //false deaktiviert!
-            colorTitle: confiuration.title_fontColor,
-            fontTitleSize: confiuration.title_fontSize,
+                //title
+                title: confiuration.title_text, //false deaktiviert!
+                colorTitle: confiuration.title_fontColor,
+                fontTitleSize: confiuration.title_fontSize,
 
-            //plate
-            colorPlate: confiuration.plate_colorPlate,
-            colorPlateEnd: confiuration.plate_colorPlateEnd,
-            borderShadowWidth: 0,
-            borderOuterWidth: 0,
-            borders: false,
+                //plate
+                colorPlate: confiuration.plate_colorPlate,
+                colorPlateEnd: confiuration.plate_colorPlateEnd,
+                borderShadowWidth: 0,
+                borderOuterWidth: 0,
+                borders: false,
 
-            //needle
-            needle: confiuration.needle_display,//show needle
-            needleType: confiuration.needle_Type, // arrow
-            needleStart: confiuration.needle_start, //in %
-            needleEnd: confiuration.needle_end,//in %
-            needleWidth: confiuration.needle_width, //in Px
-            colorNeedle: confiuration.needle_colorNeedle,
-            colorNeedleEnd: confiuration.needle_colorNeedleEnd,
-            needleSide: confiuration.linear_needleSide, //“right”, “both” => nur bei linear
+                //needle
+                needle: confiuration.needle_display,//show needle
+                needleType: confiuration.needle_Type, // arrow
+                needleStart: confiuration.needle_start, //in %
+                needleEnd: confiuration.needle_end,//in %
+                needleWidth: confiuration.needle_width, //in Px
+                colorNeedle: confiuration.needle_colorNeedle,
+                colorNeedleEnd: confiuration.needle_colorNeedleEnd,
+                needleSide: confiuration.linear_needleSide, //“right”, “both” => nur bei linear
 
-            //valuebox
-            valueBox: confiuration.valuebox_display,
-            colorValueBoxBackground: confiuration.valuebox_colorValueBoxBackground,
-            colorValueBoxShadow: false,//'rgba(255, 0, 122, 0)'
+                //valuebox
+                valueBox: confiuration.valuebox_display,
+                colorValueBoxBackground: confiuration.valuebox_colorValueBoxBackground,
+                colorValueBoxShadow: false,//'rgba(255, 0, 122, 0)'
 
-            valueBoxBorderRadius: 0,
-            valueTextShadow: false,
-            valueBoxStroke: 0,
-            valueBoxWidth: 10,
+                valueBoxBorderRadius: 0,
+                valueTextShadow: false,
+                valueBoxStroke: 0,
+                valueBoxWidth: 10,
 
-            //progressbar
-            colorBar: confiuration.progressbar_colorBar,
-            colorBarProgress:  confiuration.progressbar_colorBarProgress,
-            barShadow: confiuration.progressbar_barShadow,
-            barWidth: confiuration.progressbar_barWidth,
-            barBeginCircle: false,
-            //barStartPosition: 'right',
+                //progressbar
+                colorBar: confiuration.progressbar_colorBar,
+                colorBarProgress: confiuration.progressbar_colorBarProgress,
+                barShadow: confiuration.progressbar_barShadow,
+                barWidth: confiuration.progressbar_barWidth,
+                barBeginCircle: false,
+                //barStartPosition: 'right',
 
-            //Ticks
-            tickSide: confiuration.linear_tickSide, //“right”, “both”. => nur bei linear
-            numberSide: confiuration.linear_numberSide, //“right”, “both”. => nur bei linear
-            startAngle: confiuration.radial_startAngle, //=> nur bei Radial
-            ticksAngle: confiuration.radial_ticksAngle,//=> nur bei Radial
-            colorMajorTicks: confiuration.ticks_colorMajorTick,
-            colorMinorTicks: confiuration.ticks_colorMinorTicks,
-            colorUnits: confiuration.ticks_colorUnits,
-            colorNumbers: confiuration.ticks_colorNumbers,
-            minorTicks: confiuration.ticks_minorTicks,
-            strokeTicks: confiuration.ticks_strokeTicks,
-            highlightsWidth: confiuration.ticks_highlightsWidth,
-            highlights: config_highlights,
-            majorTicks: config_ticks,
+                //Ticks
+                tickSide: confiuration.linear_tickSide, //“right”, “both”. => nur bei linear
+                numberSide: confiuration.linear_numberSide, //“right”, “both”. => nur bei linear
+                startAngle: confiuration.radial_startAngle, //=> nur bei Radial
+                ticksAngle: confiuration.radial_ticksAngle,//=> nur bei Radial
+                colorMajorTicks: confiuration.ticks_colorMajorTick,
+                colorMinorTicks: confiuration.ticks_colorMinorTicks,
+                colorUnits: confiuration.ticks_colorUnits,
+                colorNumbers: confiuration.ticks_colorNumbers,
+                minorTicks: confiuration.ticks_minorTicks,
+                strokeTicks: confiuration.ticks_strokeTicks,
+                highlightsWidth: confiuration.ticks_highlightsWidth,
+                highlights: config_highlights,
+                majorTicks: config_ticks,
 
 
+                animationRule: 'linear', //”, “quad”, “quint”, “cycle”, “bounce”, “elastic”  “dequad”, “dequint”, “decycle”, “debounce”, “delastic”.
+                animationDuration: 500
+            }
 
-            animationRule: 'linear', //”, “quad”, “quint”, “cycle”, “bounce”, “elastic”  “dequad”, “dequint”, “decycle”, “debounce”, “delastic”.
-            animationDuration: 500
+            gauge = new LinearGauge(gauge_config);
+            gauge.draw();
+        }catch (e){
+            alert(e);
         }
-
-        gauge = new LinearGauge(gauge_config);
-        gauge.draw();
     }
 
     function connect() {
@@ -183,18 +186,22 @@
     }
 
     window.onload = function() {
-        LoadGauge();
+        try {
+            LoadGauge();
 
-        if(config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0){
-            //pullup Mode local
-            refreshRate = config_global.LocalRefreshTime;
-            PullNewData(refreshRate);
-        }else if(config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0){
-            //pullup Mode remote
-            refreshRate = config_global.RemoteRefreshTime;
-            PullNewData(refreshRate);
-        }else{
-            connect();
+            if (config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0) {
+                //pullup Mode local
+                refreshRate = config_global.LocalRefreshTime;
+                PullNewData(refreshRate);
+            } else if (config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0) {
+                //pullup Mode remote
+                refreshRate = config_global.RemoteRefreshTime;
+                PullNewData(refreshRate);
+            } else {
+                connect();
+            }
+        }catch (e) {
+            alert(e);
         }
     }
 </script>

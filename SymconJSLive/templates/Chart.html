@@ -39,56 +39,60 @@
     let offset_isSet = false;
     let last_reload = 0; //Damit der Chart nur einmal neugeladen wird!
 
-    function updateChartconfig(){
-        //modify dataset
-        config_dataset.forEach(function(part, index) {
-            if(config_dataset[index]["type"] == 'line'){
-                //config_dataset[index]["lineTension"] = 0;
-            }
-        });
+    function updateChartconfig() {
+        try {
+            //modify dataset
+            config_dataset.forEach(function (part, index) {
+                if (config_dataset[index]["type"] == 'line') {
+                    //config_dataset[index]["lineTension"] = 0;
+                }
+            });
 
-        let config = {
-            type: 'bar',
-            data: {
-                datasets: config_dataset
-            },
-            options: {
-                animation: {
-                    duration: 500,                   // general animation time
-                    easing: 'linear',
+            let config = {
+                type: 'bar',
+                data: {
+                    datasets: config_dataset
                 },
-                hover: {
-                    animationDuration: 0           // duration of animations when hovering an item
-                },
-                responsiveAnimationDuration: 500,    // animation duration after a resize
-                plugins: {
-                    streaming: checkIsStreaming()
-                },
-                title: config_title,
-                legend: config_legend,
-                tooltips: config_tooltips,
-                scales: {
-                    xAxes: config_xaxes,
-                    yAxes: config_axes
-                },
-                layout: {
-                    padding: {
-                        left: 0,
-                        right: 0,
-                        top: 0,
-                        bottom: 0
+                options: {
+                    animation: {
+                        duration: 500,                   // general animation time
+                        easing: 'linear',
+                    },
+                    hover: {
+                        animationDuration: 0           // duration of animations when hovering an item
+                    },
+                    responsiveAnimationDuration: 500,    // animation duration after a resize
+                    plugins: {
+                        streaming: checkIsStreaming()
+                    },
+                    title: config_title,
+                    legend: config_legend,
+                    tooltips: config_tooltips,
+                    scales: {
+                        xAxes: config_xaxes,
+                        yAxes: config_axes
+                    },
+                    layout: {
+                        padding: {
+                            left: 0,
+                            right: 0,
+                            top: 0,
+                            bottom: 0
+                        }
                     }
                 }
-            }
-        };
+            };
 
-        //add function tooltip
-        t_callpack = {
+            //add function tooltip
+            t_callpack = {
                 label: UpdateTooltipLabel
             };
-        config.options.tooltips.callbacks = t_callpack;
+            config.options.tooltips.callbacks = t_callpack;
 
-        return config;
+            return config;
+        } catch (e) {
+            alert(e);
+        }
     }
 
     function connect() {
@@ -719,28 +723,32 @@
     }
 
     window.onload = function() {
-        var ctx = document.getElementById('myChart');
-        myChart = new Chart(ctx, updateChartconfig());
+        try {
+            var ctx = document.getElementById('myChart');
+            myChart = new Chart(ctx, updateChartconfig());
 
-        //check load after Startup
-        if(confiuration.data_loadAfterStartup){
-            dt_val = Math.floor(Date.now() / 1000);
-            ReloadChart(update_vars[0], dt_val);
-        }
+            //check load after Startup
+            if (confiuration.data_loadAfterStartup) {
+                dt_val = Math.floor(Date.now() / 1000);
+                ReloadChart(update_vars[0], dt_val);
+            }
 
-        offset_isSet = checkOffsetisSet();
-        UpdateConfiguration();
+            offset_isSet = checkOffsetisSet();
+            UpdateConfiguration();
 
-        if(config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0){
-            //pullup Mode local
-            refreshRate = config_global.LocalRefreshTime;
-            PullNewData(refreshRate);
-        }else if(config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0){
-            //pullup Mode remote
-            refreshRate = config_global.RemoteRefreshTime;
-            PullNewData(refreshRate);
-        }else{
-            connect();
+            if (config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0) {
+                //pullup Mode local
+                refreshRate = config_global.LocalRefreshTime;
+                PullNewData(refreshRate);
+            } else if (config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0) {
+                //pullup Mode remote
+                refreshRate = config_global.RemoteRefreshTime;
+                PullNewData(refreshRate);
+            } else {
+                connect();
+            }
+        }catch (e) {
+            alert(e);
         }
     }
 </script>

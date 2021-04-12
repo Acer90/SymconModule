@@ -35,70 +35,73 @@
     let period_EndDate = GetStartEndDate(Date.now()).end;
 
     function updateChartconfig(){
+        try {
+            let config = {
+                type: 'radar',
+                data: {
+                    labels: config_labels,
+                    datasets: config_dataset
+                },
+                options: {
+                    animation: {
+                        duration: 500,                   // general animation time
+                        easing: 'linear',
+                    },
+                    hover: {
+                        animationDuration: 0           // duration of animations when hovering an item
+                    },
+                    responsive: true,
+                    aspectRatio: 1.1,
+                    responsiveAnimationDuration: 500,    // animation duration after a resize
+                    title: config_title,
+                    legend: config_legend,
+                    tooltips: config_tooltips,
+                    scale: {
+                        pointLabels: {
+                            display: confiuration.axes_pointLabels_display,
+                            color: confiuration.axes_pointLabels_color,
+                            fontSize: confiuration.axes_pointLabels_fontSize
+                        },
+                        gridLines: {
+                            display: confiuration.axes_gridLines_display,
+                            color: confiuration.axes_gridLines_color,
+                            LineWidth: confiuration.axes_gridLines_lineWidth,
+                            drawTicks: confiuration.axes_gridLines_drawTicks
+                        },
+                        angleLines: {
+                            display: confiuration.axes_angleLines_display,
+                            color: confiuration.axes_angleLines_color,
+                            lineWidth: confiuration.axes_angleLines_lineWidth
+                        },
+                        ticks: {
+                            fontColor: confiuration.axes_ticks_fontColor,
+                            fontSize: confiuration.axes_ticks_fontSize,
+                            backdropColor: confiuration.axes_ticks_backdropColor,
+                        },
 
-        let config = {
-            type: 'radar',
-            data: {
-                labels: config_labels,
-                datasets: config_dataset
-            },
-            options: {
-                animation: {
-                    duration: 500,                   // general animation time
-                    easing: 'linear',
-                },
-                hover: {
-                    animationDuration: 0           // duration of animations when hovering an item
-                },
-                responsive: true,
-                aspectRatio: 1.1,
-                responsiveAnimationDuration: 500,    // animation duration after a resize
-                title: config_title,
-                legend: config_legend,
-                tooltips: config_tooltips,
-                scale: {
-                    pointLabels: {
-                        display: confiuration.axes_pointLabels_display,
-                        color: confiuration.axes_pointLabels_color,
-                        fontSize: confiuration.axes_pointLabels_fontSize
+                        display: confiuration.axes_display
                     },
-                    gridLines:{
-                        display: confiuration.axes_gridLines_display,
-                        color: confiuration.axes_gridLines_color,
-                        LineWidth: confiuration.axes_gridLines_lineWidth,
-                        drawTicks: confiuration.axes_gridLines_drawTicks
-                    },
-                    angleLines: {
-                        display: confiuration.axes_angleLines_display,
-                        color: confiuration.axes_angleLines_color,
-                        lineWidth: confiuration.axes_angleLines_lineWidth
-                    },
-                    ticks: {
-                        fontColor: confiuration.axes_ticks_fontColor,
-                        fontSize: confiuration.axes_ticks_fontSize,
-                        backdropColor: confiuration.axes_ticks_backdropColor,
-                    },
-
-                    display: confiuration.axes_display
-                },
-                layout: {
-                    padding: {
-                        left: 0,
-                        right: 0,
-                        top: 0,
-                        bottom: 0
+                    layout: {
+                        padding: {
+                            left: 0,
+                            right: 0,
+                            top: 0,
+                            bottom: 0
+                        }
                     }
                 }
-            }
-        };
+            };
 
-        //add function tooltip
-        t_callpack = {
+            //add function tooltip
+            t_callpack = {
                 label: UpdateTooltipLabel
             };
-        config.options.tooltips.callbacks = t_callpack;
+            config.options.tooltips.callbacks = t_callpack;
 
-        return config;
+            return config;
+        } catch (e) {
+            alert(e);
+        }
     }
 
     function connect() {
@@ -386,30 +389,34 @@
     }
 
     window.onload = function() {
-        var ctx = document.getElementById('myChart');
-        myChart = new Chart(ctx, updateChartconfig());
-        refreshRate = 60;
-        isWebsocket = false;
+        try {
+            var ctx = document.getElementById('myChart');
+            myChart = new Chart(ctx, updateChartconfig());
+            refreshRate = 60;
+            isWebsocket = false;
 
-        if(config_global.LocalAddress == "{ADDRESS}"){
-            //pullup Mode local
-            refreshRate = config_global.LocalRefreshTime;
+            if (config_global.LocalAddress == "{ADDRESS}") {
+                //pullup Mode local
+                refreshRate = config_global.LocalRefreshTime;
 
-            if(config_global.LocalDataMode != 0) {
-                connect();
-                isWebsocket = true;
+                if (config_global.LocalDataMode != 0) {
+                    connect();
+                    isWebsocket = true;
+                }
+            } else { //(config_global.RemoteAddress == "{ADDRESS}")
+                //pullup Mode remote
+                refreshRate = config_global.RemoteRefreshTime;
+
+                if (config_global.RemoteDataMode != 0) {
+                    connect();
+                    isWebsocket = true;
+                }
             }
-        }else{ //(config_global.RemoteAddress == "{ADDRESS}")
-            //pullup Mode remote
-            refreshRate = config_global.RemoteRefreshTime;
-
-            if(config_global.RemoteDataMode != 0) {
-                connect();
-                isWebsocket = true;
-            }
+            UpdateLastValue();
+            PullNewData(refreshRate, isWebsocket);
+        }catch (e) {
+            alert(e);
         }
-        UpdateLastValue();
-        PullNewData(refreshRate, isWebsocket);
     }
 </script>
 </body>

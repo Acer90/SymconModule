@@ -22,20 +22,23 @@
     last_update = Date.now();
 
     function Load(){
-        obj = document.querySelector("#datetime");
-        obj.value = unixTimeToString(value);
-        document.querySelector("#datetime").addEventListener("input", updateValue);
+        try {
+            obj = document.querySelector("#datetime");
+            obj.value = unixTimeToString(value);
+            document.querySelector("#datetime").addEventListener("input", updateValue);
 
 
-        //Style
-        obj.style.backgroundColor = confiuration.style_backgroundColor;
-        obj.style.borderWidth = confiuration.style_borderWidth;
-        obj.style.borderColor = confiuration.style_borderColor;
-        obj.style.borderRadius = confiuration.style_borderRadius;
+            //Style
+            obj.style.backgroundColor = confiuration.style_backgroundColor;
+            obj.style.borderWidth = confiuration.style_borderWidth;
+            obj.style.borderColor = confiuration.style_borderColor;
+            obj.style.borderRadius = confiuration.style_borderRadius;
 
-        obj.style.color = confiuration.style_fontColor;
-        obj.style.fontSize = confiuration.style_fontSize+"px";
-
+            obj.style.color = confiuration.style_fontColor;
+            obj.style.fontSize = confiuration.style_fontSize + "px";
+        } catch (e) {
+            alert(e);
+        }
     }
 
     function updateValue(e) {
@@ -191,18 +194,22 @@
     }
 
     window.onload = function() {
-        Load();
+        try {
+            Load();
 
-        if(config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0){
-            //pullup Mode local
-            refreshRate = config_global.LocalRefreshTime;
-            PullNewData(refreshRate);
-        }else if(config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0){
-            //pullup Mode remote
-            refreshRate = config_global.RemoteRefreshTime;
-            PullNewData(refreshRate);
-        }else{
-            connect();
+            if (config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0) {
+                //pullup Mode local
+                refreshRate = config_global.LocalRefreshTime;
+                PullNewData(refreshRate);
+            } else if (config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0) {
+                //pullup Mode remote
+                refreshRate = config_global.RemoteRefreshTime;
+                PullNewData(refreshRate);
+            } else {
+                connect();
+            }
+        }catch (e) {
+            alert(e);
         }
     }
 </script>
