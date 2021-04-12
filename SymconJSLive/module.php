@@ -298,7 +298,7 @@ class SymconJSLive extends WebHookModule {
 
         return $output;
     }
-    public static function isHttps($server)
+    public static function isHttps(array $server)
     {
         if (array_key_exists("HTTPS", $server) && 'on' === $server["HTTPS"]) {
             return true;
@@ -315,7 +315,7 @@ class SymconJSLive extends WebHookModule {
         return false;
     }
 
-    public function UpdateTemplates($category){
+    public function UpdateTemplates(){
         $templates = glob(__DIR__ ."/templates/*.html");
         $category = $this->ReadPropertyInteger("TemplateCategoryID");
 
@@ -345,7 +345,7 @@ class SymconJSLive extends WebHookModule {
 
 
     }
-    public function LoadConnectAddress($start = false){
+    public function LoadConnectAddress(bool $start = false){
         if(!$start || !empty($this->ReadPropertyString("RemoteAddress"))) return;
 
         $confData = json_decode(IPS_GetConfiguration($this->InstanceID), true);
@@ -356,7 +356,7 @@ class SymconJSLive extends WebHookModule {
         IPS_SetConfiguration($this->InstanceID, json_encode($confData));
         IPS_ApplyChanges($this->InstanceID);
     }
-    public function SetRandomPassword($start = false){
+    public function SetRandomPassword(bool $start = false){
         if(!$start || !empty($this->ReadPropertyString("Password"))) return;
 
         $confData = json_decode(IPS_GetConfiguration($this->InstanceID), true);
@@ -368,5 +368,4 @@ class SymconJSLive extends WebHookModule {
         IPS_ApplyChanges($this->InstanceID);
     }
 }
-
 ?>

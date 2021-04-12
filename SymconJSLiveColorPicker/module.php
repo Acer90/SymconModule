@@ -80,8 +80,6 @@ class SymconJSLiveColorPicker extends JSLiveModule{
             }
         }
 
-
-
         $scriptData = $this->ReplacePlaceholder($scriptData);
 
         if($this->ReadPropertyBoolean("Debug"))
@@ -89,11 +87,11 @@ class SymconJSLiveColorPicker extends JSLiveModule{
 
         return $scriptData;
     }
-    public function GetData($querydata){
+    public function GetData(array $querydata){
         return json_encode($this->GenerateVariabels());
     }
 
-    public function SetData($querydata){
+    public function SetData(array $querydata){
         if(!array_key_exists("var", $querydata) || !array_key_exists("val", $querydata)){
             $this->SendDebug('SetData', "NO VARIABLE, OR VALUE SET!", 0);
             return "NO VARIABLE, OR VALUE SET!";
@@ -120,7 +118,7 @@ class SymconJSLiveColorPicker extends JSLiveModule{
         return "OK";
     }
 
-    private function ReplacePlaceholder($htmlData){
+    private function ReplacePlaceholder(string $htmlData){
 
         //configuration Data
         $htmlData = str_replace("{CONFIG}", $this->json_encode_advanced($this->GetConfigurationData()), $htmlData);
@@ -193,7 +191,7 @@ class SymconJSLiveColorPicker extends JSLiveModule{
         return $output;
     }
 
-    public function LoadOtherConfiguration($id){
+    public function LoadOtherConfiguration(int $id){
         if(!IPS_ObjectExists($id)) return "Instance/Chart not found!";
 
         if(IPS_GetObject($id)["ObjectType"] == 1){

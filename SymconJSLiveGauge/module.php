@@ -128,7 +128,7 @@ class SymconJSLiveGauge extends JSLiveModule{
 
         return $scriptData;
     }
-    public function GetData($querydata){
+    public function GetData(array $querydata){
         $output = array();
         $load_vars = array();
         $registered_vars = array();
@@ -177,7 +177,7 @@ class SymconJSLiveGauge extends JSLiveModule{
         return json_encode($output);
     }
 
-    private function ReplacePlaceholder($htmlData){
+    private function ReplacePlaceholder(string $htmlData){
         $htmlData = str_replace("{TITLE_TEXT}", $this->ReadPropertyString("title_text"), $htmlData);
 
         //configuration Data
@@ -265,7 +265,7 @@ class SymconJSLiveGauge extends JSLiveModule{
         return $output;
     }
 
-    public function LoadOtherConfiguration($id){
+    public function LoadOtherConfiguration(int $id){
         if(!IPS_ObjectExists($id)) return "Instance/Chart not found!";
 
         if(IPS_GetObject($id)["ObjectType"] == 1){

@@ -222,7 +222,7 @@ class SymconJSLiveChart extends JSLiveModule{
 
         return json_encode($updateData);
     }
-    public function GetData($querydata){
+    public function GetData(array $querydata){
         $output = array();
         $load_vars = array();
         $datasets = json_decode($this->ReadPropertyString("Datasets"), true);
@@ -314,7 +314,7 @@ class SymconJSLiveChart extends JSLiveModule{
         return json_encode($output);
     }
 
-    private function ReplacePlaceholder($htmlData){
+    private function ReplacePlaceholder(string $htmlData){
         $htmlData = str_replace("{TITLE_TEXT}", $this->ReadPropertyString("title_text"), $htmlData);
 
         //Title
@@ -707,7 +707,7 @@ class SymconJSLiveChart extends JSLiveModule{
         return array($output);
     }
 
-    private function GetArchivData($varId, $highRes, $offset, $date_start, $date_end, $Aggregationsstufe, $lastDatasets = 0, $jsconfig = true){
+    private function GetArchivData(int $varId, int $highRes, int $offset, int $date_start, int $date_end, int $Aggregationsstufe, int $lastDatasets = 0, bool $jsconfig = true){
         $archiveControlID = IPS_GetInstanceListByModuleID('{43192F0B-135B-4CE7-A0A7-1475603F3060}')[0];
         $period = $this->GetValue("Period");
         $relativ = $this->GetValue("Relativ");
@@ -826,7 +826,7 @@ class SymconJSLiveChart extends JSLiveModule{
 
         return $output;
     }
-    private function GetCorrectStartDate($date = 0){
+    private function GetCorrectStartDate(int $date = 0){
         $date_start = new DateTime();
         $date_end = new DateTime();
         $relativ = $this->GetValue("Relativ");
@@ -1064,7 +1064,7 @@ class SymconJSLiveChart extends JSLiveModule{
 
         return array("start" => $date_start->getTimestamp(), "end" => $date_end->getTimestamp(), "stufe" => $Aggregationsstufe, "datasets" => $curVales);
     }
-    private function GetOffsetDate($start_unixTimeStamp, $end_unixTimeStamp, $offset){
+    private function GetOffsetDate(int $start_unixTimeStamp, int $end_unixTimeStamp, int $offset){
         $period = $this->GetValue("Period");
         $relativ = $this->GetValue("Relativ");
         $date_start = new DateTime();
@@ -1178,7 +1178,7 @@ class SymconJSLiveChart extends JSLiveModule{
         return array("start" => $date_start->getTimestamp(), "end" => $date_end->getTimestamp(), "interval" => $seconds);
     }
 
-    public function LoadOtherConfiguration($id){
+    public function LoadOtherConfiguration(int $id){
         if(!IPS_ObjectExists($id)) return "Instance/Chart not found!";
 
         if(IPS_GetObject($id)["ObjectType"] == 1){
