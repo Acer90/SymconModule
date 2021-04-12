@@ -74,11 +74,13 @@ class SymconJSLiveColorPicker extends JSLiveModule{
             }
 
             $scriptData = IPS_GetScriptContent($scriptID);
-            if($scriptData = ""){
+            if($scriptData == ""){
                 return 'Template IS EMPTY!';
                 $this->SendDebug('GetWebpage', 'Template IS EMPTY!', 0);
             }
         }
+
+
 
         $scriptData = $this->ReplacePlaceholder($scriptData);
 
