@@ -29,7 +29,9 @@
             "type": "ExpansionPanel",
             "caption": "Expert",
             "items": [
-                { "type": "CheckBox", "name": "Debug", "caption": "Debug"}
+                { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
+                { "type": "CheckBox", "name": "enableCache", "caption": "Enable Cache"},
+                { "type": "CheckBox", "name": "enableCompression", "caption": "Enable Compression"}
             ]
         }
     ],
