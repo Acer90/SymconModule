@@ -60,7 +60,10 @@
                             },
                             clamp: confiuration.datalabels_clamp,
                             align: confiuration.datalabels_align,
-                            anchor: confiuration.datalabels_anchoring
+                            anchor: confiuration.datalabels_anchoring,
+                            formatter: function(value, context) {
+                                return config_data.prefix[context.dataIndex] + value + config_data.suffix[context.dataIndex];
+                            }
                         }
                     },
                     circumference: Math.PI * (confiuration.rotation_length / 180),
