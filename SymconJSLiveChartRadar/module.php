@@ -146,7 +146,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
 
         return $scriptData;
     }
-    public function GetData($querydata){
+    public function GetData(array $querydata){
         $output = array();
         $load_vars = array();
         $datasets = json_decode($this->ReadPropertyString("Datasets"), true);
@@ -410,7 +410,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         return $output;
     }
 
-    private function GetArchivData($labels, $varId, $offset, $date_start, $date_end, $Aggregationsstufe, $lastDatasets = 0, $jsconfig = true){
+    private function GetArchivData(array $labels, int $varId, int $offset, int $date_start, int $date_end, int $Aggregationsstufe, int $lastDatasets = 0, bool $jsconfig = true){
         $archiveControlID = IPS_GetInstanceListByModuleID('{43192F0B-135B-4CE7-A0A7-1475603F3060}')[0];
         $period = $this->GetValue("Period");
         $counter = false;
@@ -508,7 +508,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
 
         return $output;
     }
-    private function GetCustomData($labels, $arr){
+    private function GetCustomData(array $labels, array $arr){
         $output = array();
 
         //aller labes tolowercase
@@ -580,7 +580,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
 
         return $output;
     }
-    private function GetCorrectStartDate($date = 0){
+    private function GetCorrectStartDate(int $date = 0){
         $date_start = new DateTime();
         $date_end = new DateTime();
         $relativ = $this->GetValue("Relativ");
@@ -815,7 +815,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
 
         return array("start" => $date_start->getTimestamp(), "end" => $date_end->getTimestamp(), "stufe" => $Aggregationsstufe, "datasets" => $curVales);
     }
-    private function GetOffsetDate($start_unixTimeStamp, $end_unixTimeStamp, $offset){
+    private function GetOffsetDate(int $start_unixTimeStamp, int $end_unixTimeStamp, int $offset){
         $period = $this->GetValue("Period");
         $relativ = $this->GetValue("Relativ");
         $date_start = new DateTime();
@@ -929,7 +929,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         return array("start" => $date_start->getTimestamp(), "end" => $date_end->getTimestamp(), "interval" => $seconds);
     }
 
-    public function LoadOtherConfiguration($id){
+    public function LoadOtherConfiguration(int $id){
         if(!IPS_ObjectExists($id)) return "Instance/Chart not found!";
 
         $intData = IPS_GetInstance($id);

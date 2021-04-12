@@ -88,7 +88,7 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
 
         return $scriptData;
     }
-    public function GetData($querydata){
+    public function GetData(array $querydata){
         $output = array();
         $output["Variable"] = $this->ReadPropertyInteger("Variable");
         if(IPS_VariableExists($this->ReadPropertyInteger("Variable"))){
@@ -99,7 +99,7 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
         }
         return json_encode($output);
     }
-    public function SetData($querydata){
+    public function SetData(array $querydata){
         if(!array_key_exists("var", $querydata) || !array_key_exists("val", $querydata)){
             $this->SendDebug('SetData', "NO VARIABLE, OR VALUE SET!", 0);
             return "NO VARIABLE, OR VALUE SET!";
@@ -132,7 +132,7 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
         return "OK";
     }
 
-    private function ReplacePlaceholder($htmlData){
+    private function ReplacePlaceholder(string $htmlData){
         //configuration Data
         $htmlData = str_replace("{CONFIG}", $this->json_encode_advanced($this->GetConfigurationData()), $htmlData);
 
@@ -171,7 +171,7 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
         return $output;
     }
 
-    public function LoadOtherConfiguration($id){
+    public function LoadOtherConfiguration(int $id){
         if(!IPS_ObjectExists($id)) return "Instance/Chart not found!";
 
         if(IPS_GetObject($id)["ObjectType"] == 1){
