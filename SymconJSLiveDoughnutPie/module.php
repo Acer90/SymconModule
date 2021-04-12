@@ -309,7 +309,12 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
                         $output["suffix"][] = $profilData["Suffix"];
                     }
                 }else{
-                    $output["labels"][] = $varitem["Label"];
+                    if(empty($varitem["Label"])){
+                        //Load Variablen Name wenn label leer ist
+                        $output["labels"][] = IPS_GetVariableIDByName($varitem["Variable"]);
+                    }else{
+                        $output["labels"][] = $varitem["Label"];
+                    }
 
                     $singelOutput["variables"][] = $varitem["Variable"];
                     $singelOutput["data"][] = GetValue($varitem["Variable"]);
