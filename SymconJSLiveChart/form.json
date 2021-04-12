@@ -35,6 +35,8 @@
                         { "caption": "Suffix", "value": 2 }
                     ]
                 },
+                { "type": "NumberSpinner", "name": "axes_labelfontSize", "caption": "Label Font Size" },
+                { "type": "NumberSpinner", "name": "axes_tickfontSize", "caption": "Tick Font Size" },
                 { "type": "NumberSpinner", "name": "axes_lineWidth", "caption": "LineWidth" },
                 { "type": "SelectColor", "name": "axes_color", "caption": "Color" },
                 { "type": "NumberSpinner", "name": "axes_colorAlpha", "caption": "Color Alpha", "maximum": 1, "minimum": 0, "digits": 2},

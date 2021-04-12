@@ -27,6 +27,8 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->RegisterPropertyBoolean("axes_drawOnChartArea", false);
         $this->RegisterPropertyInteger("axes_lineWidth", 1);
         $this->RegisterPropertyInteger("axes_labelText", 2);
+        $this->RegisterPropertyInteger("axes_labelfontSize", 12);
+        $this->RegisterPropertyInteger("axes_tickfontSize", 12);
         $this->RegisterPropertyInteger("axes_color", 0);
         $this->RegisterPropertyFloat("axes_colorAlpha", 0);
         $this->RegisterPropertyInteger("axes_fontColor", 0);
@@ -538,6 +540,9 @@ class SymconJSLiveChart extends JSLiveModule{
                 $axisoutput["gridLines"]["drawOnChartArea"] = $this->ReadPropertyBoolean("axes_drawOnChartArea");
                 $axisoutput["gridLines"]["drawTicks"] = $this->ReadPropertyBoolean("axes_drawTicks");
 
+                $axisoutput["scaleLabel"]["fontSize"] = $this->ReadPropertyInteger("axes_labelfontSize");
+                $axisoutput["ticks"]["fontSize"] = $this->ReadPropertyInteger("axes_tickfontSize");
+
                 if(IPS_VariableProfileExists($item["Profile"])){
                     $profilData = IPS_GetVariableProfile($item["Profile"]);
                     if(($profilData["MaxValue"] != 0 || $profilData["MinValue"]  != 0) && !$item["DynScale"]){
@@ -601,6 +606,7 @@ class SymconJSLiveChart extends JSLiveModule{
         //$output["distribution"] = "series";
         $output["time"]["tooltipFormat"] = "DD.MM.YYYY HH:mm:ss";
 
+        $output["ticks"]["fontSize"] = $this->ReadPropertyInteger("axes_tickfontSize");
 
         $period = $this->GetValue("Period");
         switch ($period) {
