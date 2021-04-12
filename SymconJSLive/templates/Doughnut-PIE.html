@@ -62,7 +62,9 @@
                             align: confiuration.datalabels_align,
                             anchor: confiuration.datalabels_anchoring,
                             formatter: function(value, context) {
-                                return config_data.prefix[context.dataIndex] + value + config_data.suffix[context.dataIndex];
+                                str = config_data.prefix[context.dataIndex] + value + config_data.suffix[context.dataIndex];
+                                if(value === "") str = "";
+                                return str;
                             }
                         }
                     },
