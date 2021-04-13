@@ -1,5 +1,5 @@
 <?
-include_once (__DIR__ . '/../SymconJSLive/libs/WebHookModule.php');
+include_once (__DIR__ . '/../SymconJSLive/libs/JSLiveModule.php');
 
 class SymconJSLiveColorPicker extends JSLiveModule{
     public function Create() {
