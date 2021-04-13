@@ -38,7 +38,6 @@ class SymconJSLive extends WebHookModule {
         parent::ApplyChanges();
     }
 
-
     /**
      * This function will be called by the hook control. Visibility should be protected!
      */
