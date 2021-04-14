@@ -142,6 +142,7 @@
             "type": "ExpansionPanel",
             "caption": "Fonts",
             "items": [
+                { "type": "CheckBox", "name": "style_fontDisplay", "caption": "Display"},
                 { "type": "Select", "name": "style_fontPosition", "caption": "Position",
                     "options": [
                         { "caption": "Center", "value": "center" },
