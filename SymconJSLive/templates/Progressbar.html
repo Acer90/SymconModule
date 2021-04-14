@@ -50,9 +50,12 @@
 
             bar = new ldBar(".myBar", LoadBarConfig());
 
-            //Wenn ausgeblendet werden soll
+
             document.querySelectorAll('.ldBar-label').forEach(function(el) {
-                //el.style.display = 'none';
+                //Wenn Schrifft ausgeblendet werden soll
+                if(!confiuration.style_fontDisplay){
+                    el.style.display = 'none';
+                }
                 el.style.fontSize = confiuration.style_fontSize+'px';
                 el.style.color = confiuration.style_fontColor;
                 el.style.content = "px";
@@ -87,7 +90,8 @@
         output["duration"] = confiuration.data_animationDuration;
         output["transition-in"] = confiuration.data_animationTransitionIn;
 
-        output["stroke"] = confiuration.stroke_color;
+        hexstr = RGBAToHexA(confiuration.stroke_color_rgb.R,confiuration.stroke_color_rgb.G,confiuration.stroke_color_rgb.B, confiuration.stroke_color_Alpha);
+        output["stroke"] = hexstr;
         output["stroke-dir"] = confiuration.stroke_dir;
         output["stroke-lincap"] = confiuration.stroke_lincap;
         output["stroke-width"] = confiuration.stroke_width;

@@ -43,6 +43,7 @@ class SymconJSLiveProgressbar extends JSLiveModule{
         $this->RegisterPropertyInteger("fill_backgroundExtrude", 1);
 
         //fonts
+        $this->RegisterPropertyBoolean("style_fontDisplay", true);
         $this->RegisterPropertyString("style_fontPosition", "bottom");
         $this->RegisterPropertyInteger("style_fontSize", 12);
         $this->RegisterPropertyInteger("style_fontColor", 0);
@@ -167,6 +168,9 @@ class SymconJSLiveProgressbar extends JSLiveModule{
 
         $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("fill_color"));
         $output["fill_color_rgb"] = $rgbdata;
+
+        $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("stroke_color"));
+        $output["stroke_color_rgb"] = $rgbdata;
 
         //sufix und Prefix abrufen
         $output["suffix"] = "";
