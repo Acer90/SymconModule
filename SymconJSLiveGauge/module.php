@@ -95,6 +95,8 @@ class SymconJSLiveGauge extends JSLiveModule{
         //$this->SendDebug("ReceiveData", $jsonData['Buffer']. " =>" . $this->InstanceID, 0);
 
         switch($buffer['cmd']) {
+            case "exportConfiguration":
+                return $this->ExportConfiguration();
             case "getContend":
                 return $this->GetWebpage();
             case "getData":

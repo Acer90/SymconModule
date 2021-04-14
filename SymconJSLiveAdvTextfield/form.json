@@ -1,17 +1,13 @@
 {
     "elements":
     [
-        { "type": "SelectVariable", "name": "Variable", "caption": "Variable"},
         { "type": "Select", "name": "Template", "caption": "Template",
             "options": [
-                { "caption": "TimePicker 1", "value": "TimePicker1" },
-                { "caption": "TimePicker 2", "value": "TimePicker2" },
-                { "caption": "TimePicker 3", "value": "TimePicker3" },
-                { "caption": "DatePicker 1", "value": "DatePicker1" },
-                { "caption": "DateTimePicker 1", "value": "DateTimePicker1" }
+                { "caption": "Textfield 1", "value": "Textfield1" },
+                { "caption": "Textfield 2", "value": "Textfield2" },
+                { "caption": "Form Example", "value": "FormExample" }
             ]
         },
-
         {
             "type": "ExpansionPanel",
             "caption": "Colors",
@@ -116,8 +112,8 @@
         {
             "type": "RowLayout",
             "items": [
-                { "type": "Button", "label": "Get Link (Local)", "onClick": " echo SymconJSLiveDateTimePicker_GetLink($id, True);" },
-                { "type": "Button", "label": "Get Link (Remote)", "onClick": " echo SymconJSLiveDateTimePicker_GetLink($id, False);" }
+                { "type": "Button", "label": "Get Link (Local)", "onClick": " echo SymconJSLiveAdvTextfield_GetLink($id, True);" },
+                { "type": "Button", "label": "Get Link (Remote)", "onClick": " echo SymconJSLiveAdvTextfield_GetLink($id, False);" }
             ]
         },
         {
@@ -129,7 +125,7 @@
                     "type": "RowLayout",
                     "items": [
                         {"type": "SelectObject", "name": "ObjectID", "caption": "Modul"},
-                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveDateTimePicker_LoadOtherConfiguration($id, $ObjectID);"}
+                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveAdvTextfield_LoadOtherConfiguration($id, $ObjectID);"}
                     ]
                 },
                 { "type": "Label", "caption": "Load from File"},
@@ -137,10 +133,10 @@
                     "type": "RowLayout",
                     "items": [
                         {"type": "SelectFile", "name": "Config_fileData", "caption": "File"},
-                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveDateTimePicker_LoadConfigurationFile($id, $Config_fileData);"}
+                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveAdvTextfield_LoadConfigurationFile($id, $Config_fileData);"}
                     ]
                 },
-                { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveDateTimePicker_GetConfigurationLink($id);" }
+                { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveAdvTextfield_GetConfigurationLink($id);" }
             ]
         }
     ],

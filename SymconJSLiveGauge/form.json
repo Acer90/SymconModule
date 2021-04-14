@@ -225,9 +225,29 @@
                 { "type": "Button", "label": "Get Link (Remote)", "onClick": " echo SymconJSLiveGauge_GetLink($id, False);" }
             ]
         },
-        { "type": "Label", "caption": "Load Configuration from other Modul" },
-        { "type": "SelectObject", "name": "ObjectID", "caption": "Chart/Modul" },
-        { "type": "Button", "label": "Load Confiuration", "onClick": " echo SymconJSLiveGauge_LoadOtherConfiguration($id, $ObjectID);" }
+        {
+            "type": "ExpansionPanel",
+            "caption": "Configuration",
+            "items": [
+                { "type": "Label", "caption": "Load from other Modul"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {"type": "SelectObject", "name": "ObjectID", "caption": "Modul"},
+                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveGauge_LoadOtherConfiguration($id, $ObjectID);"}
+                    ]
+                },
+                { "type": "Label", "caption": "Load from File"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {"type": "SelectFile", "name": "Config_fileData", "caption": "File"},
+                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveGauge_LoadConfigurationFile($id, $Config_fileData);"}
+                    ]
+                },
+                { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveGauge_GetConfigurationLink($id);" }
+            ]
+        }
     ],
     "status":
     [

@@ -49,4 +49,63 @@ class JSLiveModule extends IPSModule
 
         return array("R" => $r, "G" => $g, "B" => $b);
     }
+
+    public function LoadOtherConfiguration(int $id){
+        if(!IPS_ObjectExists($id)) return "Instance/Chart not found!";
+
+        if(IPS_GetObject($id)["ObjectType"] == 1){
+            //instance
+            $intData = IPS_GetInstance($id);
+            if($intData["ModuleInfo"]["ModuleID"] != IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"]) return "Only Allowed at the same Modul!";
+
+            $confData = json_decode(IPS_GetConfiguration($id), true);
+
+            IPS_SetConfiguration($this->InstanceID, json_encode($confData));
+            IPS_ApplyChanges($this->InstanceID);
+        }else return "A Instance must be selected!";
+    }
+    public function GetLink(bool $local = true){
+        $sendData = array("InstanceID" => $this->InstanceID, "Type" => "GetLink", "local" => $local);
+        $pData = $this->SendDataToParent(json_encode([
+            'DataID' => "{751AABD7-E31D-024C-5CC0-82AC15B84095}",
+            'Buffer' => utf8_encode(json_encode($sendData)),
+        ]));
+
+        return $pData;
+    }
+
+    public function ExportConfiguration(){
+        $output = array();
+
+        $output["ModulID"] = IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"];
+        $output["ModuleName"] = IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleName"];
+
+        $output["Config"] = json_decode(IPS_GetConfiguration($this->InstanceID), true);
+
+        return json_encode($output);
+    }
+    public function LoadConfigurationFile(string $filename){
+        if(empty($filename)) return "File is Empty!";
+
+        $confdata = json_decode(base64_decode($filename), true);
+        if(json_last_error() !== JSON_ERROR_NONE) return "Not valid json File!";
+        if(!array_key_exists("Config", $confdata) || !array_key_exists("ModulID", $confdata) || !array_key_exists("ModuleName", $confdata)) return "Not valid json File!";
+        if($confdata["ModuleID"] != IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"]) return "Configuration only allowed for " . $confdata["ModuleName"];
+
+
+        IPS_SetConfiguration($this->InstanceID, json_encode($confdata["Config"]));
+        IPS_ApplyChanges($this->InstanceID);
+
+    }
+    public function GetConfigurationLink(){
+        $sendData = array("InstanceID" => $this->InstanceID, "Type" => "GetConfigurationLink");
+        $pData = $this->SendDataToParent(json_encode([
+            'DataID' => "{751AABD7-E31D-024C-5CC0-82AC15B84095}",
+            'Buffer' => utf8_encode(json_encode($sendData)),
+        ]));
+
+        return $pData;
+    }
+
+
 }

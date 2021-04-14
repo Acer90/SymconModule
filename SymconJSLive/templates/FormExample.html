@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!--<meta name="viewport" content='width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86, user-scalable=no'>-->
+    <title>Textfield</title>
+    <link rel="stylesheet" href="{ADDRESS}/hook/JSLive/js/css/FormExample.css">
+</head>
+<script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
+
+
+<body style="text-align: center;">
+<section class="contact-form">
+    <h1>Send Me a Message</h1>
+    <p>Use this handy contact form to get in touch with me.</p>
+
+    <form>
+        <div class="input-group">
+            <input id="salutation-mr" name="salutation" type="radio" value="Mr."/>
+            <label class="inline" for="salutation-mr">Mr.</label>
+
+            <input id="salutation-mrs" name="salutation" type="radio" value="Mrs."/>
+            <label class="inline" for="salutation-mrs">Mrs.</label>
+
+            <input id="salutation-ms" name="salutation" type="radio" value="Ms."/>
+            <label class="inline" for="salutation-ms">Ms.</label>
+        </div>
+
+        <div class="input-group">
+            <label for="name">Full Name</label>
+            <input id="name" name="name" type="text"/>
+        </div>
+
+        <div class="input-group">
+            <label for="email">Email Address</label>
+            <input id="email" name="email" type="email"/>
+        </div>
+
+        <div class="input-group">
+            <label for="subject">How can I help you?</label>
+            <select id="subject" name="subject">
+                <option>I have a problem.</option>
+                <option>I have a general question.</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="message">Enter a Message</label>
+            <textarea id="message" name="message" rows="6" cols="65"></textarea>
+        </div>
+
+        <input name="secret" type="hidden" value="1b3a9374-1a8e-434e-90ab-21aa7b9b80e7"/>
+        <button type="submit">Send It!</button>
+    </form>
+</section>
+
+<script>
+    let config_global = {GLOBAL};
+    let value = {VALUE};
+    let confiuration = {CONFIG};
+
+    running = false;
+    last_update = Date.now();
+
+    function Load(){
+        try {
+            const form = document.querySelector('.contact-form');
+            form.addEventListener('submit', updateValue);
+            updateForm(form);
+
+
+            //obj = document.querySelector("#text");
+            //obj.value = value;
+
+            /*//Change Style DEMO
+            obj.style.backgroundColor = confiuration.style_backgroundColor;
+            obj.style.borderWidth = confiuration.style_borderWidth;
+            obj.style.borderColor = confiuration.style_borderColor;
+            obj.style.borderRadius = confiuration.style_borderRadius;
+
+            obj.style.color = confiuration.style_fontColor;
+            obj.style.fontSize = confiuration.style_fontSize + "px";*/
+        }catch (e) {
+            alert(e);
+        }
+    }
+
+    function updateForm(form){
+        data = JSON.parse(value);
+
+        for(key in data)
+        {
+            if(data.hasOwnProperty(key))
+                $('input[id='+key+']').val(data[key]);
+        }
+    }
+
+    function updateValue(event) {
+        event.preventDefault();
+        const data = new FormData(event.target);
+        const formJSON = Object.fromEntries(data.entries());
+
+        value =  JSON.stringify(formJSON);
+        if(!running) UpdateWorker();
+    }
+
+    async function UpdateWorker(){
+        running = true;
+        last_update = Date.now();
+        while (running){
+            await sleep(1);
+            try {
+                if((last_update + confiuration.DataUpdateRate) <= Date.now()){
+                    last_update = Date.now();
+
+                    console.log(Date.now() + " >> UpdateWorker | Update => " + value);
+                    var response = await fetch("{ADDRESS}/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&val="+value);
+                    console.log(Date.now() + " >> UpdateWorker Response => " + response.statusText + " (" + response.status + ")");
+
+                    console.log(Date.now() + " >> UpdateWorker => CLOSE");
+                    running = false;
+                }
+            }catch (e) {
+                console.log(Date.now() + " >> UpdateWorker => ", e);
+            }
+        }
+    }
+    function connect() {
+        var ws = new WebSocket('{WSADDRESS}', [encodeURIComponent(btoa('webfront:{WEBFRONTPASSWORD}'))]);
+        ws.onopen = function() {
+            // subscribe to some channels
+            //ws.send(JSON.stringify({
+            //.... some message the I must send when I connect ....
+            //}));
+        };
+
+        ws.onmessage = function(e) {
+            data = JSON.parse(e.data);
+            if(data.Message == 10603) {
+                Update(data.SenderID, data.Data[0]);
+            }
+        };
+
+        ws.onclose = function(e) {
+            console.log(Date.now() + ' >> Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+            setTimeout(function() {
+                connect();
+            }, 1000);
+        };
+
+        ws.onerror = function(err) {
+            console.error(Date.now() + ' >> Socket encountered error: ', err.message, 'Closing socket');
+            ws.close();
+        };
+    }
+
+    function Update(id_val, val){
+        isUpdated = false;
+        now = Date.now();
+        if(running ) return;
+
+        if(id_val === confiuration.Variable && value !== val){
+            value = val;
+
+            obj = document.querySelector("#text");
+            obj.value = value;
+        }
+    }
+
+    async function PullNewData(refreshRate){
+        refreshRate = refreshRate * 1000;
+        while (true){
+            try {
+                $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                    Update(data.Variable, data.Value);
+                });
+
+                //Control Variables
+            }catch (e) {
+                console.log(Date.now() + " >> PullNewData => ", e);
+            }
+            await sleep(refreshRate);
+        }
+    }
+
+    function filterKeys(obj, func) {
+        return Array.prototype.filter.call(Object.keys(obj), func, obj);
+    }
+    function someKeys(obj, func) {
+        return Array.prototype.some.call(Object.keys(obj), func, obj);
+    }
+    function atLeastOnePropertyMatches(obj, requiredProp) {
+        return someKeys(obj, function (prop) {
+            if (requiredProp.hasOwnProperty(prop)) {
+                return this[prop] === requiredProp[prop];
+            }
+        });
+    }
+    function getMatchingKeys(obj, requiredProp) {
+        return filterKeys(obj, function (prop) {
+            return atLeastOnePropertyMatches(this[prop], required);
+        });
+    }
+    Array.prototype.insert = function ( index, item ) {
+        this.splice( index, 0, item );
+    };
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    window.onload = function() {
+        try {
+            Load();
+
+            if (config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0) {
+                //pullup Mode local
+                refreshRate = config_global.LocalRefreshTime;
+                PullNewData(refreshRate);
+            } else if (config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0) {
+                //pullup Mode remote
+                refreshRate = config_global.RemoteRefreshTime;
+                PullNewData(refreshRate);
+            } else {
+                connect();
+            }
+        }catch (e) {
+            alert(e);
+        }
+    }
+</script>
+</body>
+</html>

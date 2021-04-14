@@ -1,0 +1,201 @@
+{
+    "elements":
+    [
+        { "type": "SelectVariable", "name": "Variable", "caption": "Variable" },
+        { "type": "Select", "name": "Type", "caption": "Type",
+            "options": [
+                { "caption": "Stroke", "value": "stroke" },
+                { "caption": "Fill", "value": "fill" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Data",
+            "items": [
+                { "type": "NumberSpinner", "name": "data_min", "caption": "Minimum Value"},
+                { "type": "NumberSpinner", "name": "data_max", "caption": "Maximum Value"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Select", "name": "data_precision", "caption": "Precision",
+                            "options": [
+                                { "caption": "10", "value": 10 },
+                                { "caption": "1", "value": 1 },
+                                { "caption": "0.1", "value": 0.1 },
+                                { "caption": "0.01", "value": 0.01 },
+                                { "caption": "0.001", "value": 0.001 }
+                            ]
+                        },
+                        { "type": "NumberSpinner", "name": "data_precisionCustom", "caption": "Custome Precision", "digits": 3}
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Animation: ", "width": "100px" },
+                        { "type": "NumberSpinner", "name": "data_animationDuration", "caption": "Duration", "suffix": "Sec.", "minimum": 0, "width": "200px", "digits": 3},
+                        { "type": "NumberSpinner", "name": "data_animationTransitionIn", "caption": "Transition In", "suffix": "Sec.", "minimum": 0, "width": "200px", "digits": 3}
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Shape",
+            "items": [
+                { "type": "Select", "name": "shape_preset", "caption": "Preset",
+                    "options": [
+                        { "caption": "Bubble", "value": "bubble" },
+                        { "caption": "Circle", "value": "circle" },
+                        { "caption": "Fan", "value": "fan" },
+                        { "caption": "Line", "value": "line" },
+                        { "caption": "Rainbow", "value": "rainbow" },
+                        { "caption": "Energy", "value": "energy" },
+                        { "caption": "Stripe", "value": "stripe" },
+                        { "caption": "Text", "value": "text" }
+                    ]
+                },
+                { "type": "SelectFile", "name": "shape_svg", "caption": "SVG-File", "extensions": ".svg"},
+                { "type": "ValidationTextBox", "name": "shape_path", "caption": "Custom Path", "multiline": true, "width": "100%"},
+                {
+                    "type": "ExpansionPanel",
+                    "caption": "Load Custom Path from SVG File",
+                    "items": [
+                        {
+                            "type": "RowLayout",
+                            "items": [
+                                {"type": "SelectFile", "name": "SVGFile", "caption": "File", "extensions": ".svg"},
+                                { "type": "Button", "caption": "Load", "onClick": " echo SymconJSLiveProgressbar_LoadSvg($id, $SVGFile);" }                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Stroke",
+            "items": [
+                { "type": "Select", "name": "stroke_dir", "caption": "Dir",
+                    "options": [
+                        { "caption": "Normal", "value": "normal" },
+                        { "caption": "Reverse", "value": "reverse" }
+                    ]
+                },
+                { "type": "Select", "name": "stroke_lincap", "caption": "Line cap",
+                    "options": [
+                        { "caption": "Default", "value": "" },
+                        { "caption": "Round", "value": "round" }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Main:", "width": "100px" },
+                        { "type": "NumberSpinner", "name": "stroke_width", "caption": "width", "suffix": "px", "minimum": 0, "stepSize": 1, "width": "100px"},
+                        { "type": "SelectColor", "name": "stroke_color", "caption": "Color", "width": "150px"},
+                        { "type": "HorizontalSlider", "name": "stroke_color_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05}
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Trail:", "width": "100px" },
+                        { "type": "NumberSpinner", "name": "stroke_trailWidth", "caption": "width", "suffix": "px", "minimum": 0, "stepSize": 1, "width": "100px"},
+                        { "type": "SelectColor", "name": "stroke_trailColor", "caption": "Color", "width": "150px"},
+                        { "type": "HorizontalSlider", "name": "stroke_trailColor_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05}
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Fill",
+            "items": [
+                { "type": "Select", "name": "fill_dir", "caption": "Dir",
+                    "options": [
+                        { "caption": "left to right", "value": "ltr" },
+                        { "caption": "right to left", "value": "rtl" },
+                        { "caption": "bottom to top", "value": "btt" },
+                        { "caption": "top to bottom", "value": "ttb" }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Fill:", "width": "100px" },
+                        { "type": "SelectColor", "name": "fill_color", "caption": "Color", "width": "150px"},
+                        { "type": "HorizontalSlider", "name": "fill_color_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05}
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Background:", "width": "100px" },
+                        { "type": "SelectColor", "name": "fill_backgroundColor", "caption": "Color", "width": "150px"},
+                        { "type": "HorizontalSlider", "name": "fill_backgroundColor_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05}
+                    ]
+                },
+                { "type": "NumberSpinner", "name": "fill_backgroundExtrude", "caption": "Background Extrude", "suffix": "px", "minimum": 0, "stepSize": 1}
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Fonts",
+            "items": [
+                { "type": "Select", "name": "style_fontPosition", "caption": "Position",
+                    "options": [
+                        { "caption": "Center", "value": "center" },
+                        { "caption": "Bottom", "value": "bottom" }
+                    ]
+                },
+                { "type": "NumberSpinner", "name": "style_fontSize", "caption": "Font Size", "suffix": "px" },
+                { "type": "SelectColor", "name": "style_fontColor", "caption": "Font Color" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Expert",
+            "items": [
+                { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
+                { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script"}
+            ]
+        }
+    ],
+    "actions":
+    [
+        {
+            "type": "RowLayout",
+            "items": [
+                { "type": "Button", "label": "Get Link (Local)", "onClick": " echo SymconJSLiveProgressbar_GetLink($id, True);" },
+                { "type": "Button", "label": "Get Link (Remote)", "onClick": " echo SymconJSLiveProgressbar_GetLink($id, False);" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Configuration",
+            "items": [
+                { "type": "Label", "caption": "Load from other Modul"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {"type": "SelectObject", "name": "ObjectID", "caption": "Modul"},
+                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveProgressbar_LoadOtherConfiguration($id, $ObjectID);"}
+                    ]
+                },
+                { "type": "Label", "caption": "Load from File"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {"type": "SelectFile", "name": "Config_fileData", "caption": "File"},
+                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveProgressbar_LoadConfigurationFile($id, $Config_fileData);"}
+                    ]
+                },
+                { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveProgressbar_GetConfigurationLink($id);" }
+            ]
+        }
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Status OK!" }
+    ]
+}
