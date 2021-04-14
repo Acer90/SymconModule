@@ -88,12 +88,26 @@ class JSLiveModule extends IPSModule
         if(empty($filename)) return "File is Empty!";
 
         $confdata = json_decode(base64_decode($filename), true);
+        //print_r($confdata);
         if(json_last_error() !== JSON_ERROR_NONE) return "Not valid json File!";
         if(!array_key_exists("Config", $confdata) || !array_key_exists("ModulID", $confdata) || !array_key_exists("ModuleName", $confdata)) return "Not valid json File!";
-        if($confdata["ModuleID"] != IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"]) return "Configuration only allowed for " . $confdata["ModuleName"];
+        if($confdata["ModulID"] != IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"]) return "Configuration only allowed for " . $confdata["ModuleName"];
+
+        //echo json_encode($confdata["Config"]);
+
+        $output = json_decode(IPS_GetConfiguration($this->InstanceID), true);
+
+        foreach ($confdata["Config"] as $key => $item){
+            if(in_array($key, $output)){
+                $output[$key] = $item;
+                $this->SendDebug("LoadConfigurationFile", "PARAMETER UPDATE ".$key." => " . $item , 0);
+            }else{
+                $this->SendDebug("LoadConfigurationFile", "PARAMETER => " . $key ."SKIP", 0);
+            }
+        }
 
 
-        IPS_SetConfiguration($this->InstanceID, json_encode($confdata["Config"]));
+        IPS_SetConfiguration($this->InstanceID, json_encode($output));
         IPS_ApplyChanges($this->InstanceID);
 
     }
