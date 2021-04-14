@@ -141,15 +141,36 @@ class SymconJSLiveColorPicker extends JSLiveModule{
         //load all variables
         foreach ($variables as $item){
             $s_output = array();
-            $s_output["Color"]["Variable"] = $item["Color"];
-            $s_output["Color"]["Value"] = GetValue($item["Color"]);
+            if(IPS_VariableExists($item["Color"])){
+                $s_output["Color"]["Variable"] = $item["Color"];
+                $s_output["Color"]["Value"] = GetValue($item["Color"]);
+            }else{
+                $s_output["Color"]["Variable"] = 0;
+                $s_output["Color"]["Value"] = 0;
+            }
 
-            $s_output["Temperature"]["Variable"] = $item["ColorTemperature"];
-            $s_output["Temperature"]["Value"] = GetValue($item["ColorTemperature"]);
-            $s_output["Temperature"]["isMired"] = $item["isMired"];
+            if(IPS_VariableExists($item["ColorTemperature"])){
+                $s_output["Temperature"]["Variable"] = $item["ColorTemperature"];
+                $s_output["Temperature"]["Value"] = GetValue($item["ColorTemperature"]);
+                $s_output["Temperature"]["isMired"] = $item["isMired"];
+            }else{
+                $s_output["Temperature"]["Variable"] = 0;
+                $s_output["Temperature"]["Value"] = 0;
+                $s_output["Temperature"]["isMired"] = false;
+            }
 
-            $s_output["Mode"]["Variable"] = $item["SwitchTemperature"];
-            $s_output["Mode"]["Value"]  = boolval(GetValue($item["SwitchTemperature"]));
+            if(IPS_VariableExists($item["SwitchTemperature"])) {
+                $s_output["Mode"]["Variable"] = $item["SwitchTemperature"];
+                $s_output["Mode"]["Value"] = boolval(GetValue($item["SwitchTemperature"]));
+            }else{
+                if(IPS_VariableExists($item["Color"])){
+                    $s_output["Mode"]["Variable"] = 0;
+                    $s_output["Mode"]["Value"] = false;
+                }else{
+                    $s_output["Mode"]["Variable"] = 0;
+                    $s_output["Mode"]["Value"] = true;
+                }
+            }
             //$this->SendDebug("Test", "Val => ". $s_output["Mode"]["Value"]. " |ITEM => ". GetValue($item["SwitchTemperature"]),0 );
 
             $output[] = $s_output;
