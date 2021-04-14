@@ -132,7 +132,7 @@ class SymconJSLive extends WebHookModule {
             if(strtolower($Type) == "getsvg"){
                 header("Content-type: image/svg+xml");
             }elseif (strtolower($Type) == "exportconfiguration"){
-                header('Content-disposition: attachment; filename='.$queryData["instance"].'.json');
+                header('Content-disposition: attachment; filename='.$queryData["instance"].'-'.IPS_GetInstance($queryData["instance"])["ModuleInfo"]["ModuleName"].'.json');
                 header('Content-type: application/json');
             }else{
                 header("Content-Type: text/html");
