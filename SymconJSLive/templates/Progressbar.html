@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!--<meta name="viewport" content='width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86, user-scalable=no'>-->
+    <title>Progressbar</title>
+    <link rel="stylesheet" href="{ADDRESS}/hook/JSLive/js/loading-Bar/loading-bar.css">
+</head>
+<script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
+<script src="{ADDRESS}/hook/JSLive/js/loading-Bar/loading-bar.js"></script>
+
+
+<body style="text-align: center;">
+
+<div class="myBar" id="Bar"></div>
+
+<script>
+    let config_global = {GLOBAL};
+    let value = {VALUE};
+    let confiuration = {CONFIG};
+
+    last_update = Date.now();
+
+    let Bar
+
+    function Load(){
+        try {
+            //görße automatisch anpassen
+            item = document.getElementById("Bar");
+            item.style.width = (window.innerWidth-40)+"px";
+
+            if(confiuration.style_fontPosition === "center"){
+                item.style.height = (window.innerHeight-40)+"px";
+            }else{
+                item.style.height = (window.innerHeight-40-confiuration.style_fontSize)+"px";
+            }
+            console.log("Automatic Size: W: " + item.style.width+"px | H: " + item.style.height+ "px");
+
+            //wenn text mittig angezeigt werden soll
+            if(confiuration.style_fontPosition === "center"){
+                item.className = item.className + " label-center";
+            }
+
+            //suffix und Präfix
+            //item.append('<style>.wrapper:after{content: "Test";  display: inline;}</style>');
+            //$( '<style>.wrapper:after { content: "Test"; }</style>' ).appendTo( "head" )
+            var styleElem = document.head.appendChild(document.createElement("style"));
+            styleElem.innerHTML = ".ldBar-label:after {content: \""+confiuration.suffix+"\";}.ldBar-label:before {content: \""+confiuration.prefix+"\";}";
+
+
+            bar = new ldBar(".myBar", LoadBarConfig());
+
+            //Wenn ausgeblendet werden soll
+            document.querySelectorAll('.ldBar-label').forEach(function(el) {
+                //el.style.display = 'none';
+                el.style.fontSize = confiuration.style_fontSize+'px';
+                el.style.color = confiuration.style_fontColor;
+                el.style.content = "px";
+            });
+        }catch (e) {
+            alert(e);
+        }
+    }
+
+    function LoadBarConfig(){
+        output = {};
+
+        if(confiuration.shape_svg !== ""){
+            output["img"] = "{ADDRESS}/hook/JSLive/getSVG?Instance={INSTANCE}&pw={PASSWORD}";
+            //output["img"] = "data:image/jpeg;base64," + confiuration.shape_svg;
+            //output["img-size"] = "1500,500";
+        }
+        else if(confiuration.shape_path !== ""){
+            output["path"] = confiuration.shape_path;
+        }
+
+        output["type"] =  confiuration.Type;
+        if(confiuration.shape_svg === "" && confiuration.shape_path === "")  output["preset"] =  preset; //fan line bubble circle
+
+        output["precision"] = confiuration.data_precision;
+        if(confiuration.data_precisionCustom !== 0)  output["precision"] = confiuration.data_precisionCustom;
+
+        output["value"] = value;
+        output["min"] = confiuration.data_min;
+        output["max"] = confiuration.data_max;
+
+        output["duration"] = confiuration.data_animationDuration;
+        output["transition-in"] = confiuration.data_animationTransitionIn;
+
+        output["stroke"] = confiuration.stroke_color;
+        output["stroke-dir"] = confiuration.stroke_dir;
+        output["stroke-lincap"] = confiuration.stroke_lincap;
+        output["stroke-width"] = confiuration.stroke_width;
+        output["stroke-trail"] = confiuration.stroke_trailColor;
+        output["stroke-trail-width"] = confiuration.stroke_trailWidth;
+
+        hexstr = RGBAToHexA(confiuration.fill_color_rgb.R,confiuration.fill_color_rgb.G,confiuration.fill_color_rgb.B, confiuration.fill_color_Alpha); //confiuration.fill_color;
+        output["fill"] = hexstr;
+        output["fill-dir"] = confiuration.fill_dir;
+        output["fill-background-extrude"] = confiuration.fill_backgroundExtrude;
+        output["fill-background"] = confiuration.fill_backgroundColor;
+
+        return output;
+    }
+
+
+    function connect() {
+        var ws = new WebSocket('{WSADDRESS}', [encodeURIComponent(btoa('webfront:{WEBFRONTPASSWORD}'))]);
+        ws.onopen = function() {
+            // subscribe to some channels
+            //ws.send(JSON.stringify({
+            //.... some message the I must send when I connect ....
+            //}));
+        };
+
+        ws.onmessage = function(e) {
+            data = JSON.parse(e.data);
+            if(data.Message == 10603) {
+                Update(data.SenderID, data.Data[0]);
+            }
+        };
+
+        ws.onclose = function(e) {
+            console.log(Date.now() + ' >> Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+            setTimeout(function() {
+                connect();
+            }, 1000);
+        };
+
+        ws.onerror = function(err) {
+            console.error(Date.now() + ' >> Socket encountered error: ', err.message, 'Closing socket');
+            ws.close();
+        };
+    }
+    async function PullNewData(refreshRate){
+        refreshRate = refreshRate * 1000;
+        while (true){
+            try {
+                $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                    Update(data.Variable, data.Value);
+                });
+
+                //Control Variables
+            }catch (e) {
+                console.log(Date.now() + " >> PullNewData => ", e);
+            }
+            await sleep(refreshRate);
+        }
+    }
+    function Update(id_val, val){
+        if(id_val === confiuration.Variable && value !== val){
+            value = val;
+            bar.set(value);
+        }
+    }
+
+
+    function filterKeys(obj, func) {
+        return Array.prototype.filter.call(Object.keys(obj), func, obj);
+    }
+    function someKeys(obj, func) {
+        return Array.prototype.some.call(Object.keys(obj), func, obj);
+    }
+    function atLeastOnePropertyMatches(obj, requiredProp) {
+        return someKeys(obj, function (prop) {
+            if (requiredProp.hasOwnProperty(prop)) {
+                return this[prop] === requiredProp[prop];
+            }
+        });
+    }
+    function getMatchingKeys(obj, requiredProp) {
+        return filterKeys(obj, function (prop) {
+            return atLeastOnePropertyMatches(this[prop], required);
+        });
+    }
+    Array.prototype.insert = function ( index, item ) {
+        this.splice( index, 0, item );
+    };
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    function RGBAToHexA(r,g,b,a) {
+        r = r.toString(16);
+        g = g.toString(16);
+        b = b.toString(16);
+        a = Math.round(a * 255).toString(16);
+
+        if (r.length == 1)
+            r = "0" + r;
+        if (g.length == 1)
+            g = "0" + g;
+        if (b.length == 1)
+            b = "0" + b;
+        if (a.length == 1)
+            a = "0" + a;
+
+        return "#" + r + g + b + a;
+    }
+
+    window.onload = function() {
+        try {
+            Load();
+
+            if (config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0) {
+                //pullup Mode local
+                refreshRate = config_global.LocalRefreshTime;
+                PullNewData(refreshRate);
+            } else if (config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0) {
+                //pullup Mode remote
+                refreshRate = config_global.RemoteRefreshTime;
+                PullNewData(refreshRate);
+            } else {
+                connect();
+            }
+        }catch (e) {
+            alert(e);
+        }
+    }
+
+</script>
+</body>
+</html>

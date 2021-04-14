@@ -128,8 +128,15 @@ class SymconJSLive extends WebHookModule {
             //$this->SendDebug('WebHook', 'Array Server: ' . print_r($_SERVER, true), 0);
 
             header("HTTP/1.0 200 X");
-            header("Content-Type: text/html");
 
+            if(strtolower($Type) == "getsvg"){
+                header("Content-type: image/svg+xml");
+            }elseif (strtolower($Type) == "exportconfiguration"){
+                header('Content-disposition: attachment; filename='.$queryData["instance"].'.json');
+                header('Content-type: application/json');
+            }else{
+                header("Content-Type: text/html");
+            }
 
             $sendData = array("cmd" => $Type, "instance" => $queryData["instance"], "queryData" => $queryData);
             $contend = $this->SendDataToChildren(json_encode([
@@ -204,6 +211,23 @@ class SymconJSLive extends WebHookModule {
                     return $link . "/hook/JSLive?Instance=".$intId;
                 }else{
                     return $link . "/hook/JSLive?Instance=".$intId."&pw=".$pw;
+                }
+            case "GetConfigurationLink":
+                $intId = $jsonData["InstanceID"];
+
+                $local = $this->ReadPropertyString("LocalAddress");
+                $pw = $this->ReadPropertyString("Password");
+
+                $link = $local;
+
+                if(empty($link)){
+                    return "No Address in Main modul Set!";
+                }
+
+                if(empty($pw)){
+                    return $link . "/hook/JSLive/exportConfiguration?Instance=".$intId;
+                }else{
+                    return $link . "/hook/JSLive/exportConfiguration?Instance=".$intId."&pw=".$pw;
                 }
         }
 
@@ -314,9 +338,9 @@ class SymconJSLive extends WebHookModule {
         return false;
     }
 
-    public function UpdateTemplates(){
+    public function UpdateTemplates(int $category){
         $templates = glob(__DIR__ ."/templates/*.html");
-        $category = $this->ReadPropertyInteger("TemplateCategoryID");
+        //$category = $this->ReadPropertyInteger("TemplateCategoryID");
 
         if($category == 0){
             echo "It is not allowed to use the standard directory as the template directory!";

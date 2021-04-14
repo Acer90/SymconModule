@@ -1,49 +1,54 @@
 <?
 include_once (__DIR__ . '/../SymconJSLive/libs/JSLiveModule.php');
 
-class SymconJSLiveColorPicker extends JSLiveModule{
+class SymconJSLiveAdvTextfield extends JSLiveModule{
     public function Create() {
         //Never delete this line!
         parent::Create();
 
         $this->ConnectParent("{9FFF3FC0-FD51-C289-FA36-BC1C370946CF}");
 
+        $this->RegisterPropertyString("Template", "Textfield1");
+
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyInteger("DataUpdateRate", 50);
-        $this->RegisterPropertyInteger("manWidth", 0);
 
+        //colors
+        $this->RegisterPropertyInteger("style_backgroundColor", 0);
+        $this->RegisterPropertyFloat("style_backgroundColor_Alpha", 0);
+        $this->RegisterPropertyInteger("style_highlightColor1", 0);
+        $this->RegisterPropertyFloat("style_highlightColor1_Alpha", 1);
+        $this->RegisterPropertyInteger("style_highlightColor2", 0);
+        $this->RegisterPropertyFloat("style_highlightColor2_Alpha", 1);
+        $this->RegisterPropertyInteger("style_highlightColor3", 0);
+        $this->RegisterPropertyFloat("style_highlightColor3_Alpha", 1);
+        $this->RegisterPropertyInteger("style_highlightColor4", 0);
+        $this->RegisterPropertyFloat("style_highlightColor4_Alpha", 1);
+        $this->RegisterPropertyInteger("style_highlightColor5", 0);
+        $this->RegisterPropertyFloat("style_highlightColor5_Alpha", 1);
 
-        //style
+        //fonts
+        $this->RegisterPropertyInteger("style_fontSize", 12);
+        $this->RegisterPropertyInteger("style_fontColor", 0);
+
+        //border
+        $this->RegisterPropertyInteger("style_borderRadius", 10);
         $this->RegisterPropertyInteger("style_borderWidth", 2);
         $this->RegisterPropertyInteger("style_borderColor", 0);
-        $this->RegisterPropertyInteger("style_handleRadius", 8);
-
-        //wheel
-        $this->RegisterPropertyBoolean("wheel_Lightness", true);
-        $this->RegisterPropertyInteger("wheel_Angle", 0);
-        $this->RegisterPropertyString("wheel_Direction", "anticlockwise");
-
-        //layout
-        $this->RegisterPropertyString("layout_Direction", "horizontal");
-        $this->RegisterPropertyString("Layout", "[]");
-
-        //variables
-        $this->RegisterPropertyString("Variables", "[]");
-
     }
     public function ApplyChanges() {
         //Never delete this line!
         parent::ApplyChanges();
 
+        $this->RegisterVariableString("Content", $this->Translate("Content"), "", 0);
         $this->SetReceiveDataFilter('.*instance\\\":[ \\\"]*'.$this->InstanceID.'[\\\”]*.*');
     }
 
     public function ReceiveData($JSONString) {
         $jsonData = json_decode($JSONString, true);
         $buffer = json_decode($jsonData['Buffer'], true);
-
 
         //if($buffer["instance"] != $this->InstanceID) return;
         //$this->SendDebug("ReceiveData", $jsonData['Buffer']. " =>" . $this->InstanceID, 0);
@@ -61,115 +66,59 @@ class SymconJSLiveColorPicker extends JSLiveModule{
                 $this->SendDebug("ReceiveData", "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
                 break;
         }
-
     }
     public function GetWebpage(){
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
         if(empty($scriptID)){
             if($this->ReadPropertyBoolean("Debug"))
                 $this->SendDebug('GetWebpage', 'load default template!', 0);
-            $scriptData = file_get_contents (__DIR__ ."/../SymconJSLive/templates/ColorPicker.html");
+            $scriptData = file_get_contents(__DIR__ ."/../SymconJSLive/templates/".$this->ReadPropertyString("Template"). ".html");
         }else{
             if(!IPS_ScriptExists($scriptID)){
                 $this->SendDebug('GetWebpage', 'Template NOT FOUND!', 0);
-                return 'Template NOT FOUND!';
+                return "";
             }
 
             $scriptData = IPS_GetScriptContent($scriptID);
             if($scriptData == ""){
-                return 'Template IS EMPTY!';
                 $this->SendDebug('GetWebpage', 'Template IS EMPTY!', 0);
             }
         }
 
+        //$this->SendDebug('GetWebpage', $scriptData, 0);
         $scriptData = $this->ReplacePlaceholder($scriptData);
-
-        if($this->ReadPropertyBoolean("Debug"))
-            $this->SendDebug('GetWebpage', $scriptData, 0);
 
         return $scriptData;
     }
     public function GetData(array $querydata){
-        return json_encode($this->GenerateVariabels());
+        $output = array();
+        $output["Variable"] = IPS_GetObjectIDByIdent("Content", $this->InstanceID);
+        $output["Value"] = $this->GetValue("Content");
+        return json_encode($output);
     }
-
     public function SetData(array $querydata){
-        if(!array_key_exists("var", $querydata) || !array_key_exists("val", $querydata)){
-            $this->SendDebug('SetData', "NO VARIABLE, OR VALUE SET!", 0);
-            return "NO VARIABLE, OR VALUE SET!";
+        if(!array_key_exists("val", $querydata)){
+            $this->SendDebug('SetData', "NO VALUE SET!", 0);
+            return "NO VALUE SET!";
         }
 
-        $var_data = json_decode($this->ReadPropertyString("Variables"),true);
-        $var_ids = array();
-        foreach ($var_data as $varItem){
-            if($varItem["Color"] > 0)
-                $var_ids[] = $varItem["Color"];
-
-            if($varItem["ColorTemperature"] > 0)
-                $var_ids[] = $varItem["ColorTemperature"];
-        }
-
-        if(!in_array($querydata["var"], $var_ids)){
-            $this->SendDebug('SetData', "VARIABLE NOT IN LIST SET!", 0);
-            return "VARIABLE NOT IN LIST SET!";
-        }
-
-        $this->SendDebug("SetData", "Update Variable " . $querydata["var"] ." => " .$querydata["val"], 0 );
-        RequestAction($querydata["var"], $querydata["val"]);
-        $this->SendDebug("SetData", "Update Variable => OK", 0 );
+        $val = urldecode($querydata["val"]);
+        $this->SendDebug("SetData", "Update Content => " . $val, 0 );
+        $this->SetValue("Content", $val);
         return "OK";
     }
 
     private function ReplacePlaceholder(string $htmlData){
-
         //configuration Data
         $htmlData = str_replace("{CONFIG}", $this->json_encode_advanced($this->GetConfigurationData()), $htmlData);
 
-        //variables
-        $htmlData = str_replace("{VARIABELS}", $this->json_encode_advanced($this->GenerateVariabels()), $htmlData);
-
-        //Layout
-        $htmlData = str_replace("{LAYOUT}", $this->json_encode_advanced($this->GenerateLayout()), $htmlData);
+        //Value
+        $htmlData = str_replace("{VALUE}", "'".addslashes($this->GetValue("Content"))."'", $htmlData);
 
         return $htmlData;
     }
-
-    private function GenerateVariabels(){
-        $output = array();
-        $variables = json_decode($this->ReadPropertyString("Variables"), true);
-
-        //load all variables
-        foreach ($variables as $item){
-            $s_output = array();
-            $s_output["Color"]["Variable"] = $item["Color"];
-            $s_output["Color"]["Value"] = GetValue($item["Color"]);
-
-            $s_output["Temperature"]["Variable"] = $item["ColorTemperature"];
-            $s_output["Temperature"]["Value"] = GetValue($item["ColorTemperature"]);
-            $s_output["Temperature"]["isMired"] = $item["isMired"];
-
-            $s_output["Mode"]["Variable"] = $item["SwitchTemperature"];
-            $s_output["Mode"]["Value"]  = boolval(GetValue($item["SwitchTemperature"]));
-            //$this->SendDebug("Test", "Val => ". $s_output["Mode"]["Value"]. " |ITEM => ". GetValue($item["SwitchTemperature"]),0 );
-
-            $output[] = $s_output;
-        }
-
-        return $output;
-    }
-
-    private function GenerateLayout(){
-        $layout_data = json_decode($this->ReadPropertyString("Layout"),true);
-
-        $arr_order = array_column($layout_data, 'Order');
-        array_multisort($arr_order, SORT_ASC , $layout_data);
-
-        return $layout_data;
-    }
-
     private function GetConfigurationData(){
         $output = json_decode(IPS_GetConfiguration($this->InstanceID), true);
-
         $output["InstanceID"] = $this->InstanceID;
 
         //alle colorvariablen umwandeln!
@@ -188,8 +137,8 @@ class SymconJSLiveColorPicker extends JSLiveModule{
             }
         }
 
-        unset($output["Layout"]);
-        unset($output["Variables"]);
+        $output["Variable"] = IPS_GetObjectIDByIdent("Content", $this->InstanceID);
+
         return $output;
     }
 
@@ -202,9 +151,6 @@ class SymconJSLiveColorPicker extends JSLiveModule{
             if($intData["ModuleInfo"]["ModuleID"] != IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"]) return "Only Allowed at the same Modul!";
 
             $confData = json_decode(IPS_GetConfiguration($id), true);
-
-            //bestimmte aktuelle einstellungen beibehalten
-            $confData["Variables"]= $this->ReadPropertyString("Variables");
 
             IPS_SetConfiguration($this->InstanceID, json_encode($confData));
             IPS_ApplyChanges($this->InstanceID);
