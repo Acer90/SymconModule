@@ -78,7 +78,7 @@
         }
 
         output["type"] =  confiuration.Type;
-        if(confiuration.shape_svg === "" && confiuration.shape_path === "")  output["preset"] =  preset; //fan line bubble circle
+        if(confiuration.shape_svg === "" && confiuration.shape_path === "")  output["preset"] =  confiuration.shape_preset; //fan line bubble circle
 
         output["precision"] = confiuration.data_precision;
         if(confiuration.data_precisionCustom !== 0)  output["precision"] = confiuration.data_precisionCustom;
