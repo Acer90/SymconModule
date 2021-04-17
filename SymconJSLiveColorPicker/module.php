@@ -13,6 +13,7 @@ class SymconJSLiveColorPicker extends JSLiveModule{
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyInteger("DataUpdateRate", 50);
         $this->RegisterPropertyInteger("manWidth", 0);
+        $this->RegisterPropertyBoolean("viewport_enable", true);
 
 
         //style
@@ -52,7 +53,7 @@ class SymconJSLiveColorPicker extends JSLiveModule{
             case "exportConfiguration":
                 return $this->ExportConfiguration();
             case "getContend":
-                return $this->GetWebpage();
+                return json_encode(array("output" => $this->GetWebpage(), "viewport" => $this->ReadPropertyBoolean("viewport_enable")));
             case "getData":
                 return $this->GetData($buffer['queryData']);
             case "setData":
@@ -92,7 +93,6 @@ class SymconJSLiveColorPicker extends JSLiveModule{
     public function GetData(array $querydata){
         return json_encode($this->GenerateVariabels());
     }
-
     public function SetData(array $querydata){
         if(!array_key_exists("var", $querydata) || !array_key_exists("val", $querydata)){
             $this->SendDebug('SetData', "NO VARIABLE, OR VALUE SET!", 0);
@@ -133,7 +133,6 @@ class SymconJSLiveColorPicker extends JSLiveModule{
 
         return $htmlData;
     }
-
     private function GenerateVariabels(){
         $output = array();
         $variables = json_decode($this->ReadPropertyString("Variables"), true);
@@ -178,7 +177,6 @@ class SymconJSLiveColorPicker extends JSLiveModule{
 
         return $output;
     }
-
     private function GenerateLayout(){
         $layout_data = json_decode($this->ReadPropertyString("Layout"),true);
 
@@ -187,7 +185,6 @@ class SymconJSLiveColorPicker extends JSLiveModule{
 
         return $layout_data;
     }
-
     private function GetConfigurationData(){
         $output = json_decode(IPS_GetConfiguration($this->InstanceID), true);
 

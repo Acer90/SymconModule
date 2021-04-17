@@ -245,6 +245,7 @@
             "items": [
                 { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
                 { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script"},
+                { "type": "CheckBox", "name": "viewport_enable", "caption": "Viewport Enable"},
                 { "type": "Select", "name": "customScale_mode", "caption": "Mode",
                     "options": [
                         { "caption": "Override", "value": true },

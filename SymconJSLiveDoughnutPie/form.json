@@ -261,7 +261,8 @@
             "caption": "Expert",
             "items": [
                 { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
-                { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script"}
+                { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script"},
+                { "type": "CheckBox", "name": "viewport_enable", "caption": "Viewport Enable"}
             ]
         }
     ],

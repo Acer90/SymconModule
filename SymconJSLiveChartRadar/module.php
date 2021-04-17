@@ -13,6 +13,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyBoolean("customScale_mode", false);
         $this->RegisterPropertyString("customScale", "[]");
+        $this->RegisterPropertyBoolean("viewport_enable", true);
 
         //title
         $this->RegisterPropertyString("title_text", "");
@@ -116,7 +117,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
             case "exportConfiguration":
                 return $this->ExportConfiguration();
             case "getContend":
-                return $this->GetWebpage();
+                return json_encode(array("output" => $this->GetWebpage(), "viewport" => $this->ReadPropertyBoolean("viewport_enable")));
             case "getData":
                 return $this->GetData($buffer['queryData']);
             default:

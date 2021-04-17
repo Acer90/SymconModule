@@ -98,7 +98,7 @@ class SymconJSLiveGauge extends JSLiveModule{
             case "exportConfiguration":
                 return $this->ExportConfiguration();
             case "getContend":
-                return $this->GetWebpage();
+                return json_encode(array("output" => $this->GetWebpage(), "viewport" => $this->ReadPropertyBoolean("viewport_enable")));
             case "getData":
                 return $this->GetData($buffer['queryData']);
             default:

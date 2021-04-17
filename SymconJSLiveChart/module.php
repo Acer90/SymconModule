@@ -11,6 +11,7 @@ class SymconJSLiveChart extends JSLiveModule{
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
+        $this->RegisterPropertyBoolean("viewport_enable", true);
 
         //title
         $this->RegisterPropertyString("title_text", "");
@@ -178,7 +179,7 @@ class SymconJSLiveChart extends JSLiveModule{
             case "exportConfiguration":
                 return $this->ExportConfiguration();
             case "getContend":
-                return $this->GetWebpage();
+                return json_encode(array("output" => $this->GetWebpage(), "viewport" => $this->ReadPropertyBoolean("viewport_enable")));
             case "getUpdate":
                 return $this->GetUpdate();
             case "getData":

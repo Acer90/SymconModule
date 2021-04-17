@@ -23,6 +23,10 @@ class SymconJSLive extends WebHookModule {
         $this->RegisterPropertyInteger("LocalRefreshTime", 3);
         $this->RegisterPropertyInteger("RemoteRefreshTime", 10);
 
+        //viewport
+        $this->RegisterPropertyBoolean("viewport_enable", true);
+        $this->RegisterPropertyString("viewport_content", "width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1, user-scalable=no");
+
         //expert
         $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyBoolean("enableCache", false);
@@ -153,7 +157,13 @@ class SymconJSLive extends WebHookModule {
             if($Type = "getContend") {
                 //check if local
                 $isLocal = $this->CheckIfLocal($_SERVER["HTTP_HOST"]);
-                $contend = $this->ReplacePlaceholder($contend[0], $isLocal, $queryData["instance"], $_SERVER);
+
+                $arr_data = json_decode($contend[0],true);
+
+                $viewport = false;
+                if($this->ReadPropertyBoolean("viewport_enable") &&  $arr_data["viewport"]) $viewport = true;
+
+                $contend = $this->ReplacePlaceholder( $arr_data["output"], $isLocal, $queryData["instance"], $_SERVER, $viewport);
             }
 
             /*if($this->ReadPropertyBoolean("enableCache")) {
@@ -249,7 +259,7 @@ class SymconJSLive extends WebHookModule {
 
         return true;
     }
-    private function ReplacePlaceholder(string $htmlData, bool $isLocal, int $IntID, array $server){
+    private function ReplacePlaceholder(string $htmlData, bool $isLocal, int $IntID, array $server, bool $viewport){
         $webfrontid = $this->ReadPropertyInteger("WebfrontInstanceID");
         $address = $this->ReadPropertyString("RemoteAddress");
 
@@ -270,6 +280,12 @@ class SymconJSLive extends WebHookModule {
         $htmlData = str_replace("{WEBFRONTID}", $webfrontid, $htmlData);
         $htmlData = str_replace("{ISLOCAL}", ($isLocal ? 'true' : 'false'), $htmlData);
         $htmlData = str_replace("{INSTANCE}", $IntID, $htmlData);
+
+        if($viewport){
+            $htmlData = str_replace("{VIEWPORT}", '<meta name="viewport" content="'.$this->ReadPropertyString("viewport_content").'">', $htmlData);
+        }else{
+            $htmlData = str_replace("{VIEWPORT}", "", $htmlData);
+        }
 
         return $htmlData;
     }

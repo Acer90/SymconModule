@@ -27,6 +27,14 @@
         },
         {
             "type": "ExpansionPanel",
+            "caption": "Viewport Settings",
+            "items": [
+                { "type": "CheckBox", "name": "viewport_enable", "caption": "Enable"},
+                { "type": "ValidationTextBox", "name": "viewport_content", "caption": "Content", "width": "100%" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
             "caption": "Expert",
             "items": [
                 { "type": "CheckBox", "name": "Debug", "caption": "Debug"},

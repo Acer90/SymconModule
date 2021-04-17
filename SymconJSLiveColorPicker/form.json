@@ -176,8 +176,10 @@
             "items": [
                 { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
                 { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script"},
+                { "type": "CheckBox", "name": "viewport_enable", "caption": "Viewport Enable"},
                 { "type": "NumberSpinner", "name": "DataUpdateRate", "caption": "Data Update Rate", "minimum": 0, "suffix": "ms", "digits": 0 },
                 { "type": "NumberSpinner", "name": "manWidth", "caption": "Manual Width", "suffix": "px" }
+
             ]
         }
     ],
