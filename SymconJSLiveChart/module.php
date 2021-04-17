@@ -11,7 +11,7 @@ class SymconJSLiveChart extends JSLiveModule{
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
-        $this->RegisterPropertyBoolean("viewport_enable", true);
+        $this->RegisterPropertyBoolean("viewport_enable", false);
 
         //title
         $this->RegisterPropertyString("title_text", "");

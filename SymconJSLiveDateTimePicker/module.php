@@ -15,7 +15,7 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
         $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyInteger("DataUpdateRate", 50);
-        $this->RegisterPropertyBoolean("viewport_enable", true);
+        $this->RegisterPropertyBoolean("viewport_enable", false);
 
         //colors
         $this->RegisterPropertyInteger("style_backgroundColor", 0);
