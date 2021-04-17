@@ -51,6 +51,7 @@ class SymconJSLiveProgressbar extends JSLiveModule{
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
+        $this->RegisterPropertyBoolean("viewport_enable", true);
     }
     public function ApplyChanges() {
         //Never delete this line!
@@ -70,7 +71,7 @@ class SymconJSLiveProgressbar extends JSLiveModule{
             case "exportConfiguration":
                 return $this->ExportConfiguration();
             case "getContend":
-                return $this->GetWebpage();
+                return json_encode(array("output" => $this->GetWebpage(), "viewport" => $this->ReadPropertyBoolean("viewport_enable")));
             case "getData":
                 return $this->GetData($buffer['queryData']);
             case "getSVG":

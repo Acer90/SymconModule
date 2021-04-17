@@ -14,6 +14,7 @@ class SymconJSLiveAdvTextfield extends JSLiveModule{
         $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyInteger("DataUpdateRate", 50);
+        $this->RegisterPropertyBoolean("viewport_enable", true);
 
         //colors
         $this->RegisterPropertyInteger("style_backgroundColor", 0);
@@ -57,7 +58,7 @@ class SymconJSLiveAdvTextfield extends JSLiveModule{
             case "exportConfiguration":
                 return $this->ExportConfiguration();
             case "getContend":
-                return $this->GetWebpage();
+                return json_encode(array("output" => $this->GetWebpage(), "viewport" => $this->ReadPropertyBoolean("viewport_enable")));
             case "getData":
                 return $this->GetData($buffer['queryData']);
             case "setData":
