@@ -51,7 +51,7 @@ class SymconJSLiveProgressbar extends JSLiveModule{
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
-        $this->RegisterPropertyBoolean("viewport_enable", true);
+        $this->RegisterPropertyBoolean("viewport_enable", false);
     }
     public function ApplyChanges() {
         //Never delete this line!

@@ -13,7 +13,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyBoolean("customScale_mode", false);
         $this->RegisterPropertyString("customScale", "[]");
-        $this->RegisterPropertyBoolean("viewport_enable", true);
+        $this->RegisterPropertyBoolean("viewport_enable", false);
 
         //title
         $this->RegisterPropertyString("title_text", "");
