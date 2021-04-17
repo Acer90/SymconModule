@@ -135,6 +135,7 @@ class SymconJSLive extends WebHookModule {
 
             if(strtolower($Type) == "getsvg"){
                 header("Content-type: image/svg+xml");
+                //header("Content-Type: text/html");
             }elseif (strtolower($Type) == "exportconfiguration"){
                 header('Content-disposition: attachment; filename='.$queryData["instance"].'-'.IPS_GetInstance($queryData["instance"])["ModuleInfo"]["ModuleName"].'.json');
                 header('Content-type: application/json');
@@ -154,7 +155,7 @@ class SymconJSLive extends WebHookModule {
                 return "NO INSTANCE FOUND!"; //wenn instance nicht gefunden
             }
 
-            if($Type = "getContend") {
+            if(strtolower($Type) == "getcontend") {
                 //check if local
                 $isLocal = $this->CheckIfLocal($_SERVER["HTTP_HOST"]);
 
@@ -164,6 +165,8 @@ class SymconJSLive extends WebHookModule {
                 if($this->ReadPropertyBoolean("viewport_enable") &&  $arr_data["viewport"]) $viewport = true;
 
                 $contend = $this->ReplacePlaceholder( $arr_data["output"], $isLocal, $queryData["instance"], $_SERVER, $viewport);
+            }else{
+                $contend = $contend[0];
             }
 
             /*if($this->ReadPropertyBoolean("enableCache")) {
