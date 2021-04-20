@@ -104,6 +104,15 @@
                         { "type": "SelectColor", "name": "stroke_trailColor", "caption": "Color", "width": "150px"},
                         { "type": "HorizontalSlider", "name": "stroke_trailColor_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05}
                     ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Dash:", "width": "100px"},
+                        { "type": "NumberSpinner", "name": "stroke_Dash1", "caption": "width 1", "suffix": "px", "minimum": 0, "stepSize": 1, "width": "100px"},
+                        { "type": "NumberSpinner", "name": "stroke_Dash2", "caption": "width 2", "suffix": "px", "minimum": 0, "stepSize": 1, "width": "100px"},
+                        { "type": "Label", "caption": "Works only if \"Custom Path\" set!"}
+                    ]
                 }
             ]
         },
@@ -159,7 +168,22 @@
             "items": [
                 { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
                 { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script"},
-                { "type": "CheckBox", "name": "viewport_enable", "caption": "Viewport Enable"}
+                { "type": "CheckBox", "name": "viewport_enable", "caption": "Viewport Enable"},
+                { "type": "Label", "caption": "Override"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Stroke:", "width": "100px"},
+                        { "type": "ValidationTextBox", "name": "override_stroke", "caption": "Stroke", "width": "900px"}
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Fill:", "width": "100px"},
+                        { "type": "ValidationTextBox", "name": "override_fill", "caption": "Fill", "width": "900px"}
+                    ]
+                }
             ]
         }
     ],
