@@ -34,6 +34,9 @@ class SymconJSLiveProgressbar extends JSLiveModule{
         $this->RegisterPropertyInteger("stroke_trailColor", 0);
         $this->RegisterPropertyFloat("stroke_trailColor_Alpha", 1.0);
 
+        $this->RegisterPropertyInteger("stroke_Dash1", 0);
+        $this->RegisterPropertyInteger("stroke_Dash2", 0);
+
         //Fill
         $this->RegisterPropertyString("fill_dir", "ltr");
         $this->RegisterPropertyInteger("fill_color", 0);
@@ -52,6 +55,9 @@ class SymconJSLiveProgressbar extends JSLiveModule{
         $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyBoolean("viewport_enable", false);
+
+        $this->RegisterPropertyString("override_stroke", "");
+        $this->RegisterPropertyString("override_fill", "");
     }
     public function ApplyChanges() {
         //Never delete this line!

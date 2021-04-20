@@ -122,4 +122,12 @@ class JSLiveModule extends IPSModule
     }
 
 
+    private function ClearLogFile(){
+        file_put_contents(IPS_GetLogDir()."logfile.log", "");
+    }
+    public function Debug_LoadLogFile(int $intID){
+        $file_arr = file(IPS_GetLogDir()."logfile.log");
+
+        print_r($file_arr);
+    }
 }

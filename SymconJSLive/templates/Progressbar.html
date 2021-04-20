@@ -8,11 +8,19 @@
 </head>
 <script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
 <script src="{ADDRESS}/hook/JSLive/js/loading-Bar/loading-bar.js"></script>
-
+<style type="text/css">
+    path { mask: url(#mask); }
+</style>
 
 <body style="text-align: center;">
 
 <div class="myBar" id="Bar"></div>
+
+<svg height="0" width="0">
+    <mask id="mask">
+        <path id="dash_path" d="" stroke-width="15" stroke="#fff" stroke-dasharray=""></path>
+    </mask>
+</svg>
 
 <script>
     let config_global = {GLOBAL};
@@ -25,20 +33,34 @@
 
     function Load(){
         try {
-            //görße automatisch anpassen
             item = document.getElementById("Bar");
+            //görße automatisch anpassen
             item.style.width = (window.innerWidth-40)+"px";
 
             if(confiuration.style_fontPosition === "center"){
                 item.style.height = (window.innerHeight-40)+"px";
             }else{
-                item.style.height = (window.innerHeight-40-confiuration.style_fontSize)+"px";
+                item.style.height = (window.innerHeight-60-confiuration.style_fontSize)+"px";
             }
             console.log("Automatic Size: W: " + item.style.width+"px | H: " + item.style.height+ "px");
 
             //wenn text mittig angezeigt werden soll
             if(confiuration.style_fontPosition === "center"){
                 item.className = item.className + " label-center";
+            }
+
+            //configuration dashpart
+            d_item = document.getElementById("dash_path");
+            if(confiuration.Type === "stroke" && confiuration.shape_path !== "" && confiuration.stroke_Dash1 > 0 && confiuration.stroke_Dash2 > 0){
+                d_item.classList.add("path");
+
+                //set dash configuration
+                d_item.setAttribute("d", confiuration.shape_path);
+                d_item.setAttribute("stroke-dasharray", confiuration.stroke_Dash1 + " " + confiuration.stroke_Dash2);
+                d_item.setAttribute("stroke-width", confiuration.stroke_width);
+            }else{
+                //entfernen der Mask damit diese nicht geladen werden kann
+                document.getElementById("mask").remove();
             }
 
             //suffix und Präfix
@@ -97,12 +119,17 @@
         output["stroke-width"] = confiuration.stroke_width;
         output["stroke-trail"] = confiuration.stroke_trailColor;
         output["stroke-trail-width"] = confiuration.stroke_trailWidth;
+        output["stroke-dasharray"] = "3 6";
 
         hexstr = RGBAToHexA(confiuration.fill_color_rgb.R,confiuration.fill_color_rgb.G,confiuration.fill_color_rgb.B, confiuration.fill_color_Alpha); //confiuration.fill_color;
         output["fill"] = hexstr;
         output["fill-dir"] = confiuration.fill_dir;
         output["fill-background-extrude"] = confiuration.fill_backgroundExtrude;
         output["fill-background"] = confiuration.fill_backgroundColor;
+
+        //override
+        if(confiuration.override_stroke !== "") output["stroke"] = confiuration.override_stroke;
+        if(confiuration.override_fill !== "") output["fill"] = confiuration.override_fill;
 
         return output;
     }

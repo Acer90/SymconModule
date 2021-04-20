@@ -7,7 +7,6 @@ class SymconJSLive extends WebHookModule {
     {
         parent::__construct($InstanceID, "JSLive");
     }
-
     public function Create() {
         //Never delete this line!
         parent::Create();
@@ -36,7 +35,6 @@ class SymconJSLive extends WebHookModule {
         $this->LoadConnectAddress();
         $this->SetRandomPassword();
     }
-
     public function ApplyChanges() {
         //Never delete this line!
         parent::ApplyChanges();
@@ -168,6 +166,7 @@ class SymconJSLive extends WebHookModule {
             }else{
                 $contend = $contend[0];
             }
+
 
             /*if($this->ReadPropertyBoolean("enableCache")) {
                 //Add caching support
