@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     {VIEWPORT} <!-- Dont Remove this line, it can be disabled at the Instance Configuration! -->
     <title>Custom Modul</title>
+    <link rel="stylesheet" type="text/css" href="{ADDRESS}/hook/JSLive/js/css/font-face.css"> <!-- Need for Custom font Family !-->
 </head>
 <script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
 <script src="{ADDRESS}/hook/JSLive/js/util.js"></script>
@@ -31,6 +32,7 @@
         try {
             //Example
             document.getElementById('test').innerText = JSON.stringify(datasets);
+            document.getElementById("test").style.fontFamily = confiuration.style_fontFamily;
 
             updateValue(26787, Date.now());
         }catch (e) {

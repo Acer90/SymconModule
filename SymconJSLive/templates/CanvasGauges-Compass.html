@@ -5,6 +5,8 @@
     {VIEWPORT} <!-- Dont Remove this line, it can be disabled at intstance! -->
     <title>{TITLE_TEXT}</title>
 </head>
+<link rel="stylesheet" type="text/css" href="{ADDRESS}/hook/JSLive/js/css/font-face.css"> <!-- Need for Custom font Family !-->
+
 <script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
 <script src="{ADDRESS}/hook/JSLive/js/canvas-gauges/gauge.min.js"></script>
 
@@ -22,6 +24,9 @@
 
     function LoadGauge(){
         try {
+            //fontstyle
+            document.getElementById("gauge").style.fontFamily = confiuration.style_fontFamily;
+
             if (!confiuration.title_display) confiuration.title_text = false;
             if (!confiuration.plate_unit) confiuration.plate_unit = false;
             if (!confiuration.progressbar_display) confiuration.progressbar_barWidth = 0;
@@ -47,11 +52,14 @@
                 startAngle: 180,
                 strokeTicks: false,
                 highlights: false,
+                fontNumbers: confiuration.ticks_fontFamily,
+                fontNumbersSize: confiuration.ticks_fontSize,
 
                 title: confiuration.title_text, //false deaktiviert!
                 colorTitle: confiuration.title_fontColor,
                 fontTitleSize: confiuration.title_fontSize,
                 units: confiuration.plate_unit,
+                fontTitle: confiuration.title_fontFamily,
 
                 colorPlate: confiuration.plate_colorPlate,
                 colorPlateEnd: confiuration.plate_colorPlateEnd,
@@ -196,6 +204,10 @@
             alert(e);
         }
     }
+
+    document.fonts.ready.then(function () {
+        gauge.update();
+    });
 </script>
 </body>
 </html>

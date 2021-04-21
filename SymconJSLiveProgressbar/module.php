@@ -50,6 +50,7 @@ class SymconJSLiveProgressbar extends JSLiveModule{
         $this->RegisterPropertyString("style_fontPosition", "bottom");
         $this->RegisterPropertyInteger("style_fontSize", 12);
         $this->RegisterPropertyInteger("style_fontColor", 0);
+        $this->RegisterPropertyString("style_fontFamily", "");
 
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);

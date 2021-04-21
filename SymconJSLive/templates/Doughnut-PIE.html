@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     {VIEWPORT} <!-- Dont Remove this line, it can be disabled at intstance! -->
     <title>{TITLE_TEXT}</title>
+    <link rel="stylesheet" type="text/css" href="{ADDRESS}/hook/JSLive/js/css/font-face.css"> <!-- Need for Custom font Family !-->
 </head>
 <script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
 <script src="{ADDRESS}/hook/JSLive/js/chartjs/2.8.0/Chart.js"></script>
@@ -56,7 +57,8 @@
                             display: confiuration.datalabels_enabled,
                             color: confiuration.datalabels_fontColor,
                             font: {
-                                size: confiuration.datalabels_fontSize
+                                size: confiuration.datalabels_fontSize,
+                                family: confiuration.datalabls_fontFamily
                             },
                             clamp: confiuration.datalabels_clamp,
                             align: confiuration.datalabels_align,

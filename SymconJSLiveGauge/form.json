@@ -19,8 +19,33 @@
             "items": [
                 { "type": "CheckBox", "name": "title_display", "caption": "Display"},
                 { "type": "ValidationTextBox", "name": "title_text", "caption": "Text" },
-                { "type": "NumberSpinner", "name": "title_fontSize", "caption": "FontSize" },
-                { "type": "SelectColor", "name": "title_fontColor", "caption": "FontColor" }
+                { "type": "NumberSpinner", "name": "title_fontSize", "caption": "Font Size" },
+                { "type": "SelectColor", "name": "title_fontColor", "caption": "Font Color" },
+                { "type": "Select", "name": "title_fontFamily", "caption": "font Family",
+                    "options": [
+                        { "caption": "-Default-", "value": "" },
+                        { "caption": "Amatic SC", "value": "Amatic SC" },
+                        { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                        { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                        { "caption": "Codystar", "value": "Codystar" },
+                        { "caption": "Comfortaa", "value": "Comfortaa" },
+                        { "caption": "Cookie", "value": "Cookie" },
+                        { "caption": "Dancing Script", "value": "Dancing Script" },
+                        { "caption": "Gurajada", "value": "Gurajada" },
+                        { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                        { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                        { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                        { "caption": "Medula One", "value": "Medula One" },
+                        { "caption": "Open Sans", "value": "Open Sans" },
+                        { "caption": "Orbitron", "value": "Orbitron" },
+                        { "caption": "Roboto", "value": "Roboto" },
+                        { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                        { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                        { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                        { "caption": "Space Mono", "value": "Space Mono" },
+                        { "caption": "Syne Mono", "value": "Syne Mono" }
+                    ]
+                }
             ]
         },
         {
@@ -46,7 +71,6 @@
                         { "caption": "Line", "value": "line" }
                     ]
                 },
-                { "type": "NumberSpinner", "name": "needle_fontSize", "caption": "FontSize" },
                 { "type": "NumberSpinner", "name": "needle_start", "caption": "Start", "suffix": "%" },
                 { "type": "NumberSpinner", "name": "needle_end", "caption": "End", "suffix": "%" },
                 { "type": "NumberSpinner", "name": "needle_width", "caption": "Width", "suffix": "px" },
@@ -61,7 +85,32 @@
             "caption": "Valuebox",
             "items": [
                 { "type": "CheckBox", "name": "valuebox_display", "caption": "Display"},
-                { "type": "NumberSpinner", "name": "valuebox_fontSize", "caption": "FontSize" },
+                { "type": "NumberSpinner", "name": "valuebox_fontSize", "caption": "Font Size" },
+                { "type": "Select", "name": "valuebox_fontFamily", "caption": "font Family",
+                    "options": [
+                        { "caption": "-Default-", "value": "" },
+                        { "caption": "Amatic SC", "value": "Amatic SC" },
+                        { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                        { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                        { "caption": "Codystar", "value": "Codystar" },
+                        { "caption": "Comfortaa", "value": "Comfortaa" },
+                        { "caption": "Cookie", "value": "Cookie" },
+                        { "caption": "Dancing Script", "value": "Dancing Script" },
+                        { "caption": "Gurajada", "value": "Gurajada" },
+                        { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                        { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                        { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                        { "caption": "Medula One", "value": "Medula One" },
+                        { "caption": "Open Sans", "value": "Open Sans" },
+                        { "caption": "Orbitron", "value": "Orbitron" },
+                        { "caption": "Roboto", "value": "Roboto" },
+                        { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                        { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                        { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                        { "caption": "Space Mono", "value": "Space Mono" },
+                        { "caption": "Syne Mono", "value": "Syne Mono" }
+                    ]
+                },
                 { "type": "SelectColor", "name": "valuebox_colorValueBoxBackground", "caption": "Background Color" },
                 { "type": "HorizontalSlider", "name": "valuebox_colorValueBoxBackground_Alpha", "caption": "Background Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
             ]
@@ -83,6 +132,32 @@
             "type": "ExpansionPanel",
             "caption": "Ticks Settings",
             "items": [
+                { "type": "Select", "name": "ticks_fontFamily", "caption": "font Family",
+                    "options": [
+                        { "caption": "-Default-", "value": "" },
+                        { "caption": "Amatic SC", "value": "Amatic SC" },
+                        { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                        { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                        { "caption": "Codystar", "value": "Codystar" },
+                        { "caption": "Comfortaa", "value": "Comfortaa" },
+                        { "caption": "Cookie", "value": "Cookie" },
+                        { "caption": "Dancing Script", "value": "Dancing Script" },
+                        { "caption": "Gurajada", "value": "Gurajada" },
+                        { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                        { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                        { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                        { "caption": "Medula One", "value": "Medula One" },
+                        { "caption": "Open Sans", "value": "Open Sans" },
+                        { "caption": "Orbitron", "value": "Orbitron" },
+                        { "caption": "Roboto", "value": "Roboto" },
+                        { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                        { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                        { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                        { "caption": "Space Mono", "value": "Space Mono" },
+                        { "caption": "Syne Mono", "value": "Syne Mono" }
+                    ]
+                },
+                { "type": "NumberSpinner", "name": "ticks_fontSize", "caption": "Font Size" },
                 { "type": "CheckBox", "name": "ticks_strokeTicks", "caption": "Stroke Ticks"},
                 { "type": "NumberSpinner", "name": "ticks_highlightsWidth", "caption": "Highlights Width" },
                 { "type": "NumberSpinner", "name": "ticks_minorTicks", "caption": "Minor Ticks" },

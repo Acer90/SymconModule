@@ -21,6 +21,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         $this->RegisterPropertyString("title_position", "top");
         $this->RegisterPropertyInteger("title_fontSize", 12);
         $this->RegisterPropertyInteger("title_fontColor", 0);
+        $this->RegisterPropertyString("title_fontFamily", "");
 
         //Axes
         $this->RegisterPropertyBoolean("axes_display", true);
@@ -37,9 +38,11 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         $this->RegisterPropertyBoolean("axes_pointLabels_display", true);
         $this->RegisterPropertyInteger("axes_pointLabels_color", 0);
         $this->RegisterPropertyInteger("axes_pointLabels_fontSize", 12);
+        $this->RegisterPropertyString("axes_pointLabels_fontFamily", "");
 
         $this->RegisterPropertyInteger("axes_ticks_fontColor", 0);
         $this->RegisterPropertyInteger("axes_ticks_fontSize", 12);
+        $this->RegisterPropertyString("axes_ticks_fontFamily", "");
         $this->RegisterPropertyInteger("axes_ticks_backdropColor", 16777215);
         $this->RegisterPropertyFloat("axes_ticks_backdropColor_Alpha", 0);
 
@@ -54,6 +57,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         $this->RegisterPropertyString("legend_align", "center");
         $this->RegisterPropertyInteger("legend_fontSize", 12);
         $this->RegisterPropertyInteger("legend_fontColor", 0);
+        $this->RegisterPropertyString("legend_fontFamily", "");
         $this->RegisterPropertyInteger("legend_boxWidth", 40);
 
         //Tooltips
@@ -62,6 +66,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         $this->RegisterPropertyString("tooltips_mode", "index");
         $this->RegisterPropertyInteger("tooltips_fontSize", 12);
         $this->RegisterPropertyInteger("tooltips_fontColor", 16777215);
+        $this->RegisterPropertyString("tooltips_fontFamily", "");
         $this->RegisterPropertyInteger("tooltips_backgroundColor", 0);
         $this->RegisterPropertyInteger("tooltips_cornerRadius", 5);
 
@@ -236,6 +241,8 @@ class SymconJSLiveRadarChart extends JSLiveModule{
             $output["fontColor"] = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
         }
 
+        $output["fontFamily"] = $this->ReadPropertyString("title_fontFamily");
+
         return $output;
     }
     private function GenerateTooltipData(){
@@ -247,6 +254,10 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         $output["titleFontSize"] = $this->ReadPropertyInteger("tooltips_fontSize");
         $output["bodyFontSize"] = $this->ReadPropertyInteger("tooltips_fontSize");
         $output["footerFontSize"] = $this->ReadPropertyInteger("tooltips_fontSize");
+
+        $output["titleFontFamily"] = $this->ReadPropertyString("tooltips_fontFamily");
+        $output["bodyFontFamily"] = $this->ReadPropertyString("tooltips_fontFamily");
+        $output["footerFontFamily"] = $this->ReadPropertyString("tooltips_fontFamily");
 
         $output["cornerRadius"] = $this->ReadPropertyInteger("tooltips_cornerRadius");
 
@@ -276,6 +287,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         }
         $output["labels"]["fontSize"] = $this->ReadPropertyInteger("legend_fontSize");
         $output["labels"]["boxWidth"] = $this->ReadPropertyInteger("legend_boxWidth");
+        $output["labels"]["fontFamily"] = $this->ReadPropertyString("legend_fontFamily");
 
         return $output;
 

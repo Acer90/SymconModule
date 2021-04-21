@@ -23,6 +23,7 @@ class SymconJSLiveGauge extends JSLiveModule{
         $this->RegisterPropertyBoolean("title_display", false);
         $this->RegisterPropertyInteger("title_fontSize", 20);
         $this->RegisterPropertyInteger("title_fontColor", 0);
+        $this->RegisterPropertyString("title_fontFamily", "");
 
         //Plate
         $this->RegisterPropertyBoolean("plate_display", false);
@@ -35,7 +36,6 @@ class SymconJSLiveGauge extends JSLiveModule{
         //Needle
         $this->RegisterPropertyBoolean("needle_display", false);
         $this->RegisterPropertyString("needle_Type", "arrow"); //"line"
-        $this->RegisterPropertyInteger("needle_fontSize", 14);
         $this->RegisterPropertyInteger("needle_start", 0);
         $this->RegisterPropertyInteger("needle_end", 80);
         $this->RegisterPropertyInteger("needle_width", 2);
@@ -49,6 +49,7 @@ class SymconJSLiveGauge extends JSLiveModule{
         $this->RegisterPropertyInteger("valuebox_fontSize", 14);
         $this->RegisterPropertyInteger("valuebox_colorValueBoxBackground", 0);
         $this->RegisterPropertyInteger("valuebox_colorValueBoxBackground_Alpha", 1);
+        $this->RegisterPropertyString("valuebox_fontFamily", "");
 
         //Progressbar
         $this->RegisterPropertyBoolean("progressbar_display", false);
@@ -60,6 +61,8 @@ class SymconJSLiveGauge extends JSLiveModule{
         $this->RegisterPropertyInteger("progressbar_colorBarProgress_Alpha", 1);
 
         //Ticks
+        $this->RegisterPropertyString("ticks_fontFamily", "");
+        $this->RegisterPropertyInteger("ticks_fontSize", 12);
         $this->RegisterPropertyBoolean("ticks_strokeTicks", false);
         $this->RegisterPropertyInteger("ticks_highlightsWidth", 5);
         $this->RegisterPropertyInteger("ticks_minorTicks", 5);

@@ -89,7 +89,32 @@
             "caption": "Fonts",
             "items": [
                 { "type": "NumberSpinner", "name": "style_fontSize", "caption": "Font Size", "suffix": "px" },
-                { "type": "SelectColor", "name": "style_fontColor", "caption": "Font Color" }
+                { "type": "SelectColor", "name": "style_fontColor", "caption": "Font Color" },
+                { "type": "Select", "name": "style_fontFamily", "caption": "font Family",
+                    "options": [
+                        { "caption": "-Default-", "value": "" },
+                        { "caption": "Amatic SC", "value": "Amatic SC" },
+                        { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                        { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                        { "caption": "Codystar", "value": "Codystar" },
+                        { "caption": "Comfortaa", "value": "Comfortaa" },
+                        { "caption": "Cookie", "value": "Cookie" },
+                        { "caption": "Dancing Script", "value": "Dancing Script" },
+                        { "caption": "Gurajada", "value": "Gurajada" },
+                        { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                        { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                        { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                        { "caption": "Medula One", "value": "Medula One" },
+                        { "caption": "Open Sans", "value": "Open Sans" },
+                        { "caption": "Orbitron", "value": "Orbitron" },
+                        { "caption": "Roboto", "value": "Roboto" },
+                        { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                        { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                        { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                        { "caption": "Space Mono", "value": "Space Mono" },
+                        { "caption": "Syne Mono", "value": "Syne Mono" }
+                    ]
+                }
             ]
         },
         {

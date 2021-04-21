@@ -19,6 +19,7 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->RegisterPropertyString("title_position", "top");
         $this->RegisterPropertyInteger("title_fontSize", 12);
         $this->RegisterPropertyInteger("title_fontColor", 0);
+        $this->RegisterPropertyString("title_fontFamily", "");
 
         //Axes
         $this->RegisterPropertyBoolean("axes_display", true);
@@ -33,6 +34,7 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->RegisterPropertyInteger("axes_color", 0);
         $this->RegisterPropertyFloat("axes_colorAlpha", 0);
         $this->RegisterPropertyInteger("axes_fontColor", 0);
+        $this->RegisterPropertyString("axes_fontFamily", "");
 
         //Points
         $this->RegisterPropertyInteger("point_radius", 0);
@@ -46,6 +48,7 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->RegisterPropertyString("legend_align", "center");
         $this->RegisterPropertyInteger("legend_fontSize", 12);
         $this->RegisterPropertyInteger("legend_fontColor", 0);
+        $this->RegisterPropertyString("legend_fontFamily", "");
         $this->RegisterPropertyInteger("legend_boxWidth", 40);
 
         //Tooltips
@@ -54,6 +57,7 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->RegisterPropertyString("tooltips_mode", "index");
         $this->RegisterPropertyInteger("tooltips_fontSize", 12);
         $this->RegisterPropertyInteger("tooltips_fontColor", 16777215);
+        $this->RegisterPropertyString("tooltips_fontFamily", "");
         $this->RegisterPropertyInteger("tooltips_backgroundColor", 0);
         $this->RegisterPropertyInteger("tooltips_cornerRadius", 5);
 
@@ -68,6 +72,7 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->RegisterPropertyBoolean("datalabels_clamp", false);
         $this->RegisterPropertyInteger("datalabels_fontSize", 12);
         $this->RegisterPropertyInteger("datalabels_fontColor", 0);
+        $this->RegisterPropertyString("datalabels_fontFamily", "");
         $this->RegisterPropertyInteger("datalabels_borderRadius", 12);
 
         //dataset
@@ -355,6 +360,7 @@ class SymconJSLiveChart extends JSLiveModule{
         $output["text"] = $this->ReadPropertyString("title_text");
         $output["position"] = $this->ReadPropertyString("title_position");
         $output["fontSize"] = $this->ReadPropertyInteger("title_fontSize");
+        $output["fontFamily"] = $this->ReadPropertyString("title_fontFamily");
 
         $output["display"] = $this->ReadPropertyBoolean("title_display");
 
@@ -374,6 +380,10 @@ class SymconJSLiveChart extends JSLiveModule{
         $output["titleFontSize"] = $this->ReadPropertyInteger("tooltips_fontSize");
         $output["bodyFontSize"] = $this->ReadPropertyInteger("tooltips_fontSize");
         $output["footerFontSize"] = $this->ReadPropertyInteger("tooltips_fontSize");
+
+        $output["titleFontFamily"] = $this->ReadPropertyString("tooltips_fontFamily");
+        $output["bodyFontFamily"] = $this->ReadPropertyString("tooltips_fontFamily");
+        $output["footerFontFamily"] = $this->ReadPropertyString("tooltips_fontFamily");
 
         $output["cornerRadius"] = $this->ReadPropertyInteger("tooltips_cornerRadius");
 
@@ -403,6 +413,7 @@ class SymconJSLiveChart extends JSLiveModule{
         }
         $output["labels"]["fontSize"] = $this->ReadPropertyInteger("legend_fontSize");
         $output["labels"]["boxWidth"] = $this->ReadPropertyInteger("legend_boxWidth");
+        $output["labels"]["fontFamily"] = $this->ReadPropertyString("legend_fontFamily");
 
         return $output;
 
@@ -546,6 +557,9 @@ class SymconJSLiveChart extends JSLiveModule{
                 $axisoutput["scaleLabel"]["fontSize"] = $this->ReadPropertyInteger("axes_labelfontSize");
                 $axisoutput["ticks"]["fontSize"] = $this->ReadPropertyInteger("axes_tickfontSize");
 
+                $axisoutput["ticks"]["fontFamily"] = $this->ReadPropertyString("axes_fontFamily");
+                $axisoutput["scaleLabel"]["fontFamily"] = $this->ReadPropertyString("axes_fontFamily");
+
                 if(IPS_VariableProfileExists($item["Profile"])){
                     $profilData = IPS_GetVariableProfile($item["Profile"]);
                     if(($profilData["MaxValue"] != 0 || $profilData["MinValue"]  != 0) && !$item["DynScale"]){
@@ -610,6 +624,7 @@ class SymconJSLiveChart extends JSLiveModule{
         $output["time"]["tooltipFormat"] = "DD.MM.YYYY HH:mm:ss";
 
         $output["ticks"]["fontSize"] = $this->ReadPropertyInteger("axes_tickfontSize");
+        $output["ticks"]["fontFamily"] = $this->ReadPropertyString("axes_fontFamily");
 
         $period = $this->GetValue("Period");
         switch ($period) {
