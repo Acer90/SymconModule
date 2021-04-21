@@ -189,7 +189,7 @@ class SymconJSLiveChart extends JSLiveModule{
                 break;
         }
     }
-    public function GetWebpage(){
+    private function GetWebpage(){
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
         if(empty($scriptID)){
             if($this->ReadPropertyBoolean("Debug"))
@@ -225,7 +225,7 @@ class SymconJSLiveChart extends JSLiveModule{
 
         return json_encode($updateData);
     }
-    public function GetData(array $querydata){
+    private function GetData(array $querydata){
         $output = array();
         $load_vars = array();
         $datasets = json_decode($this->ReadPropertyString("Datasets"), true);

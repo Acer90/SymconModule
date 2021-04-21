@@ -1,0 +1,217 @@
+{
+    "elements":
+    [
+        { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script"},
+        {
+            "type": "ExpansionPanel",
+            "caption": "Colors",
+            "items": [
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "SelectColor", "name": "style_backgroundColor", "caption": "Background Color"
+                        },
+                        {
+                            "type": "HorizontalSlider", "name": "style_backgroundColor_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "SelectColor", "name": "style_highlightColor1", "caption": "Highlight Color 1"
+                        },
+                        {
+                            "type": "HorizontalSlider", "name": "style_highlightColor1_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "SelectColor", "name": "style_highlightColor2", "caption": "Highlight Color 2"
+                        },
+                        {
+                            "type": "HorizontalSlider", "name": "style_highlightColor2_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "SelectColor", "name": "style_highlightColor3", "caption": "Highlight Color 3"
+                        },
+                        {
+                            "type": "HorizontalSlider", "name": "style_highlightColor3_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "SelectColor", "name": "style_highlightColor4", "caption": "Highlight Color 4"
+                        },
+                        {
+                            "type": "HorizontalSlider", "name": "style_highlightColor4_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "SelectColor", "name": "style_highlightColor5", "caption": "Highlight Color 5"
+                        },
+                        {
+                            "type": "HorizontalSlider", "name": "style_highlightColor5_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Fonts",
+            "items": [
+                { "type": "NumberSpinner", "name": "style_fontSize", "caption": "Font Size", "suffix": "px" },
+                { "type": "SelectColor", "name": "style_fontColor", "caption": "Font Color" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Border",
+            "items": [
+                { "type": "NumberSpinner", "name": "style_borderRadius", "caption": "Border Radius", "suffix": "px" },
+                { "type": "NumberSpinner", "name": "style_borderWidth", "caption": "Border Width", "suffix": "px" },
+                { "type": "SelectColor", "name": "style_borderColor", "caption": "Border Color" }
+            ]
+        },
+        {
+            "type": "List",
+            "name": "Datasets",
+            "caption": "Datasets",
+            "rowCount": 5,
+            "add": true,
+            "delete": true,
+            "edit": true,
+            "sort": {
+                "column": "Title",
+                "direction": "ascending"
+            },
+            "columns": [
+                {
+                    "caption": "Title",
+                    "name": "Title",
+                    "width": "auto",
+                    "add": "",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                },
+                {
+                    "caption": "Object",
+                    "name": "Object",
+                    "width": "400px",
+                    "add": 0,
+                    "edit": {
+                        "type": "SelectObject"
+                    }
+                },
+                {
+                    "caption": "HighlightColor1",
+                    "name": "HighlightColor1",
+                    "width": "130px",
+                    "add": 0,
+                    "edit": {
+                        "type": "SelectColor"
+                    }
+                },
+                {
+                    "caption": "HighlightColor2",
+                    "name": "HighlightColor2",
+                    "width": "120px",
+                    "add": 0,
+                    "edit": {
+                        "type": "SelectColor"
+                    }
+                },
+                {
+                    "caption": "HighlightColor1 Alpha",
+                    "name": "HighlightColor1_Alpha",
+                    "width": "50px",
+                    "add": 0.5,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 2,
+                        "maximum": 1,
+                        "minimum": 0
+                    }
+                },
+                {
+                    "caption": "HighlightColor2 Alpha",
+                    "name": "HighlightColor2_Alpha",
+                    "width": "50px",
+                    "add": 1.0,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 2,
+                        "maximum": 1,
+                        "minimum": 0
+                    }
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Expert",
+            "items": [
+                { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
+                { "type": "CheckBox", "name": "viewport_enable", "caption": "Viewport Enable"},
+                { "type": "NumberSpinner", "name": "DataUpdateRate", "caption": "Data Update Rate", "minimum": 0, "suffix": "ms", "digits": 0 }
+            ]
+        }
+    ],
+    "actions":
+    [
+        {
+            "type": "RowLayout",
+            "items": [
+                { "type": "Button", "label": "Get Link (Local)", "onClick": " echo SymconJSLiveCustom_GetLink($id, True);" },
+                { "type": "Button", "label": "Get Link (Remote)", "onClick": " echo SymconJSLiveCustom_GetLink($id, False);" }
+            ]
+        },
+        { "type": "Button", "label": "Generate Default Template", "onClick": " echo SymconJSLiveCustom_GenerateDefaultScript($id);" },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Configuration",
+            "items": [
+                { "type": "Label", "caption": "Load from other Modul"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {"type": "SelectObject", "name": "ObjectID", "caption": "Modul"},
+                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveCustom_LoadOtherConfiguration($id, $ObjectID);"}
+                    ]
+                },
+                { "type": "Label", "caption": "Load from File"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {"type": "SelectFile", "name": "Config_fileData", "caption": "File"},
+                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveCustom_LoadConfigurationFile($id, $Config_fileData);"}
+                    ]
+                },
+                { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveCustom_GetConfigurationLink($id);" }
+            ]
+        }
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Status OK!" }
+    ]
+}

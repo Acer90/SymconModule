@@ -85,7 +85,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         }
 
     }
-    public function GetWebpage(){
+    private function GetWebpage(){
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
         if(empty($scriptID)){
             if($this->ReadPropertyBoolean("Debug"))
@@ -121,7 +121,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
 
         return json_encode($updateData);
     }
-    public function GetData(array $querydata){
+    private function GetData(array $querydata){
         $output = array();
         $load_vars = array();
         $registered_vars = array();

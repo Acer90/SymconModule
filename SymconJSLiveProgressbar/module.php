@@ -87,7 +87,7 @@ class SymconJSLiveProgressbar extends JSLiveModule{
                 break;
         }
     }
-    public function GetWebpage(){
+    private function GetWebpage(){
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
         if(empty($scriptID)){
             if($this->ReadPropertyBoolean("Debug"))
@@ -110,7 +110,7 @@ class SymconJSLiveProgressbar extends JSLiveModule{
 
         return $scriptData;
     }
-    public function GetData(array $querydata){
+    private function GetData(array $querydata){
         $output = array();
         $output["Variable"] = $this->ReadPropertyInteger("Variable");
         if(IPS_VariableExists($output["Variable"])){

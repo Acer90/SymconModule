@@ -126,7 +126,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         }
 
     }
-    public function GetWebpage(){
+    private function GetWebpage(){
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
         if(empty($scriptID)){
             if($this->ReadPropertyBoolean("Debug"))
@@ -149,7 +149,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
 
         return $scriptData;
     }
-    public function GetData(array $querydata){
+    private function GetData(array $querydata){
         $output = array();
         $load_vars = array();
         $datasets = json_decode($this->ReadPropertyString("Datasets"), true);

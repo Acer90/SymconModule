@@ -108,7 +108,7 @@ class SymconJSLiveGauge extends JSLiveModule{
         }
 
     }
-    public function GetWebpage(){
+    private function GetWebpage(){
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
         if(empty($scriptID)){
             if($this->ReadPropertyBoolean("Debug"))
@@ -131,7 +131,7 @@ class SymconJSLiveGauge extends JSLiveModule{
 
         return $scriptData;
     }
-    public function GetData(array $querydata){
+    private function GetData(array $querydata){
         $output = array();
         $load_vars = array();
         $registered_vars = array();

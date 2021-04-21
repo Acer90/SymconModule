@@ -64,7 +64,7 @@ class SymconJSLiveColorPicker extends JSLiveModule{
         }
 
     }
-    public function GetWebpage(){
+    private function GetWebpage(){
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
         if(empty($scriptID)){
             if($this->ReadPropertyBoolean("Debug"))
@@ -90,10 +90,10 @@ class SymconJSLiveColorPicker extends JSLiveModule{
 
         return $scriptData;
     }
-    public function GetData(array $querydata){
+    private function GetData(array $querydata){
         return json_encode($this->GenerateVariabels());
     }
-    public function SetData(array $querydata){
+    private function SetData(array $querydata){
         if(!array_key_exists("var", $querydata) || !array_key_exists("val", $querydata)){
             $this->SendDebug('SetData', "NO VARIABLE, OR VALUE SET!", 0);
             return "NO VARIABLE, OR VALUE SET!";
