@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {VIEWPORT} <!-- Dont Remove this line, it can be disabled at the Instance Configuration! -->
+    <title>Textfield</title>
+</head>
+<script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
+<script src="{ADDRESS}/hook/JSLive/js/util.js"></script>
+<body>
+
+<!-- Start Content Area for HTML-Code -->
+<div id="test"></div>
+<!-- End Content Area for HTML-Code -->
+
+<script>
+    let config_global = {GLOBAL}; // <== Configuration from the Splitter Instance
+    let datasets = {DATASETS}; // <== Output with Content/Value from
+    let confiuration = {CONFIG}; // <== configuration of the Instance
+
+    let running = false;
+    let last_update = Date.now();
+    let itemList = []; // <== Indexing for fast search in Subitems!
+    let update_itemList = []; // <==
+
+    /**
+     * This function running after Startup
+     */
+    function onLoad(){
+        //USE TRY and CATCH to see Errors on IPSView/Neo
+        try {
+            //Example
+            document.getElementById('test').innerText = JSON.stringify(datasets);
+
+            updateValue();
+        }catch (e) {
+            alert(e);
+        }
+    }
+
+    /**
+     * This function running on Update from Webseocket ,or Pullmode
+     * It will only perfom at Variable ist Set in Datasets, an the Value has Changed!
+     *
+     * @param id_val => VariableID
+     * @param value => Value
+     */
+    function onUpdate(id_val, value){
+        //Only Updatinge Value if Updateworker not running!
+        if(running) return;
+
+        //Update datasets
+        //Child Objects
+        required = {ObjectID: id_val};
+        results = [];
+        results = getMatchingKeys(itemList, required);
+
+        results.forEach(function(index) {
+            if("subindex" in itemList[index]){
+                //update child if subindex defined!
+                datasets[itemList[index].index].Object.ChildrenIDs[itemList[index].subindex].Value = value;
+            }else{
+                //update Main Item
+                datasets[itemList[index].index].Object.Value = value;
+            }
+        });
+
+        /*Start here with your Code!*/
+
+        //Example Update Output!
+        document.getElementById('test').innerText = JSON.stringify(datasets);
+    }
+
+    /**
+     * Use for push a Update
+     * No Editing necessary
+     *
+     * @param id_val => VariableID (Only Variables, Skrips and Media Objects can be updatet!)
+     * @param value => Can be a Value, or a JSON string for a script
+     */
+    function updateValue(id_val, value) {
+        //check if Variable is in array
+        required = {ObjectID: id_val};
+        results = [];
+        results = getMatchingKeys(update_itemList, required);
+
+        if(results.length > 0){
+            //update the first element only!
+            update_itemList[results[0]].Value = value;
+        }else{
+            //add to update array
+            update_itemList.push({ObjectID: id_val, Value: value});
+        }
+
+        //Run the worker only he is not running
+        if(!running) UpdateWorker();
+    }
+
+    /**
+     * This function Limit the Update refresh rate
+     * No Editing necessary
+     */
+    async function UpdateWorker(){
+        running = true;
+        while (running){
+            await sleep(1);
+            try {
+                //console.log("UpdateWorker => "+ updateVal.length + " | " + updateId.length);
+                if((last_update + confiuration.DataUpdateRate) <= Date.now() && update_itemList.length > 0){
+                    last_update = Date.now();
+                    //console.log("UpdateWorker => "+ JSON.stringify(update_itemList));
+
+                    for (i = 0; i < update_itemList.length; i++) {
+                        console.log(Date.now() + " >> UpdateWorker | Update " + JSON.stringify(update_itemList[i].ObjectID) + " | " + JSON.stringify(update_itemList[i].Value));
+                        var response = await fetch("{ADDRESS}/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&obj=" +update_itemList[i].ObjectID+ "&val="+update_itemList[i].Value);
+                        console.log(Date.now() + " >> UpdateWorker Response => " + response.statusText + " (" + response.status + ")");
+                    }
+
+                    update_itemList = [];
+                    running = false;
+                    console.log(Date.now() + " >> UpdateWorker => CLOSE");
+
+                }else if(update_itemList.length === 0){
+                    //Process safety
+                    running = false;
+                }
+            }catch (e) {
+                console.log(Date.now() + " >> UpdateWorker => ", e);
+            }
+        }
+    }
+
+    /**
+     * WebSocket function!
+     * No Editing necessary
+     */
+    function connect() {
+        var ws = new WebSocket('{WSADDRESS}', [encodeURIComponent(btoa('webfront:{WEBFRONTPASSWORD}'))]);
+        ws.onopen = function() {
+            //on Websocket connected
+        };
+
+        ws.onmessage = function(e) {
+            //on new Message
+            data = JSON.parse(e.data);
+            //Only Message wenn Update Variable!
+            if(data.Message == 10603) {
+                //check Objects exist
+                required = {ObjectID: data.SenderID};
+                results = [];
+                results = getMatchingKeys(itemList, required);
+
+                //nur updaten wenn object gefunden wird
+                if(results.length > 0)
+                    onUpdate(data.SenderID, data.Data[0]);
+            }
+        };
+
+        ws.onclose = function(e) {
+            console.log(Date.now() + ' >> Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+            setTimeout(function() {
+                connect();
+            }, 1000);
+        };
+
+        ws.onerror = function(err) {
+            console.error(Date.now() + ' >> Socket encountered error: ', err.message, 'Closing socket');
+            ws.close();
+        };
+    }
+    /**
+     * Pullmode function!
+     * No Editing necessary
+     */
+    async function PullNewData(refreshRate){
+        refreshRate = refreshRate * 1000;
+        while (true){
+            try {
+                $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                    onUpdate(data.Variable, data.Value);
+                });
+
+            }catch (e) {
+                console.log(Date.now() + " >> PullNewData => ", e);
+            }
+            await sleep(refreshRate);
+        }
+    }
+
+    /**
+     * Create a object List for all elements
+     * This list is use for fast find the Index and Subindex
+     * No Editing necessary
+     */
+    function createObjectList(){
+        datasets.forEach(function(item, index){
+            //load Main Objects to list
+            obj = {
+                ObjectID: item.Object.ObjectID,
+                index: index,
+            };
+            itemList.push(obj);
+
+            //Load Childs to list
+            ChildrenIDs = item.Object.ChildrenIDs;
+            if(ChildrenIDs !== 'undefined'){
+                ChildrenIDs.forEach(function(subitem, subindex) {
+                    obj = {
+                        ObjectID: subitem.ObjectID,
+                        index: index,
+                        subindex: subindex
+                    };
+                    itemList.push(obj);
+                });
+            }
+        });
+    }
+
+    window.onload = function() {
+        //USE TRY and CATCH to see Errors on IPSView/Neo
+        try {
+            createObjectList();
+            onLoad();
+            if (config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0) {
+                //pullup Mode local
+                refreshRate = config_global.LocalRefreshTime;
+                PullNewData(refreshRate);
+            } else if (config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0) {
+                //pullup Mode remote
+                refreshRate = config_global.RemoteRefreshTime;
+                PullNewData(refreshRate);
+            } else {
+                connect();
+            }
+        }catch (e) {
+            alert(e);
+        }
+    }
+</script>
+</body>
+</html>

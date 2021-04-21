@@ -68,7 +68,7 @@ class SymconJSLiveAdvTextfield extends JSLiveModule{
                 break;
         }
     }
-    public function GetWebpage(){
+    private function GetWebpage(){
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
         if(empty($scriptID)){
             if($this->ReadPropertyBoolean("Debug"))
@@ -91,13 +91,13 @@ class SymconJSLiveAdvTextfield extends JSLiveModule{
 
         return $scriptData;
     }
-    public function GetData(array $querydata){
+    private function GetData(array $querydata){
         $output = array();
         $output["Variable"] = IPS_GetObjectIDByIdent("Content", $this->InstanceID);
         $output["Value"] = $this->GetValue("Content");
         return json_encode($output);
     }
-    public function SetData(array $querydata){
+    private function SetData(array $querydata){
         if(!array_key_exists("val", $querydata)){
             $this->SendDebug('SetData', "NO VALUE SET!", 0);
             return "NO VALUE SET!";
