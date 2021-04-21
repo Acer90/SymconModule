@@ -178,6 +178,21 @@ class SymconJSLiveCustom extends JSLiveModule{
 
         foreach ($datasets as $item){
             $s_output =  array();
+            $s_output["Title"] = $item["Title"];
+
+            if(is_numeric($item["HighlightColor1"]) && $item["HighlightColor1"] >= 0) {
+                $rgbdata = $this->HexToRGB($item["HighlightColor1"]);
+                $s_output["HighlightColor1"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["HighlightColor1_Alpha"], 2, '.', '') . ")";
+            }else{
+                $s_output["HighlightColor1"] = "rgba(0,0,0,0)";
+            }
+
+            if(is_numeric($item["HighlightColor2"]) && $item["HighlightColor2"] >= 0) {
+                $rgbdata = $this->HexToRGB($item["HighlightColor2"]);
+                $s_output["HighlightColor2"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["HighlightColor2_Alpha"], 2, '.', '') . ")";
+            }else{
+                $s_output["HighlightColor2"] = "rgba(0,0,0,0)";
+            }
 
             $obj_name = "Object";
             if($item[$obj_name] > 0 && IPS_ObjectExists($item[$obj_name])){
@@ -315,13 +330,12 @@ class SymconJSLiveCustom extends JSLiveModule{
         //check variable is set in Instance!!
         //recursiv serach
         $datasets = json_decode($this->ReadPropertyString("Datasets"),true);
-        $inInstance = false;
         foreach($datasets as $data){
             if($data["Object"] == 0 || !IPS_ObjectExists($data["Object"])) continue;
 
             //Main object
             if($data["Object"] == $obj) {
-                return $this->SetSingleData($obj);
+                return $this->SetSingleData($obj, $val);
             }
 
             $obj_data = IPS_GetObject($data["Object"]);
@@ -329,20 +343,22 @@ class SymconJSLiveCustom extends JSLiveModule{
                 foreach ($obj_data["ChildrenIDs"] as $item) {
                     if($item == $obj){
                         //wenn variable in Childids dann ausgabe
-                        return $this->SetSingleData($obj, true);
+                        return $this->SetSingleData($obj, $val, true);
                     }
                 }
             }
         }
+        $this->SendDebug("SetData", $obj." NOT IN INSTANCE!", 0);
         return "ERROR";
     }
-    private function SetSingleData(int $item, object $val, bool $isSubItem = false){
+    private function SetSingleData(int $item, $val, bool $isSubItem = false){
         $obj_data2 = IPS_GetObject($item);
         switch($obj_data2["ObjectType"]){
             case 2:
                 //Variable
                 //nur ausgeben wenn nicht hidden/disabled!
                 if((!$obj_data2["ObjectIsHidden"] && !$obj_data2["ObjectIsDisabled"])) {
+                    $this->SendDebug("SetSingleData", "Update Variable " . $item ." => " .$val, 0 );
                     SetValue($item, $val);
                     return "OK";
                 }
@@ -350,12 +366,14 @@ class SymconJSLiveCustom extends JSLiveModule{
             case 3:
                 //Skript
                 if(!$isSubItem && !$obj_data2["ObjectIsHidden"] && !$obj_data2["ObjectIsDisabled"]) {
+                    $this->SendDebug("SetSingleData", "Run Script " . $item ." with => " .$val, 0 );
                     return IPS_RunScriptWaitEx($item, json_decode($val, true));
                 }
                 break;
             case 5:
                 //Media
                 if((!$obj_data2["ObjectIsHidden"] && !$obj_data2["ObjectIsDisabled"])) {
+                    $this->SendDebug("SetSingleData", "Update Media " . $item ." => " .$val, 0 );
                     IPS_SetMediaContent($item, $val);
                     return "OK";
                 }
@@ -365,8 +383,8 @@ class SymconJSLiveCustom extends JSLiveModule{
                 //nur ausgeben wenn nicht hidden/disabled!
                 if((!$obj_data2["ObjectIsHidden"] && !$obj_data2["ObjectIsDisabled"])) {
                     $l_data = IPS_GetLink($item);
-                    SetValue($l_data["TargetID"], $val);
-                    return "OK";
+                    $this->SendDebug("SetSingleData", "link Found (" . $item . ")", 0 );
+                    return $this->SetSingleData($l_data["TargetID"], $val, $isSubItem);
                 }
                 break;
             default:

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     {VIEWPORT} <!-- Dont Remove this line, it can be disabled at the Instance Configuration! -->
-    <title>Textfield</title>
+    <title>Custom Modul</title>
 </head>
 <script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
 <script src="{ADDRESS}/hook/JSLive/js/util.js"></script>
@@ -32,7 +32,7 @@
             //Example
             document.getElementById('test').innerText = JSON.stringify(datasets);
 
-            updateValue();
+            updateValue(26787, Date.now());
         }catch (e) {
             alert(e);
         }
@@ -44,13 +44,13 @@
      *
      * @param id_val => VariableID
      * @param value => Value
+     * @param override => If True the Dataset will be always updated!
      */
-    function onUpdate(id_val, value){
+    function onUpdate(id_val, value, override = false){
         //Only Updatinge Value if Updateworker not running!
-        if(running) return;
+        if(running && !override) return;
 
         //Update datasets
-        //Child Objects
         required = {ObjectID: id_val};
         results = [];
         results = getMatchingKeys(itemList, required);
@@ -94,6 +94,9 @@
 
         //Run the worker only he is not running
         if(!running) UpdateWorker();
+
+        //update dataset if you want
+        onUpdate(id_val, value, true);
     }
 
     /**
@@ -111,7 +114,7 @@
                     //console.log("UpdateWorker => "+ JSON.stringify(update_itemList));
 
                     for (i = 0; i < update_itemList.length; i++) {
-                        console.log(Date.now() + " >> UpdateWorker | Update " + JSON.stringify(update_itemList[i].ObjectID) + " | " + JSON.stringify(update_itemList[i].Value));
+                        console.log(Date.now() + " >> UpdateWorker | Update " + JSON.stringify(update_itemList[i].ObjectID) + " to " + JSON.stringify(update_itemList[i].Value));
                         var response = await fetch("{ADDRESS}/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&obj=" +update_itemList[i].ObjectID+ "&val="+update_itemList[i].Value);
                         console.log(Date.now() + " >> UpdateWorker Response => " + response.statusText + " (" + response.status + ")");
                     }
