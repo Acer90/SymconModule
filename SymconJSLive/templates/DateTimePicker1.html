@@ -6,6 +6,8 @@
     <title>DateTimePicker</title>
     <link rel="stylesheet" href="{ADDRESS}/hook/JSLive/js/css/DatePicker1.css">
 </head>
+<link rel="stylesheet" type="text/css" href="{ADDRESS}/hook/JSLive/js/css/font-face.css"> <!-- Need for Custom font Family !-->
+
 <script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
 <!--<script src="{ADDRESS}/hook/JSLive/js/mc-calendar/mc-calendar.min.js"></script>-->
 
@@ -26,6 +28,7 @@
             obj = document.querySelector("#datetime");
             obj.value = unixTimeToString(value);
             document.querySelector("#datetime").addEventListener("input", updateValue);
+            document.getElementById("datetime").style.fontFamily = confiuration.style_fontFamily;
 
 
             //Style

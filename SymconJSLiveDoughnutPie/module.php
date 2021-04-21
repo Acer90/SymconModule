@@ -21,6 +21,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         $this->RegisterPropertyString("title_position", "top");
         $this->RegisterPropertyInteger("title_fontSize", 12);
         $this->RegisterPropertyInteger("title_fontColor", 0);
+        $this->RegisterPropertyString("title_fontFamily", "");
 
         //Legend
         $this->RegisterPropertyBoolean("legend_display", true);
@@ -28,6 +29,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         $this->RegisterPropertyString("legend_align", "center");
         $this->RegisterPropertyInteger("legend_fontSize", 12);
         $this->RegisterPropertyInteger("legend_fontColor", 0);
+        $this->RegisterPropertyString("legend_fontFamily", "");
         $this->RegisterPropertyInteger("legend_boxWidth", 40);
 
         //Tooltips
@@ -36,6 +38,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         $this->RegisterPropertyString("tooltips_mode", "index");
         $this->RegisterPropertyInteger("tooltips_fontSize", 12);
         $this->RegisterPropertyInteger("tooltips_fontColor", 65535);
+        $this->RegisterPropertyString("tooltips_fontFamily", "");
         $this->RegisterPropertyInteger("tooltips_backgroundColor", 0);
         $this->RegisterPropertyInteger("tooltips_cornerRadius", 5);
 
@@ -50,6 +53,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         $this->RegisterPropertyBoolean("datalabels_clamp", false);
         $this->RegisterPropertyInteger("datalabels_fontSize", 12);
         $this->RegisterPropertyInteger("datalabels_fontColor", 0);
+        $this->RegisterPropertyString("datalabls_fontFamily", "");
         $this->RegisterPropertyInteger("datalabels_borderRadius", 12);
 
         //dataset
@@ -196,6 +200,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         $output["text"] = $this->ReadPropertyString("title_text");
         $output["position"] = $this->ReadPropertyString("title_position");
         $output["fontSize"] = $this->ReadPropertyInteger("title_fontSize");
+        $output["fontFamily"] = $this->ReadPropertyString("title_fontFamily");
 
         $output["display"] = $this->ReadPropertyBoolean("title_display");
 
@@ -215,6 +220,11 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         $output["titleFontSize"] = $this->ReadPropertyInteger("tooltips_fontSize");
         $output["bodyFontSize"] = $this->ReadPropertyInteger("tooltips_fontSize");
         $output["footerFontSize"] = $this->ReadPropertyInteger("tooltips_fontSize");
+
+        $output["titleFontFamily"] = $this->ReadPropertyString("tooltips_fontFamily");
+        $output["bodyFontFamily"] = $this->ReadPropertyString("tooltips_fontFamily");
+        $output["footerFontFamily"] = $this->ReadPropertyString("tooltips_fontFamily");
+
 
         $output["cornerRadius"] = $this->ReadPropertyInteger("tooltips_cornerRadius");
 
@@ -244,6 +254,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         }
         $output["labels"]["fontSize"] = $this->ReadPropertyInteger("legend_fontSize");
         $output["labels"]["boxWidth"] = $this->ReadPropertyInteger("legend_boxWidth");
+        $output["labels"]["fontFamily"] = $this->ReadPropertyString("legend_fontFamily");
 
         return $output;
 

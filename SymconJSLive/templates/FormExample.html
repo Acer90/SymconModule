@@ -6,6 +6,8 @@
     <title>Textfield</title>
     <link rel="stylesheet" href="{ADDRESS}/hook/JSLive/js/css/FormExample.css">
 </head>
+<link rel="stylesheet" type="text/css" href="{ADDRESS}/hook/JSLive/js/css/font-face.css"> <!-- Need for Custom font Family !-->
+
 <script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
 
 
@@ -67,6 +69,8 @@
             const form = document.querySelector('.contact-form');
             form.addEventListener('submit', updateValue);
             updateForm(form);
+
+            document.getElementsByTagName("body")[0].style.fontFamily = confiuration.style_fontFamily;
 
 
             //obj = document.querySelector("#text");

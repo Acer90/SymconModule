@@ -5,6 +5,8 @@
     {VIEWPORT} <!-- Dont Remove this line, it can be disabled at intstance! -->
     <title>{TITLE_TEXT}</title>
 </head>
+<link rel="stylesheet" type="text/css" href="{ADDRESS}/hook/JSLive/js/css/font-face.css"> <!-- Need for Custom font Family !-->
+
 <script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
 <script src="{ADDRESS}/hook/JSLive/js/canvas-gauges/gauge.min.js"></script>
 
@@ -42,6 +44,7 @@
                 title: confiuration.title_text, //false deaktiviert!
                 colorTitle: confiuration.title_fontColor,
                 fontTitleSize: confiuration.title_fontSize,
+                fontTitle: confiuration.title_fontFamily,
 
                 //plate
                 colorPlate: confiuration.plate_colorPlate,
@@ -64,6 +67,7 @@
                 valueBox: confiuration.valuebox_display,
                 colorValueBoxBackground: confiuration.valuebox_colorValueBoxBackground,
                 colorValueBoxShadow: false,//'rgba(255, 0, 122, 0)'
+                fontValue: confiuration.valuebox_fontFamily,
 
                 valueBoxBorderRadius: 0,
                 valueTextShadow: false,
@@ -92,6 +96,8 @@
                 highlightsWidth: confiuration.ticks_highlightsWidth,
                 highlights: config_highlights,
                 majorTicks: config_ticks,
+                fontNumbers: confiuration.ticks_fontFamily,
+                fontNumbersSize: confiuration.ticks_fontSize,
 
                 needleCircleSize: 50,
                 needleCircleOuter: 10,
@@ -201,7 +207,6 @@
     window.onload = function() {
         try {
             LoadGauge();
-
             if (config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0) {
                 //pullup Mode local
                 refreshRate = config_global.LocalRefreshTime;
@@ -217,6 +222,11 @@
             alert("Gauge Radial | ",e);
         }
     }
+
+    document.fonts.ready.then(function () {
+        gauge.update();
+    });
+
 </script>
 </body>
 </html>

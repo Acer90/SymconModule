@@ -6,6 +6,8 @@
     <title>DateTimePicker</title>
     <link rel="stylesheet" href="{ADDRESS}/hook/JSLive/js/css/TimePicker1.css">
 </head>
+<link rel="stylesheet" type="text/css" href="{ADDRESS}/hook/JSLive/js/css/font-face.css"> <!-- Need for Custom font Family !-->
+
 <script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
 
 <body style="text-align: center;">
@@ -26,6 +28,7 @@
             obj.value = unixTimeToString(value);
             UpdateIcon(obj.value);
             document.querySelector("#time").addEventListener("input", updateValue);
+            document.getElementById("time").style.fontFamily = confiuration.style_fontFamily;
 
 
             //Style

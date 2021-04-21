@@ -5,6 +5,8 @@
     {VIEWPORT} <!-- Dont Remove this line, it can be disabled at intstance! -->
     <title>{TITLE_TEXT}</title>
 </head>
+<link rel="stylesheet" type="text/css" href="{ADDRESS}/hook/JSLive/js/css/font-face.css"> <!-- Need for Custom font Family !-->
+
 <script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
 <script src="{ADDRESS}/hook/JSLive/js/chartjs/2.8.0/Chart.js"></script>
 
@@ -60,7 +62,8 @@
                         pointLabels: {
                             display: confiuration.axes_pointLabels_display,
                             color: confiuration.axes_pointLabels_color,
-                            fontSize: confiuration.axes_pointLabels_fontSize
+                            fontSize: confiuration.axes_pointLabels_fontSize,
+                            fontFamily: confiuration.axes_pointLabels_fontFamily
                         },
                         gridLines: {
                             display: confiuration.axes_gridLines_display,
@@ -77,6 +80,7 @@
                             fontColor: confiuration.axes_ticks_fontColor,
                             fontSize: confiuration.axes_ticks_fontSize,
                             backdropColor: confiuration.axes_ticks_backdropColor,
+                            fontFamily: confiuration.axes_ticks_fontFamily
                         },
 
                         display: confiuration.axes_display

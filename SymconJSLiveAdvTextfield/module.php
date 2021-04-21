@@ -33,6 +33,7 @@ class SymconJSLiveAdvTextfield extends JSLiveModule{
         //fonts
         $this->RegisterPropertyInteger("style_fontSize", 12);
         $this->RegisterPropertyInteger("style_fontColor", 0);
+        $this->RegisterPropertyString("style__fontFamily", "");
 
         //border
         $this->RegisterPropertyInteger("style_borderRadius", 10);
