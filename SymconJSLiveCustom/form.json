@@ -203,10 +203,17 @@
                     "type": "RowLayout",
                     "items": [
                         {"type": "SelectFile", "name": "Config_fileData", "caption": "File"},
-                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveCustom_LoadConfigurationFile($id, $Config_fileData);"}
+                        { "type": "CheckBox", "name": "overrideScript", "caption": "Override Script!", "value": true},
+                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveCustom_LoadConfigurationFile($id, $Config_fileData, $overrideScript);"}
                     ]
                 },
-                { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveCustom_GetConfigurationLink($id);" }
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveCustom_GetConfigurationLink($id, $withScript);" },
+                        { "type": "CheckBox", "name": "withScript", "caption": "With Script?", "value": true}
+                    ]
+                }
             ]
         }
     ],

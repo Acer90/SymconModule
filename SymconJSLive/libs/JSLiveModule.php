@@ -74,7 +74,7 @@ class JSLiveModule extends IPSModule
         return $pData;
     }
 
-    public function ExportConfiguration(){
+    public function ExportConfiguration(bool $withScript = false){
         $output = array();
 
         $output["ModulID"] = IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"];
@@ -82,9 +82,15 @@ class JSLiveModule extends IPSModule
 
         $output["Config"] = json_decode(IPS_GetConfiguration($this->InstanceID), true);
 
+        $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
+        if(IPS_ScriptExists($scriptID)){
+            $output["Script"] = IPS_GetScriptContent($scriptID);
+            $output["ScriptName"] = IPS_GetObject($scriptID)["ObjectName"];
+        }
+
         return json_encode($output);
     }
-    public function LoadConfigurationFile(string $filename){
+    public function LoadConfigurationFile(string $filename, bool $overrideScript = false){
         if(empty($filename)) return "File is Empty!";
 
         $confdata = json_decode(base64_decode($filename), true);
@@ -106,6 +112,17 @@ class JSLiveModule extends IPSModule
             }
         }
 
+        if($overrideScript && array_key_exists("Script", $confdata)){
+            //Load with Skript
+            if($output["TemplateScriptID"] == 0 || !$overrideScript || !IPS_ScriptExists($output["TemplateScriptID"])){
+                //Neues skript anlegen
+                $output["TemplateScriptID"] = IPS_CreateScript(0);
+                IPS_SetParent($output["TemplateScriptID"], $this->InstanceID);
+                IPS_SetName($output["TemplateScriptID"], $confdata["ScriptName"]);
+            }
+
+            IPS_SetScriptContent($output["TemplateScriptID"], $confdata["Script"]);
+        }
 
         IPS_SetConfiguration($this->InstanceID, json_encode($output));
         IPS_ApplyChanges($this->InstanceID);
@@ -122,6 +139,7 @@ class JSLiveModule extends IPSModule
     }
 
 
+    //Advance Debug!
     private function ClearLogFile(){
         file_put_contents(IPS_GetLogDir()."logfile.log", "");
     }
