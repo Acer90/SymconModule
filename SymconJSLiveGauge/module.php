@@ -145,7 +145,6 @@ class SymconJSLiveGauge extends JSLiveModule{
 
         $output["Value"] = GetValue($output["Variable"]);
 
-
         return json_encode($output);
     }
 
