@@ -134,51 +134,17 @@ class SymconJSLiveGauge extends JSLiveModule{
 
         return $scriptData;
     }
-    private function GetData(array $querydata){
+    public function GetData(array $querydata){
         $output = array();
-        $load_vars = array();
-        $registered_vars = array();
-        $datasets = json_decode($this->ReadPropertyString("Datasets"), true);
 
-        //load all variables
-        foreach ($datasets as $item){
-            foreach ($item["Variables"] as $vars){
-                if(!in_array($vars["Variable"], $load_vars)){
-                    $registered_vars[] = $vars["Variable"];
-                }
-            }
+        $output["Variable"] = $this->ReadPropertyInteger("variable");
+        if(!IPS_VariableExists($output["Variable"])){
+            $this->SendDebug("GetData", "VARIABLE NOT EXIST!", 0);
+            return "VARIABLE NOT EXIST!";
         }
 
-        if(!array_key_exists("var", $querydata)) {
-            //$this->SendDebug("GetData", "PARAMETER VARIABLE NOT SET!(" . json_encode($querydata). ")", 0);
-            $load_vars = $registered_vars;
-        }else{
-            $load_vars[] = $querydata["var"];
-        }
+        $output["Value"] = GetValue($output["Variable"]);
 
-
-        foreach($load_vars as $var){
-            $o_item = array();
-            $o_item["Variable"] = $var;
-            if(!IPS_VariableExists($var)){
-                $this->SendDebug("GetData", "VARIABLE NOT EXIST!", 0);
-                continue;
-            }
-
-
-            $key = array_search($var, array_column($registered_vars, 'Variable'));
-            if(!in_array($var, $registered_vars)){
-                $this->SendDebug("GetData", "VARIABLE NOT IN INSTANCE!", 0);
-                continue;
-            }
-
-            $o_item["Value"] = GetValue($var);
-
-            if($this->ReadPropertyBoolean("Debug"))
-                $this->SendDebug("GetData", json_encode($querydata), 0);
-
-            $output[] = $o_item;
-        }
 
         return json_encode($output);
     }
