@@ -14,7 +14,7 @@ class SymconJSLiveAdvTextfield extends JSLiveModule{
         $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyInteger("DataUpdateRate", 50);
-        $this->RegisterPropertyBoolean("viewport_enable", false);
+        $this->RegisterPropertyBoolean("viewport_enable", true);
 
         //colors
         $this->RegisterPropertyInteger("style_backgroundColor", 0);
@@ -33,7 +33,7 @@ class SymconJSLiveAdvTextfield extends JSLiveModule{
         //fonts
         $this->RegisterPropertyInteger("style_fontSize", 12);
         $this->RegisterPropertyInteger("style_fontColor", 0);
-        $this->RegisterPropertyString("style__fontFamily", "");
+        $this->RegisterPropertyString("style_fontFamily", "");
 
         //border
         $this->RegisterPropertyInteger("style_borderRadius", 10);
@@ -116,6 +116,10 @@ class SymconJSLiveAdvTextfield extends JSLiveModule{
 
         //Value
         $htmlData = str_replace("{VALUE}", "'".addslashes($this->GetValue("Content"))."'", $htmlData);
+
+        //Load Fonts
+        $arr = array($this->ReadPropertyString("style_fontFamily"));
+        $htmlData = str_replace("{FONTS}", $this->LoadFonts($arr), $htmlData);
 
         return $htmlData;
     }

@@ -13,7 +13,7 @@ class SymconJSLiveColorPicker extends JSLiveModule{
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyInteger("DataUpdateRate", 50);
         $this->RegisterPropertyInteger("manWidth", 0);
-        $this->RegisterPropertyBoolean("viewport_enable", false);
+        $this->RegisterPropertyBoolean("viewport_enable", true);
 
 
         //style

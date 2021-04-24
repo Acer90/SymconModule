@@ -15,7 +15,7 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
         $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyInteger("DataUpdateRate", 50);
-        $this->RegisterPropertyBoolean("viewport_enable", false);
+        $this->RegisterPropertyBoolean("viewport_enable", true);
 
         //colors
         $this->RegisterPropertyInteger("style_backgroundColor", 0);
@@ -148,8 +148,10 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
             $htmlData = str_replace("{VALUE}", 0, $htmlData);
         }
 
-        //Layout
-        //$htmlData = str_replace("{LAYOUT}", $this->json_encode_advanced($this->GenerateLayout()), $htmlData);
+        //Load Fonts
+        $arr = array($this->ReadPropertyString("style_fontFamily"));
+        $htmlData = str_replace("{FONTS}", $this->LoadFonts($arr), $htmlData);
+
         return $htmlData;
     }
     private function GetConfigurationData(){

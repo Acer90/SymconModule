@@ -16,7 +16,7 @@ class SymconJSLiveGauge extends JSLiveModule{
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
-        $this->RegisterPropertyBoolean("viewport_enable", false);
+        $this->RegisterPropertyBoolean("viewport_enable", true);
 
         //title
         $this->RegisterPropertyString("title_text", "");
@@ -169,6 +169,10 @@ class SymconJSLiveGauge extends JSLiveModule{
         }
         $htmlData = str_replace("{VALUE}", number_format($val, 2, '.', ''), $htmlData);
 
+        //Load Fonts
+        $arr = array($this->ReadPropertyString("valuebox_fontFamily"), $this->ReadPropertyString("ticks_fontFamily"), $this->ReadPropertyString("title_fontFamily"));
+        $htmlData = str_replace("{FONTS}", $this->LoadFonts($arr), $htmlData);
+
         return $htmlData;
     }
 
@@ -224,11 +228,16 @@ class SymconJSLiveGauge extends JSLiveModule{
             }
         }
 
-
-
         if(!$this->ReadPropertyBoolean("plate_display")){
             $output["plate_colorPlate"] = "rgba(0, 0, 0, 0)";
             $output["plate_colorPlateEnd"] = "rgba(0, 0, 0, 0)";
+        }
+
+        //check if fonts is sets
+        $arr = array($this->ReadPropertyString("valuebox_fontFamily"), $this->ReadPropertyString("ticks_fontFamily"), $this->ReadPropertyString("title_fontFamily"));
+        $output["font_isSet"] = false;
+        foreach ($arr as $item){
+            if(!empty($item)) $output["font_isSet"] = true;
         }
 
         unset($output["Ticks"]);

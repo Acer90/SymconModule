@@ -5,7 +5,7 @@
     {VIEWPORT} <!-- Dont Remove this line, it can be disabled at intstance! -->
     <title>{TITLE_TEXT}</title>
 </head>
-<link rel="stylesheet" type="text/css" href="{ADDRESS}/hook/JSLive/js/css/font-face.css"> <!-- Need for Custom font Family !-->
+{FONTS} <!-- Need for Custom font Family !-->
 
 <script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
 <script src="{ADDRESS}/hook/JSLive/js/canvas-gauges/gauge.min.js"></script>
@@ -52,14 +52,13 @@
                 startAngle: 180,
                 strokeTicks: false,
                 highlights: false,
-                fontNumbers: confiuration.ticks_fontFamily,
-                fontNumbersSize: confiuration.ticks_fontSize,
 
+                fontNumbersSize: confiuration.ticks_fontSize,
                 title: confiuration.title_text, //false deaktiviert!
                 colorTitle: confiuration.title_fontColor,
                 fontTitleSize: confiuration.title_fontSize,
                 units: confiuration.plate_unit,
-                fontTitle: confiuration.title_fontFamily,
+
 
                 colorPlate: confiuration.plate_colorPlate,
                 colorPlateEnd: confiuration.plate_colorPlateEnd,
@@ -94,6 +93,14 @@
                 borderShadowWidth: 0,
                 animationTarget: "plate",
                 animationDuration: 1500
+            }
+
+            if(confiuration.title_fontFamily !== ""){
+                gauge_config.fontTitle = confiuration.title_fontFamily;
+            }
+
+            if(confiuration.ticks_fontFamily !== ""){
+                gauge_config.fontNumbers = confiuration.ticks_fontFamily;
             }
 
             gauge = new RadialGauge(gauge_config);
@@ -187,7 +194,8 @@
 
     window.onload = function() {
         try {
-            LoadGauge();
+            //if no font is load then here Start load guage
+            if(!confiuration.font_isSet) LoadGauge();
 
             if (config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0) {
                 //pullup Mode local
@@ -206,7 +214,8 @@
     }
 
     document.fonts.ready.then(function () {
-        gauge.update();
+        //if font is load then here Start load guage
+        if(confiuration.font_isSet) LoadGauge();
     });
 </script>
 </body>
