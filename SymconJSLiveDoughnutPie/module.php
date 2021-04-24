@@ -13,7 +13,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
-        $this->RegisterPropertyBoolean("viewport_enable", false);
+        $this->RegisterPropertyBoolean("viewport_enable", true);
 
         //title
         $this->RegisterPropertyString("title_text", "");
@@ -53,7 +53,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         $this->RegisterPropertyBoolean("datalabels_clamp", false);
         $this->RegisterPropertyInteger("datalabels_fontSize", 12);
         $this->RegisterPropertyInteger("datalabels_fontColor", 0);
-        $this->RegisterPropertyString("datalabls_fontFamily", "");
+        $this->RegisterPropertyString("datalabels_fontFamily", "");
         $this->RegisterPropertyInteger("datalabels_borderRadius", 12);
 
         //dataset
@@ -191,6 +191,10 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
 
         //configuration Data
         $htmlData = str_replace("{CONFIG}", $this->json_encode_advanced($this->GetConfigurationData()), $htmlData);
+
+        //Load Fonts
+        $arr = array($this->ReadPropertyString("title_fontFamily") ,$this->ReadPropertyString("legend_fontFamily"), $this->ReadPropertyString("tooltips_fontFamily"), $this->ReadPropertyString("datalabels_fontFamily"));
+        $htmlData = str_replace("{FONTS}", $this->LoadFonts($arr), $htmlData);
 
         return $htmlData;
     }

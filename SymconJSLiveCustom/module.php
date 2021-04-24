@@ -12,7 +12,7 @@ class SymconJSLiveCustom extends JSLiveModule{
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyInteger("DataUpdateRate", 50);
-        $this->RegisterPropertyBoolean("viewport_enable", false);
+        $this->RegisterPropertyBoolean("viewport_enable", true);
 
         //colors
         $this->RegisterPropertyInteger("style_backgroundColor", 0);
@@ -400,6 +400,10 @@ class SymconJSLiveCustom extends JSLiveModule{
 
         //Value
         $htmlData = str_replace("{DATASETS}", $this->GetAllData(), $htmlData);
+
+        //Load Fonts
+        $arr = array($this->ReadPropertyString("style_fontFamily"));
+        $htmlData = str_replace("{FONTS}", $this->LoadFonts($arr), $htmlData);
 
         return $htmlData;
     }

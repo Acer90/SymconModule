@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     {VIEWPORT} <!-- Dont Remove this line, it can be disabled at intstance! -->
     <title>{TITLE_TEXT}</title>
-    <link rel="stylesheet" type="text/css" href="{ADDRESS}/hook/JSLive/js/css/font-face.css"> <!-- Need for Custom font Family !-->
+    {FONTS} <!-- Need for Custom font Family !-->
 </head>
 <script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
 <script src="{ADDRESS}/hook/JSLive/js/chartjs/2.8.0/Chart.js"></script>
@@ -65,7 +65,7 @@
                             anchor: confiuration.datalabels_anchoring,
                             formatter: function(value, context) {
                                 str = config_data.prefix[context.dataIndex] + value + config_data.suffix[context.dataIndex];
-                                if(value === "") str = "";
+                                if(value === "" || value === 0) str = "";
                                 return str;
                             }
                         }

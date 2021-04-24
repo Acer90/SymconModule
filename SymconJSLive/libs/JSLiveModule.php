@@ -2,6 +2,32 @@
 
 class JSLiveModule extends IPSModule
 {
+    protected function LoadFonts(array $fonts){
+        $font_list = array();
+        $html_str = "";
+
+        //fonts bereinigen!
+        foreach ($fonts as $font){
+            if(!in_array($font, $font_list) && !empty($font)){
+                $font_list[] = $font;
+            }
+        }
+
+        //htmlTag erstellen
+        $start = true;
+        foreach ($font_list as $font){
+            if($start){
+                $start =  false;
+            }else{
+                $html_str .= "\r\n";
+            }
+
+            $html_str .= '<link rel="stylesheet" type="text/css" href="{ADDRESS}/hook/JSLive/js/css/fonts/'.$font.'.css">';
+        }
+
+        return $html_str;
+    }
+
     protected function json_encode_advanced(array $arr, $sequential_keys = false, $quotes = false, $beautiful_json = true, $decimals = 2) {
 
         $output = $this->isAssoc($arr) ? "{" : "[";

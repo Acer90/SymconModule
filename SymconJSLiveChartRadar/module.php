@@ -13,7 +13,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyBoolean("customScale_mode", false);
         $this->RegisterPropertyString("customScale", "[]");
-        $this->RegisterPropertyBoolean("viewport_enable", false);
+        $this->RegisterPropertyBoolean("viewport_enable", true);
 
         //title
         $this->RegisterPropertyString("title_text", "");
@@ -75,6 +75,16 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         $this->RegisterPropertyInteger("data_maxValue", 360);
         $this->RegisterPropertyInteger("data_sections", 16);
         $this->RegisterPropertyInteger("data_precision", 0);
+
+        //Datalabels
+        $this->RegisterPropertyBoolean("datalabels_enabled", true);
+        $this->RegisterPropertyString("datalabels_anchoring", "start");
+        $this->RegisterPropertyString("datalabels_align", "center");
+        $this->RegisterPropertyBoolean("datalabels_clamp", false);
+        $this->RegisterPropertyInteger("datalabels_fontSize", 12);
+        $this->RegisterPropertyInteger("datalabels_fontColor", 0);
+        $this->RegisterPropertyString("datalabels_fontFamily", "");
+        $this->RegisterPropertyInteger("datalabels_borderRadius", 12);
 
         //dataset
         $this->RegisterPropertyString("Datasets", "[]");
@@ -224,6 +234,9 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         //configuration Data
         $htmlData = str_replace("{CONFIG}", $this->json_encode_advanced($this->GetConfigurationData()), $htmlData);
 
+        //Load Fonts
+        $arr = array($this->ReadPropertyString("title_fontFamily"), $this->ReadPropertyString("axes_pointLabels_fontFamily"), $this->ReadPropertyString("axes_ticks_fontFamily"), $this->ReadPropertyString("legend_fontFamily"), $this->ReadPropertyString("tooltips_fontFamily"), $this->ReadPropertyString("datalabels_fontFamily"));
+        $htmlData = str_replace("{FONTS}", $this->LoadFonts($arr), $htmlData);
 
         return $htmlData;
     }

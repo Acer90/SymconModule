@@ -23,7 +23,7 @@ class SymconJSLive extends WebHookModule {
         $this->RegisterPropertyInteger("RemoteRefreshTime", 10);
 
         //viewport
-        $this->RegisterPropertyBoolean("viewport_enable", false);
+        $this->RegisterPropertyBoolean("viewport_enable", true);
         $this->RegisterPropertyString("viewport_content", "width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1, user-scalable=no");
 
         //expert
