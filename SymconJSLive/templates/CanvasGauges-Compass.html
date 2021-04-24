@@ -77,7 +77,6 @@
                 needleCircleSize: 15,
                 needleCircleOuter: false,
 
-                animationRule: "linear",
                 needleType: "line",
                 needleStart: 75,
                 needleEnd: 99,
@@ -91,8 +90,10 @@
                 colorBorderOuterEnd: "#ccc",
                 colorNeedleShadowDown: "#222",
                 borderShadowWidth: 0,
+
                 animationTarget: "plate",
-                animationDuration: 1500
+                animationRule: confiuration.animation_rule, //'linear', //”, “quad”, “quint”, “cycle”, “bounce”, “elastic”  “dequad”, “dequint”, “decycle”, “debounce”, “delastic”.
+                animationDuration: confiuration.animation_duration
             }
 
             if(confiuration.title_fontFamily !== ""){

@@ -284,6 +284,28 @@
         },
         {
             "type": "ExpansionPanel",
+            "caption": "Animation",
+            "items": [
+                { "type": "NumberSpinner", "name": "animation_duration", "caption": "Duration", "suffix": "ms", "minimum": 0 },
+                { "type": "Select", "name": "animation_rule", "caption": "Rule",
+                    "options": [
+                        { "caption": "Linear", "value": "linear" },
+                        { "caption": "Quad", "value": "quad" },
+                        { "caption": "Quint", "value": "quint" },
+                        { "caption": "Cycle", "value": "cycle" },
+                        { "caption": "Bounce", "value": "bounce" },
+                        { "caption": "Elastic", "value": "elastic" },
+                        { "caption": "Dequad", "value": "dequad" },
+                        { "caption": "Dequint", "value": "dequint" },
+                        { "caption": "Decycle", "value": "decycle" },
+                        { "caption": "Debounce", "value": "debounce" },
+                        { "caption": "Delastic", "value": "delastic" }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
             "caption": "Expert",
             "items": [
                 { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
