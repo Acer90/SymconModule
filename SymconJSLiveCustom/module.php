@@ -337,15 +337,25 @@ class SymconJSLiveCustom extends JSLiveModule{
 
             //Main object
             if($data["Object"] == $obj) {
-                return $this->SetSingleData($obj, $val);
+                if($data["ReadOnly"]){
+                    $this->SendDebug("SetData", "Variable " . $data["Object"] . "IS READONLY!", 0);
+                    return "ACCESS DENIED";
+                }else{
+                    return $this->SetSingleData($obj, $val);
+                }
             }
 
             $obj_data = IPS_GetObject($data["Object"]);
             if($obj_data["ObjectType"] == 0 || $obj_data["ObjectType"] == 1 && $obj_data["HasChildren"]){
                 foreach ($obj_data["ChildrenIDs"] as $item) {
                     if($item == $obj){
-                        //wenn variable in Childids dann ausgabe
-                        return $this->SetSingleData($obj, $val, true);
+                        if($data["ReadOnly"]){
+                            $this->SendDebug("SetData", "Variable " . $data["Object"] . "IS READONLY!", 0);
+                            return "ACCESS DENIED";
+                        }else{
+                            //wenn variable in Childids dann ausgabe
+                            return $this->SetSingleData($obj, $val, true);
+                        }
                     }
                 }
             }
