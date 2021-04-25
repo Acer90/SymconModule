@@ -40,6 +40,7 @@ class SymconJSLiveCustom extends JSLiveModule{
         $this->RegisterPropertyInteger("style_borderColor", 0);
 
         $this->RegisterPropertyString("Datasets", "[]");
+        $this->RegisterPropertyString("Libraries", "[]");
     }
     public function ApplyChanges() {
         //Never delete this line!
@@ -57,13 +58,15 @@ class SymconJSLiveCustom extends JSLiveModule{
 
         switch($buffer['cmd']) {
             case "exportConfiguration":
-                return $this->ExportConfiguration();
+                return $this->ExportConfiguration($buffer['queryData']);
             case "getContend":
                 return json_encode(array("output" => $this->GetWebpage(), "viewport" => $this->ReadPropertyBoolean("viewport_enable")));
             case "getData":
                 return $this->GetData($buffer['queryData']);
             case "setData":
                 return $this->SetData($buffer['queryData']);
+            case "loadFile":
+                return json_encode($this->LoadFile($buffer['queryData']));
             default:
                 $this->SendDebug("ReceiveData", "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
                 break;
@@ -138,6 +141,34 @@ class SymconJSLiveCustom extends JSLiveModule{
             }
         }
         return json_encode($output);
+    }
+    private function LoadFile($querydata){
+        if(!array_key_exists("ident", $querydata)) {
+            $this->SendDebug('LoadFile', 'NO IDENT SET!', 0);
+            return array("Contend" => "", "Type" => "");
+        }
+
+        $Libraries = json_decode($this->ReadPropertyString("Libraries"),true);
+        $key = array_search($querydata["ident"], array_column($Libraries, 'Ident'));
+
+        if($key === false){
+            $this->SendDebug('LoadFile', 'NO IDENT '.$querydata["ident"].' SET!', 0);
+            return array("Contend" => "", "Type" => "");
+        }
+
+        $item = $Libraries[$key];
+
+        if(empty($item["Script"]) && empty($item["File"])){
+            $this->SendDebug('LoadFile', 'NO SCRIPT OR FILE FOR '.$querydata["ident"].' SET!', 0);
+            return array("Contend" => "", "Type" => "");
+        }
+
+        if($item["Script"] > 0 && IPS_ScriptExists($item["Script"])){
+            return array("Contend" => IPS_GetScriptContent($item["Script"]), "Type" => $item["Type"]);
+        }else{
+            $this->SendDebug("TEST", $item["File"], 0);
+            return array("Contend" => base64_decode($item["File"]), "Type" => $item["Type"]);
+        }
     }
 
     private function GetSingelData(int $item, bool $isSubItem = false){
@@ -415,6 +446,11 @@ class SymconJSLiveCustom extends JSLiveModule{
         $arr = array($this->ReadPropertyString("style_fontFamily"));
         $htmlData = str_replace("{FONTS}", $this->LoadFonts($arr), $htmlData);
 
+        //Load Libarys
+        $arr = $this->LoadLibraries();
+        $htmlData = str_replace("{SCRIPTS}", $arr["js"], $htmlData);
+        $htmlData = str_replace("{CSS}", $arr["css"], $htmlData);
+
         return $htmlData;
     }
     private function GetConfigurationData(){
@@ -438,8 +474,65 @@ class SymconJSLiveCustom extends JSLiveModule{
         }
 
         unset($output["Datasets"]);
+        unset($output["Libraries"]);
 
         return $output;
+    }
+
+    private function LoadLibraries(){
+        $html_str_js = "";
+        $html_str_css = "";
+        $start_js = true;
+        $start_css = true;
+        $Libraries = json_decode($this->ReadPropertyString("Libraries"),true);
+
+        $arr_order = array_column($Libraries, 'Order');
+        array_multisort($arr_order, SORT_ASC , $Libraries);
+
+
+        foreach ($Libraries as $item){
+            if($item["Type"] == "Script"){
+                //Javascript
+                $str_js = "";
+                if(!empty($item["Link"])){
+                    $str_js .= '<script src="'.$item["Link"].'"></script>';
+                }elseif($item["Script"] > 0 && IPS_ScriptExists($item["Script"])){
+                    $str_js .= '<script src="{ADDRESS}/hook/JSLive/loadFile?Instance={INSTANCE}&pw={PASSWORD}&ident='.$item["Ident"].'"></script>';
+                }elseif (!empty($item["File"])){
+                    $str_js .= '<script src="{ADDRESS}/hook/JSLive/loadFile?Instance={INSTANCE}&pw={PASSWORD}&ident='.$item["Ident"].'"></script>';
+                }
+
+                if(!empty($str_js)){
+                    if($start_js){
+                        $start_js = false;
+                        $html_str_js .= $str_js;
+                    }else{
+                        $html_str_js .= "\n\t".$str_js;
+                    }
+                }
+            }else{
+                //CSS
+                $str_css = "";
+                if(!empty($item["Link"])){
+                    $str_css = '<link rel="stylesheet" href="'.$item["Link"].'">';
+                }elseif($item["Script"] > 0 && IPS_ScriptExists($item["Script"])){
+                    $str_css = '<link rel="stylesheet" href="{ADDRESS}/hook/JSLive/loadFile?Instance={INSTANCE}&pw={PASSWORD}&ident='.$item["Ident"].'">';
+                }elseif (!empty($item["File"])){
+                    $str_css = '<link rel="stylesheet" href="{ADDRESS}/hook/JSLive/loadFile?Instance={INSTANCE}&pw={PASSWORD}&ident='.$item["Ident"].'">';
+                }
+
+                if(!empty($str_css)){
+                    if($start_css){
+                        $start_css = false;
+                        $html_str_css .= $str_css;
+                    }else{
+                        $html_str_css .= "\n\t".$str_css;
+                    }
+                }
+            }
+        }
+
+        return (array("js" => $html_str_js, "css" => $html_str_css));
     }
 
     public function LoadOtherConfiguration(int $id){

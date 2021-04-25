@@ -201,6 +201,87 @@
             ]
         },
         {
+            "type": "List",
+            "name": "Libraries",
+            "caption": "Libraries",
+            "rowCount": 3,
+            "add": true,
+            "delete": true,
+            "edit": true,
+            "sort": {
+                "column": "Order",
+                "direction": "ascending"
+            },
+            "columns": [
+                {
+                    "caption": "Order",
+                    "name": "Order",
+                    "width": "150px",
+                    "add": 0,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 0,
+                        "minimum": 0
+                    }
+                },
+                {
+                    "caption": "Type",
+                    "name": "Type",
+                    "width": "100px",
+                    "add": "Script",
+                    "edit": {
+                        "type": "Select",
+                        "options": [
+                            {
+                                "caption": "CSS",
+                                "value": "CSS"
+                            },
+                            {
+                                "caption": "Script",
+                                "value": "Script"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "caption": "Ident",
+                    "name": "Ident",
+                    "width": "200px",
+                    "add": "",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                },
+                {
+                    "caption": "Link",
+                    "name": "Link",
+                    "width": "auto",
+                    "add": "",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                },
+                {
+                    "caption": "Script",
+                    "name": "Script",
+                    "width": "400px",
+                    "add": 0,
+                    "edit": {
+                        "type": "SelectScript"
+                    }
+                },
+                {
+                    "caption": "File",
+                    "name": "File",
+                    "width": "100px",
+                    "add": "",
+                    "edit": {
+                        "type": "SelectFile"
+                    }
+                }
+            ]
+        },
+        {
             "type": "ExpansionPanel",
             "caption": "Expert",
             "items": [
@@ -238,7 +319,7 @@
                     "items": [
                         {"type": "SelectFile", "name": "Config_fileData", "caption": "File"},
                         { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveCustom_LoadConfigurationFile($id, $Config_fileData, $overrideScript);"},
-                        { "type": "CheckBox", "name": "overrideScript", "caption": "Override Script!", "value": true}
+                        { "type": "CheckBox", "name": "overrideScript", "caption": "Load and Override Script!", "value": true}
                     ]
                 },
                 {
