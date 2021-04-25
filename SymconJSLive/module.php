@@ -131,16 +131,6 @@ class SymconJSLive extends WebHookModule {
 
             header("HTTP/1.0 200 X");
 
-            if(strtolower($Type) == "getsvg"){
-                header("Content-type: image/svg+xml");
-                //header("Content-Type: text/html");
-            }elseif (strtolower($Type) == "exportconfiguration"){
-                header('Content-disposition: attachment; filename='.$queryData["instance"].'-'.IPS_GetInstance($queryData["instance"])["ModuleInfo"]["ModuleName"].'.json');
-                header('Content-type: application/json');
-            }else{
-                header("Content-Type: text/html");
-            }
-
             $sendData = array("cmd" => $Type, "instance" => $queryData["instance"], "queryData" => $queryData);
             $contend = $this->SendDataToChildren(json_encode([
                 'DataID' => "{79D59629-E9C5-44F1-0F34-0FBC5C88F307}",
@@ -150,19 +140,40 @@ class SymconJSLive extends WebHookModule {
             if (count($contend) == 0){
                 $this->SendDebug("WebHook", "NO INSTANCE FOUND!", 0);
                 $this->SendDebug("WebHook", print_r($contend, true), 0);
+                header("Content-Type: text/html");
                 return "NO INSTANCE FOUND!"; //wenn instance nicht gefunden
+            }
+
+            if(strtolower($Type) == "getsvg"){
+                header("Content-type: image/svg+xml");
+                //header("Content-Type: text/html");
+            }elseif (strtolower($Type) == "exportconfiguration") {
+                header('Content-disposition: attachment; filename=' . $queryData["instance"] . '-' . IPS_GetInstance($queryData["instance"])["ModuleInfo"]["ModuleName"] . '.json');
+                header('Content-type: application/json');
+            }elseif (strtolower($Type) == "loadfile"){
+                //Here Do Nothing
+            }else{
+                header("Content-Type: text/html");
             }
 
             if(strtolower($Type) == "getcontend") {
                 //check if local
                 $isLocal = $this->CheckIfLocal($_SERVER["HTTP_HOST"]);
 
-                $arr_data = json_decode($contend[0],true);
+                $arr_data = json_decode($contend[0], true);
 
                 $viewport = false;
-                if($this->ReadPropertyBoolean("viewport_enable") &&  $arr_data["viewport"]) $viewport = true;
+                if ($this->ReadPropertyBoolean("viewport_enable") && $arr_data["viewport"]) $viewport = true;
 
-                $contend = $this->ReplacePlaceholder( $arr_data["output"], $isLocal, $queryData["instance"], $_SERVER, $viewport);
+                $contend = $this->ReplacePlaceholder($arr_data["output"], $isLocal, $queryData["instance"], $_SERVER, $viewport);
+            }elseif(strtolower($Type) == "loadfile"){
+                $arr_data = json_decode($contend[0], true);
+                if(strtolower($arr_data["Type"]) == "css"){
+                    header('Content-type: text/css');
+                }else{
+                    header("Content-type: text/javascript");
+                }
+                $contend = $arr_data["Contend"];
             }else{
                 $contend = $contend[0];
             }

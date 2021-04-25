@@ -100,21 +100,46 @@ class JSLiveModule extends IPSModule
         return $pData;
     }
 
-    public function ExportConfiguration(bool $withScript = false){
+    public function ExportConfiguration(array $queryData = array()){
         $output = array();
+        $withScript = false;
 
+        if(array_key_exists("scripts", $queryData) && $queryData["scripts"] >= 1) $withScript = true;
+
+        //$output["queryData"] = json_encode($queryData);
         $output["ModulID"] = IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"];
         $output["ModuleName"] = IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleName"];
 
         $output["Config"] = json_decode(IPS_GetConfiguration($this->InstanceID), true);
 
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
-        if(IPS_ScriptExists($scriptID)){
+        if(IPS_ScriptExists($scriptID) && $withScript){
             $output["Script"] = IPS_GetScriptContent($scriptID);
             $output["ScriptName"] = IPS_GetObject($scriptID)["ObjectName"];
         }
 
-        return json_encode($output);
+        if(array_key_exists("Libraries", $output["Config"]) && $withScript){
+            //export libery scripts
+            $libs = array();
+            $lib_data = json_decode($output["Config"]["Libraries"],true);
+
+            foreach ($lib_data as $item){
+                if(IPS_ScriptExists($item["Script"])){
+                    $s_lib = array();
+                    $s_lib["Ident"] = $item["Ident"];
+                    $s_lib["Script"] = IPS_GetScriptContent($item["Script"]);
+                    $s_lib["ScriptName"] = IPS_GetObject($item["Script"])["ObjectName"];
+
+                    $libs[] = $s_lib;
+                }
+            }
+
+            if(count($libs) > 0){
+                $output["Libraries"] = $libs;
+            }
+        }
+
+        return json_encode($output, JSON_PRETTY_PRINT);
     }
     public function LoadConfigurationFile(string $filename, bool $overrideScript = false){
         if(empty($filename)) return "File is Empty!";
@@ -134,7 +159,7 @@ class JSLiveModule extends IPSModule
                 $output[$key] = $item;
                 $this->SendDebug("LoadConfigurationFile", "PARAMETER UPDATE ".$key." => " . $item , 0);
             }else{
-                $this->SendDebug("LoadConfigurationFile", "PARAMETER => " . $key ."SKIP", 0);
+                $this->SendDebug("LoadConfigurationFile", "PARAMETER => " . $key ." SKIP", 0);
             }
         }
 
@@ -150,16 +175,47 @@ class JSLiveModule extends IPSModule
             IPS_SetScriptContent($output["TemplateScriptID"], $confdata["Script"]);
         }
 
+
+        if($overrideScript && array_key_exists("Libraries", $confdata) && is_array($confdata["Libraries"])){
+            $hasChanged = false;
+            $Libraries = json_decode($output["Libraries"], true);
+            foreach ($confdata["Libraries"] as $lib){
+                //find index
+                $key = array_search($lib["Ident"], array_column($Libraries, 'Ident'));
+
+                if($key === false){
+                    $this->SendDebug("LoadConfigurationFile", "SCRIPT => " . $lib["Ident"] ." SKIP", 0);
+                    continue;
+                }else{
+                    if($output["TemplateScriptID"] == 0 || !$overrideScript || !IPS_ScriptExists($output["TemplateScriptID"])){
+                        //Neues skript anlegen
+                        $Libraries[$key]["Script"] = IPS_CreateScript(0);
+                        IPS_SetParent($Libraries[$key]["Script"], $this->InstanceID);
+                        IPS_SetName($Libraries[$key]["Script"], $confdata["ScriptName"]);
+                        $hasChanged = true;
+                    }
+
+                    IPS_SetScriptContent($Libraries[$key]["Script"], $lib["Script"]);
+                }
+            }
+
+            if($hasChanged){
+                $confdata["Libraries"] = json_encode($Libraries);
+            }
+        }
+
         IPS_SetConfiguration($this->InstanceID, json_encode($output));
         IPS_ApplyChanges($this->InstanceID);
 
     }
-    public function GetConfigurationLink(){
+    public function GetConfigurationLink($withScript){
         $sendData = array("InstanceID" => $this->InstanceID, "Type" => "GetConfigurationLink");
         $pData = $this->SendDataToParent(json_encode([
             'DataID' => "{751AABD7-E31D-024C-5CC0-82AC15B84095}",
             'Buffer' => utf8_encode(json_encode($sendData)),
         ]));
+
+        if($withScript) $pData .= "&scripts=1";
 
         return $pData;
     }
