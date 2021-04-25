@@ -148,6 +148,15 @@
                     }
                 },
                 {
+                    "caption": "Read Only",
+                    "name": "ReadOnly",
+                    "width": "100px",
+                    "add": true,
+                    "edit": {
+                        "type": "CheckBox"
+                    }
+                },
+                {
                     "caption": "HighlightColor1",
                     "name": "HighlightColor1",
                     "width": "130px",
