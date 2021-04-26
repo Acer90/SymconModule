@@ -42,6 +42,11 @@
 
     function updateChartconfig() {
         try {
+            //set Window to canvas
+            var ctx = document.getElementById('myChart');
+            ctx.width = window.innerWidth - 20;
+            ctx.height = window.innerHeight - 20;
+
             //modify dataset
             config_dataset.forEach(function (part, index) {
                 if (config_dataset[index]["type"] == 'line') {
@@ -55,6 +60,7 @@
                     datasets: config_dataset
                 },
                 options: {
+                    responsive: false,
                     animation: {
                         duration: 500,                   // general animation time
                         easing: 'linear',
