@@ -191,7 +191,7 @@ class JSLiveModule extends IPSModule
                         //Neues skript anlegen
                         $Libraries[$key]["Script"] = IPS_CreateScript(0);
                         IPS_SetParent($Libraries[$key]["Script"], $this->InstanceID);
-                        IPS_SetName($Libraries[$key]["Script"], $Libraries[$key]["ScriptName"]);
+                        IPS_SetName($Libraries[$key]["Script"], $lib["ScriptName"]);
                         $hasChanged = true;
                     }
 
