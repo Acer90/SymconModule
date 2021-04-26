@@ -28,7 +28,7 @@
     let running = false;
     let last_update = Date.now();
     let itemList = []; // <== Indexing for fast search in Subitems!
-    let update_itemList = []; // <==
+    let update_itemList = []; // <== Update List for Cache Values an wait for Next Update!
 
     /**
      * This function running after Startup
@@ -40,7 +40,7 @@
             document.getElementById('test').innerText = JSON.stringify(datasets);
             document.getElementById("test").style.fontFamily = confiuration.style_fontFamily;
 
-            updateValue(26787, Date.now());
+            //updateValue(datasets[0].O, Date.now()); //<= Besp Update
         }catch (e) {
             alert(e);
         }
