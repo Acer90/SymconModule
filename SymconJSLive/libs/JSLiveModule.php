@@ -187,7 +187,7 @@ class JSLiveModule extends IPSModule
                     $this->SendDebug("LoadConfigurationFile", "SCRIPT => " . $lib["Ident"] ." SKIP", 0);
                     continue;
                 }else{
-                    if($output["TemplateScriptID"] == 0 || !$overrideScript || !IPS_ScriptExists($output["TemplateScriptID"])){
+                    if($Libraries[$key]["Script"] == 0 || !$overrideScript || !IPS_ScriptExists($Libraries[$key]["Script"])){
                         //Neues skript anlegen
                         $Libraries[$key]["Script"] = IPS_CreateScript(0);
                         IPS_SetParent($Libraries[$key]["Script"], $this->InstanceID);
