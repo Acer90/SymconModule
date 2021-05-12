@@ -10,6 +10,8 @@ class SymconJSLiveChart extends JSLiveModule{
 
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
+        $this->RegisterPropertyBoolean("EnableCache", true);
+        $this->RegisterPropertyBoolean("CreateOutput", true);
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyBoolean("viewport_enable", true);
 
@@ -63,7 +65,7 @@ class SymconJSLiveChart extends JSLiveModule{
 
         //Data
         $this->RegisterPropertyInteger("data_highResSteps", 1);
-        $this->RegisterPropertyBoolean("data_loadAfterStartup", true);
+        $this->RegisterPropertyBoolean("data_loadAsync", true);
 
         //Datalabels
         $this->RegisterPropertyBoolean("datalabels_enabled", true);
@@ -77,8 +79,6 @@ class SymconJSLiveChart extends JSLiveModule{
 
         //dataset
         $this->RegisterPropertyString("Datasets", "[]");
-
-
     }
     public function ApplyChanges() {
         //Never delete this line!
@@ -101,9 +101,9 @@ class SymconJSLiveChart extends JSLiveModule{
             IPS_SetVariableProfileAssociation("JSLive_Now", false, " ", "", -1);
         }
 
-        $this->RegisterVariableInteger("Period",  $this->Translate("Period"), "JSLive_Periode", 0);
-        $this->RegisterVariableBoolean("Now",  $this->Translate("Now"), "JSLive_Now", 1);
-        $this->RegisterVariableBoolean("Relativ",  $this->Translate("Relativ"), "~Switch", 1);
+        $this->RegisterVariableInteger("Period",  $this->Translate("Period"), "JSLive_Periode", 5);
+        $this->RegisterVariableBoolean("Now",  $this->Translate("Now"), "JSLive_Now", 96);
+        $this->RegisterVariableBoolean("Relativ",  $this->Translate("Relativ"), "~Switch", 97);
 
         $this->RegisterVariableInteger("Offset", $this->Translate("Offset"), "", 98);
         $this->RegisterVariableInteger("StartDate", $this->Translate("Start Date"), "~UnixTimestamp", 99);
@@ -125,6 +125,8 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->SetBuffer("IdentIDList", json_encode($identIdlist));
 
         $this->SetReceiveDataFilter('.*instance\\\":[ \\\"]*'.$this->InstanceID.'[\\\”]*.*');
+
+        $this->SetStatus(102);
     }
     public function RequestAction($Ident, $Value) {
 
@@ -176,7 +178,6 @@ class SymconJSLiveChart extends JSLiveModule{
         $jsonData = json_decode($JSONString, true);
         $buffer = json_decode($jsonData['Buffer'], true);
 
-
         //if($buffer["instance"] != $this->InstanceID) return;
         //$this->SendDebug("ReceiveData", $jsonData['Buffer']. " =>" . $this->InstanceID, 0);
 
@@ -184,9 +185,9 @@ class SymconJSLiveChart extends JSLiveModule{
             case "exportConfiguration":
                 return $this->ExportConfiguration();
             case "getContend":
-                return json_encode(array("output" => $this->GetWebpage(), "viewport" => $this->ReadPropertyBoolean("viewport_enable")));
+                return $this->GetOutput();
             case "getUpdate":
-                return $this->GetUpdate();
+                return $this->GetUpdate($buffer['queryData']);
             case "getData":
                 return $this->GetData($buffer['queryData']);
             default:
@@ -194,7 +195,7 @@ class SymconJSLiveChart extends JSLiveModule{
                 break;
         }
     }
-    private function GetWebpage(){
+    protected function GetWebpage(){
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
         if(empty($scriptID)){
             if($this->ReadPropertyBoolean("Debug"))
@@ -217,16 +218,30 @@ class SymconJSLiveChart extends JSLiveModule{
 
         return $scriptData;
     }
-    public function GetUpdate(){
+    public function GetUpdate(array $querydata){
         $updateData = array();
 
-        $data = $this->GenerateDataSet();
-        $updateData["DATASETS"] = $data["datasets"];
-        $updateData["AXES"] = $data["charts"];
-        $updateData["CONFIG"] = $this->GetConfigurationData();
+        if(array_key_exists("loadxaxes", $querydata)) {
+            $updateData["XAXES"] = $this->GenerateXAxesData();
+        }
+        elseif(array_key_exists("loadconfig", $querydata)) {
+            $updateData["Config"] = $this->GetConfigurationData();
+        }
+        elseif(array_key_exists("var", $querydata)) {
+            //einzelnen datensatz laden!
+            $variable = $querydata["var"];
 
-        $updateData["XAXES"] = $this->GenerateXAxesData();
+            $data = $this->GenerateDataSet($variable);
+            $updateData["DATASETS"] = $data["datasets"];
+            $updateData["AXES"] = $data["charts"];
+        }else{
+            $data = $this->GenerateDataSet();
+            $updateData["DATASETS"] = $data["datasets"];
+            $updateData["AXES"] = $data["charts"];
+            $updateData["Config"] = $this->GetConfigurationData();
 
+            $updateData["XAXES"] = $this->GenerateXAxesData();
+        }
 
         return json_encode($updateData);
     }
@@ -234,7 +249,6 @@ class SymconJSLiveChart extends JSLiveModule{
         $output = array();
         $load_vars = array();
         $datasets = json_decode($this->ReadPropertyString("Datasets"), true);
-
 
 
         if(!array_key_exists("var", $querydata)) {
@@ -328,17 +342,13 @@ class SymconJSLiveChart extends JSLiveModule{
         //Title
         $htmlData = str_replace("{TITLE}", $this->json_encode_advanced($this->GenerateTitleData()), $htmlData);
 
-        //datasets and axis
-        if($this->ReadPropertyBoolean("data_loadAfterStartup")){
-            $htmlData = str_replace("{DATASETS}", $this->json_encode_advanced(array()), $htmlData);
-            $htmlData = str_replace("{AXES}", $this->json_encode_advanced(array()), $htmlData);
-        }else{
-            $data = $this->GenerateDataSet();
-            $htmlData = str_replace("{DATASETS}", $this->json_encode_advanced($data["datasets"]), $htmlData);
-            $htmlData = str_replace("{AXES}", $this->json_encode_advanced($data["charts"]), $htmlData);
 
-            if(count($data["charts"]) == 0) return "NO CHARTS DEFINE!";
-        }
+        //datasets and axis
+        $data = $this->GenerateDataSet(0, false);
+        $htmlData = str_replace("{DATASETS}", $this->json_encode_advanced($data["datasets"]), $htmlData);
+        $htmlData = str_replace("{AXES}", $this->json_encode_advanced($data["charts"]), $htmlData);
+
+        if(count($data["charts"]) == 0) return "NO CHARTS DEFINE!";
 
         //Legend
         $htmlData = str_replace("{LEGEND}", $this->json_encode_advanced($this->GenerateLegendData()), $htmlData);
@@ -422,7 +432,7 @@ class SymconJSLiveChart extends JSLiveModule{
         return $output;
 
     }
-    private function GenerateDataSet(){
+    private function GenerateDataSet(int $var = 0, bool $getData = true){
         $archiveControlID = IPS_GetInstanceListByModuleID('{43192F0B-135B-4CE7-A0A7-1475603F3060}')[0];
         $output["datasets"] = array();
         $output["charts"] = array();
@@ -430,6 +440,16 @@ class SymconJSLiveChart extends JSLiveModule{
         if(!is_array($datasets)){
             $this->SendDebug("GenerateDataSet", "No Variables set!", 0);
             return "{}";
+        }
+
+        if($var > 0){
+            foreach($datasets as $key => $id)
+            {
+                if($var != $id["Variable"]){
+                    //$this->SendDebug("GenerateDataSet", "ITEM(".$key.") " . $id["Variable"], 0);
+                    unset($datasets[$key]);
+                }
+            }
         }
 
         $starData = $this->GetCorrectStartDate();
@@ -450,7 +470,7 @@ class SymconJSLiveChart extends JSLiveModule{
 
             $emptyGrpID--;
             $singelOutput = array();
-            $singelOutput["variable"] = $item["Variable"];
+            $singelOutput["Variable"] = $item["Variable"];
 
             if(empty($item["Title"])){
                 //Load Variablen Name wenn label leer ist
@@ -466,6 +486,9 @@ class SymconJSLiveChart extends JSLiveModule{
             if(is_numeric($item["BackgroundColor"]) && $item["BackgroundColor"] >= 0) {
                 $rgbdata = $this->HexToRGB($item["BackgroundColor"]);
                 $singelOutput["backgroundColor"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["BackgroundColor_Alpha"], 2, '.', '') . ")";
+                $singelOutput["fill"] = true;
+            }else{
+                $singelOutput["fill"] = false;
             }
 
             if(is_numeric($item["BorderColor"]) && $item["BorderColor"] >= 0) {
@@ -486,8 +509,13 @@ class SymconJSLiveChart extends JSLiveModule{
 
 
             //datenabrufen
-            $singelOutput["data"] = $this->GetArchivData($item["Variable"], $item["HighRes"], $item["Offset"], $date_start, $date_end, $Aggregationsstufe, $starData["datasets"]);
-            //$singelOutput["data"][] = array("x" => 1615732860000, "y" => 658,78);
+            if($getData){
+                $singelOutput["data"] = $this->GetArchivData($item["Variable"], $item["HighRes"], $item["Offset"], $date_start, $date_end, $Aggregationsstufe, $starData["datasets"]);
+            }else{
+                $singelOutput["data"] = array();
+            }
+
+
 
             if(!empty($item["Dash"])){
                 $dashData = @json_decode($item["Dash"], true);
@@ -519,6 +547,7 @@ class SymconJSLiveChart extends JSLiveModule{
                 $singelOutput["steppedLine"] = "before";
             }
 
+
             //falls noch nicht vorhanden anlegen
             $key = array_search($item["Profile"], array_column($output["charts"], 'id'));
             if($key === FALSE){
@@ -527,9 +556,10 @@ class SymconJSLiveChart extends JSLiveModule{
                 $axisoutput["display"] = $this->ReadPropertyBoolean("axes_display");
                 $axisoutput["id"] = $item["Profile"];
                 $axisoutput["position"] = $item["Side"];
+                $axisoutput["axis"] = "y";
 
-                $axisoutput["MinValue"] = 0;
-                $axisoutput["MaxValue"] = 0;
+                $axisoutput["min"] = 0;
+                $axisoutput["max"] = 0;
 
                 $axisoutput["Prefix"] = "";
                 $axisoutput["Suffix"] = "";
@@ -539,40 +569,36 @@ class SymconJSLiveChart extends JSLiveModule{
 
                 if($this->ReadPropertyInteger("axes_color") >= 0){
                     $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("axes_color"));
-                    $axisoutput["gridLines"]["color"] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($this->ReadPropertyFloat("axes_colorAlpha"), 2, '.', '').")";
-                    $axisoutput["gridLines"]["LineWidth"] = $this->ReadPropertyInteger("axes_lineWidth");
-                }
+                    $axisoutput["grid"]["borderColor"] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($this->ReadPropertyFloat("axes_colorAlpha"), 2, '.', '').")";
+                    $axisoutput["grid"]["borderWidth"] = $this->ReadPropertyInteger("axes_lineWidth");
 
-                if($this->ReadPropertyInteger("axes_color") >= 0){
-                    $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("axes_color"));
-                    $axisoutput["gridLines"]["color"] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($this->ReadPropertyFloat("axes_colorAlpha"), 2, '.', '').")";
-                    $axisoutput["gridLines"]["LineWidth"] = $this->ReadPropertyInteger("axes_lineWidth");
+                    $axisoutput["grid"]["color"] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($this->ReadPropertyFloat("axes_colorAlpha"), 2, '.', '').")";
+                    $axisoutput["grid"]["lineWidth"] = $this->ReadPropertyInteger("axes_lineWidth");
+
+                    $axisoutput["ticks"]["color"] =  "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($this->ReadPropertyFloat("axes_colorAlpha"), 2, '.', '').")";
                 }
 
                 if($this->ReadPropertyInteger("axes_fontColor") >= 0) {
                     $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("axes_fontColor"));
-                    $axisoutput["ticks"]["fontColor"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
+                    $axisoutput["ticks"]["color"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
                 }
 
-                $axisoutput["gridLines"]["drawBorder"] = $this->ReadPropertyBoolean("axes_drawBorder");
-                $axisoutput["gridLines"]["drawOnChartArea"] = $this->ReadPropertyBoolean("axes_drawOnChartArea");
-                $axisoutput["gridLines"]["drawTicks"] = $this->ReadPropertyBoolean("axes_drawTicks");
+                $axisoutput["grid"]["drawBorder"] = $this->ReadPropertyBoolean("axes_drawBorder");
+                $axisoutput["grid"]["drawOnChartArea"] = $this->ReadPropertyBoolean("axes_drawOnChartArea");
+                $axisoutput["grid"]["drawTicks"] = $this->ReadPropertyBoolean("axes_drawTicks");
 
-                $axisoutput["scaleLabel"]["fontSize"] = $this->ReadPropertyInteger("axes_labelfontSize");
-                $axisoutput["ticks"]["fontSize"] = $this->ReadPropertyInteger("axes_tickfontSize");
-
-                $axisoutput["ticks"]["fontFamily"] = $this->ReadPropertyString("axes_fontFamily");
-                $axisoutput["scaleLabel"]["fontFamily"] = $this->ReadPropertyString("axes_fontFamily");
+                $axisoutput["ticks"]["font"]["size"] = $this->ReadPropertyInteger("axes_tickfontSize");
+                $axisoutput["ticks"]["font"]["family"] = $this->ReadPropertyString("axes_fontFamily");
 
                 if(IPS_VariableProfileExists($item["Profile"])){
                     $profilData = IPS_GetVariableProfile($item["Profile"]);
                     if(($profilData["MaxValue"] != 0 || $profilData["MinValue"]  != 0) && !$item["DynScale"]){
 
-                        $axisoutput["ticks"]["suggestedMax"] = $profilData["MaxValue"];
-                        $axisoutput["ticks"]["suggestedMin"] = $profilData["MinValue"];
+                        //$axisoutput["suggestedMax"] = $profilData["MaxValue"];
+                        //$axisoutput["suggestedMin"] = $profilData["MinValue"];
 
-                        $axisoutput["MinValue"] = $profilData["MaxValue"];
-                        $axisoutput["MaxValue"] = $profilData["MinValue"];
+                        $axisoutput["min"] = $profilData["MaxValue"];
+                        $axisoutput["max"] = $profilData["MinValue"];
                     }
 
                     $axisoutput["Prefix"] = $profilData["Prefix"];
@@ -582,9 +608,13 @@ class SymconJSLiveChart extends JSLiveModule{
                         $axisoutput["ticks"]["stepSize"] = $profilData["StepSize"];
                     }
 
+                    //$axisoutput["ticks"]["count"] = 10;
+                    $axisoutput["ticks"]["stepSize"] = 500;
+
+
                     $digits = $profilData["Digits"];
 
-                    $axisoutput["scaleLabel"]["display"] = $this->ReadPropertyBoolean("axes_showLabel");
+                    $axisoutput["title"]["display"] = $this->ReadPropertyBoolean("axes_showLabel");
                     $l_text = "";
                     switch ($this->ReadPropertyInteger("axes_labelText")){
                         case 0:
@@ -597,15 +627,18 @@ class SymconJSLiveChart extends JSLiveModule{
                             $l_text = $profilData["Suffix"];
                             break;
                     }
-                    $axisoutput["scaleLabel"]["labelString"] = $l_text;
+                    $axisoutput["title"]["text"] = $l_text;
 
                     if($this->ReadPropertyInteger("axes_fontColor") >= 0) {
                         $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("axes_fontColor"));
-                        $axisoutput["scaleLabel"]["fontColor"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
+                        $axisoutput["title"]["color"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
                     }
 
+                    $axisoutput["title"]["font"]["size"] = $this->ReadPropertyInteger("axes_labelfontSize");
+                    $axisoutput["title"]["font"]["family"] = $this->ReadPropertyString("axes_fontFamily");
+
                 }
-                $output["charts"][] = $axisoutput;
+                $output["charts"][$item["Profile"]] = $axisoutput;
             }else{
 
             }
@@ -623,12 +656,13 @@ class SymconJSLiveChart extends JSLiveModule{
 
         //vor Stacked Charts!
         //$output["stacked"] = true;
+        $output["axis"] = "x";
 
         //$output["distribution"] = "series";
         $output["time"]["tooltipFormat"] = "DD.MM.YYYY HH:mm:ss";
 
-        $output["ticks"]["fontSize"] = $this->ReadPropertyInteger("axes_tickfontSize");
-        $output["ticks"]["fontFamily"] = $this->ReadPropertyString("axes_fontFamily");
+        $output["ticks"]["font"]["size"] = $this->ReadPropertyInteger("axes_tickfontSize");
+        $output["ticks"]["font"]["family"] = $this->ReadPropertyString("axes_fontFamily");
 
         $period = $this->GetValue("Period");
         switch ($period) {
@@ -636,43 +670,43 @@ class SymconJSLiveChart extends JSLiveModule{
                 //Dekade
                 $output["type"] = "time";
                 $output["time"]["unit"] = "year";
-                $output["time"]["unitStepSize"] = 1;
+                $output["time"]["stepSize"] = 1;
                 break;
             case 1:
                 //Jahr
                 $output["type"] = "time";
                 $output["time"]["unit"] = "month";
-                $output["time"]["unitStepSize"] = 2;
+                $output["time"]["stepSize"] = 2;
                 break;
             case 2:
                 //Quartal
                 $output["type"] = "time";
                 $output["time"]["unit"] = "month";
-                $output["time"]["unitStepSize"] = 1;
+                $output["time"]["stepSize"] = 1;
                 break;
             case 3:
                 //Monat
                 $output["type"] = "time";
                 $output["time"]["unit"] = "day";
-                $output["time"]["unitStepSize"] = 3;
+                $output["time"]["stepSize"] = 3;
                 break;
             case 4:
                 //Woche
                 $output["type"] = "time";
                 $output["time"]["unit"] = "day";
-                $output["time"]["unitStepSize"] = 1;
+                $output["time"]["stepSize"] = 1;
                 break;
             case 5:
                 //Tag
                 $output["type"] = "time";
                 $output["time"]["unit"] = "hour";
-                $output["time"]["unitStepSize"] = 3;
+                $output["time"]["stepSize"] = 3;
                 break;
             case 6:
                 //Stunde
-                $output["type"] = "time";
+                $output["type"] = "realtime";
                 $output["time"]["unit"] = "minute";
-                $output["time"]["unitStepSize"] = 5;
+                $output["time"]["stepSize"] = 5;
 
                 $output["realtime"]["duration"] = 3600000;
                 $output["realtime"]["delay"] = 0;
@@ -680,9 +714,9 @@ class SymconJSLiveChart extends JSLiveModule{
                 break;
             case 7:
                 //Minute
-                $output["type"] = "time";
+                $output["type"] = "realtime";
                 $output["time"]["unit"] = "second";
-                $output["time"]["unitStepSize"] = 10;
+                $output["time"]["stepSize"] = 10;
 
                 $output["realtime"]["duration"] = 60000;
                 $output["realtime"]["delay"] = 0;
@@ -700,33 +734,36 @@ class SymconJSLiveChart extends JSLiveModule{
         $output["time"]["displayFormats"]["quarter"] = "[Q]Q - YYYY";
         $output["time"]["displayFormats"]["year"] = "YYYY";
 
-
-        $starData = $this->GetCorrectStartDate();
-        $output["time"]["min"] = ($starData["start"] * 1000);
-        $output["time"]["max"] = (($starData["end"] + 1) * 1000);
+        if($output["type"] != "realtime"){
+            $starData = $this->GetCorrectStartDate();
+            $output["min"] = ($starData["start"] * 1000);
+            $output["max"] = (($starData["end"] + 1) * 1000);
+        }
 
         //$output["realtime"]["pause"] = false;
         //$output["realtime"]["refresh"] = 180000;
 
-
         if($this->ReadPropertyInteger("axes_color") >= 0){
             $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("axes_color"));
-            $output["gridLines"]["color"] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($this->ReadPropertyFloat("axes_colorAlpha"), 2, '.', '').")";
-            $output["gridLines"]["LineWidth"] = $this->ReadPropertyInteger("axes_lineWidth");
+            $output["grid"]["borderColor"] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($this->ReadPropertyFloat("axes_colorAlpha"), 2, '.', '').")";
+            $output["grid"]["borderWidth"] = $this->ReadPropertyInteger("axes_lineWidth");
+
+            $output["grid"]["tickColor"] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($this->ReadPropertyFloat("axes_colorAlpha"), 2, '.', '').")";
+            $output["grid"]["tickWidth"] = $this->ReadPropertyInteger("axes_lineWidth");
         }
 
         $output["display"] = $this->ReadPropertyBoolean("axes_display");
 
-        $output["gridLines"]["drawBorder"] = $this->ReadPropertyBoolean("axes_drawBorder");
-        $output["gridLines"]["drawOnChartArea"] = $this->ReadPropertyBoolean("axes_drawOnChartArea");
-        $output["gridLines"]["drawTicks"] = $this->ReadPropertyBoolean("axes_drawTicks");
+        $output["grid"]["drawBorder"] = $this->ReadPropertyBoolean("axes_drawBorder");
+        $output["grid"]["drawOnChartArea"] = $this->ReadPropertyBoolean("axes_drawOnChartArea");
+        $output["grid"]["drawTicks"] = $this->ReadPropertyBoolean("axes_drawTicks");
 
         if($this->ReadPropertyInteger("axes_fontColor") >= 0) {
             $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("axes_fontColor"));
-            $output["ticks"]["fontColor"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
+            $output["ticks"]["color"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
         }
 
-        return array($output);
+        return $output;
     }
 
     private function GetArchivData(int $varId, int $highRes, int $offset, int $date_start, int $date_end, int $Aggregationsstufe, int $lastDatasets = 0, bool $jsconfig = true){
@@ -842,6 +879,13 @@ class SymconJSLiveChart extends JSLiveModule{
         $output["ID_Now"] = IPS_GetObjectIDByIdent("Now", $this->InstanceID);
         $output["ID_StartDate"] = IPS_GetObjectIDByIdent("StartDate", $this->InstanceID);
         $output["ID_Relativ"] = IPS_GetObjectIDByIdent("Relativ", $this->InstanceID);
+
+
+        $output["Var_List"] = array();
+
+        foreach (json_decode($output["Datasets"], true) as $item){
+            if(IPS_VariableExists($item["Variable"])) $output["Var_List"][] = $item["Variable"];
+        }
 
         //remove Dataset
         unset($output["Datasets"]);
@@ -1277,15 +1321,6 @@ class SymconJSLiveChart extends JSLiveModule{
                 echo 'Exception abgefangen: ',  $e->getMessage(), "\n";
             }
         }else return "A Instance/Chart must be selected!";
-    }
-    public function GetLink(bool $local = true){
-        $sendData = array("InstanceID" => $this->InstanceID, "Type" => "GetLink", "local" => $local);
-        $pData = $this->SendDataToParent(json_encode([
-            'DataID' => "{751AABD7-E31D-024C-5CC0-82AC15B84095}",
-            'Buffer' => utf8_encode(json_encode($sendData)),
-        ]));
-
-        return $pData;
     }
 }
 

@@ -11,6 +11,8 @@ class SymconJSLiveCustom extends JSLiveModule{
 
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
+        $this->RegisterPropertyBoolean("EnableCache", true);
+        $this->RegisterPropertyBoolean("CreateOutput", true);
         $this->RegisterPropertyInteger("DataUpdateRate", 50);
         $this->RegisterPropertyBoolean("viewport_enable", true);
 
@@ -60,7 +62,7 @@ class SymconJSLiveCustom extends JSLiveModule{
             case "exportConfiguration":
                 return $this->ExportConfiguration($buffer['queryData']);
             case "getContend":
-                return json_encode(array("output" => $this->GetWebpage(), "viewport" => $this->ReadPropertyBoolean("viewport_enable")));
+                return $this->GetOutput();
             case "getData":
                 return $this->GetData($buffer['queryData']);
             case "setData":
@@ -72,7 +74,7 @@ class SymconJSLiveCustom extends JSLiveModule{
                 break;
         }
     }
-    private function GetWebpage(){
+    protected function GetWebpage(){
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
         if(empty($scriptID)){
             if($this->ReadPropertyBoolean("Debug"))

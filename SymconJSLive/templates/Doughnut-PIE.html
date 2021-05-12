@@ -6,9 +6,10 @@
     <title>{TITLE_TEXT}</title>
     {FONTS} <!-- Need for Custom font Family !-->
 </head>
-<script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
-<script src="{ADDRESS}/hook/JSLive/js/chartjs/2.8.0/Chart.js"></script>
-<script src="{ADDRESS}/hook/JSLive/js/chartjs/2.8.0/plugins/chartjs-plugin-datalabels.min.js"></script>
+<script src="/hook/JSLive/js/jquery.min.js"></script>
+<script src="/hook/JSLive/js/util.js"></script>
+<script src="/hook/JSLive/js/chartjs/2.8.0/Chart.js"></script>
+<script src="/hook/JSLive/js/chartjs/2.8.0/plugins/chartjs-plugin-datalabels.min.js"></script>
 
 <body>
 <div id="data"></div>
@@ -16,20 +17,20 @@
 <canvas id="myChart"></canvas>
 
 <script>
-    let myChart;
+    var myChart;
 
-    let config_global = {GLOBAL};
+    var config_global = {GLOBAL};
 
-    let config_data = {DATA};
-    let config_legend = {LEGEND};
-    let config_tooltips = {TOOLTIPS};
-    let config_title = {TITLE};
+    var config_data = {DATA};
+    var config_legend = {LEGEND};
+    var config_tooltips = {TOOLTIPS};
+    var config_title = {TITLE};
 
-    let confiuration = {CONFIG};
+    var confiuration = {CONFIG};
 
     function updateChartconfig(){
         try {
-            let config = {
+            var config = {
                 type: confiuration.type,
                 data: config_data,
                 options: {
@@ -88,7 +89,7 @@
     }
 
     function connect() {
-        var ws = new WebSocket('{WSADDRESS}', [encodeURIComponent(btoa('webfront:{WEBFRONTPASSWORD}'))]);
+        var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
         ws.onopen = function() {
             // subscribe to some channels
             //ws.send(JSON.stringify({
@@ -98,7 +99,10 @@
 
         ws.onmessage = function(e) {
             data = JSON.parse(e.data);
-            if(data.Message == 10603) {
+            if(data.Message == 10506) {
+                //refresh webseite
+                location.reload();
+            } else if(data.Message == 10603) {
                 UpdateChart(data.SenderID, data.Data[3], data.Data[0]);
             }
         };
@@ -120,7 +124,7 @@
         isUpdated = false;
 
         myChart.data.datasets.forEach(function(part, index){
-            var_arr = part.variables;
+            var_arr = part.Variables;
 
             if(var_arr.includes(id_val)){
                 var_index = var_arr.indexOf(id_val)
@@ -143,7 +147,7 @@
             try {
                 //console.log("PullNewData => ", Date.now());
                 dt_val = Math.floor(Date.now() / 1000);
-                $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
                     data.forEach(function (part, index) {
                         UpdateChart(part.Variable, dt_val, part.Value);
                     });
@@ -158,11 +162,11 @@
     }
 
     function UpdateTooltipLabel(tooltipItem, data){
-        let dataset = data.datasets[tooltipItem.datasetIndex];
+        var dataset = data.datasets[tooltipItem.datasetIndex];
 
-        let Suffix = "";
-        let Prefix = "";
-        let blocks = [];
+        var Suffix = "";
+        var Prefix = "";
+        var blocks = [];
 
         Suffix = data.suffix[tooltipItem.datasetIndex];
         Prefix = data.prefix[tooltipItem.datasetIndex];
@@ -180,41 +184,18 @@
         return blocks.join('');
     }
 
-    function filterKeys(obj, func) {
-        return Array.prototype.filter.call(Object.keys(obj), func, obj);
-    }
-    function someKeys(obj, func) {
-        return Array.prototype.some.call(Object.keys(obj), func, obj);
-    }
-    function atLeastOnePropertyMatches(obj, requiredProp) {
-        return someKeys(obj, function (prop) {
-            if (requiredProp.hasOwnProperty(prop)) {
-                return this[prop] === requiredProp[prop];
-            }
-        });
-    }
-    function getMatchingKeys(obj, requiredProp) {
-        return filterKeys(obj, function (prop) {
-            return atLeastOnePropertyMatches(this[prop], required);
-        });
-    }
-    Array.prototype.insert = function ( index, item ) {
-        this.splice( index, 0, item );
-    };
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
+
 
     window.onload = function() {
         try {
             var ctx = document.getElementById('myChart');
             myChart = new Chart(ctx, updateChartconfig());
 
-            if (config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0) {
+            if (config_global.LocalAddress == "" && config_global.LocalDataMode == 0) {
                 //pullup Mode local
                 refreshRate = config_global.LocalRefreshTime;
                 PullNewData(refreshRate);
-            } else if (config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0) {
+            } else if (config_global.RemoteAddress == "" && config_global.RemoteDataMode == 0) {
                 //pullup Mode remote
                 refreshRate = config_global.RemoteRefreshTime;
                 PullNewData(refreshRate);

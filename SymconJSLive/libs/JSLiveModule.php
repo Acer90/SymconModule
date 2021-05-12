@@ -76,6 +76,7 @@ class JSLiveModule extends IPSModule
         return array("R" => $r, "G" => $g, "B" => $b);
     }
 
+    //confuguration and link
     public function LoadOtherConfiguration(int $id){
         if(!IPS_ObjectExists($id)) return "Instance/Chart not found!";
 
@@ -90,8 +91,8 @@ class JSLiveModule extends IPSModule
             IPS_ApplyChanges($this->InstanceID);
         }else return "A Instance must be selected!";
     }
-    public function GetLink(bool $local = true){
-        $sendData = array("InstanceID" => $this->InstanceID, "Type" => "GetLink", "local" => $local);
+    public function GetLink(){
+        $sendData = array("InstanceID" => $this->InstanceID, "Type" => "GetLink");
         $pData = $this->SendDataToParent(json_encode([
             'DataID' => "{751AABD7-E31D-024C-5CC0-82AC15B84095}",
             'Buffer' => utf8_encode(json_encode($sendData)),
@@ -99,7 +100,15 @@ class JSLiveModule extends IPSModule
 
         return $pData;
     }
+    public function GetLocalLink(){
+        $sendData = array("InstanceID" => $this->InstanceID, "Type" => "GetLocalLink");
+        $pData = $this->SendDataToParent(json_encode([
+            'DataID' => "{751AABD7-E31D-024C-5CC0-82AC15B84095}",
+            'Buffer' => utf8_encode(json_encode($sendData)),
+        ]));
 
+        return $pData;
+    }
     public function ExportConfiguration(array $queryData = array()){
         $output = array();
         $withScript = false;
@@ -208,7 +217,7 @@ class JSLiveModule extends IPSModule
         IPS_ApplyChanges($this->InstanceID);
 
     }
-    public function GetConfigurationLink($withScript){
+    public function GetConfigurationLink(bool $withScript){
         $sendData = array("InstanceID" => $this->InstanceID, "Type" => "GetConfigurationLink");
         $pData = $this->SendDataToParent(json_encode([
             'DataID' => "{751AABD7-E31D-024C-5CC0-82AC15B84095}",
@@ -220,6 +229,214 @@ class JSLiveModule extends IPSModule
         return $pData;
     }
 
+    //Messagesink
+    protected function GetVariableList(){
+        $varList = array();
+        $confData = json_decode(IPS_GetConfiguration($this->InstanceID), true);
+
+        if(array_key_exists("Datasets", $confData)){
+            $datasets = json_decode($confData["Datasets"], true);
+
+            foreach ($datasets as $item){
+                if(array_key_exists("Variable", $item)){
+                    if(IPS_VariableExists($item["Variable"])){
+                        $varList[] = $item["Variable"];
+                    }
+                }
+
+                if(array_key_exists("Object", $item)){
+
+                }
+            }
+        }
+
+        //check if identlist exist then add
+        if(in_array("IdentIDList", $this->GetBufferList())){
+            $identList = json_decode($this->GetBuffer("IdentIDList"), true);
+            foreach ($identList as $identID){
+                $varList[] = $identID;
+            }
+        }
+
+        if(array_key_exists("Variable", $confData)){
+            if(IPS_VariableExists($confData["Variable"])){
+                $varList[] = $confData["Variable"];
+            }
+        }
+
+        //$this->SendDebug("GetVariableList" , json_encode($varList), 0);
+        return $varList;
+    }
+    protected function UpdateMessageSink(array $newVariables){
+        if(in_array("MessageSink", $this->GetBufferList())){
+            $oldVariables = json_decode($this->GetBuffer("MessageSink"), true);
+        }else{
+            $oldVariables = array();
+        }
+
+        //gateway connection registrieren!
+        $gw_id = IPS_GetInstance($this->InstanceID)["ConnectionID"];
+        $this->RegisterMessage($gw_id, 10503); //wenn verfügbar!
+
+
+        foreach ($newVariables as $var){
+            $oldVariables = array_diff($oldVariables, array($var));
+
+            if(in_array($var , $oldVariables)){
+                if($this->ReadPropertyBoolean("Debug"))
+                    $this->SendDebug("UpdateMessageSink", "Skip => " . $var, 0);
+                continue;
+            }
+
+            $this->RegisterMessage($var, 10602);
+            $this->RegisterMessage($var, 10603);
+
+            if($this->ReadPropertyBoolean("Debug"))
+                $this->SendDebug("UpdateMessageSink", "RegisterMessage => " . $var, 0);
+        }
+
+        //alte entfernen
+        foreach ($oldVariables as $var){
+            $this->UnregisterMessage ($var, 10602);
+            $this->UnregisterMessage ($var, 10603);
+
+            if($this->ReadPropertyBoolean("Debug"))
+                $this->SendDebug("UpdateMessageSink", "UnregisterMessage => " . $var, 0);
+        }
+
+        $this->SetBuffer("MessageSink", json_encode($newVariables));
+    }
+    public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
+    {
+        //Never delete this line!
+        parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
+
+        $gw_id = IPS_GetInstance($this->InstanceID)["ConnectionID"];
+        if ($SenderID == $gw_id && $Message == 10503) {
+            $this-> UpdateOutput();
+            $this->UpdateIframe();
+            return;
+        }
+
+        if($this->ReadPropertyBoolean("Debug"))
+            $this->SendDebug("MessageSink", $TimeStamp." | ".$SenderID." => ". $Message . "(". json_encode($Data).")",0);
+
+        switch ($Message) {
+            case 10602:
+                //delete Message!
+                //the unregister!
+                $this->UnregisterMessage ($SenderID, 10602);
+                $this->UnregisterMessage ($SenderID, 10603);
+
+                $this->SendDebug("UpdateMessageSink", "UnregisterMessage => " . $SenderID . "(REMOVE)", 0);
+
+                $RegistredVariables = json_decode($this->GetBuffer("MessageSink"), true);
+
+                unset($RegistredVariables[$SenderID]);
+                $this->SetBuffer("MessageSink", json_encode($RegistredVariables));
+                break;
+            case 10603:
+                //on Update send
+                $this->SendDataToSocketClient($SenderID, $Message, $Data);
+                break;
+        }
+    }
+
+    //websocket
+    protected function SendDataToSocketClient(int $SenderID, int $Message, array $Data)
+    {
+        $senddata = array();
+        $senddata["SenderID"] = $SenderID;
+        $senddata["Message"] = $Message;
+        $senddata["Data"] = $Data;
+
+        if($this->ReadPropertyBoolean("Debug"))
+            $this->SendDebug("MessageSink", "Send Data to WS-Client => " . json_encode($senddata), 0);
+
+        $hcID = IPS_GetInstanceListByModuleID('{015A6EB8-D6E5-4B93-B496-0D3F77AE9FE1}')[0];
+        WC_PushMessage($hcID, '/hook/JSLive/WS/' . $this->InstanceID, json_encode($senddata));
+    }
+
+    //Cache and Htmlbox
+    public function ApplyChanges()
+    {
+        //setLastModifed buffer
+        $this->SetBuffer("LastModifed", gmdate("D, d M Y H:i:s", time())." GMT");
+
+        //Never delete this line!
+        parent::ApplyChanges();
+
+        //HTMLBOX and Chache!
+        $this->UpdateOutput();
+        $this->UpdateIframe();
+
+        //Update MessageSink
+        $this->UpdateMessageSink($this->GetVariableList());
+    }
+    protected function UpdateOutput(){
+        if (IPS_GetInstance($this->InstanceID)["InstanceStatus"] != 102) return;
+
+        if($this->ReadPropertyBoolean("EnableCache")) {
+
+            $sendData = array();
+            $sendData["Html"] = $this->GetWebpage();
+            $sendData["InstanceID"] = $this->InstanceID;
+            $sendData["Type"] = "UpdateHtml";
+            $sendData["ViewPort"] = $this->ReadPropertyBoolean("viewport_enable");
+
+            $pData = $this->SendDataToParent(json_encode([
+                'DataID' => "{751AABD7-E31D-024C-5CC0-82AC15B84095}",
+                'Buffer' => utf8_encode(json_encode($sendData)),
+            ]));
+
+            $this->SetBuffer("Output", $pData);
+        }else{
+            $this->SetBuffer("Output", "");
+        }
+
+        //send refresh website to client
+        $this->SendDataToSocketClient($this->InstanceID, 10506, array());
+    }
+    protected function UpdateIframe(string $height = "auto", string $scrolling = "no"){
+        if (IPS_GetInstance($this->InstanceID)["InstanceStatus"] != 102) return;
+        $htmlStr = "";
+
+        if($this->ReadPropertyBoolean("CreateOutput")) {
+            $this->RegisterVariableString("Output", $this->Translate("Output"), "~HTMLBox", 0);
+
+
+            if($height == "auto"){
+                $htmlStr .= '<iframe src="' . $this->GetLocalLink() . '" width="100%" frameborder="0" style="overflow:hidden;height:100%;width:100%" height="100%" scrolling="'.$scrolling.'" ></iframe>'; //onload="resizeIframe(this)"
+
+            }else{
+                $htmlStr .= '<iframe src="' . $this->GetLink() . '" width="100%" frameborder="0" scrolling="'.$scrolling.'" height="'.$height.'"></iframe>';
+            }
+
+            //$htmlStr .= '<script>
+                //screen.lockOrientation("landscape");
+                //</script>';
+
+            $this->SetValue("Output", $htmlStr);
+        }else{
+            //remove old valeue
+            $oldID = IPS_GetObjectIDByIdent("Output", $this->InstanceID);
+
+            if($oldID !== false){
+                $this->UnregisterVariable("Output");
+            }
+        }
+    }
+    protected function GetOutput(){
+        $EnableCache = $this->ReadPropertyBoolean("EnableCache");
+        $viewport_enable = $this->ReadPropertyBoolean("viewport_enable");
+        if($this->ReadPropertyBoolean("EnableCache")){
+            //Load data from Cache
+            $this->SendDebug("GetOutput", "Get Data form Cache!", 0);
+            return json_encode(array("Contend" => $this->GetBuffer("Output"), "lastModify" => $this->GetBuffer("LastModifed"), "EnableCache" => $EnableCache, "EnableViewport" => $viewport_enable));
+        }else{
+            return json_encode(array("Contend" => $this->GetWebpage(), "lastModify" => $this->GetBuffer("LastModifed"), "EnableCache" => $EnableCache, "EnableViewport" => $viewport_enable));
+        }
+    }
 
     //Advance Debug!
     private function ClearLogFile(){

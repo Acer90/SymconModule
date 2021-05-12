@@ -9,8 +9,8 @@
     {CSS}
     <!-- End Load Custom CSS Files !-->
 </head>
-<script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
-<script src="{ADDRESS}/hook/JSLive/js/util.js"></script>
+<script src="/hook/JSLive/js/jquery.min.js"></script>
+<script src="/hook/JSLive/js/util.js"></script>
 <!-- Start Load Custom Javascript Files !-->
 {SCRIPTS}
 <!-- END Load Custom Javascript Files !-->
@@ -123,7 +123,7 @@
 
                     for (i = 0; i < update_itemList.length; i++) {
                         console.log(Date.now() + " >> UpdateWorker | Update " + JSON.stringify(update_itemList[i].ObjectID) + " to " + JSON.stringify(update_itemList[i].Value));
-                        var response = await fetch("{ADDRESS}/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&obj=" +update_itemList[i].ObjectID+ "&val="+update_itemList[i].Value);
+                        var response = await fetch("/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&obj=" +update_itemList[i].ObjectID+ "&val="+update_itemList[i].Value);
                         console.log(Date.now() + " >> UpdateWorker Response => " + response.statusText + " (" + response.status + ")");
                     }
 
@@ -146,7 +146,7 @@
      * No Editing necessary
      */
     function connect() {
-        var ws = new WebSocket('{WSADDRESS}', [encodeURIComponent(btoa('webfront:{WEBFRONTPASSWORD}'))]);
+        var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
         ws.onopen = function() {
             //on Websocket connected
         };
@@ -155,7 +155,10 @@
             //on new Message
             data = JSON.parse(e.data);
             //Only Message wenn Update Variable!
-            if(data.Message == 10603) {
+            if(data.Message == 10506) {
+                //refresh webseite
+                location.reload();
+            } else if(data.Message == 10603) {
                 //check Objects exist
                 required = {ObjectID: data.SenderID};
                 results = [];
@@ -187,7 +190,7 @@
         refreshRate = refreshRate * 1000;
         while (true){
             try {
-                $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
                     onUpdate(data.Variable, data.Value);
                 });
 
@@ -232,11 +235,11 @@
         try {
             createObjectList();
             onLoad();
-            if (config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0) {
+            if (config_global.LocalAddress == "" && config_global.LocalDataMode == 0) {
                 //pullup Mode local
                 refreshRate = config_global.LocalRefreshTime;
                 PullNewData(refreshRate);
-            } else if (config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0) {
+            } else if (config_global.RemoteAddress == "" && config_global.RemoteDataMode == 0) {
                 //pullup Mode remote
                 refreshRate = config_global.RemoteRefreshTime;
                 PullNewData(refreshRate);

@@ -6,14 +6,18 @@
     <title>{TITLE_TEXT}</title>
     {FONTS} <!-- Need for Custom font Family !-->
 </head>
-<script src="{ADDRESS}/hook/JSLive/js/jquery.min.js" ></script>
-<script src="{ADDRESS}/hook/JSLive/js/chartjs/2.8.0/Chart.js" charset="utf-8"></script>
-<script src="{ADDRESS}/hook/JSLive/js/moment/2.27.0/Moment.js" charset="utf-8"></script>
-<script src="{ADDRESS}/hook/JSLive/js/chartjs/2.8.0/plugins/chartjs-adapter-moment.js" charset="utf-8"></script>
-<script src="{ADDRESS}/hook/JSLive/js/chartjs/2.8.0/plugins/chartjs-plugin-streaming.min.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/jquery.min.js" ></script>
+<script src="/hook/JSLive/js/chartjs/3.2.1/chart.min.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/moment/2.27.0/Moment.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-adapter-moment.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-plugin-streaming.min.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-plugin-datalabels.min.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/util.js"></script>
 
 <body>
-<canvas id="myChart"></canvas>
+<div id="chart-container" style="position: relative;">
+    <canvas id="myChart"></canvas>
+</div>
 
 <script>
     let myChart;
@@ -42,10 +46,12 @@
 
     function updateChartconfig() {
         try {
+            Chart.register(ChartDataLabels);
+
             //set Window to canvas
-            var ctx = document.getElementById('myChart');
-            ctx.width = window.innerWidth - 20;
-            ctx.height = window.innerHeight - 20;
+            var ctx = document.getElementById('chart-container');
+            ctx.style.width = window.innerWidth - 20+"px";
+            ctx.style.height = window.innerHeight - 20+"px";
 
             //modify dataset
             config_dataset.forEach(function (part, index) {
@@ -54,13 +60,14 @@
                 }
             });
 
-            let config = {
+            var config = {
                 type: 'bar',
                 data: {
                     datasets: config_dataset
                 },
                 options: {
-                    responsive: false,
+                    responsive: true,
+                    maintainAspectRatio: false,
                     animation: {
                         duration: 500,                   // general animation time
                         easing: 'linear',
@@ -70,14 +77,31 @@
                     },
                     responsiveAnimationDuration: 500,    // animation duration after a resize
                     plugins: {
-                        streaming: checkIsStreaming()
+                        streaming: checkIsStreaming(),
+                        tooltip: config_tooltips,
+                        title: config_title,
+                        legend: config_legend,
+                        datalabels: {
+                            //align: 'start',
+                            //anchor: 'start',
+                            backgroundColor: function(context) {
+                                return context.dataset.borderColor;
+                            },
+                            borderRadius: 4,
+                            color: 'white',
+                            font: {
+                                weight: 'bold'
+                            },
+                            clip: true,
+                            padding: 6,
+                            formatter: function(value, context) {
+                                return value["y"]; //  + '%'
+                            }
+                        }
                     },
-                    title: config_title,
-                    legend: config_legend,
-                    tooltips: config_tooltips,
                     scales: {
-                        xAxes: config_xaxes,
-                        yAxes: config_axes
+                        x: config_xaxes,
+                        config_axes
                     },
                     layout: {
                         padding: {
@@ -94,7 +118,7 @@
             t_callpack = {
                 label: UpdateTooltipLabel
             };
-            config.options.tooltips.callbacks = t_callpack;
+            config.options.plugins.tooltip.callbacks = t_callpack;
 
             return config;
         } catch (e) {
@@ -103,7 +127,7 @@
     }
 
     function connect() {
-        var ws = new WebSocket('{WSADDRESS}', [encodeURIComponent(btoa('webfront:{WEBFRONTPASSWORD}'))]);
+        var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
         ws.onopen = function() {
             // subscribe to some channels
             //ws.send(JSON.stringify({
@@ -113,9 +137,12 @@
 
         ws.onmessage = function(e) {
             data = JSON.parse(e.data);
-            if(data.Message == 10603) {
+            if(data.Message == 10506) {
+                //refresh webseite
+                location.reload();
+            } else if(data.Message == 10603) {
                 UpdateChart(data.SenderID, data.Data[3], data.Data[0]);
-                ReloadChart(data.SenderID, data.Data[3]);
+                ReloadChart(data.SenderID, data.Data[3], data.Data[0]);
             }
         };
 
@@ -217,37 +244,101 @@
             });
         }
     }
-    function ReloadChart(id_val, dt_val){
+    async function ReloadChart(id_val, dt_val, val = null){
         //deoppelten Reload verhinden!
         if(last_reload == dt_val) return;
         if(!update_vars.includes(id_val)) return;
 
+        old_isStreaming = false;
+        if(checkIsStreaming() !== false) old_isStreaming = true;
         last_reload = dt_val;
 
-        $.getJSON( "{ADDRESS}/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}", function( data ) {
-            config_dataset = data.DATASETS;
-            config_axes = data.AXES;
-            config_xaxes =  data.XAXES;
+        if(confiuration.ID_Period === id_val && val !== null) confiuration.Period = val;
+        if(confiuration.ID_Relativ === id_val && val !== null) confiuration.Relativ = val;
 
-            confiuration =  data.CONFIG;
+        if(confiuration.data_loadAsync){
+            //config_axes = [];
+            config_dataset = [];
+            config_xaxes = {};
+            config_axes = {};
 
+            new_isStreaming = false;
+            if(checkIsStreaming() !== false) new_isStreaming = true;
 
-            //neuerstellen (aufgrund des livestreming plugins!
-            if(true){
-            //if(data.SenderID == confiuration["ID_Relativ"] || data.SenderID == confiuration["ID_Period"]){
+            if(old_isStreaming !== new_isStreaming) {
                 console.log("RELOAD CHART Full!");
                 myChart.destroy();
                 var ctx = document.getElementById('myChart');
                 myChart = new Chart(ctx, updateChartconfig());
-            }else{
-                //sonst nur updaten 8D
-                console.log("RELOAD CHART!");
-                myChart.update({
-                    preservation: false
-                });
             }
-            last_update = Date.now();
-            offset_isSet = checkOffsetisSet();
+
+            //load XAxes
+            $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&loadXAxes=1", function (data) {
+                //console.log("update Offset: ", data);
+                config_xaxes = data.XAXES;
+                //Object.assign(config_axes, {x: config_xaxes});
+            });
+
+            //load Vraibales
+            var counter_var = 0;
+            confiuration.Var_List.forEach(function (variable) {
+                $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&var=" + variable, function (data) {
+                    //console.log("update Offset: ", data);
+                    config_dataset.push(data.DATASETS[0]);
+                    myChart.data.datasets = config_dataset;
+
+                    key = Object.keys(data.AXES)[0];
+                    //config_axes[key] = data.AXES;
+                    //Object.assign(config_axes, data.AXES);
+
+                    console.log("Async Chart " + variable + " loaded");
+
+                    counter_var++;
+                    if(counter_var >= confiuration.Var_List.length){
+                        console.log("Update Chart!");
+                        //myChart.update(0);
+                    }
+                });
+            });
+
+            myChart.options.scales = Object.assign(config_axes, {x: config_xaxes});
+        }else{
+            $.getJSON( "/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}", function( data ) {
+
+                config_dataset = data.DATASETS;
+                config_axes = data.AXES;
+                config_xaxes =  data.XAXES;
+
+                confiuration = data.Config;
+
+                new_isStreaming = false;
+                if(checkIsStreaming() !== false) new_isStreaming = true;
+
+
+                //neuerstellen (aufgrund des livestreming plugins!
+                if(old_isStreaming !== new_isStreaming){
+                    console.log("RELOAD CHART Full!");
+                    myChart.destroy();
+                    var ctx = document.getElementById('myChart');
+                    myChart = new Chart(ctx, updateChartconfig());
+                }else{
+                    //sonst nur updaten 8D
+                    myChart.data.datasets = config_dataset;
+                    myChart.options.scales = Object.assign(config_axes, {x: config_xaxes});
+
+                    console.log("RELOAD CHART!");
+                    myChart.update(0);
+                }
+                last_update = Date.now();
+                offset_isSet = checkOffsetisSet();
+            });
+        }
+    }
+    function LoadConfiguration(){
+        //updaten configura
+        $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&loadConfig=1", function (data) {
+            //console.log("update Offset: ", data);
+            confiuration = data.Config;
         });
     }
     async function UpdateConfiguration() {
@@ -267,9 +358,9 @@
     }
 
     function UpdateDate(date, highRes = 7){
-        let period = confiuration["Period"];
-        let oldDate = new Date(date);
-        let newDate = new Date();
+        var period = confiuration["Period"];
+        var oldDate = new Date(date);
+        var newDate = new Date();
 
         if(highRes <= period){
             newDate = oldDate;
@@ -370,7 +461,7 @@
                     end = Math.floor((curDate) / 1000);
 
                     highRes = part.highRes;
-                    $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}&var=" + part.variable + "&offset=" + offset + "&hires=" + highRes + "&start=" + start + "&end=" + end, function (data) {
+                    $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}&var=" + part.Variable + "&offset=" + offset + "&hires=" + highRes + "&start=" + start + "&end=" + end, function (data) {
                         //console.log("update Offset: ", data);
 
                         data.archiv.forEach(function (apart, aindex) {
@@ -399,7 +490,7 @@
             if (offset > 0 && c > 0) {
 
                 highRes = part.highRes;
-                $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}&var=" + part.variable + "&offset=" + offset + "&hires=" + highRes + "&start=" + start + "&end=" + end, function (data) {
+                $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}&var=" + part.Variable + "&offset=" + offset + "&hires=" + highRes + "&start=" + start + "&end=" + end, function (data) {
                     //console.log("update Offset: ", data);
 
                     data.archiv.forEach(function (apart, aindex) {
@@ -418,7 +509,7 @@
         while (true){
             try {
                 dt_val = Math.floor(Date.now() / 1000);
-                $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
                     data.forEach(function (part, index) {
                         UpdateChart(part.Variable, dt_val, part.Value);
 
@@ -673,23 +764,19 @@
 
         return isSet;
     }
-    function UpdateTooltipLabel(tooltipItem, data){
-        let dataset = data.datasets[tooltipItem.datasetIndex];
+    function UpdateTooltipLabel(context){
+        var dataset = context.dataset;
 
-        let Suffix = "";
-        let Prefix = "";
-        let blocks = [];
-
-
-        required = {id: data.datasets[tooltipItem.datasetIndex].yAxisID};
-        AxisData = [];
-        Axiskeys = getMatchingKeys(config_axes, required);
+        var Suffix = "";
+        var Prefix = "";
+        var blocks = [];
 
 
-        Axiskeys.forEach(function(part, index) {
-            Suffix = config_axes[part].Suffix;
-            Prefix = config_axes[part].Prefix;
-        });
+        key = dataset.yAxisID;
+        if(key in config_axes){
+            Suffix = config_axes[key].Suffix;
+            Prefix = config_axes[key].Prefix;
+        };
 
         if (dataset.label) {
             blocks.push(dataset.label + ': ');
@@ -697,59 +784,31 @@
         if (Prefix !== "") {
             blocks.push(Prefix);
         }
-        blocks.push(dataset.data[tooltipItem.index].y)
+        blocks.push(context.parsed.y)
         if (Suffix !== "") {
             blocks.push(Suffix);
         }
         return blocks.join('');
     }
 
-    function filterKeys(obj, func) {
-        return Array.prototype.filter.call(Object.keys(obj), func, obj);
-    }
-    function someKeys(obj, func) {
-        return Array.prototype.some.call(Object.keys(obj), func, obj);
-    }
-    function atLeastOnePropertyMatches(obj, requiredProp) {
-        return someKeys(obj, function (prop) {
-            if (requiredProp.hasOwnProperty(prop)) {
-                return this[prop] === requiredProp[prop];
-            }
-        });
-    }
-    function getMatchingKeys(obj, requiredProp) {
-        return filterKeys(obj, function (prop) {
-            return atLeastOnePropertyMatches(this[prop], required);
-        });
-    }
-    Array.prototype.insert = function ( index, item ) {
-        this.splice( index, 0, item );
-    };
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
     window.onload = function() {
         try {
+            //update config
+            LoadConfiguration();
+
             var ctx = document.getElementById('myChart');
             myChart = new Chart(ctx, updateChartconfig());
 
-            //check load after Startup
-            if (confiuration.data_loadAfterStartup) {
-                dt_val = Math.floor(Date.now() / 1000);
-                ReloadChart(update_vars[0], dt_val);
-            }
+            //load config after Startup
+            var dt_val = Math.floor(Date.now() / 1000);
+            ReloadChart(update_vars[0], dt_val, 0);
 
             offset_isSet = checkOffsetisSet();
             UpdateConfiguration();
 
-            if (config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0) {
-                //pullup Mode local
-                refreshRate = config_global.LocalRefreshTime;
-                PullNewData(refreshRate);
-            } else if (config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0) {
+            if (config_global.DataMode == 0) {
                 //pullup Mode remote
-                refreshRate = config_global.RemoteRefreshTime;
+                var refreshRate = config_global.RemoteRefreshTime;
                 PullNewData(refreshRate);
             } else {
                 connect();
@@ -757,6 +816,21 @@
         }catch (e) {
             alert("Chart | ",e);
         }
+    }
+
+    window.addEventListener('resize', function () {
+        myFunction('resize');
+    });
+
+    window.addEventListener("orientationchange", function() {
+        myFunction('orientation');
+    });
+
+    function myFunction(value) {
+        //reload
+        var ctx = document.getElementById('chart-container');
+        ctx.style.width = window.innerWidth - 20+"px";
+        ctx.style.height = window.innerHeight - 20+"px";
     }
 </script>
 </body>

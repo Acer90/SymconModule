@@ -127,6 +127,8 @@
             "caption": "Expert",
             "items": [
                 { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
+                { "type": "CheckBox", "name": "EnableCache", "caption": "Enable Cache"},
+                { "type": "CheckBox", "name": "CreateOutput", "caption": "Create HTMLBox"},
                 { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script"},
                 { "type": "CheckBox", "name": "viewport_enable", "caption": "Viewport Enable"},
                 { "type": "NumberSpinner", "name": "DataUpdateRate", "caption": "Data Update Rate", "minimum": 0, "suffix": "ms", "digits": 0 }
@@ -135,13 +137,7 @@
     ],
     "actions":
     [
-        {
-            "type": "RowLayout",
-            "items": [
-                { "type": "Button", "label": "Get Link (Local)", "onClick": " echo SymconJSLiveAdvTextfield_GetLink($id, True);" },
-                { "type": "Button", "label": "Get Link (Remote)", "onClick": " echo SymconJSLiveAdvTextfield_GetLink($id, False);" }
-            ]
-        },
+        { "type": "Button", "label": "Get Link", "onClick": " echo SymconJSLiveAdvTextfield_GetLink($id);" },
         {
             "type": "ExpansionPanel",
             "caption": "Configuration",

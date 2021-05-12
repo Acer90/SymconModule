@@ -221,7 +221,7 @@
             "caption": "Data",
             "items": [
                 { "type": "NumberSpinner", "name": "data_highResSteps", "caption": "HighResolution Steps" },
-                { "type": "CheckBox", "name": "data_loadAfterStartup", "caption": "load data after start"}
+                { "type": "CheckBox", "name": "data_loadAsync", "caption": "load data asynchronously"}
             ]
         },
         {
@@ -435,6 +435,8 @@
             "caption": "Expert",
             "items": [
                 { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
+                { "type": "CheckBox", "name": "EnableCache", "caption": "Enable Cache"},
+                { "type": "CheckBox", "name": "CreateOutput", "caption": "Create HTMLBox"},
                 { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script"},
                 { "type": "CheckBox", "name": "viewport_enable", "caption": "Viewport Enable"}
             ]
@@ -442,13 +444,7 @@
     ],
     "actions":
     [
-        {
-            "type": "RowLayout",
-            "items": [
-                { "type": "Button", "label": "Get Link (Local)", "onClick": " echo SymconJSLiveChart_GetLink($id, True);" },
-                { "type": "Button", "label": "Get Link (Remote)", "onClick": " echo SymconJSLiveChart_GetLink($id, False);" }
-            ]
-        },
+        { "type": "Button", "label": "Get Link (Remote)", "onClick": " echo SymconJSLiveChart_GetLink($id);" },
         {
             "type": "ExpansionPanel",
             "caption": "Configuration",

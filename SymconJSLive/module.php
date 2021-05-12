@@ -12,15 +12,10 @@ class SymconJSLive extends WebHookModule {
         parent::Create();
 
         $this->RegisterPropertyString("Password", $this->GenerateRandomPassword());
-        $this->RegisterPropertyInteger("WebfrontInstanceID", 0);
+        $this->RegisterPropertyString("Address", "http://127.0.0.1:3777");
 
-        $this->RegisterPropertyString("LocalAddress", "http://127.0.0.1:3777");
-        $this->RegisterPropertyString("RemoteAddress", $this->GetConnectAddress());
-
-        $this->RegisterPropertyInteger("LocalDataMode", 1);
-        $this->RegisterPropertyInteger("RemoteDataMode", 0);
-        $this->RegisterPropertyInteger("LocalRefreshTime", 3);
-        $this->RegisterPropertyInteger("RemoteRefreshTime", 10);
+        $this->RegisterPropertyInteger("DataMode", 1);
+        $this->RegisterPropertyInteger("RefreshTime", 3);
 
         //viewport
         $this->RegisterPropertyBoolean("viewport_enable", true);
@@ -44,12 +39,13 @@ class SymconJSLive extends WebHookModule {
      * This function will be called by the hook control. Visibility should be protected!
      */
     protected function ProcessHookData() {
-        $pos = strpos($_SERVER['SCRIPT_NAME'], "/hook/JSLive/js");
 
         if($this->ReadPropertyBoolean("Debug"))
             $this->SendDebug('WebHook', '$_SERVER: ' . print_r($_SERVER, true), 0);
 
-        if ($pos !== false) {
+        if (strpos($_SERVER['SCRIPT_NAME'], "/hook/JSLive/WS") !== false) {
+            $this->SendDebug('WebHook', 'Array POST: ' . print_r($_POST, true), 0);
+        } elseif (strpos($_SERVER['SCRIPT_NAME'], "/hook/JSLive/js") !== false) {
             //get javascript files load from webhook
             $subpath = substr($_SERVER['SCRIPT_NAME'], strlen("/hook/JSLive/"));
             $path = __DIR__ . "/" . $subpath;
@@ -58,37 +54,40 @@ class SymconJSLive extends WebHookModule {
                 $this->SendDebug('WebHook', 'JS PATH =>' . $path, 0);
 
             if (!file_exists($path)) {
-                header("HTTP/1.0 404 Not Found");
-                echo "404 file not found!";
+                header("HTTP/1.1 404 Not Found");
                 return;
             }
 
 
-            header("HTTP/1.0 200 X");
+            header("HTTP/1.1 200 X");
             //http_response_code(200);
             $path_parts = pathinfo($path);
-            if(strtolower($path_parts["extension"]) == "css"){
-                header("Content-Type: text/css");
-            }else{
-                header("Content-Type: text/html");
-            }
+            $mimeType = $this->GetMimeType($path_parts["extension"]);
+            header("Content-Type: ".$mimeType);
 
-            if($this->ReadPropertyBoolean("enableCache")) {
+            if ($this->ReadPropertyBoolean("enableCache")) {
                 //Add caching support
+                $lastmodified = filemtime($path);
+                header('Cache-Control: max-age=3600');
+                header("Last-Modified: ".$lastmodified);
                 $etag = md5_file($path);
                 header("ETag: " . $etag);
-                if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && (trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag)) {
-                    http_response_code(304);
-                    return;
+
+                //CHeck if etag header exist and get them
+                $Header_Etag = (isset($_SERVER['HTTP_IF_NONE_MATCH']) ? trim($_SERVER['HTTP_IF_NONE_MATCH']) : false);
+
+                if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE'])==$lastmodified || $Header_Etag == $etag){
+                    header("HTTP/1.1 304 Not Modified");
                 }
             }
 
-            if($this->ReadPropertyBoolean("enableCompression")) {
+            if($this->ReadPropertyBoolean("enableCompression") && $this->IsCompressionAllowed($mimeType)) {
                 $compressed = gzencode(file_get_contents($path));
                 header("Content-Encoding: gzip");
                 header("Content-Length: " . strlen($compressed));
                 echo $compressed;
             }else{
+                header("Content-Length: " . filesize($path));
                 echo file_get_contents($path);
             }
         }else{
@@ -129,7 +128,7 @@ class SymconJSLive extends WebHookModule {
             //$this->SendDebug('WebHook', 'Array QUERY_STRING: ' . print_r($queryData, true), 0);
             //$this->SendDebug('WebHook', 'Array Server: ' . print_r($_SERVER, true), 0);
 
-            header("HTTP/1.0 200 X");
+            header("HTTP/1.1 200 X");
 
             $sendData = array("cmd" => $Type, "instance" => $queryData["instance"], "queryData" => $queryData);
             $contend = $this->SendDataToChildren(json_encode([
@@ -156,17 +155,22 @@ class SymconJSLive extends WebHookModule {
                 header("Content-Type: text/html");
             }
 
-            if(strtolower($Type) == "getcontend") {
-                //check if local
-                $isLocal = $this->CheckIfLocal($_SERVER["HTTP_HOST"]);
 
+            $lastmodified = gmdate("D, d M Y H:i:s", time())." GMT";
+            $useCache = false;
+            if(strtolower($Type) == "getcontend"){
                 $arr_data = json_decode($contend[0], true);
+                $contend = $arr_data["Contend"];
+                $lastmodified = $arr_data["lastModify"];
+                header("Content-Type: text/html");
+                $useCache = true;
 
-                $viewport = false;
-                if ($this->ReadPropertyBoolean("viewport_enable") && $arr_data["viewport"]) $viewport = true;
-
-                $contend = $this->ReplacePlaceholder($arr_data["output"], $isLocal, $queryData["instance"], $_SERVER, $viewport);
-            }elseif(strtolower($Type) == "loadfile"){
+                if(!$arr_data["EnableCache"]){
+                    //wenn cache deaktiviert dann global aktualiesieren!
+                    $contend = $this->ReplacePlaceholder($contend, $queryData["instance"], $arr_data["EnableViewport"]);
+                }
+            }
+            elseif(strtolower($Type) == "loadfile"){
                 $arr_data = json_decode($contend[0], true);
                 if(strtolower($arr_data["Type"]) == "css"){
                     header('Content-type: text/css');
@@ -174,29 +178,35 @@ class SymconJSLive extends WebHookModule {
                     header("Content-type: text/javascript");
                 }
                 $contend = $arr_data["Contend"];
+                $useCache = true;
             }else{
                 $contend = $contend[0];
             }
 
-
-            /*if($this->ReadPropertyBoolean("enableCache")) {
+            if ($this->ReadPropertyBoolean("enableCache") && $useCache) {
                 //Add caching support
+                header('Cache-Control: max-age=3600');
+                header("Last-Modified: ".$lastmodified);
                 $etag = md5($contend);
                 header("ETag: " . $etag);
-                if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && (trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag)) {
-                    http_response_code(304);
-                    return;
+
+                //CHeck if etag header exist and get them
+                $Header_Etag = (isset($_SERVER['HTTP_IF_NONE_MATCH']) ? trim($_SERVER['HTTP_IF_NONE_MATCH']) : false);
+
+                if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE'])==$lastmodified || $Header_Etag == $etag){
+                    header("HTTP/1.1 304 Not Modified");
                 }
-            }*/
+            }
 
             if($this->ReadPropertyBoolean("Debug")) $this->SendDebug("WebHook", $contend, 0);
 
-            if($this->ReadPropertyBoolean("enableCompression")) {
+            if($this->ReadPropertyBoolean("enableCompression") && strstr($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')) {
                 $compressed = gzencode($contend);
                 header("Content-Encoding: gzip");
                 header("Content-Length: " . strlen($compressed));
                 echo $compressed;
             }else {
+                header("Content-Length: " . strlen($contend));
                 echo $contend;
             }
         }
@@ -209,39 +219,41 @@ class SymconJSLive extends WebHookModule {
         $this->SendDebug("ForwardData", $JSONString, 0);
 
         switch($jsonData["Type"]){
+            case "UpdateHtml":
+                $IntID = $jsonData["InstanceID"];
+                $Html = $jsonData["Html"];
+                $ViewPort = $jsonData["ViewPort"];
+
+                return $this->ReplacePlaceholder($Html,  $IntID, $ViewPort);
             case "GetLink":
                 $intId = $jsonData["InstanceID"];
 
-                $remote = $this->ReadPropertyString("RemoteAddress");
-                $local = $this->ReadPropertyString("LocalAddress");
+                $link = $this->ReadPropertyString("Address");
                 $pw = $this->ReadPropertyString("Password");
-
-                $link = $remote;
-                if($jsonData["local"] == true){
-                    $link = $local;
-                }
-
-                if(empty($link)){
-                    $link = $local;
-                }
 
                 if(empty($link)){
                     return "No Address in Main modul Set!";
                 }
-
 
                 if(empty($pw)){
                     return $link . "/hook/JSLive?Instance=".$intId;
                 }else{
                     return $link . "/hook/JSLive?Instance=".$intId."&pw=".$pw;
                 }
+            case "GetLocalLink":
+                $intId = $jsonData["InstanceID"];
+                $pw = $this->ReadPropertyString("Password");
+
+                if(empty($pw)){
+                    return "/hook/JSLive?Instance=".$intId;
+                }else{
+                    return "/hook/JSLive?Instance=".$intId."&pw=".$pw;
+                }
             case "GetConfigurationLink":
                 $intId = $jsonData["InstanceID"];
 
-                $local = $this->ReadPropertyString("LocalAddress");
+                $link = $this->ReadPropertyString("Address");
                 $pw = $this->ReadPropertyString("Password");
-
-                $link = $local;
 
                 if(empty($link)){
                     return "No Address in Main modul Set!";
@@ -253,45 +265,14 @@ class SymconJSLive extends WebHookModule {
                     return $link . "/hook/JSLive/exportConfiguration?Instance=".$intId."&pw=".$pw;
                 }
         }
-
-
     }
 
-    private function CheckIfLocal(string $address){
-        if(empty($this->ReadPropertyString("RemoteAddress"))) return true;
-
-        $r_address = parse_url($this->ReadPropertyString("RemoteAddress"));
-
-        $chk_address = $r_address["host"];
-        if(array_key_exists("port", $r_address)){
-            $chk_address = $r_address["host"]. ":". $r_address["port"];
-        }
-
-        //$this->SendDebug("CheckIfLocal", $address. "|". $chk_address, 0);
-        if($address == $chk_address) return false;
-
-        return true;
-    }
-    private function ReplacePlaceholder(string $htmlData, bool $isLocal, int $IntID, array $server, bool $viewport){
-        $webfrontid = $this->ReadPropertyInteger("WebfrontInstanceID");
-        $address = $this->ReadPropertyString("RemoteAddress");
-
-        if($isLocal || empty($address)){
-            $address = $this->ReadPropertyString("LocalAddress");
-        }
-        $wsaddress = $this->GetWebsocket($server, $webfrontid);
+    private function ReplacePlaceholder(string $htmlData, int $IntID, bool $viewport){
+        $address = $this->ReadPropertyString("Address");
 
         $htmlData = str_replace("{GLOBAL}",  $this->json_encode_advanced($this->GetConfigurationData()), $htmlData);
         $htmlData = str_replace("{ADDRESS}", $address, $htmlData);
-        $htmlData = str_replace("{WSADDRESS}", $wsaddress , $htmlData);
-        $htmlData = str_replace("{REMOTE_ADDRESS}", $this->ReadPropertyString("RemoteAddress"), $htmlData);
-        $htmlData = str_replace("{REMOTE_WSADDRESS}", $this->ReadPropertyString("RemoteAddress"), $htmlData);
-        $htmlData = str_replace("{LOCAL_ADDRESS}", $this->ReadPropertyString("LocalAddress"), $htmlData);
-        $htmlData = str_replace("{LOCAL_WSADDRESS}", $this->ReadPropertyString("LocalAddress"), $htmlData);
         $htmlData = str_replace("{PASSWORD}", $this->ReadPropertyString("Password"), $htmlData);
-        $htmlData = str_replace("{WEBFRONTPASSWORD}", $this->GetWebfrontPassword($webfrontid), $htmlData);
-        $htmlData = str_replace("{WEBFRONTID}", $webfrontid, $htmlData);
-        $htmlData = str_replace("{ISLOCAL}", ($isLocal ? 'true' : 'false'), $htmlData);
         $htmlData = str_replace("{INSTANCE}", $IntID, $htmlData);
 
         if($viewport){
@@ -303,37 +284,7 @@ class SymconJSLive extends WebHookModule {
         return $htmlData;
     }
 
-    private function GetConnectAddress(){
-        $connectID = IPS_GetInstanceListByModuleID('{43192F0B-135B-4CE7-A0A7-1475603F3060}');
-        if(count($connectID) == 0){} return "";
-        return CC_GetUrl($connectID);
-    }
-    private function GetWebsocket(array $server, int $webfrontid){
-        if(empty($server)) return;
 
-        //$url_str = strtolower($url_str);
-        //$url = parse_url($url_str);
-
-        //$port = "";
-        //if(key_exists("port", $url)) $port = ":" . $url["port"];
-
-        if($this->isHttps($server)){
-            return "wss://" . $server["HTTP_HOST"]. "/wfc/". $webfrontid ."/api/";
-        }else{
-            return "ws://" . $server["HTTP_HOST"].  "/wfc/". $webfrontid ."/api/";
-        }
-    }
-    private function GetWebfrontPassword(int $webfrontid){
-        if(!IPS_InstanceExists($webfrontid)) return "";
-        $data = json_decode(IPS_GetConfiguration($webfrontid), true);
-
-        if(is_array($data) && key_exists("Password", $data)){
-            return $data["Password"];
-        }else{
-            return "";
-        }
-
-    }
     private function GenerateRandomPassword(){
         $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
         $pass = array(); //remember to declare $pass as an array
@@ -398,15 +349,20 @@ class SymconJSLive extends WebHookModule {
 
     }
     public function LoadConnectAddress(bool $start = false){
-        if(!$start || !empty($this->ReadPropertyString("RemoteAddress"))) return;
+        if(!$start || !empty($this->ReadPropertyString("Address"))) return;
 
         $confData = json_decode(IPS_GetConfiguration($this->InstanceID), true);
 
         //bestimmte aktuelle einstellungen beibehalten
-        $confData["RemoteAddress"] = $this->GetConnectAddress();
+        $confData["Address"] = $this->GetConnectAddress();
 
         IPS_SetConfiguration($this->InstanceID, json_encode($confData));
         IPS_ApplyChanges($this->InstanceID);
+    }
+    private function GetConnectAddress(){
+        $connectID = IPS_GetInstanceListByModuleID('{43192F0B-135B-4CE7-A0A7-1475603F3060}');
+        if(count($connectID) == 0){} return "";
+        return CC_GetUrl($connectID);
     }
     public function SetRandomPassword(bool $start = false){
         if(!$start || !empty($this->ReadPropertyString("Password"))) return;

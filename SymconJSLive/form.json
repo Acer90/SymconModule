@@ -2,29 +2,14 @@
     "elements":
     [
         { "type": "PasswordTextBox", "name": "Password", "caption": "Passwort" },
-        { "type": "SelectInstance", "name": "WebfrontInstanceID", "caption": "WebfrontID" },
-        { "type": "ValidationTextBox", "name": "LocalAddress", "caption": "Local Address" },
-        { "type": "ValidationTextBox", "name": "RemoteAddress", "caption": "Remote Address" },
-        { "type": "Select", "name": "LocalDataMode", "caption": "Local Data Mode",
+        { "type": "ValidationTextBox", "name": "Address", "caption": "Address" },
+        { "type": "Select", "name": "DataMode", "caption": "Data Mode",
             "options": [
                 { "caption": "Pull", "value": 0 },
-                { "caption": "Webfront-Websocket", "value": 1 }
+                { "caption": "Websocket", "value": 1 }
             ]
         },
-        { "type": "Select", "name": "RemoteDataMode", "caption": "Remote Data Mode",
-            "options": [
-                { "caption": "Pull", "value": 0 },
-                { "caption": "Webfront-Websocket", "value": 1 }
-            ]
-        },
-        {
-            "type": "ExpansionPanel",
-            "caption": "Pull Data Settings",
-            "items": [
-                { "type": "NumberSpinner", "name": "LocalRefreshTime", "caption": "Local Refresh Time" },
-                { "type": "NumberSpinner", "name": "RemoteRefreshTime", "caption": "Remote Refresh Time" }
-            ]
-        },
+        { "type": "NumberSpinner", "name": "RefreshTime", "caption": "Pull Refresh Time" },
         {
             "type": "ExpansionPanel",
             "caption": "Viewport Settings",

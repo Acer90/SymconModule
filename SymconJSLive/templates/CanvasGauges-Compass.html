@@ -7,8 +7,9 @@
 </head>
 {FONTS} <!-- Need for Custom font Family !-->
 
-<script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
-<script src="{ADDRESS}/hook/JSLive/js/canvas-gauges/gauge.min.js"></script>
+<script src="/hook/JSLive/js/jquery.min.js"></script>
+<script src="/hook/JSLive/js/util.js"></script>
+<script src="/hook/JSLive/js/canvas-gauges/gauge.min.js"></script>
 
 <body style="text-align: center;">
 <canvas id="gauge"></canvas>
@@ -77,7 +78,7 @@
                 needleCircleSize: 15,
                 needleCircleOuter: false,
 
-                needleType: "line",
+                needvarype: "line",
                 needleStart: 75,
                 needleEnd: 99,
                 needleWidth: 3,
@@ -113,7 +114,7 @@
     }
 
     function connect() {
-        var ws = new WebSocket('{WSADDRESS}', [encodeURIComponent(btoa('webfront:{WEBFRONTPASSWORD}'))]);
+        var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
         ws.onopen = function() {
             // subscribe to some channels
             //ws.send(JSON.stringify({
@@ -123,7 +124,10 @@
 
         ws.onmessage = function(e) {
             data = JSON.parse(e.data);
-            if(data.Message == 10603) {
+            if(data.Message == 10506) {
+                //refresh webseite
+                location.reload();
+            } else if(data.Message == 10603) {
                 UpdateGauge(data.SenderID, data.Data[0]);
             }
         };
@@ -144,7 +148,7 @@
     function UpdateGauge(id_val, val){
         isUpdated = false;
 
-        if(id_val == confiuration.variable){
+        if(id_val == confiuration.Variable){
             //console.log(val);
             gauge.value = val;
         }
@@ -154,7 +158,7 @@
         refreshRate = refreshRate * 1000;
         while (true){
             try {
-                $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
                     data.forEach(function (part, index) {
                         UpdateGauge(part.Variable, part.Value);
                     });
@@ -168,41 +172,16 @@
         }
     }
 
-    function filterKeys(obj, func) {
-        return Array.prototype.filter.call(Object.keys(obj), func, obj);
-    }
-    function someKeys(obj, func) {
-        return Array.prototype.some.call(Object.keys(obj), func, obj);
-    }
-    function atLeastOnePropertyMatches(obj, requiredProp) {
-        return someKeys(obj, function (prop) {
-            if (requiredProp.hasOwnProperty(prop)) {
-                return this[prop] === requiredProp[prop];
-            }
-        });
-    }
-    function getMatchingKeys(obj, requiredProp) {
-        return filterKeys(obj, function (prop) {
-            return atLeastOnePropertyMatches(this[prop], required);
-        });
-    }
-    Array.prototype.insert = function ( index, item ) {
-        this.splice( index, 0, item );
-    };
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
     window.onload = function() {
         try {
             //if no font is load then here Start load guage
             if(!confiuration.font_isSet) LoadGauge();
 
-            if (config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0) {
+            if (config_global.LocalAddress == "" && config_global.LocalDataMode == 0) {
                 //pullup Mode local
                 refreshRate = config_global.LocalRefreshTime;
                 PullNewData(refreshRate);
-            } else if (config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0) {
+            } else if (config_global.RemoteAddress == "" && config_global.RemoteDataMode == 0) {
                 //pullup Mode remote
                 refreshRate = config_global.RemoteRefreshTime;
                 PullNewData(refreshRate);

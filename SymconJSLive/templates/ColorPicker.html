@@ -5,8 +5,9 @@
     {VIEWPORT} <!-- Dont Remove this line, it can be disabled at intstance! -->
     <title>ColorPicker</title>
 </head>
-<script src="{ADDRESS}/hook/JSLive/js/jquery.min.js"></script>
-<script src="{ADDRESS}/hook/JSLive/js/iro/5.5.0/iro.js"></script>
+<script src="/hook/JSLive/js/jquery.min.js"></script>
+<script src="/hook/JSLive/js/util.js"></script>
+<script src="/hook/JSLive/js/iro/5.5.0/iro.js"></script>
 
 
 <body style="text-align: center;">
@@ -39,7 +40,6 @@
     let running = false;
 
     function LoadPicker(){
-        try {
 
             var laydata = GenerateLayoutData();
             var wdh = window.innerHeight - 20;
@@ -76,6 +76,7 @@
             };
 
             return config;
+        try {
         }catch (e){
             alert("Colorpicker | ",e);
         }
@@ -229,8 +230,8 @@
 
                     for (i = 0; i < updateVal.length; i++) {
                         console.log(Date.now() + " >> UpdateWorker | Update " + JSON.stringify(updateVal) + " | " + JSON.stringify(updateId));
-                        console.log(Date.now() + " >> UpdateWorker | URL: {ADDRESS}/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&var=" +updateId[i]+ "&val="+updateVal[i]);
-                        var response = await fetch("{ADDRESS}/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&var=" +updateId[i]+ "&val="+updateVal[i]);
+                        console.log(Date.now() + " >> UpdateWorker | URL: /hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&var=" +updateId[i]+ "&val="+updateVal[i]);
+                        var response = await fetch("/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&var=" +updateId[i]+ "&val="+updateVal[i]);
                         console.log(Date.now() + " >> UpdateWorker Response => " + response.statusText + " (" + response.status + ")");
                     }
 
@@ -247,7 +248,7 @@
     }
 
     function connect() {
-        var ws = new WebSocket('{WSADDRESS}', [encodeURIComponent(btoa('webfront:{WEBFRONTPASSWORD}'))]);
+        var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
         ws.onopen = function() {
             // subscribe to some channels
             //ws.send(JSON.stringify({
@@ -257,7 +258,10 @@
 
         ws.onmessage = function(e) {
             data = JSON.parse(e.data);
-            if(data.Message == 10603) {
+            if(data.Message == 10506) {
+                //refresh webseite
+                location.reload();
+            } else if(data.Message == 10603) {
                 UpdateColorPicker(data.SenderID, data.Data[0]);
             }
         };
@@ -321,7 +325,7 @@
         refreshRate = refreshRate * 1000;
         while (true){
             try {
-                $.getJSON("{ADDRESS}/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
                     data.forEach(function (part, index) {
                         UpdateColorPicker(part.Color.Variable, part.Color.Value);
                         UpdateColorPicker(part.Temperature.Variable, part.Temperature.Value);
@@ -337,96 +341,13 @@
         }
     }
 
-    function filterKeys(obj, func) {
-        return Array.prototype.filter.call(Object.keys(obj), func, obj);
-    }
-    function someKeys(obj, func) {
-        return Array.prototype.some.call(Object.keys(obj), func, obj);
-    }
-    function atLeastOnePropertyMatches(obj, requiredProp) {
-        return someKeys(obj, function (prop) {
-            if (requiredProp.hasOwnProperty(prop)) {
-                return this[prop] === requiredProp[prop];
-            }
-        });
-    }
-    function getMatchingKeys(obj, requiredProp) {
-        return filterKeys(obj, function (prop) {
-            return atLeastOnePropertyMatches(this[prop], required);
-        });
-    }
-    Array.prototype.insert = function ( index, item ) {
-        this.splice( index, 0, item );
-    };
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    function colorTemperatureToRGB(kelvin){
-        var temp = kelvin / 100;
-        var red, green, blue;
-
-        if( temp <= 66 ){
-            red = 255;
-            green = temp;
-            green = 99.4708025861 * Math.log(green) - 161.1195681661;
-
-            if( temp <= 19){
-                blue = 0;
-            } else {
-                blue = temp-10;
-                blue = 138.5177312231 * Math.log(blue) - 305.0447927307;
-            }
-        } else {
-            red = temp - 60;
-            red = 329.698727446 * Math.pow(red, -0.1332047592);
-
-            green = temp - 60;
-            green = 288.1221695283 * Math.pow(green, -0.0755148492 );
-
-            blue = 255;
-        }
-
-        return {
-            r : clamp(red,   0, 255),
-            g : clamp(green, 0, 255),
-            b : clamp(blue,  0, 255)
-        }
-    }
-    function clamp( x, min, max ) {
-        if(x<min){ return min; }
-        if(x>max){ return max; }
-
-        return x;
-    }
-    function hexToRgb(bigint) {
-        var r = (bigint >> 16) & 255;
-        var g = (bigint >> 8) & 255;
-        var b = bigint & 255;
-
-        return {"r": r, "g": g, "b": b};
-    }
-    function hexToInt(rgb){
-        var erg = rgb.r*256*256 + rgb.g*256 + rgb.b;
-        console.log(Date.now() + " >> hexToInt => " + JSON.stringify(rgb) + " | " + erg);
-        return erg;
-    }
-
-    function KelvinToMired(value){
-        return Math.floor(1000000 / value);
-    }
-    function MiredToKelvin(value){
-        return Math.floor(1000000 / value);
-    }
-
-
     window.onload = function() {
         try {
-            if (config_global.LocalAddress == "{ADDRESS}" && config_global.LocalDataMode == 0) {
+            if (config_global.LocalAddress == "" && config_global.LocalDataMode == 0) {
                 //pullup Mode local
                 refreshRate = config_global.LocalRefreshTime;
                 PullNewData(refreshRate);
-            } else if (config_global.RemoteAddress == "{ADDRESS}" && config_global.RemoteDataMode == 0) {
+            } else if (config_global.RemoteAddress == "" && config_global.RemoteDataMode == 0) {
                 //pullup Mode remote
                 refreshRate = config_global.RemoteRefreshTime;
                 PullNewData(refreshRate);

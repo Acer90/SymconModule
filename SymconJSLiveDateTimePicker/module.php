@@ -14,6 +14,8 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
+        $this->RegisterPropertyBoolean("EnableCache", true);
+        $this->RegisterPropertyBoolean("CreateOutput", true);
         $this->RegisterPropertyInteger("DataUpdateRate", 50);
         $this->RegisterPropertyBoolean("viewport_enable", true);
 
@@ -59,7 +61,7 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
             case "exportConfiguration":
                 return $this->ExportConfiguration();
             case "getContend":
-                return json_encode(array("output" => $this->GetWebpage(), "viewport" => $this->ReadPropertyBoolean("viewport_enable")));
+                return $this->GetOutput();
             case "getData":
                 return $this->GetData($buffer['queryData']);
             case "setData":
@@ -69,7 +71,7 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
                 break;
         }
     }
-    private function GetWebpage(){
+    protected function GetWebpage(){
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
         if(empty($scriptID)){
             if($this->ReadPropertyBoolean("Debug"))
@@ -193,15 +195,6 @@ class SymconJSLiveDateTimePicker extends JSLiveModule{
             IPS_SetConfiguration($this->InstanceID, json_encode($confData));
             IPS_ApplyChanges($this->InstanceID);
         }else return "A Instance must be selected!";
-    }
-    public function GetLink(bool $local = true){
-        $sendData = array("InstanceID" => $this->InstanceID, "Type" => "GetLink", "local" => $local);
-        $pData = $this->SendDataToParent(json_encode([
-            'DataID' => "{751AABD7-E31D-024C-5CC0-82AC15B84095}",
-            'Buffer' => utf8_encode(json_encode($sendData)),
-        ]));
-
-        return $pData;
     }
 }
 
