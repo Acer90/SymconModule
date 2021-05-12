@@ -12,7 +12,8 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
 
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
-        $this->RegisterPropertyInteger("TemplateScriptID", 0);
+$this->RegisterPropertyBoolean("EnableCache", true);
+        $this->RegisterPropertyBoolean("CreateOutput", true);        $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyBoolean("viewport_enable", true);
 
         //title
@@ -78,7 +79,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
             case "exportConfiguration":
                 return $this->ExportConfiguration();
             case "getContend":
-                return json_encode(array("output" => $this->GetWebpage(), "viewport" => $this->ReadPropertyBoolean("viewport_enable")));
+                return $this->GetOutput();
             case "getUpdate":
                 return $this->GetUpdate();
             case "getData":
@@ -89,7 +90,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         }
 
     }
-    private function GetWebpage(){
+    protected function GetWebpage(){
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
         if(empty($scriptID)){
             if($this->ReadPropertyBoolean("Debug"))

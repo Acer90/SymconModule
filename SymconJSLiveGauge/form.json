@@ -1,7 +1,7 @@
 {
     "elements":
     [
-        { "type": "SelectVariable", "name": "variable", "caption": "Variable" },
+        { "type": "SelectVariable", "name": "Variable", "caption": "Variable" },
         { "type": "NumberSpinner", "name": "min", "caption": "Min" ,"digits": 2 },
         { "type": "NumberSpinner", "name": "max", "caption": "Max" ,"digits": 2 },
         { "type": "Select", "name": "template", "caption": "Template",
@@ -309,6 +309,8 @@
             "caption": "Expert",
             "items": [
                 { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
+                { "type": "CheckBox", "name": "EnableCache", "caption": "Enable Cache"},
+                { "type": "CheckBox", "name": "CreateOutput", "caption": "Create HTMLBox"},
                 { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script"},
                 { "type": "CheckBox", "name": "viewport_enable", "caption": "Viewport Enable"}
             ]
@@ -316,13 +318,7 @@
     ],
     "actions":
     [
-        {
-            "type": "RowLayout",
-            "items": [
-                { "type": "Button", "label": "Get Link (Local)", "onClick": " echo SymconJSLiveGauge_GetLink($id, True);" },
-                { "type": "Button", "label": "Get Link (Remote)", "onClick": " echo SymconJSLiveGauge_GetLink($id, False);" }
-            ]
-        },
+        { "type": "Button", "label": "Get Link", "onClick": " echo SymconJSLiveGauge_GetLink($id);" },
         {
             "type": "ExpansionPanel",
             "caption": "Configuration",

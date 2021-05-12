@@ -8,14 +8,15 @@ class SymconJSLiveGauge extends JSLiveModule{
 
         $this->ConnectParent("{9FFF3FC0-FD51-C289-FA36-BC1C370946CF}");
 
-        $this->RegisterPropertyInteger("variable", 0);
+        $this->RegisterPropertyInteger("Variable", 0);
         $this->RegisterPropertyInteger("min", 0);
         $this->RegisterPropertyInteger("max", 1000);
         $this->RegisterPropertyString("template", "CanvasGauges-Radial");
 
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
-        $this->RegisterPropertyInteger("TemplateScriptID", 0);
+$this->RegisterPropertyBoolean("EnableCache", true);
+        $this->RegisterPropertyBoolean("CreateOutput", true);        $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyBoolean("viewport_enable", true);
 
         //title
@@ -106,7 +107,7 @@ class SymconJSLiveGauge extends JSLiveModule{
             case "exportConfiguration":
                 return $this->ExportConfiguration();
             case "getContend":
-                return json_encode(array("output" => $this->GetWebpage(), "viewport" => $this->ReadPropertyBoolean("viewport_enable")));
+                return $this->GetOutput();
             case "getData":
                 return $this->GetData($buffer['queryData']);
             default:
@@ -115,7 +116,7 @@ class SymconJSLiveGauge extends JSLiveModule{
         }
 
     }
-    private function GetWebpage(){
+    protected function GetWebpage(){
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
         if(empty($scriptID)){
             if($this->ReadPropertyBoolean("Debug"))
@@ -141,7 +142,7 @@ class SymconJSLiveGauge extends JSLiveModule{
     public function GetData(array $querydata){
         $output = array();
 
-        $output["Variable"] = $this->ReadPropertyInteger("variable");
+        $output["Variable"] = $this->ReadPropertyInteger("Variable");
         if(!IPS_VariableExists($output["Variable"])){
             $this->SendDebug("GetData", "VARIABLE NOT EXIST!", 0);
             return "VARIABLE NOT EXIST!";
@@ -166,10 +167,10 @@ class SymconJSLiveGauge extends JSLiveModule{
 
         //VALUE
         $val = 0;
-        if(IPS_VariableExists($this->ReadPropertyInteger("variable"))){
-            $val = GetValue($this->ReadPropertyInteger("variable"));
+        if(IPS_VariableExists($this->ReadPropertyInteger("Variable"))){
+            $val = GetValue($this->ReadPropertyInteger("Variable"));
         }else{
-            $this->SendDebug("ReplacePlaceholder", "Variable (".$this->ReadPropertyInteger("variable").") NOT EXIST!", 0);
+            $this->SendDebug("ReplacePlaceholder", "Variable (".$this->ReadPropertyInteger("Variable").") NOT EXIST!", 0);
         }
         $htmlData = str_replace("{VALUE}", number_format($val, 2, '.', ''), $htmlData);
 
@@ -266,15 +267,6 @@ class SymconJSLiveGauge extends JSLiveModule{
             IPS_SetConfiguration($this->InstanceID, json_encode($confData));
             IPS_ApplyChanges($this->InstanceID);
         }else return "A Instance must be selected!";
-    }
-    public function GetLink(bool $local = true){
-        $sendData = array("InstanceID" => $this->InstanceID, "Type" => "GetLink", "local" => $local);
-        $pData = $this->SendDataToParent(json_encode([
-            'DataID' => "{751AABD7-E31D-024C-5CC0-82AC15B84095}",
-            'Buffer' => utf8_encode(json_encode($sendData)),
-        ]));
-
-        return $pData;
     }
 }
 

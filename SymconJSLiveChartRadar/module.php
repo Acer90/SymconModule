@@ -10,7 +10,8 @@ class SymconJSLiveRadarChart extends JSLiveModule{
 
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
-        $this->RegisterPropertyInteger("TemplateScriptID", 0);
+$this->RegisterPropertyBoolean("EnableCache", true);
+        $this->RegisterPropertyBoolean("CreateOutput", true);        $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyBoolean("customScale_mode", false);
         $this->RegisterPropertyString("customScale", "[]");
         $this->RegisterPropertyBoolean("viewport_enable", true);
@@ -132,7 +133,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
             case "exportConfiguration":
                 return $this->ExportConfiguration();
             case "getContend":
-                return json_encode(array("output" => $this->GetWebpage(), "viewport" => $this->ReadPropertyBoolean("viewport_enable")));
+                return $this->GetOutput();
             case "getData":
                 return $this->GetData($buffer['queryData']);
             default:
@@ -141,7 +142,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         }
 
     }
-    private function GetWebpage(){
+    protected function GetWebpage(){
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
         if(empty($scriptID)){
             if($this->ReadPropertyBoolean("Debug"))
@@ -371,7 +372,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
 
             $emptyGrpID--;
             $singelOutput = array();
-            $singelOutput["variable"] = $item["Variable"];
+            $singelOutput["Variable"] = $item["Variable"];
 
             if(empty($item["Title"])){
                 //Load Variablen Name wenn label leer ist

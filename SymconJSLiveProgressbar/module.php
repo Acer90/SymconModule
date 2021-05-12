@@ -54,6 +54,8 @@ class SymconJSLiveProgressbar extends JSLiveModule{
 
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
+        $this->RegisterPropertyBoolean("EnableCache", true);
+        $this->RegisterPropertyBoolean("CreateOutput", true);
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyBoolean("viewport_enable", true);
 
@@ -78,7 +80,7 @@ class SymconJSLiveProgressbar extends JSLiveModule{
             case "exportConfiguration":
                 return $this->ExportConfiguration();
             case "getContend":
-                return json_encode(array("output" => $this->GetWebpage(), "viewport" => $this->ReadPropertyBoolean("viewport_enable")));
+                return $this->GetOutput();
             case "getData":
                 return $this->GetData($buffer['queryData']);
             case "getSVG":
@@ -88,7 +90,7 @@ class SymconJSLiveProgressbar extends JSLiveModule{
                 break;
         }
     }
-    private function GetWebpage(){
+    protected function GetWebpage(){
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
         if(empty($scriptID)){
             if($this->ReadPropertyBoolean("Debug"))
