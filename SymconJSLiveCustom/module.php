@@ -173,6 +173,7 @@ class SymconJSLiveCustom extends JSLiveModule{
         }
     }
 
+
     private function GetSingelData(int $item, bool $isSubItem = false){
         $obj_data2 = IPS_GetObject($item);
         switch($obj_data2["ObjectType"]){

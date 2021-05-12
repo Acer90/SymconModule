@@ -404,12 +404,14 @@ class JSLiveModule extends IPSModule
         if($this->ReadPropertyBoolean("CreateOutput")) {
             $this->RegisterVariableString("Output", $this->Translate("Output"), "~HTMLBox", 0);
 
+            $link = $this->GetLocalLink();
+            //$link = $this->GetLink();
 
             if($height == "auto"){
-                $htmlStr .= '<iframe src="' . $this->GetLocalLink() . '" width="100%" frameborder="0" style="overflow:hidden;height:100%;width:100%" height="100%" scrolling="'.$scrolling.'" ></iframe>'; //onload="resizeIframe(this)"
+                $htmlStr .= '<iframe src="' . $link . '" width="100%" frameborder="0" style="overflow:hidden;height:100%;width:100%" height="100%" scrolling="'.$scrolling.'" ></iframe>'; //onload="resizeIframe(this)"
 
             }else{
-                $htmlStr .= '<iframe src="' . $this->GetLink() . '" width="100%" frameborder="0" scrolling="'.$scrolling.'" height="'.$height.'"></iframe>';
+                $htmlStr .= '<iframe src="' . $link . '" width="100%" frameborder="0" scrolling="'.$scrolling.'" height="'.$height.'"></iframe>';
             }
 
             //$htmlStr .= '<script>
