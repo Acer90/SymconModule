@@ -507,15 +507,12 @@ class SymconJSLiveChart extends JSLiveModule{
                 $singelOutput["lastValue"] = number_format(GetValue($item["Variable"]), 5, '.', '');
             }
 
-
             //datenabrufen
             if($getData){
                 $singelOutput["data"] = $this->GetArchivData($item["Variable"], $item["HighRes"], $item["Offset"], $date_start, $date_end, $Aggregationsstufe, $starData["datasets"]);
             }else{
                 $singelOutput["data"] = array();
             }
-
-
 
             if(!empty($item["Dash"])){
                 $dashData = @json_decode($item["Dash"], true);
@@ -534,7 +531,8 @@ class SymconJSLiveChart extends JSLiveModule{
             }
 
             //Axis
-            $singelOutput["yAxisID"] = $item["Profile"];
+            $axesname = $item["Profile"];
+            $singelOutput["yAxisID"] = $axesname;
             $digits = 2;
 
             //Pointstyle
@@ -547,19 +545,15 @@ class SymconJSLiveChart extends JSLiveModule{
                 $singelOutput["steppedLine"] = "before";
             }
 
-
             //falls noch nicht vorhanden anlegen
-            $key = array_search($item["Profile"], array_column($output["charts"], 'id'));
+            $key = array_search($axesname, array_column($output["charts"], 'id'));
             if($key === FALSE){
                 $axisoutput = array();
                 $axisoutput["type"] = "linear";
                 $axisoutput["display"] = $this->ReadPropertyBoolean("axes_display");
-                $axisoutput["id"] = $item["Profile"];
+                $axisoutput["id"] = $axesname;
                 $axisoutput["position"] = $item["Side"];
                 $axisoutput["axis"] = "y";
-
-                $axisoutput["min"] = 0;
-                $axisoutput["max"] = 0;
 
                 $axisoutput["Prefix"] = "";
                 $axisoutput["Suffix"] = "";
@@ -597,20 +591,17 @@ class SymconJSLiveChart extends JSLiveModule{
                         //$axisoutput["suggestedMax"] = $profilData["MaxValue"];
                         //$axisoutput["suggestedMin"] = $profilData["MinValue"];
 
-                        $axisoutput["min"] = $profilData["MaxValue"];
-                        $axisoutput["max"] = $profilData["MinValue"];
+                        $axisoutput["min"] =  $profilData["MinValue"];
+                        $axisoutput["max"] = $profilData["MaxValue"];
                     }
 
                     $axisoutput["Prefix"] = $profilData["Prefix"];
                     $axisoutput["Suffix"] = $profilData["Suffix"];
 
+
                     if($profilData["StepSize"] > 0){
                         $axisoutput["ticks"]["stepSize"] = $profilData["StepSize"];
                     }
-
-                    //$axisoutput["ticks"]["count"] = 10;
-                    $axisoutput["ticks"]["stepSize"] = 500;
-
 
                     $digits = $profilData["Digits"];
 
@@ -636,16 +627,13 @@ class SymconJSLiveChart extends JSLiveModule{
 
                     $axisoutput["title"]["font"]["size"] = $this->ReadPropertyInteger("axes_labelfontSize");
                     $axisoutput["title"]["font"]["family"] = $this->ReadPropertyString("axes_fontFamily");
-
                 }
-                $output["charts"][$item["Profile"]] = $axisoutput;
+                $output["charts"][$axesname] = $axisoutput;
             }else{
 
             }
 
             $singelOutput["digits"] = $digits;
-
-
             $output["datasets"][] = $singelOutput;
         }
 
@@ -663,6 +651,7 @@ class SymconJSLiveChart extends JSLiveModule{
 
         $output["ticks"]["font"]["size"] = $this->ReadPropertyInteger("axes_tickfontSize");
         $output["ticks"]["font"]["family"] = $this->ReadPropertyString("axes_fontFamily");
+
 
         $period = $this->GetValue("Period");
         switch ($period) {
@@ -725,6 +714,7 @@ class SymconJSLiveChart extends JSLiveModule{
 
         }
 
+
         $output["time"]["displayFormats"]["second"] = "ss";
         $output["time"]["displayFormats"]["minute"] = "HH:mm";
         $output["time"]["displayFormats"]["hour"] = "HH";
@@ -739,6 +729,7 @@ class SymconJSLiveChart extends JSLiveModule{
             $output["min"] = ($starData["start"] * 1000);
             $output["max"] = (($starData["end"] + 1) * 1000);
         }
+
 
         //$output["realtime"]["pause"] = false;
         //$output["realtime"]["refresh"] = 180000;

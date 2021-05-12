@@ -11,7 +11,7 @@
 <script src="/hook/JSLive/js/moment/2.27.0/Moment.js" charset="utf-8"></script>
 <script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-adapter-moment.js" charset="utf-8"></script>
 <script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-plugin-streaming.min.js" charset="utf-8"></script>
-<script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-plugin-datalabels.min.js" charset="utf-8"></script>
+<!--<script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-plugin-datalabels.min.js" charset="utf-8"></script>-->
 <script src="/hook/JSLive/js/util.js"></script>
 
 <body>
@@ -46,7 +46,8 @@
 
     function updateChartconfig() {
         try {
-            Chart.register(ChartDataLabels);
+            //Eneable Datalabels
+            //Chart.register(ChartDataLabels);
 
             //set Window to canvas
             var ctx = document.getElementById('chart-container');
@@ -81,7 +82,7 @@
                         tooltip: config_tooltips,
                         title: config_title,
                         legend: config_legend,
-                        datalabels: {
+                        /*datalabels: {
                             //align: 'start',
                             //anchor: 'start',
                             backgroundColor: function(context) {
@@ -97,12 +98,9 @@
                             formatter: function(value, context) {
                                 return value["y"]; //  + '%'
                             }
-                        }
+                        }*/
                     },
-                    scales: {
-                        x: config_xaxes,
-                        config_axes
-                    },
+                    scales: Object.assign(config_axes, {x: config_xaxes}),
                     layout: {
                         padding: {
                             left: 0,
@@ -165,7 +163,7 @@
 
         isUpdated = false;
 
-        required = {variable: id_val};
+        required = {Variable: id_val};
         results = [];
         results = getMatchingKeys(config_dataset, required);
 
@@ -276,32 +274,42 @@
             $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&loadXAxes=1", function (data) {
                 //console.log("update Offset: ", data);
                 config_xaxes = data.XAXES;
-                //Object.assign(config_axes, {x: config_xaxes});
+                Object.assign(config_axes, {x: config_xaxes});
+                myChart.options.scales = config_axes;
+                myChart.update(0);
             });
+
+
 
             //load Vraibales
             var counter_var = 0;
-            confiuration.Var_List.forEach(function (variable) {
-                $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&var=" + variable, function (data) {
+            confiuration.Var_List.forEach(function (Variable) {
+                $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&var=" + Variable, function (data) {
                     //console.log("update Offset: ", data);
                     config_dataset.push(data.DATASETS[0]);
-                    myChart.data.datasets = config_dataset;
+                    //myChart.data.datasets = config_dataset;
 
                     key = Object.keys(data.AXES)[0];
                     //config_axes[key] = data.AXES;
-                    //Object.assign(config_axes, data.AXES);
+                    Object.assign(config_axes, data.AXES);
 
-                    console.log("Async Chart " + variable + " loaded");
+                    myChart.data.datasets = config_dataset;
+                    myChart.options.scales = config_axes;
+                    console.log("Async Chart " + Variable + " loaded");
 
                     counter_var++;
                     if(counter_var >= confiuration.Var_List.length){
                         console.log("Update Chart!");
-                        //myChart.update(0);
+                        myChart.update(0);
                     }
                 });
             });
 
-            myChart.options.scales = Object.assign(config_axes, {x: config_xaxes});
+            //myChart.data.datasets = config_dataset;
+            //myChart.options.scales = Object.assign(myChart.options.scales, {x: config_xaxes});
+            //myChart.update(0);
+
+
         }else{
             $.getJSON( "/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}", function( data ) {
 
@@ -344,7 +352,6 @@
     async function UpdateConfiguration() {
         while (true){
             try {
-                UpdateTimeScale();
                 if(confiuration.Relativ && offset_isSet){
                     UpdateOffsetData_Relativ();
                 }
@@ -408,28 +415,10 @@
         //console.log("newDate:", newDate);
         return newDate;
     }
-    function UpdateTimeScale(){
-        //nur wenn live ausführen!
-        if(!confiuration.Now) return;
-
-        curDate = Date.now();
-        old_endDate = myChart.options.scales.xAxes[0].time.max;
-
-        if(curDate > old_endDate){
-            dateData = GetStartEndDate(curDate);
-            myChart.options.scales.xAxes[0].time.min = dateData.start;
-            myChart.options.scales.xAxes[0].time.max = dateData.end;
-
-            if(!confiuration.Relativ){
-                //update offset Absolut
-                UpdateOffsetData_Absolute(curDate);
-            }
-        }
-    }
 
     function RemoveOldData() {
-        if (myChart.options.scales.xAxes[0].type != "realtime") {
-            itemDate = myChart.options.scales.xAxes[0].time.min;
+        if (myChart.options.scales.x.type != "realtime") {
+            itemDate = myChart.options.scales.x.min;
 
             //löschdatum holen
             myChart.data.datasets.forEach(function (part, index) {
@@ -801,7 +790,7 @@
 
             //load config after Startup
             var dt_val = Math.floor(Date.now() / 1000);
-            ReloadChart(update_vars[0], dt_val, 0);
+            ReloadChart(update_vars[0], dt_val);
 
             offset_isSet = checkOffsetisSet();
             UpdateConfiguration();
@@ -818,20 +807,18 @@
         }
     }
 
-    window.addEventListener('resize', function () {
-        myFunction('resize');
+    window.addEventListener('load resize orientationchange', function () {
+        ResizeChart('resize');
     });
-
-    window.addEventListener("orientationchange", function() {
-        myFunction('orientation');
-    });
-
-    function myFunction(value) {
+    function ResizeChart() {
         //reload
         var ctx = document.getElementById('chart-container');
         ctx.style.width = window.innerWidth - 20+"px";
         ctx.style.height = window.innerHeight - 20+"px";
     }
+
+
+
 </script>
 </body>
 </html>
