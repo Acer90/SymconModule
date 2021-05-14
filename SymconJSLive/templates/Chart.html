@@ -24,12 +24,12 @@
 
     let config_global = {GLOBAL};
 
-    let config_dataset = {DATASETS};
-    let config_axes = {AXES};
+    let config_dataset = []; //{DATASETS};
+    let config_axes =  {};// {AXES};
     let config_legend = {LEGEND};
     let config_tooltips = {TOOLTIPS};
     let config_title = {TITLE};
-    let config_xaxes = {XAXES};
+    let config_xaxes = {};//{XAXES};
 
     let confiuration = {CONFIG};
 
@@ -242,44 +242,36 @@
             });
         }
     }
-    async function ReloadChart(id_val, dt_val, val = null){
+    function ReloadChart(id_val, dt_val, val = null, fullReload = false){
         //deoppelten Reload verhinden!
         if(last_reload == dt_val) return;
         if(!update_vars.includes(id_val)) return;
-
-        old_isStreaming = false;
-        if(checkIsStreaming() !== false) old_isStreaming = true;
         last_reload = dt_val;
 
         if(confiuration.ID_Period === id_val && val !== null) confiuration.Period = val;
         if(confiuration.ID_Relativ === id_val && val !== null) confiuration.Relativ = val;
 
         if(confiuration.data_loadAsync){
-            //config_axes = [];
             config_dataset = [];
             config_xaxes = {};
             config_axes = {};
+            count = 0;
+            len = confiuration.Var_List.length + 1;
 
-            new_isStreaming = false;
-            if(checkIsStreaming() !== false) new_isStreaming = true;
+            const data = fetch("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&loadConfig=1").json();
+            confiuration = data.Config;
 
-            if(old_isStreaming !== new_isStreaming) {
-                console.log("RELOAD CHART Full!");
-                myChart.destroy();
-                var ctx = document.getElementById('myChart');
-                myChart = new Chart(ctx, updateChartconfig());
-            }
-
-            //load XAxes
+                //load XAxes
             $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&loadXAxes=1", function (data) {
                 //console.log("update Offset: ", data);
                 config_xaxes = data.XAXES;
                 Object.assign(config_axes, {x: config_xaxes});
                 myChart.options.scales = config_axes;
-                myChart.update(0);
+                if(!fullReload && new_Streaming === old_Streaming){
+                    myChart.update(0);
+                }
+                count++;
             });
-
-
 
             //load Vraibales
             var counter_var = 0;
@@ -298,20 +290,28 @@
                     console.log("Async Chart " + Variable + " loaded");
 
                     counter_var++;
-                    if(counter_var >= confiuration.Var_List.length){
+                    if(counter_var >= confiuration.Var_List.length && !fullReload && new_Streaming === old_Streaming){
                         console.log("Update Chart!");
                         myChart.update(0);
                     }
+
+                    count++;
                 });
             });
 
-            //myChart.data.datasets = config_dataset;
-            //myChart.options.scales = Object.assign(myChart.options.scales, {x: config_xaxes});
-            //myChart.update(0);
+            if(fullReload || new_Streaming !== old_Streaming) {
 
-
+                console.log("RELOAD CHART Full!");
+                myChart.destroy();
+                var ctx = document.getElementById('myChart');
+                myChart = new Chart(ctx, updateChartconfig());
+            }
         }else{
+            //sync load of all Data
             $.getJSON( "/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}", function( data ) {
+                if(confiuration.Period != data.Config.Period || confiuration.Relativ != data.Config.Relativ){
+                    fullReload = true;
+                }
 
                 config_dataset = data.DATASETS;
                 config_axes = data.AXES;
@@ -319,14 +319,10 @@
 
                 confiuration = data.Config;
 
-                new_isStreaming = false;
-                if(checkIsStreaming() !== false) new_isStreaming = true;
-
-
                 //neuerstellen (aufgrund des livestreming plugins!
-                if(old_isStreaming !== new_isStreaming){
+                if(fullReload){
                     console.log("RELOAD CHART Full!");
-                    myChart.destroy();
+                    if(typeof myChart !== "undefined") myChart.destroy();
                     var ctx = document.getElementById('myChart');
                     myChart = new Chart(ctx, updateChartconfig());
                 }else{
@@ -339,15 +335,9 @@
                 }
                 last_update = Date.now();
                 offset_isSet = checkOffsetisSet();
+                UpdateConfiguration();
             });
         }
-    }
-    function LoadConfiguration(){
-        //updaten configura
-        $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&loadConfig=1", function (data) {
-            //console.log("update Offset: ", data);
-            confiuration = data.Config;
-        });
     }
     async function UpdateConfiguration() {
         while (true){
@@ -780,20 +770,11 @@
         return blocks.join('');
     }
 
-    window.onload = function() {
+    function bootUp(){
         try {
-            //update config
-            LoadConfiguration();
-
-            var ctx = document.getElementById('myChart');
-            myChart = new Chart(ctx, updateChartconfig());
-
             //load config after Startup
             var dt_val = Math.floor(Date.now() / 1000);
-            ReloadChart(update_vars[0], dt_val);
-
-            offset_isSet = checkOffsetisSet();
-            UpdateConfiguration();
+            ReloadChart(update_vars[0], dt_val, null, true);
 
             if (config_global.DataMode == 0) {
                 //pullup Mode remote
@@ -803,8 +784,12 @@
                 connect();
             }
         }catch (e) {
-            alert("Chart | ",e);
+            alert("Chart | ", e.message);
         }
+    }
+
+    window.onload = function() {
+        bootUp();
     }
 
     window.addEventListener('load resize orientationchange', function () {
