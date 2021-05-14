@@ -108,21 +108,11 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->RegisterVariableInteger("Offset", $this->Translate("Offset"), "", 98);
         $this->RegisterVariableInteger("StartDate", $this->Translate("Start Date"), "~UnixTimestamp", 99);
 
-
         $this->EnableAction("Period");
         $this->EnableAction("Offset");
         $this->EnableAction("Now");
         $this->EnableAction("StartDate");
         $this->EnableAction("Relativ");
-
-        $identIdlist = array();
-        $identIdlist[] = IPS_GetObjectIDByIdent("Period", $this->InstanceID);
-        $identIdlist[] = IPS_GetObjectIDByIdent("Offset", $this->InstanceID);
-        $identIdlist[] = IPS_GetObjectIDByIdent("Now", $this->InstanceID);
-        $identIdlist[] = IPS_GetObjectIDByIdent("StartDate", $this->InstanceID);
-        $identIdlist[] = IPS_GetObjectIDByIdent("Relativ", $this->InstanceID);
-
-        $this->SetBuffer("IdentIDList", json_encode($identIdlist));
 
         $this->SetReceiveDataFilter('.*instance\\\":[ \\\"]*'.$this->InstanceID.'[\\\”]*.*');
 

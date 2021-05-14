@@ -230,6 +230,20 @@ class JSLiveModule extends IPSModule
     }
 
     //Messagesink
+    private function UpdateIdentList(){
+        $arr_Idents = array("Period", "Offset", "Now", "StartDate", "Relativ");
+        $identIdlist = array();
+
+        foreach ($arr_Idents as $ident){
+            $identID = @IPS_GetObjectIDByIdent($ident, $this->InstanceID);
+
+            if($identID !== false){
+                $identIdlist[] = $identID;
+            }
+        }
+
+        $this->SetBuffer("IdentIDList", json_encode($identIdlist));
+    }
     protected function GetVariableList(){
         $varList = array();
         $confData = json_decode(IPS_GetConfiguration($this->InstanceID), true);
@@ -264,7 +278,7 @@ class JSLiveModule extends IPSModule
             }
         }
 
-        //$this->SendDebug("GetVariableList" , json_encode($varList), 0);
+        $this->SendDebug("GetVariableList" , json_encode($varList), 0);
         return $varList;
     }
     protected function UpdateMessageSink(array $newVariables){
@@ -313,7 +327,7 @@ class JSLiveModule extends IPSModule
 
         $gw_id = IPS_GetInstance($this->InstanceID)["ConnectionID"];
         if ($SenderID == $gw_id && $Message == 10503) {
-            $this-> UpdateOutput();
+            $this->UpdateOutput();
             $this->UpdateIframe();
             return;
         }
@@ -337,6 +351,14 @@ class JSLiveModule extends IPSModule
                 break;
             case 10603:
                 //on Update send
+
+                if(in_array("IdentIDList", $this->GetBufferList())){
+                    $identList = json_decode($this->GetBuffer("IdentIDList"), true);
+                    if(in_array($SenderID, $identList)){
+                        $this->SendDebug("UpdateMessageSink", "Send Data => " . $SenderID . " | DATA => " . json_encode($Data), 0);
+                    }
+                }
+
                 $this->SendDataToSocketClient($SenderID, $Message, $Data);
                 break;
         }
@@ -360,11 +382,11 @@ class JSLiveModule extends IPSModule
     //Cache and Htmlbox
     public function ApplyChanges()
     {
-        //setLastModifed buffer
-        $this->SetBuffer("LastModifed", gmdate("D, d M Y H:i:s", time())." GMT");
-
         //Never delete this line!
         parent::ApplyChanges();
+
+        //updateindetnlist
+        $this->UpdateIdentList();
 
         //HTMLBOX and Chache!
         $this->UpdateOutput();
@@ -375,6 +397,9 @@ class JSLiveModule extends IPSModule
     }
     protected function UpdateOutput(){
         if (IPS_GetInstance($this->InstanceID)["InstanceStatus"] != 102) return;
+
+        //setLastModifed buffer
+        $this->SetBuffer("LastModifed", gmdate("D, d M Y H:i:s", time())." GMT");
 
         if($this->ReadPropertyBoolean("EnableCache")) {
 
