@@ -711,7 +711,7 @@ class SymconJSLiveChart extends JSLiveModule{
 
         }
 
-        $output["type"] = "time";
+        //$output["type"] = "time";
 
         if($output["type"] != "realtime"){
             $starData = $this->GetCorrectStartDate();
