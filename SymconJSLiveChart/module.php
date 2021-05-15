@@ -711,15 +711,7 @@ class SymconJSLiveChart extends JSLiveModule{
 
         }
 
-
-
-
-
-
-
-
-
-
+        $output["type"] = "time";
 
         if($output["type"] != "realtime"){
             $starData = $this->GetCorrectStartDate();
@@ -727,9 +719,6 @@ class SymconJSLiveChart extends JSLiveModule{
             $output["min"] = ($starData["start"] * 1000);
             $output["max"] = (($starData["end"] + 1) * 1000);
         }
-
-        //$output["time"]["stepSize"] = 1;
-
 
         //$output["realtime"]["pause"] = false;
         //$output["realtime"]["refresh"] = 180000;
