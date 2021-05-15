@@ -123,6 +123,8 @@
             };
             config.options.plugins.tooltip.callbacks = t_callpack;
 
+            console.log("CONFIG: ", JSON.stringify(config));
+
             return config;
         } catch (e) {
             alert(e);
@@ -274,12 +276,14 @@
                     fullReload = true;
                 }
                 confiuration = data.Config;
+                console.log("Configuration: ", JSON.stringify(data));
 
                 //then load XAxes
                 $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&loadXAxes=1", function (data) {
                     //console.log("update Offset: ", data);
                     config_xaxes = data.XAXES;
                     config_axes = {x: config_xaxes};
+                    console.log("XAXES: ", JSON.stringify(data));
 
                     //load VariablesData Async
                     var first = true;
@@ -291,10 +295,11 @@
                             Object.assign(config_axes, data.AXES);
 
                             console.log("Async Dataset " + Variable + " loaded");
+                            console.log("Dataset: ", JSON.stringify(data));
 
                             if(first){
                                 first = false
-                                fullReload = true;
+                                //fullReload = true;
                                 if (fullReload || typeof myChart === "undefined") {
                                     console.log("RELOAD CHART Full!");
                                     if(typeof myChart !== "undefined") myChart.destroy();
@@ -739,7 +744,7 @@
         return rDate;
     }
     function checkIsStreaming(){
-        return false;
+        //return false;
         if(confiuration.Relativ == false) return false;
         switch(confiuration.Period){
             case 0:
