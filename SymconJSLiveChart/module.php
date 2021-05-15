@@ -318,7 +318,6 @@ class SymconJSLiveChart extends JSLiveModule{
 
                     }
                 }
-
                 $o_item["archiv"] = $this->GetArchivData($var, $hires, $offset, $start, $end, $Aggregationsstufe, 0, false);
             }
             $output[] = $o_item;
@@ -445,6 +444,7 @@ class SymconJSLiveChart extends JSLiveModule{
         $starData = $this->GetCorrectStartDate();
         $date_start = $starData["start"];
         $date_end = $starData["end"];
+
         $Aggregationsstufe = $starData["stufe"];
 
         $emptyGrpID = 0;
@@ -631,12 +631,6 @@ class SymconJSLiveChart extends JSLiveModule{
     }
     private function GenerateXAxesData(){
         $output = array();
-
-        //vor Stacked Charts!
-        //$output["stacked"] = true;
-        $output["axis"] = "x";
-
-        //$output["distribution"] = "series";
         $output["time"]["tooltipFormat"] = "DD.MM.YYYY HH:mm:ss";
 
         $output["ticks"]["font"]["size"] = $this->ReadPropertyInteger("axes_tickfontSize");
@@ -651,42 +645,49 @@ class SymconJSLiveChart extends JSLiveModule{
                 $output["type"] = "time";
                 $output["time"]["unit"] = "year";
                 $output["time"]["stepSize"] = 1;
+                $output["time"]["displayFormats"]["year"] = "YYYY";
                 break;
             case 1:
                 //Jahr
                 $output["type"] = "time";
                 $output["time"]["unit"] = "month";
                 $output["time"]["stepSize"] = 2;
+                $output["time"]["displayFormats"]["month"] = "MMM YYYY";
                 break;
             case 2:
                 //Quartal
                 $output["type"] = "time";
                 $output["time"]["unit"] = "month";
                 $output["time"]["stepSize"] = 1;
+                $output["time"]["displayFormats"]["month"] = "MMM YYYY";
                 break;
             case 3:
                 //Monat
                 $output["type"] = "time";
                 $output["time"]["unit"] = "day";
                 $output["time"]["stepSize"] = 3;
+                $output["time"]["displayFormats"]["day"] = "DD.MM";
                 break;
             case 4:
                 //Woche
                 $output["type"] = "time";
                 $output["time"]["unit"] = "day";
                 $output["time"]["stepSize"] = 1;
+                $output["time"]["displayFormats"]["day"] = "DD.MM";
                 break;
             case 5:
                 //Tag
                 $output["type"] = "time";
                 $output["time"]["unit"] = "hour";
                 $output["time"]["stepSize"] = 3;
+                $output["time"]["displayFormats"]["hour"] = "HH";
                 break;
             case 6:
                 //Stunde
                 if($relativ) $output["type"] = "realtime"; else $output["type"] = "time";
                 $output["time"]["unit"] = "minute";
                 $output["time"]["stepSize"] = 5;
+                $output["time"]["displayFormats"]["minute"] = "HH:mm";
 
                 if($relativ) {
                     $output["realtime"]["duration"] = 3600000;
@@ -699,6 +700,7 @@ class SymconJSLiveChart extends JSLiveModule{
                 if($relativ) $output["type"] = "realtime"; else $output["type"] = "time";
                 $output["time"]["unit"] = "second";
                 $output["time"]["stepSize"] = 10;
+                $output["time"]["displayFormats"]["second"] = "ss";
 
                 if($relativ){
                     $output["realtime"]["duration"] = 60000;
@@ -710,20 +712,23 @@ class SymconJSLiveChart extends JSLiveModule{
         }
 
 
-        $output["time"]["displayFormats"]["second"] = "ss";
-        $output["time"]["displayFormats"]["minute"] = "HH:mm";
-        $output["time"]["displayFormats"]["hour"] = "HH";
-        $output["time"]["displayFormats"]["day"] = "DD.MM";
-        $output["time"]["displayFormats"]["week"] = "ll";
-        $output["time"]["displayFormats"]["month"] = "MMM YYYY";
-        $output["time"]["displayFormats"]["quarter"] = "[Q]Q - YYYY";
-        $output["time"]["displayFormats"]["year"] = "YYYY";
+
+
+
+
+
+
+
+
 
         if($output["type"] != "realtime"){
             $starData = $this->GetCorrectStartDate();
+            $this->SendDebug("GetArchivData", "Start_Date: ". $starData["start"]. " | End_Date: ".$starData["end"], 0);
             $output["min"] = ($starData["start"] * 1000);
             $output["max"] = (($starData["end"] + 1) * 1000);
         }
+
+        //$output["time"]["stepSize"] = 1;
 
 
         //$output["realtime"]["pause"] = false;
@@ -748,6 +753,7 @@ class SymconJSLiveChart extends JSLiveModule{
             $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("axes_fontColor"));
             $output["ticks"]["color"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
         }
+
 
         return $output;
     }
