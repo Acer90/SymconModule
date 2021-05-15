@@ -644,6 +644,7 @@ class SymconJSLiveChart extends JSLiveModule{
 
 
         $period = $this->GetValue("Period");
+        $relativ = $this->GetValue("Relativ");
         switch ($period) {
             case 0:
                 //Dekade
@@ -683,23 +684,27 @@ class SymconJSLiveChart extends JSLiveModule{
                 break;
             case 6:
                 //Stunde
-                $output["type"] = "realtime";
+                if($relativ) $output["type"] = "realtime"; else $output["type"] = "time";
                 $output["time"]["unit"] = "minute";
                 $output["time"]["stepSize"] = 5;
 
-                $output["realtime"]["duration"] = 3600000;
-                $output["realtime"]["delay"] = 0;
-                $output["realtime"]["ttl"] = $output["realtime"]["duration"]+30000;
+                if($relativ) {
+                    $output["realtime"]["duration"] = 3600000;
+                    $output["realtime"]["delay"] = 0;
+                    $output["realtime"]["ttl"] = $output["realtime"]["duration"] + 30000;
+                }
                 break;
             case 7:
                 //Minute
-                $output["type"] = "realtime";
+                if($relativ) $output["type"] = "realtime"; else $output["type"] = "time";
                 $output["time"]["unit"] = "second";
                 $output["time"]["stepSize"] = 10;
 
-                $output["realtime"]["duration"] = 60000;
-                $output["realtime"]["delay"] = 0;
-                $output["realtime"]["ttl"] = $output["realtime"]["duration"]+30000;
+                if($relativ){
+                    $output["realtime"]["duration"] = 60000;
+                    $output["realtime"]["delay"] = 0;
+                    $output["realtime"]["ttl"] = $output["realtime"]["duration"]+30000;
+                }
                 break;
 
         }

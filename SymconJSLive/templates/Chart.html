@@ -78,7 +78,6 @@
                     },
                     responsiveAnimationDuration: 500,    // animation duration after a resize
                     plugins: {
-                        streaming: checkIsStreaming(),
                         tooltip: config_tooltips,
                         title: config_title,
                         legend: config_legend,
@@ -111,6 +110,11 @@
                     }
                 }
             };
+
+            sData = checkIsStreaming();
+            if(sData !== false){
+                config.options.plugins["streaming"] = sData;
+            }
 
             //add function tooltip
             t_callpack = {
@@ -248,64 +252,69 @@
         if(!update_vars.includes(id_val)) return;
         last_reload = dt_val;
 
-        if(confiuration.ID_Period === id_val && val !== null) confiuration.Period = val;
-        if(confiuration.ID_Relativ === id_val && val !== null) confiuration.Relativ = val;
+        if(confiuration.ID_Period === id_val && val !== null){
+            confiuration.Period = val;
+            fullReload = true;
+        }
+        if(confiuration.ID_Relativ === id_val && val !== null){
+            confiuration.Relativ = val;
+            fullReload = true;
+        }
 
         if(confiuration.data_loadAsync){
             config_dataset = [];
             config_xaxes = {};
             config_axes = {};
-            count = 0;
-            len = confiuration.Var_List.length + 1;
 
-            const data = fetch("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&loadConfig=1").json();
-            confiuration = data.Config;
-
-                //load XAxes
-            $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&loadXAxes=1", function (data) {
-                //console.log("update Offset: ", data);
-                config_xaxes = data.XAXES;
-                Object.assign(config_axes, {x: config_xaxes});
-                myChart.options.scales = config_axes;
-                if(!fullReload && new_Streaming === old_Streaming){
-                    myChart.update(0);
+            //First Load Config!!
+            $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&loadConfig=1", function( data ) {
+                if(confiuration.Period != data.Config.Period || confiuration.Relativ != data.Config.Relativ){
+                    fullReload = true;
                 }
-                count++;
-            });
+                confiuration = data.Config;
 
-            //load Vraibales
-            var counter_var = 0;
-            confiuration.Var_List.forEach(function (Variable) {
-                $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&var=" + Variable, function (data) {
+                //then load XAxes
+                $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&loadXAxes=1", function (data) {
                     //console.log("update Offset: ", data);
-                    config_dataset.push(data.DATASETS[0]);
-                    //myChart.data.datasets = config_dataset;
+                    config_xaxes = data.XAXES;
+                    config_axes = {x: config_xaxes};
 
-                    key = Object.keys(data.AXES)[0];
-                    //config_axes[key] = data.AXES;
-                    Object.assign(config_axes, data.AXES);
+                    //load VariablesData Async
+                    var counter_var = 0;
+                    confiuration.Var_List.forEach(function (Variable) {
+                        $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&var=" + Variable, function (data) {
+                            //console.log("update Offset: ", data);
+                            config_dataset.push(data.DATASETS[0]);
+                            Object.assign(config_axes, data.AXES);
 
-                    myChart.data.datasets = config_dataset;
-                    myChart.options.scales = config_axes;
-                    console.log("Async Chart " + Variable + " loaded");
+                            console.log("Async Dataset " + Variable + " loaded");
 
-                    counter_var++;
-                    if(counter_var >= confiuration.Var_List.length && !fullReload && new_Streaming === old_Streaming){
-                        console.log("Update Chart!");
-                        myChart.update(0);
+                            if(typeof myChart !== "undefined") {
+                                myChart.data.datasets = config_dataset;
+                                myChart.options.scales = config_axes;
+
+                                console.log("Update Chart!");
+                                myChart.update();
+                            }
+                        });
+                    });
+
+                    if (fullReload || typeof myChart === "undefined") {
+                        console.log("RELOAD CHART Full!");
+                        if(typeof myChart !== "undefined") myChart.destroy();
+                        var ctx = document.getElementById('myChart');
+                        myChart = new Chart(ctx, updateChartconfig());
+
+                        last_update = Date.now();
+                        offset_isSet = checkOffsetisSet();
+                        UpdateConfiguration();
+                    }else{
+                        myChart.data.datasets = config_dataset;
+                        myChart.options.scales = config_axes;
+                        myChart.update();
                     }
-
-                    count++;
                 });
             });
-
-            if(fullReload || new_Streaming !== old_Streaming) {
-
-                console.log("RELOAD CHART Full!");
-                myChart.destroy();
-                var ctx = document.getElementById('myChart');
-                myChart = new Chart(ctx, updateChartconfig());
-            }
         }else{
             //sync load of all Data
             $.getJSON( "/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}", function( data ) {
@@ -331,7 +340,7 @@
                     myChart.options.scales = Object.assign(config_axes, {x: config_xaxes});
 
                     console.log("RELOAD CHART!");
-                    myChart.update(0);
+                    myChart.update();
                 }
                 last_update = Date.now();
                 offset_isSet = checkOffsetisSet();
