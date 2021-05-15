@@ -43,6 +43,7 @@
     let last_update = Date.now();
     let offset_isSet = false;
     let last_reload = 0; //Damit der Chart nur einmal neugeladen wird!
+    let isReloading = true;
 
     function updateChartconfig() {
         try {
@@ -163,7 +164,7 @@
 
     function UpdateChart(id_val, dt_val, value){
         //wenn nicht Now dann kein Update durchführen!
-        if(!confiuration.Now) return;
+        if(!confiuration.Now || isReloading) return;
 
         isUpdated = false;
 
@@ -251,6 +252,7 @@
         if(last_reload == dt_val) return;
         if(!update_vars.includes(id_val)) return;
         last_reload = dt_val;
+        isReloading = true;
 
         if(confiuration.ID_Period === id_val && val !== null){
             confiuration.Period = val;
@@ -263,8 +265,8 @@
 
         if(confiuration.data_loadAsync){
             config_dataset = [];
-            //config_xaxes = {};
-            //config_axes = {};
+            config_xaxes = {};
+            config_axes = {};
 
             //First Load Config!!
             $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&loadConfig=1", function( data ) {
@@ -280,6 +282,7 @@
                     config_axes = {x: config_xaxes};
 
                     //load VariablesData Async
+                    var first = true;
                     var counter_var = 0;
                     confiuration.Var_List.forEach(function (Variable) {
                         $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&var=" + Variable, function (data) {
@@ -289,31 +292,38 @@
 
                             console.log("Async Dataset " + Variable + " loaded");
 
-                            if(typeof myChart !== "undefined") {
-                                myChart.data.datasets = config_dataset;
-                                myChart.options.scales = config_axes;
+                            if(first){
+                                first = false
+                                fullReload = true;
+                                if (fullReload || typeof myChart === "undefined") {
+                                    console.log("RELOAD CHART Full!");
+                                    if(typeof myChart !== "undefined") myChart.destroy();
+                                    var ctx = document.getElementById('myChart');
+                                    myChart = new Chart(ctx, updateChartconfig());
 
-                                console.log("Update Chart!");
-                                myChart.update();
+
+                                    last_update = Date.now();
+                                    offset_isSet = checkOffsetisSet();
+                                    UpdateConfiguration();
+                                }else{
+                                    myChart.data.datasets = config_dataset;
+                                    myChart.options.scales = config_axes;
+                                    myChart.update();
+                                }
+
+                            }else{
+                                if(typeof myChart !== "undefined") {
+                                    myChart.data.datasets = config_dataset;
+                                    myChart.options.scales = config_axes;
+
+                                    console.log("Update Chart!");
+                                    myChart.update();
+                                }
                             }
+
+                            isReloading = false;
                         });
                     });
-
-                    fullReload = true;
-                    if (fullReload || typeof myChart === "undefined") {
-                        console.log("RELOAD CHART Full!");
-                        if(typeof myChart !== "undefined") myChart.destroy();
-                        var ctx = document.getElementById('myChart');
-                        myChart = new Chart(ctx, updateChartconfig());
-
-                        last_update = Date.now();
-                        offset_isSet = checkOffsetisSet();
-                        UpdateConfiguration();
-                    }else{
-                        myChart.data.datasets = config_dataset;
-                        myChart.options.scales = config_axes;
-                        myChart.update();
-                    }
                 });
             });
         }else{
@@ -346,6 +356,8 @@
                 last_update = Date.now();
                 offset_isSet = checkOffsetisSet();
                 UpdateConfiguration();
+
+                isReloading = false;
             });
         }
     }
@@ -727,6 +739,7 @@
         return rDate;
     }
     function checkIsStreaming(){
+        return false;
         if(confiuration.Relativ == false) return false;
         switch(confiuration.Period){
             case 0:
