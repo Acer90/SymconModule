@@ -263,8 +263,8 @@
 
         if(confiuration.data_loadAsync){
             config_dataset = [];
-            config_xaxes = {};
-            config_axes = {};
+            //config_xaxes = {};
+            //config_axes = {};
 
             //First Load Config!!
             $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&loadConfig=1", function( data ) {
@@ -299,6 +299,7 @@
                         });
                     });
 
+                    fullReload = true;
                     if (fullReload || typeof myChart === "undefined") {
                         console.log("RELOAD CHART Full!");
                         if(typeof myChart !== "undefined") myChart.destroy();
