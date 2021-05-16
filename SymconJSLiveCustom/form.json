@@ -288,7 +288,8 @@
                 { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
                 { "type": "CheckBox", "name": "EnableCache", "caption": "Enable Cache"},
                 { "type": "CheckBox", "name": "CreateOutput", "caption": "Create HTMLBox"},
-                { "type": "CheckBox", "name": "viewport_enable", "caption": "Viewport Enable"},
+                { "type": "CheckBox", "name": "EnableViewport", "caption": "Viewport Enable"},
+                { "type": "NumberSpinner", "name": "IFrameHeight", "caption": "IFrame Height", "suffix": "px", "minimum": 0 },
                 { "type": "NumberSpinner", "name": "DataUpdateRate", "caption": "Data Update Rate", "minimum": 0, "suffix": "ms", "digits": 0 }
             ]
         }

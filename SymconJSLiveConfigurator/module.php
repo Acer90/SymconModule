@@ -1,5 +1,5 @@
 <?php
-include_once (__DIR__ . '/../SymconJSLive/libs/JSLiveModule.php');
+//include_once (__DIR__ . '/../SymconJSLive/libs/JSLiveModule.php');
 
 class SymconJSLiveCofiguartor extends WebHookModule {
 

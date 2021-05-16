@@ -18,7 +18,7 @@ class SymconJSLive extends WebHookModule {
         $this->RegisterPropertyInteger("RefreshTime", 3);
 
         //viewport
-        $this->RegisterPropertyBoolean("viewport_enable", true);
+        $this->RegisterPropertyBoolean("EnableViewport", true);
         $this->RegisterPropertyString("viewport_content", "width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1, user-scalable=no");
 
         //expert
@@ -79,6 +79,10 @@ class SymconJSLive extends WebHookModule {
                 if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE'])==$lastmodified || $Header_Etag == $etag){
                     header("HTTP/1.1 304 Not Modified");
                 }
+            }else {
+                header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+                header("Cache-Control: post-check=0, pre-check=0", false);
+                header("Pragma: no-cache");
             }
 
             if($this->ReadPropertyBoolean("enableCompression") && $this->IsCompressionAllowed($mimeType)) {
@@ -196,6 +200,12 @@ class SymconJSLive extends WebHookModule {
                 if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE'])==$lastmodified || $Header_Etag == $etag){
                     header("HTTP/1.1 304 Not Modified");
                 }
+            }
+
+            if(!$useCache || !$this->ReadPropertyBoolean("enableCache")){
+                header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+                header("Cache-Control: post-check=0, pre-check=0", false);
+                header("Pragma: no-cache");
             }
 
             if($this->ReadPropertyBoolean("Debug")) $this->SendDebug("WebHook", $contend, 0);

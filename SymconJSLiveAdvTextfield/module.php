@@ -12,10 +12,12 @@ class SymconJSLiveAdvTextfield extends JSLiveModule{
 
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
-$this->RegisterPropertyBoolean("EnableCache", true);
-        $this->RegisterPropertyBoolean("CreateOutput", true);        $this->RegisterPropertyInteger("TemplateScriptID", 0);
+        $this->RegisterPropertyBoolean("EnableCache", true);
+        $this->RegisterPropertyBoolean("CreateOutput", true);
+        $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyInteger("DataUpdateRate", 50);
-        $this->RegisterPropertyBoolean("viewport_enable", true);
+        $this->RegisterPropertyBoolean("EnableViewport", true);
+        $this->RegisterPropertyInteger("IFrameHeight", 0);
 
         //colors
         $this->RegisterPropertyInteger("style_backgroundColor", 0);

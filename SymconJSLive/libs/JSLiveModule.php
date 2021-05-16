@@ -407,7 +407,7 @@ class JSLiveModule extends IPSModule
             $sendData["Html"] = $this->GetWebpage();
             $sendData["InstanceID"] = $this->InstanceID;
             $sendData["Type"] = "UpdateHtml";
-            $sendData["ViewPort"] = $this->ReadPropertyBoolean("viewport_enable");
+            $sendData["ViewPort"] = $this->ReadPropertyBoolean("EnableViewport");
 
             $pData = $this->SendDataToParent(json_encode([
                 'DataID' => "{751AABD7-E31D-024C-5CC0-82AC15B84095}",
@@ -422,9 +422,11 @@ class JSLiveModule extends IPSModule
         //send refresh website to client
         $this->SendDataToSocketClient($this->InstanceID, 10506, array());
     }
-    protected function UpdateIframe(string $height = "auto", string $scrolling = "no"){
+    protected function UpdateIframe(){
         if (IPS_GetInstance($this->InstanceID)["InstanceStatus"] != 102) return;
         $htmlStr = "";
+        $scrolling = "no";
+        $height = $this->ReadPropertyInteger("IFrameHeight");
 
         if($this->ReadPropertyBoolean("CreateOutput")) {
             $this->RegisterVariableString("Output", $this->Translate("Output"), "~HTMLBox", 0);
@@ -432,7 +434,7 @@ class JSLiveModule extends IPSModule
             $link = $this->GetLocalLink();
             //$link = $this->GetLink();
 
-            if($height == "auto"){
+            if($height == 0){
                 $htmlStr .= '<iframe src="' . $link . '" width="100%" frameborder="0" style="overflow:hidden;height:100%;width:100%" height="100%" scrolling="'.$scrolling.'" ></iframe>'; //onload="resizeIframe(this)"
 
             }else{
@@ -455,13 +457,13 @@ class JSLiveModule extends IPSModule
     }
     protected function GetOutput(){
         $EnableCache = $this->ReadPropertyBoolean("EnableCache");
-        $viewport_enable = $this->ReadPropertyBoolean("viewport_enable");
+        $EnableViewport = $this->ReadPropertyBoolean("EnableViewport");
         if($this->ReadPropertyBoolean("EnableCache")){
             //Load data from Cache
             $this->SendDebug("GetOutput", "Get Data form Cache!", 0);
-            return json_encode(array("Contend" => $this->GetBuffer("Output"), "lastModify" => $this->GetBuffer("LastModifed"), "EnableCache" => $EnableCache, "EnableViewport" => $viewport_enable));
+            return json_encode(array("Contend" => $this->GetBuffer("Output"), "lastModify" => $this->GetBuffer("LastModifed"), "EnableCache" => $EnableCache, "EnableViewport" => $EnableViewport));
         }else{
-            return json_encode(array("Contend" => $this->GetWebpage(), "lastModify" => $this->GetBuffer("LastModifed"), "EnableCache" => $EnableCache, "EnableViewport" => $viewport_enable));
+            return json_encode(array("Contend" => $this->GetWebpage(), "lastModify" => $this->GetBuffer("LastModifed"), "EnableCache" => $EnableCache, "EnableViewport" => $EnableViewport));
         }
     }
 
