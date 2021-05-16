@@ -12,9 +12,11 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
 
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
-$this->RegisterPropertyBoolean("EnableCache", true);
-        $this->RegisterPropertyBoolean("CreateOutput", true);        $this->RegisterPropertyInteger("TemplateScriptID", 0);
-        $this->RegisterPropertyBoolean("viewport_enable", true);
+        $this->RegisterPropertyBoolean("EnableCache", true);
+        $this->RegisterPropertyBoolean("CreateOutput", true);
+        $this->RegisterPropertyInteger("TemplateScriptID", 0);
+        $this->RegisterPropertyBoolean("EnableViewport", true);
+        $this->RegisterPropertyInteger("IFrameHeight", 0);
 
         //title
         $this->RegisterPropertyString("title_text", "");

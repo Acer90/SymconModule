@@ -14,7 +14,8 @@ class SymconJSLiveCustom extends JSLiveModule{
         $this->RegisterPropertyBoolean("EnableCache", true);
         $this->RegisterPropertyBoolean("CreateOutput", true);
         $this->RegisterPropertyInteger("DataUpdateRate", 50);
-        $this->RegisterPropertyBoolean("viewport_enable", true);
+        $this->RegisterPropertyBoolean("EnableViewport", true);
+        $this->RegisterPropertyInteger("IFrameHeight", 0);
 
         //colors
         $this->RegisterPropertyInteger("style_backgroundColor", 0);
