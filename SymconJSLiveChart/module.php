@@ -85,6 +85,9 @@ class SymconJSLiveChart extends JSLiveModule{
         //Never delete this line!
         parent::ApplyChanges();
 
+        $setDefault = false;
+        if(@IPS_GetObjectIDByIdent("Period", $this->InstanceID) === false) $setDefault = true;
+
         if (!IPS_VariableProfileExists("JSLive_Periode")){
             IPS_CreateVariableProfile("JSLive_Periode", 1);
             IPS_SetVariableProfileAssociation("JSLive_Periode", 0, $this->Translate("Decade"), "", -1);
@@ -118,6 +121,15 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->SetReceiveDataFilter('.*instance\\\":[ \\\"]*'.$this->InstanceID.'[\\\”]*.*');
 
         $this->SetStatus(102);
+
+        //setdafult if Variabel Periode not define
+        if($setDefault){
+            $this->SetValue("Period", 6);
+            $this->SetValue("Offset", 0);
+            $this->SetValue("Now", True);
+            $this->SetValue("StartDate", 0);
+            $this->SetValue("Relativ", True);
+        }
     }
     public function RequestAction($Ident, $Value) {
 
