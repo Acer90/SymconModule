@@ -25,6 +25,8 @@ class SymconJSLive extends WebHookModule {
         $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyBoolean("enableCache", false);
         $this->RegisterPropertyBoolean("enableCompression", true);
+        $this->RegisterPropertyBoolean("Iframe_useFullLink", false);
+
 
         //da das direkte reinladen ja nicht geht!
         $this->LoadConnectAddress();
@@ -254,10 +256,19 @@ class SymconJSLive extends WebHookModule {
                 $intId = $jsonData["InstanceID"];
                 $pw = $this->ReadPropertyString("Password");
 
-                if(empty($pw)){
-                    return "/hook/JSLive?Instance=".$intId;
+                if($this->ReadPropertyBoolean("Iframe_useFullLink")){
+                    $link = $this->ReadPropertyString("Address");
+                    if(empty($pw)){
+                        return $link . "/hook/JSLive?Instance=".$intId;
+                    }else{
+                        return $link . "/hook/JSLive?Instance=".$intId."&pw=".$pw;
+                    }
                 }else{
-                    return "/hook/JSLive?Instance=".$intId."&pw=".$pw;
+                    if(empty($pw)){
+                        return "/hook/JSLive?Instance=".$intId;
+                    }else{
+                        return "/hook/JSLive?Instance=".$intId."&pw=".$pw;
+                    }
                 }
             case "GetConfigurationLink":
                 $intId = $jsonData["InstanceID"];
