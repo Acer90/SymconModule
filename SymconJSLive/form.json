@@ -24,7 +24,8 @@
             "items": [
                 { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
                 { "type": "CheckBox", "name": "enableCache", "caption": "Enable Cache"},
-                { "type": "CheckBox", "name": "enableCompression", "caption": "Enable Compression"}
+                { "type": "CheckBox", "name": "enableCompression", "caption": "Enable Compression"},
+                { "type": "CheckBox", "name": "Iframe_useFullLink", "caption": "Iframe use FullLink"}
             ]
         }
     ],
