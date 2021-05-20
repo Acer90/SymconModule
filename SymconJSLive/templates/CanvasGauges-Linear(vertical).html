@@ -195,7 +195,7 @@
                 PullNewData(refreshRate);
             } else if (config_global.RemoteAddress == "" && config_global.RemoteDataMode == 0) {
                 //pullup Mode remote
-                refreshRate = config_global.RemoteRefreshTime;
+                refreshRate = config_global.RefreshTime;
                 PullNewData(refreshRate);
             } else {
                 connect();

@@ -64,19 +64,24 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->RegisterPropertyInteger("tooltips_backgroundColor", 0);
         $this->RegisterPropertyInteger("tooltips_cornerRadius", 5);
 
+        //Animation
+        $this->RegisterPropertyInteger("animation_duration", 500);
+        $this->RegisterPropertyString("animation_easing", "linear");
+
         //Data
         $this->RegisterPropertyInteger("data_highResSteps", 1);
         $this->RegisterPropertyBoolean("data_loadAsync", true);
+        $this->RegisterPropertyBoolean("data_pullModeinMinute", true);
+        $this->RegisterPropertyInteger("data_pullModeRefreshTime", 3);
 
         //Datalabels
-        $this->RegisterPropertyBoolean("datalabels_enabled", true);
-        $this->RegisterPropertyString("datalabels_anchoring", "start");
+        $this->RegisterPropertyString("datalabels_anchoring", "center");
         $this->RegisterPropertyString("datalabels_align", "center");
-        $this->RegisterPropertyBoolean("datalabels_clamp", false);
         $this->RegisterPropertyInteger("datalabels_fontSize", 12);
         $this->RegisterPropertyInteger("datalabels_fontColor", 0);
         $this->RegisterPropertyString("datalabels_fontFamily", "");
-        $this->RegisterPropertyInteger("datalabels_borderRadius", 12);
+        $this->RegisterPropertyInteger("datalabels_borderWidth", 1);
+        $this->RegisterPropertyInteger("datalabels_borderRadius", 2);
 
         //dataset
         $this->RegisterPropertyString("Datasets", "[]");
@@ -452,6 +457,10 @@ class SymconJSLiveChart extends JSLiveModule{
                     unset($datasets[$key]);
                 }
             }
+        }else{
+            //sortieren aufsteigend nach order
+            $arr_order = array_column($datasets, 'Order');
+            array_multisort($arr_order, SORT_ASC , $datasets);
         }
 
         $starData = $this->GetCorrectStartDate();
@@ -516,12 +525,19 @@ class SymconJSLiveChart extends JSLiveModule{
             }else{
                 $singelOutput["data"] = array();
             }
+            //BorderDash
+            $dash_arr = $item["Dash"];
+            if(is_array($dash_arr) && count($dash_arr)){
+                //sortieren aufsteigend nach order
+                $arr_order = array_column($dash_arr, 'Order');
+                array_multisort($arr_order, SORT_ASC , $dash_arr);
 
-            if(!empty($item["Dash"])){
-                $dashData = @json_decode($item["Dash"], true);
-                if ($dashData !== null){
-                    $singelOutput["borderDash"] = $dashData;
+                $dash = array();
+                foreach($dash_arr as $d_item){
+                    $dash[] = $d_item["Length"];
                 }
+
+                $singelOutput["borderDash"] = $dash;
             }
 
             //stackerd Chart
@@ -636,6 +652,38 @@ class SymconJSLiveChart extends JSLiveModule{
 
             }
 
+            //datalabels
+            if($item["datalabels_enable"]){
+                $datalabels = array();
+                $datalabels["display"] = true;
+
+
+                if($item["datalabels_BackgroundColor"] >= 0){
+                    $datalabels["useBackgroundColor"] = false;
+                    $rgbdata = $this->HexToRGB($item["datalabels_BackgroundColor"]);
+                    $datalabels["BackgroundColor"] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($item["datalabels_BackgroundColor_Alpha"], 2, '.', '').")";
+
+                }else{
+                    $datalabels["useBackgroundColor"] = true;
+                }
+
+                if($item["datalabels_BorderColor"] >= 0) {
+                    $datalabels["useBorderColor"] = false;
+                    $rgbdata = $this->HexToRGB($item["datalabels_BorderColor"]);
+                    $datalabels["BorderColor"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["datalabels_BorderColor_Alpha"], 2, '.', '') . ")";
+                }else{
+                    $datalabels["useBorderColor"] = true;
+                }
+                //$datalabels[""] = $item["datalabels_"];
+
+                $datalabels["showPrefix"] = $item["datalabels_showPrefix"];
+                $datalabels["showSuffix"] = $item["datalabels_showSuffix"];
+
+                //"visible": false,
+
+                $singelOutput["datalabels"] = $datalabels;
+            }
+
             $singelOutput["digits"] = $digits;
             $output["datasets"][] = $singelOutput;
         }
@@ -645,6 +693,7 @@ class SymconJSLiveChart extends JSLiveModule{
     private function GenerateXAxesData(){
         $output = array();
         $output["time"]["tooltipFormat"] = "DD.MM.YYYY HH:mm:ss";
+        $output["stacked"] = true;
 
         $output["ticks"]["font"]["size"] = $this->ReadPropertyInteger("axes_tickfontSize");
         $output["ticks"]["font"]["family"] = $this->ReadPropertyString("axes_fontFamily");
@@ -870,6 +919,22 @@ class SymconJSLiveChart extends JSLiveModule{
         $output["ID_Now"] = IPS_GetObjectIDByIdent("Now", $this->InstanceID);
         $output["ID_StartDate"] = IPS_GetObjectIDByIdent("StartDate", $this->InstanceID);
         $output["ID_Relativ"] = IPS_GetObjectIDByIdent("Relativ", $this->InstanceID);
+
+        //alle colorvariablen umwandeln!
+        foreach($output as $key => $val){
+            $pos = strpos(strtolower($key), "color");
+            $pos2 = strpos(strtolower($key), "alpha");
+            if ($pos !== false && $pos2 === false) {
+
+                if(array_key_exists($key."_Alpha", $output)){
+                    $rgbdata = $this->HexToRGB($val);
+                    $output[$key] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", ".$output[$key."_Alpha"].")";
+                }else{
+                    $rgbdata = $this->HexToRGB($val);
+                    $output[$key] = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
+                }
+            }
+        }
 
 
         $output["Var_List"] = array();
