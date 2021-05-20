@@ -11,7 +11,7 @@
 <script src="/hook/JSLive/js/moment/2.27.0/Moment.js" charset="utf-8"></script>
 <script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-adapter-moment.js" charset="utf-8"></script>
 <script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-plugin-streaming.min.js" charset="utf-8"></script>
-<!--<script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-plugin-datalabels.min.js" charset="utf-8"></script>-->
+<script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-plugin-datalabels.min.js" charset="utf-8"></script>
 <script src="/hook/JSLive/js/util.js"></script>
 
 <body>
@@ -44,11 +44,13 @@
     let offset_isSet = false;
     let last_reload = 0; //Damit der Chart nur einmal neugeladen wird!
     let isReloading = true;
+    let pullMode = false;
+    let pullModeStopping = false;
 
     function updateChartconfig() {
         try {
             //Eneable Datalabels
-            //Chart.register(ChartDataLabels);
+            Chart.register(ChartDataLabels);
 
             //set Window to canvas
             var ctx = document.getElementById('chart-container');
@@ -71,34 +73,58 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     animation: {
-                        duration: 500,                   // general animation time
-                        easing: 'easeOutQuad',
+                        duration: confiuration.animation_duration,
+                        easing: confiuration.animation_easing,
                     },
                     hover: {
                         animationDuration: 0           // duration of animations when hovering an item
                     },
-                    responsiveAnimationDuration: 500,    // animation duration after a resize
+                    responsiveAnimationDuration: 0,    // animation duration after a resize
                     plugins: {
                         tooltip: config_tooltips,
                         title: config_title,
                         legend: config_legend,
-                        /*datalabels: {
-                            //align: 'start',
-                            //anchor: 'start',
-                            backgroundColor: function(context) {
-                                return context.dataset.borderColor;
-                            },
-                            borderRadius: 4,
-                            color: 'white',
+                        datalabels: {
+                            display: false,
+                            align: confiuration.datalabels_align,
+                            anchor: confiuration.datalabels_anchoring,
+
+                            borderRadius: confiuration.datalabels_borderRadius,
+                            borderWidth: confiuration.datalabels_borderWidth,
                             font: {
-                                weight: 'bold'
+                                size: confiuration.datalabels_fontSize,
+                                family: confiuration.datalabels_fontFamily
                             },
+                            color: confiuration.datalabels_fontColor,
                             clip: true,
-                            padding: 6,
+                            clamp: true,
                             formatter: function(value, context) {
-                                return value["y"]; //  + '%'
+                                var str = value["y"];
+
+                                if(context.dataset.datalabels.showPrefix){
+                                    str = context.chart.config.options.scales[context.dataset.yAxisID].Prefix + str;
+                                }
+                                if(context.dataset.datalabels.showSuffix){
+                                    str = str + context.chart.config.options.scales[context.dataset.yAxisID].Suffix;
+                                }
+
+                                return  str;
+                            },
+                            backgroundColor: function(context) {
+                                if(context.dataset.datalabels.useBackgroundColor){
+                                    return context.dataset.backgroundColor;
+                                }else{
+                                    return context.dataset.datalabels.BackgroundColor;
+                                }
+                            },
+                            borderColor: function(context) {
+                                if(context.dataset.datalabels.useBorderColor){
+                                    return context.dataset.borderColor;
+                                }else{
+                                    return context.dataset.datalabels.BorderColor;
+                                }
                             }
-                        }*/
+                        }
                     },
                     scales: Object.assign(config_axes, {x: config_xaxes}),
                     layout: {
@@ -146,7 +172,10 @@
                 //refresh webseite
                 location.reload();
             } else if(data.Message == 10603) {
-                UpdateChart(data.SenderID, data.Data[3], data.Data[0]);
+                if(!confiuration.data_pullModeinMinute && confiuration.Period !== 7){
+                    UpdateChart(data.SenderID, data.Data[3], data.Data[0]);
+                }
+
                 ReloadChart(data.SenderID, data.Data[3], data.Data[0]);
             }
         };
@@ -285,6 +314,16 @@
                     config_axes = {x: config_xaxes};
                     console.log("XAXES: ", JSON.stringify(data));
 
+
+                    //pullmod at Minute
+                    if (config_global.DataMode !== 0 && confiuration.data_pullModeinMinute && confiuration.Period === 7 && !pullMode) {
+                        //pullup Mode
+                        var refreshRate = confiuration.data_pullModeRefreshTime;
+                        PullNewData(refreshRate);
+                    }else if(config_global.DataMode !== 0){
+                        pullModeStopping = true;
+                    }
+
                     //load VariablesData Async
                     var first = true;
                     var counter_var = 0;
@@ -363,6 +402,14 @@
                 UpdateConfiguration();
 
                 isReloading = false;
+
+                //pullmod at Minute
+                if (config_global.DataMode !== 0 && confiuration.data_pullModeinMinute && confiuration.Period === 7 && !pullMode) {
+                    var refreshRate = confiuration.data_pullModeRefreshTime;
+                    PullNewData(refreshRate);
+                }else if(config_global.DataMode !== 0){
+                    pullModeStopping = true;
+                }
             });
         }
     }
@@ -511,8 +558,10 @@
         myChart.update(0);
     }
     async function PullNewData(refreshRate){
+        pullMode = true;
+        pullModeStopping = false;
         refreshRate = refreshRate * 1000;
-        while (true){
+        while (!pullModeStopping){
             try {
                 dt_val = Math.floor(Date.now() / 1000);
                 $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
@@ -804,9 +853,9 @@
             var dt_val = Math.floor(Date.now() / 1000);
             ReloadChart(update_vars[0], dt_val, null, true);
 
-            if (config_global.DataMode == 0) {
-                //pullup Mode remote
-                var refreshRate = config_global.RemoteRefreshTime;
+            if (config_global.DataMode === 0) {
+                //pullup Mode
+                var refreshRate = config_global.RefreshTime;
                 PullNewData(refreshRate);
             } else {
                 connect();
