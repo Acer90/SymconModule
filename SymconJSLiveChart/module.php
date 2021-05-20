@@ -70,6 +70,7 @@ class SymconJSLiveChart extends JSLiveModule{
 
         //Data
         $this->RegisterPropertyInteger("data_highResSteps", 1);
+        $this->RegisterPropertyInteger("data_precision", 2);
         $this->RegisterPropertyBoolean("data_loadAsync", true);
         $this->RegisterPropertyBoolean("data_pullModeinMinute", true);
         $this->RegisterPropertyInteger("data_pullModeRefreshTime", 3);
@@ -257,7 +258,7 @@ class SymconJSLiveChart extends JSLiveModule{
         $output = array();
         $load_vars = array();
         $datasets = json_decode($this->ReadPropertyString("Datasets"), true);
-
+        $precision = $this->ReadPropertyInteger("data_precision");
 
         if(!array_key_exists("var", $querydata)) {
             //$this->SendDebug("GetData", "PARAMETER VARIABLE NOT SET!(" . json_encode($querydata). ")", 0);
@@ -289,7 +290,7 @@ class SymconJSLiveChart extends JSLiveModule{
                 continue;
             }
 
-            $o_item["Value"] = GetValue($var);
+            $o_item["Value"] = round(GetValue($var),$precision);
 
             if ($this->ReadPropertyBoolean("Debug"))
                 $this->SendDebug("GetData", json_encode($querydata), 0);
@@ -812,7 +813,7 @@ class SymconJSLiveChart extends JSLiveModule{
         $relativ = $this->GetValue("Relativ");
         $highResSteps = $this->ReadPropertyInteger("data_highResSteps");
         $counter = false;
-        $precision = 2;
+        $precision = $this->ReadPropertyInteger("data_precision");
         if(AC_GetAggregationType($archiveControlID, $varId) == 1){
             $precision = 5;
             $counter = true;

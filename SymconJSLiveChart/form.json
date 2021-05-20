@@ -355,10 +355,17 @@
             "caption": "Data",
             "items": [
                 { "type": "NumberSpinner", "name": "data_highResSteps", "caption": "HighResolution Steps" },
+                { "type": "Select", "name": "data_precision", "caption": "Precision",
+                    "options": [
+                        { "caption": "1", "value": 0 },
+                        { "caption": "0.1", "value": 1 },
+                        { "caption": "0.01", "value": 2 },
+                        { "caption": "0.001", "value": 3 }
+                    ]
+                },
                 { "type": "CheckBox", "name": "data_loadAsync", "caption": "load data asynchronously"},
                 { "type": "CheckBox", "name": "data_pullModeinMinute", "caption": "Pullmode at Minute"},
                 { "type": "NumberSpinner", "name": "data_pullModeRefreshTime", "caption": "Pullmode Refreshtime", "suffix": "sec.", "minimum": 0}
-
             ]
         },
         {
