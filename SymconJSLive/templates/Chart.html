@@ -212,7 +212,9 @@
                 //nur daten ohne Offset hier updaten
                 offset = myChart.data.datasets[part].offset;
                 if(offset == 0) {
-                    val = value;
+                    precision = Math.pow(10, confiuration.data_precision);
+
+                    val = Math.floor(value * precision) /  precision;
                     highRes = myChart.data.datasets[part].highRes;
                     itemDate = UpdateDate(dt_val * 1000, highRes);
 
@@ -220,7 +222,7 @@
                     if(counter){
 
                         val = val - myChart.data.datasets[part].lastValue;
-                        val = Math.floor(val * 100000) / 100000;
+                        val = Math.floor(val * precision) / precision;
                         if(val < 0) val = val * -1.0;
 
                         myChart.data.datasets[part].lastValue = Math.floor(value * 100000) / 100000;
