@@ -381,14 +381,14 @@ class SymconJSLiveChart extends JSLiveModule{
         $output = array();
         $output["text"] = $this->ReadPropertyString("title_text");
         $output["position"] = $this->ReadPropertyString("title_position");
-        $output["fontSize"] = $this->ReadPropertyInteger("title_fontSize");
-        $output["fontFamily"] = $this->ReadPropertyString("title_fontFamily");
+        $output["font"]["size"] = $this->ReadPropertyInteger("title_fontSize");
+        $output["font"]["family"] = $this->ReadPropertyString("title_fontFamily");
 
         $output["display"] = $this->ReadPropertyBoolean("title_display");
 
         if($this->ReadPropertyInteger("title_fontColor") >= 0) {
             $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("title_fontColor"));
-            $output["fontColor"] = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
+            $output["color"] = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
         }
 
         return $output;
@@ -431,11 +431,11 @@ class SymconJSLiveChart extends JSLiveModule{
 
         if($this->ReadPropertyInteger("legend_fontColor") >= 0){
             $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("legend_fontColor"));
-            $output["labels"]["fontColor"] = "rgb(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"]. ")";
+            $output["labels"]["color"] = "rgb(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"]. ")";
         }
-        $output["labels"]["fontSize"] = $this->ReadPropertyInteger("legend_fontSize");
+        $output["labels"]["font"]["size"] = $this->ReadPropertyInteger("legend_fontSize");
         $output["labels"]["boxWidth"] = $this->ReadPropertyInteger("legend_boxWidth");
-        $output["labels"]["fontFamily"] = $this->ReadPropertyString("legend_fontFamily");
+        $output["labels"]["font"]["family"] = $this->ReadPropertyString("legend_fontFamily");
 
         return $output;
 
@@ -657,7 +657,6 @@ class SymconJSLiveChart extends JSLiveModule{
             if($item["datalabels_enable"]){
                 $datalabels = array();
                 $datalabels["display"] = true;
-
 
                 if($item["datalabels_BackgroundColor"] >= 0){
                     $datalabels["useBackgroundColor"] = false;
