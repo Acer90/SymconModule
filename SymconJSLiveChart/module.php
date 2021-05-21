@@ -547,7 +547,7 @@ class SymconJSLiveChart extends JSLiveModule{
                 $singelOutput["stack"] = $item["Profile"]."-" .$item["StackGroup"];
                 $isStacked = true;
             }else{
-                $singelOutput["stack"] = "Stack " .$emptyGrpID;
+                $singelOutput["stack"] = $emptyGrpID."Stack";
             }
 
             //Axis
@@ -693,7 +693,7 @@ class SymconJSLiveChart extends JSLiveModule{
     private function GenerateXAxesData(){
         $output = array();
         $output["time"]["tooltipFormat"] = "DD.MM.YYYY HH:mm:ss";
-        $output["stacked"] = true;
+        //$output["stacked"] = true;
 
         $output["ticks"]["font"]["size"] = $this->ReadPropertyInteger("axes_tickfontSize");
         $output["ticks"]["font"]["family"] = $this->ReadPropertyString("axes_fontFamily");
