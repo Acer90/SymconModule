@@ -453,7 +453,7 @@
                     "type": "RowLayout",
                     "items": [
                         {"type": "SelectFile", "name": "Config_fileData", "caption": "File"},
-                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveRadarChart_LoadConfigurationFile($id, $Config_fileData);"}
+                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveRadarChart_LoadConfigurationFile($id, $Config_fileData, true);"}
                     ]
                 },
                 { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveRadarChart_GetConfigurationLink($id, true);" }

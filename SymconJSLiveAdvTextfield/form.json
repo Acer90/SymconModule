@@ -156,7 +156,7 @@
                     "type": "RowLayout",
                     "items": [
                         {"type": "SelectFile", "name": "Config_fileData", "caption": "File"},
-                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveAdvTextfield_LoadConfigurationFile($id, $Config_fileData);"}
+                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveAdvTextfield_LoadConfigurationFile($id, $Config_fileData, true);"}
                     ]
                 },
                 { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveAdvTextfield_GetConfigurationLink($id, true);" }
