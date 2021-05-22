@@ -151,7 +151,7 @@ class SymconJSLive extends WebHookModule {
                 'Buffer' => utf8_encode(json_encode($sendData))
             ]));
 
-            if (count($contend) == 0){
+            if (!is_array($contend) || count($contend) == 0){
                 $this->SendDebug("WebHook", "NO INSTANCE FOUND!", 0);
                 $this->SendDebug("WebHook", print_r($contend, true), 0);
                 header("Content-Type: text/html");
