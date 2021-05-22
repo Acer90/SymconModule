@@ -48,12 +48,10 @@ class SymconJSLiveAdvTextfield extends JSLiveModule{
         parent::ApplyChanges();
 
         $this->RegisterVariableString("Content", $this->Translate("Content"), "", 0);
-        $this->SetReceiveDataFilter('.*instance\\\":[ \\\"]*'.$this->InstanceID.'[\\\”]*.*');
+        
     }
 
     public function ReceiveData($JSONString) {
-        $jsonData = json_decode($JSONString, true);
-        $buffer = json_decode($jsonData['Buffer'], true);
 
         //if($buffer["instance"] != $this->InstanceID) return;
         //$this->SendDebug("ReceiveData", $jsonData['Buffer']. " =>" . $this->InstanceID, 0);
@@ -68,7 +66,8 @@ class SymconJSLiveAdvTextfield extends JSLiveModule{
             case "setData":
                 return $this->SetData($buffer['queryData']);
             default:
-                $this->SendDebug("ReceiveData", "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
+               if($buffer['cmd'] != "UpdateCache")
+                    $this->SendDebug("ReceiveData", "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
                 break;
         }
     }

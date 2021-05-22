@@ -37,6 +37,13 @@ class SymconJSLive extends WebHookModule {
         parent::ApplyChanges();
 
         $this->SetStatus("102");
+
+        //update all submoduls
+        $sendData = array("cmd" => "UpdateCache", "instance" => 0);
+        $this->SendDataToChildren(json_encode([
+            'DataID' => "{79D59629-E9C5-44F1-0F34-0FBC5C88F307}",
+            'Buffer' => utf8_encode(json_encode($sendData))
+        ]));
     }
 
     /**

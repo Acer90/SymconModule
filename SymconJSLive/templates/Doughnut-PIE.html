@@ -170,8 +170,9 @@
 
             if(var_arr.includes(id_val)){
                 var_index = var_arr.indexOf(id_val)
+                precision = Math.pow(10, confiuration.data_precision);
 
-                val = Math.round(value * 100) / 100;
+                val = Math.floor(value * precision) /  precision;
                 myChart.data.datasets[index].data[var_index] = val;
 
                 isUpdated = true;
@@ -230,6 +231,9 @@
         var Suffix = "";
         var Prefix = "";
         var blocks = [];
+        var val = dataset.data[tooltipItem.dataIndex];
+
+        if(val === null || val === 0 || val === "") return "";
 
         Suffix = config_data.suffix[tooltipItem.datasetIndex];
         Prefix = config_data.prefix[tooltipItem.datasetIndex];
@@ -240,7 +244,7 @@
         if (Prefix !== "") {
             blocks.push(Prefix);
         }
-        blocks.push(dataset.data[tooltipItem.dataIndex])
+        blocks.push(val)
         if (Suffix !== "") {
             blocks.push(Suffix);
         }

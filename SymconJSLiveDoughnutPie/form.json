@@ -283,6 +283,20 @@
             ]
         },
         {
+            "type": "ExpansionPanel",
+            "caption": "Data",
+            "items": [
+                { "type": "Select", "name": "data_precision", "caption": "Precision",
+                    "options": [
+                        { "caption": "1", "value": 0 },
+                        { "caption": "0.1", "value": 1 },
+                        { "caption": "0.01", "value": 2 },
+                        { "caption": "0.001", "value": 3 }
+                    ]
+                }
+            ]
+        },
+        {
             "type": "List",
             "name": "Datasets",
             "caption": "Datasets",

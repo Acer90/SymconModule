@@ -62,20 +62,21 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         $this->RegisterPropertyInteger("datalabels_borderWidth", 1);
         $this->RegisterPropertyInteger("datalabels_borderRadius", 2);
 
+        //data
+        $this->RegisterPropertyInteger("data_precision", 2);
+
         //dataset
         $this->RegisterPropertyString("Datasets", "[]");
     }
     public function ApplyChanges() {
         //Never delete this line!
         parent::ApplyChanges();
-
-        $this->SetReceiveDataFilter('.*instance\\\":[ \\\"]*'.$this->InstanceID.'[\\\”]*.*');
     }
 
     public function ReceiveData($JSONString) {
+        parent::ReceiveData($JSONString);
         $jsonData = json_decode($JSONString, true);
         $buffer = json_decode($jsonData['Buffer'], true);
-
 
         //if($buffer["instance"] != $this->InstanceID) return;
         //$this->SendDebug("ReceiveData", $jsonData['Buffer']. " =>" . $this->InstanceID, 0);
@@ -90,7 +91,8 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
             case "getData":
                 return $this->GetData($buffer['queryData']);
             default:
-                $this->SendDebug("ReceiveData", "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
+                if($buffer['cmd'] != "UpdateCache")
+                    $this->SendDebug("ReceiveData", "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
                 break;
         }
 
@@ -164,7 +166,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
                 continue;
             }
 
-            $o_item["Value"] = GetValue($var);
+            $o_item["Value"] = round(GetValue($var), $this->ReadPropertyInteger("data_precision"));
 
             if($this->ReadPropertyBoolean("Debug"))
                 $this->SendDebug("GetData", json_encode($querydata), 0);
@@ -313,7 +315,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
                 if(in_array($varitem["Label"], $output["labels"])){
                     $key = array_search($varitem["Label"], $output["labels"]);
                     $singelOutput["variables"][$key] = $varitem["Variable"];
-                    $singelOutput["data"][$key] = GetValue($varitem["Variable"]);
+                    $singelOutput["data"][$key] = round(GetValue($varitem["Variable"]), $this->ReadPropertyInteger("data_precision"));
 
                     $rgbdata = $this->HexToRGB($varitem["BackgroundColor"]);
                     $singelOutput["backgroundColor"][$key] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($varitem["BackgroundColor_Alpha"], 2, '.', '').")";
@@ -336,7 +338,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
                     }
 
                     $singelOutput["variables"][] = $varitem["Variable"];
-                    $singelOutput["data"][] = GetValue($varitem["Variable"]);
+                    $singelOutput["data"][] = round(GetValue($varitem["Variable"]), $this->ReadPropertyInteger("data_precision"));
 
                     $rgbdata = $this->HexToRGB($varitem["BackgroundColor"]);
                     $singelOutput["backgroundColor"][] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($varitem["BackgroundColor_Alpha"], 2, '.', '').")";
