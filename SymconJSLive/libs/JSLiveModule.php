@@ -258,9 +258,19 @@ class JSLiveModule extends IPSModule
                     }
                 }
 
+                if(array_key_exists("Variables", $item) && is_array($item["Variables"])){
+                    foreach ($item["Variables"] as $var) {
+                        if (IPS_VariableExists($var["Variable"])) {
+                            $varList[] = $var["Variable"];
+                        }
+                    }
+                }
+
                 if(array_key_exists("Object", $item)){
 
                 }
+
+
             }
         }
 
@@ -278,7 +288,7 @@ class JSLiveModule extends IPSModule
             }
         }
 
-        $this->SendDebug("GetVariableList" , json_encode($varList), 0);
+        if($this->ReadPropertyBoolean("Debug")) $this->SendDebug("GetVariableList" , json_encode($varList), 0);
         return $varList;
     }
     protected function UpdateMessageSink(array $newVariables){
@@ -290,6 +300,7 @@ class JSLiveModule extends IPSModule
 
         //gateway connection registrieren!
         $gw_id = IPS_GetInstance($this->InstanceID)["ConnectionID"];
+        $this->SendDebug("UpdateMessageSink", "Register Gateway for ReadyMessage (ID:".$gw_id." => 10503)", 0);
         $this->RegisterMessage($gw_id, 10503); //wenn verfügbar!
 
 
@@ -327,7 +338,8 @@ class JSLiveModule extends IPSModule
 
         $gw_id = IPS_GetInstance($this->InstanceID)["ConnectionID"];
         if ($SenderID == $gw_id && $Message == 10503) {
-            $this->UpdateOutput();
+            //$this->SendDebug("MessageSink", "Update Output!",0);
+            //$this->UpdateOutput();
             $this->UpdateIframe();
             return;
         }
@@ -361,6 +373,9 @@ class JSLiveModule extends IPSModule
 
                 $this->SendDataToSocketClient($SenderID, $Message, $Data);
                 break;
+            default:
+                $this->SendDebug("MessageSink", $TimeStamp." | ".$SenderID." => ". $Message . "(". json_encode($Data).")",0);
+                break;
         }
     }
 
@@ -389,11 +404,14 @@ class JSLiveModule extends IPSModule
         $this->UpdateIdentList();
 
         //HTMLBOX and Chache!
-        $this->UpdateOutput();
+        //$this->UpdateOutput();
         $this->UpdateIframe();
 
         //Update MessageSink
         $this->UpdateMessageSink($this->GetVariableList());
+
+        //send refresh website to client
+        $this->SendDataToSocketClient($this->InstanceID, 10506, array());
     }
     protected function UpdateOutput(){
         if (IPS_GetInstance($this->InstanceID)["InstanceStatus"] != 102) return;
@@ -420,7 +438,7 @@ class JSLiveModule extends IPSModule
         }
 
         //send refresh website to client
-        $this->SendDataToSocketClient($this->InstanceID, 10506, array());
+        //$this->SendDataToSocketClient($this->InstanceID, 10506, array());
     }
     protected function UpdateIframe(){
         if (IPS_GetInstance($this->InstanceID)["InstanceStatus"] != 102) return;
@@ -460,7 +478,14 @@ class JSLiveModule extends IPSModule
         $EnableViewport = $this->ReadPropertyBoolean("EnableViewport");
         if($this->ReadPropertyBoolean("EnableCache")){
             //Load data from Cache
-            $this->SendDebug("GetOutput", "Get Data form Cache!", 0);
+            if(empty($this->GetBuffer("Output"))){
+                //updateCache when empty
+                $this->UpdateOutput();
+                $this->UpdateIframe();
+            }
+
+            if($this->ReadPropertyBoolean("Debug"))
+                $this->SendDebug("GetOutput", "Get Data form Cache!", 0);
             return json_encode(array("Contend" => $this->GetBuffer("Output"), "lastModify" => $this->GetBuffer("LastModifed"), "EnableCache" => $EnableCache, "EnableViewport" => $EnableViewport));
         }else{
             return json_encode(array("Contend" => $this->GetWebpage(), "lastModify" => $this->GetBuffer("LastModifed"), "EnableCache" => $EnableCache, "EnableViewport" => $EnableViewport));

@@ -674,6 +674,22 @@ class SymconJSLiveChart extends JSLiveModule{
                 }else{
                     $datalabels["useBorderColor"] = true;
                 }
+
+                if($item["datalabels_BorderColor"] >= 0) {
+                    $datalabels["useBorderColor"] = false;
+                    $rgbdata = $this->HexToRGB($item["datalabels_BorderColor"]);
+                    $datalabels["BorderColor"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["datalabels_BorderColor_Alpha"], 2, '.', '') . ")";
+                }else{
+                    $datalabels["useBorderColor"] = true;
+                }
+
+                if($item["datalabels_FontColor"] >= 0) {
+                    $rgbdata = $this->HexToRGB($item["datalabels_FontColor"]);
+                    $datalabels["color"] = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
+                }else{
+                    $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("datalabels_fontColor"));
+                    $datalabels["color"] = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
+                }
                 //$datalabels[""] = $item["datalabels_"];
 
                 $datalabels["showPrefix"] = $item["datalabels_showPrefix"];

@@ -49,15 +49,18 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         $this->RegisterPropertyInteger("rotation_start", 180);
         $this->RegisterPropertyInteger("rotation_length", 360);
 
+        //Animation
+        $this->RegisterPropertyInteger("animation_duration", 500);
+        $this->RegisterPropertyString("animation_easing", "linear");
+
         //Datalabels
-        $this->RegisterPropertyBoolean("datalabels_enabled", true);
         $this->RegisterPropertyString("datalabels_anchoring", "center");
         $this->RegisterPropertyString("datalabels_align", "center");
-        $this->RegisterPropertyBoolean("datalabels_clamp", false);
         $this->RegisterPropertyInteger("datalabels_fontSize", 12);
         $this->RegisterPropertyInteger("datalabels_fontColor", 0);
         $this->RegisterPropertyString("datalabels_fontFamily", "");
-        $this->RegisterPropertyInteger("datalabels_borderRadius", 12);
+        $this->RegisterPropertyInteger("datalabels_borderWidth", 1);
+        $this->RegisterPropertyInteger("datalabels_borderRadius", 2);
 
         //dataset
         $this->RegisterPropertyString("Datasets", "[]");
@@ -118,13 +121,8 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
     public function GetUpdate(){
         $updateData = array();
 
-        $data = $this->GenerateDataSet();
-        $updateData["DATASETS"] = $data["datasets"];
-        $updateData["AXES"] = $data["charts"];
+        $updateData["DATASETS"] = $this->GenerateDataSet();
         $updateData["CONFIG"] = $this->GetConfigurationData();
-
-        $updateData["XAXES"] = $this->GenerateXAxesData();
-
 
         return json_encode($updateData);
     }
@@ -206,14 +204,14 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         $output = array();
         $output["text"] = $this->ReadPropertyString("title_text");
         $output["position"] = $this->ReadPropertyString("title_position");
-        $output["fontSize"] = $this->ReadPropertyInteger("title_fontSize");
-        $output["fontFamily"] = $this->ReadPropertyString("title_fontFamily");
+        $output["font"]["size"] = $this->ReadPropertyInteger("title_fontSize");
+        $output["font"]["family"] = $this->ReadPropertyString("title_fontFamily");
 
         $output["display"] = $this->ReadPropertyBoolean("title_display");
 
         if($this->ReadPropertyInteger("title_fontColor") >= 0) {
             $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("title_fontColor"));
-            $output["fontColor"] = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
+            $output["color"] = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
         }
 
         return $output;
@@ -257,11 +255,11 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
 
         if($this->ReadPropertyInteger("legend_fontColor") >= 0){
             $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("legend_fontColor"));
-            $output["labels"]["fontColor"] = "rgb(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"]. ")";
+            $output["labels"]["color"] = "rgb(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"]. ")";
         }
-        $output["labels"]["fontSize"] = $this->ReadPropertyInteger("legend_fontSize");
+        $output["labels"]["font"]["size"] = $this->ReadPropertyInteger("legend_fontSize");
         $output["labels"]["boxWidth"] = $this->ReadPropertyInteger("legend_boxWidth");
-        $output["labels"]["fontFamily"] = $this->ReadPropertyString("legend_fontFamily");
+        $output["labels"]["font"]["family"] = $this->ReadPropertyString("legend_fontFamily");
 
         return $output;
 
@@ -356,6 +354,56 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
                 }
             }
 
+            //datalabels
+            if($item["datalabels_enable"]){
+                $datalabels = array();
+                $datalabels["display"] = true;
+
+                if($item["datalabels_BackgroundColor"] >= 0){
+                    $datalabels["useBackgroundColor"] = false;
+                    $rgbdata = $this->HexToRGB($item["datalabels_BackgroundColor"]);
+                    $datalabels["BackgroundColor"] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($item["datalabels_BackgroundColor_Alpha"], 2, '.', '').")";
+
+                }else{
+                    $datalabels["useBackgroundColor"] = true;
+                }
+
+                if($item["datalabels_BorderColor"] >= 0) {
+                    $datalabels["useBorderColor"] = false;
+                    $rgbdata = $this->HexToRGB($item["datalabels_BorderColor"]);
+                    $datalabels["BorderColor"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["datalabels_BorderColor_Alpha"], 2, '.', '') . ")";
+                }else{
+                    $datalabels["useBorderColor"] = true;
+                }
+
+                if($item["datalabels_BorderColor"] >= 0) {
+                    $datalabels["useBorderColor"] = false;
+                    $rgbdata = $this->HexToRGB($item["datalabels_BorderColor"]);
+                    $datalabels["BorderColor"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["datalabels_BorderColor_Alpha"], 2, '.', '') . ")";
+                }else{
+                    $datalabels["useBorderColor"] = true;
+                }
+
+                if($item["datalabels_FontColor"] >= 0) {
+                    $rgbdata = $this->HexToRGB($item["datalabels_FontColor"]);
+                    $datalabels["color"] = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
+                }else{
+                    $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("datalabels_fontColor"));
+                    $datalabels["color"] = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
+                }
+
+                if(!empty($item["datalabels_anchoring"])){
+                    $datalabels["anchor"] = $item["datalabels_anchoring"];
+                }
+
+                $datalabels["showPrefix"] = $item["datalabels_showPrefix"];
+                $datalabels["showSuffix"] = $item["datalabels_showSuffix"];
+
+                //"visible": false,
+
+                $singelOutput["datalabels"] = $datalabels;
+            }
+
             $output["datasets"][] = $singelOutput;
         }
 
@@ -440,15 +488,6 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
             IPS_SetConfiguration($this->InstanceID, json_encode($confData));
             IPS_ApplyChanges($this->InstanceID);
         }else return "A Instance must be selected!";
-    }
-    public function GetLink(bool $local = true){
-        $sendData = array("InstanceID" => $this->InstanceID, "Type" => "GetLink", "local" => $local);
-        $pData = $this->SendDataToParent(json_encode([
-            'DataID' => "{751AABD7-E31D-024C-5CC0-82AC15B84095}",
-            'Buffer' => utf8_encode(json_encode($sendData)),
-        ]));
-
-        return $pData;
     }
 }
 
