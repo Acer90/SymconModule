@@ -17,7 +17,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyBoolean("EnableViewport", true);
         $this->RegisterPropertyInteger("IFrameHeight", 0);
-        $this->RegisterPropertyInteger("Ratio", 2);
+        $this->RegisterPropertyInteger("Ratio", 0);
 
         //title
         $this->RegisterPropertyString("title_text", "");
@@ -78,9 +78,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         parent::ReceiveData($JSONString);
         $jsonData = json_decode($JSONString, true);
         $buffer = json_decode($jsonData['Buffer'], true);
-
-        //if($buffer["instance"] != $this->InstanceID) return;
-        //$this->SendDebug("ReceiveData", $jsonData['Buffer']. " =>" . $this->InstanceID, 0);
+        if($buffer["instance"] == 0) return;
 
         switch($buffer['cmd']) {
             case "exportConfiguration":
