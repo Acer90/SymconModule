@@ -174,7 +174,22 @@ class SymconJSLive extends WebHookModule {
             $lastmodified = gmdate("D, d M Y H:i:s", time())." GMT";
             $useCache = false;
             if(strtolower($Type) == "getcontend"){
-                $arr_data = json_decode($contend[0], true);
+                $arr_data = array();
+
+                foreach ($contend as $s_contend){
+                    $c_data = json_decode($contend[0], true);
+                    if($c_data["InstanceID"] == $queryData["instance"]){
+                        $arr_data = $c_data;
+                        break;
+                    }
+                }
+
+                if(count($arr_data) == 0){
+                    $this->SendDebug("WebHook", "Instance Not in List!", 0);
+                    echo "Instance Not in List!";
+                    return;
+                }
+
                 $contend = $arr_data["Contend"];
                 $lastmodified = $arr_data["lastModify"];
                 header("Content-Type: text/html");

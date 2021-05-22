@@ -65,7 +65,8 @@
                             "type": "RowLayout",
                             "items": [
                                 {"type": "SelectFile", "name": "SVGFile", "caption": "File", "extensions": ".svg"},
-                                { "type": "Button", "caption": "Load", "onClick": " echo SymconJSLiveProgressbar_LoadSvg($id, $SVGFile);" }                            ]
+                                { "type": "Button", "caption": "Load", "onClick": " echo SymconJSLiveProgressbar_LoadSvg($id, $SVGFile);" }
+                            ]
                         }
                     ]
                 }
@@ -235,7 +236,7 @@
                     "type": "RowLayout",
                     "items": [
                         {"type": "SelectFile", "name": "Config_fileData", "caption": "File"},
-                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveProgressbar_LoadConfigurationFile($id, $Config_fileData);"}
+                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveProgressbar_LoadConfigurationFile($id, $Config_fileData, true);"}
                     ]
                 },
                 { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveProgressbar_GetConfigurationLink($id, true);" }

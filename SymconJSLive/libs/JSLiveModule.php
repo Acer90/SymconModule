@@ -500,9 +500,9 @@ class JSLiveModule extends IPSModule
 
             if($this->ReadPropertyBoolean("Debug"))
                 $this->SendDebug("GetOutput", "Get Data form Cache!", 0);
-            return json_encode(array("Contend" => $this->GetBuffer("Output"), "lastModify" => $this->GetBuffer("LastModifed"), "EnableCache" => $EnableCache, "EnableViewport" => $EnableViewport));
+            return json_encode(array("Contend" => $this->GetBuffer("Output"), "lastModify" => $this->GetBuffer("LastModifed"), "EnableCache" => $EnableCache, "EnableViewport" => $EnableViewport, "InstanceID" => $this->InstanceID));
         }else{
-            return json_encode(array("Contend" => $this->GetWebpage(), "lastModify" => $this->GetBuffer("LastModifed"), "EnableCache" => $EnableCache, "EnableViewport" => $EnableViewport));
+            return json_encode(array("Contend" => $this->GetWebpage(), "lastModify" => $this->GetBuffer("LastModifed"), "EnableCache" => $EnableCache, "EnableViewport" => $EnableViewport, "InstanceID" => $this->InstanceID));
         }
     }
 
