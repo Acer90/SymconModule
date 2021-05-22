@@ -579,7 +579,7 @@
                         { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveDoughnutPie_LoadConfigurationFile($id, $Config_fileData);"}
                     ]
                 },
-                { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveDoughnutPie_GetConfigurationLink($id);" }
+                { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveDoughnutPie_GetConfigurationLink($id, true);" }
             ]
         }
     ],

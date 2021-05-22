@@ -209,7 +209,7 @@
                         { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveColorPicker_LoadConfigurationFile($id, $Config_fileData);"}
                     ]
                 },
-                { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveColorPicker_GetConfigurationLink($id);" }
+                { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveColorPicker_GetConfigurationLink($id, true);" }
             ]
         }
     ],

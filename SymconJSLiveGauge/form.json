@@ -340,7 +340,7 @@
                         { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveGauge_LoadConfigurationFile($id, $Config_fileData);"}
                     ]
                 },
-                { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveGauge_GetConfigurationLink($id);" }
+                { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveGauge_GetConfigurationLink($id, true);" }
             ]
         }
     ],
