@@ -163,7 +163,7 @@
                         { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveDateTimePicker_LoadConfigurationFile($id, $Config_fileData);"}
                     ]
                 },
-                { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveDateTimePicker_GetConfigurationLink($id);" }
+                { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveDateTimePicker_GetConfigurationLink($id, true);" }
             ]
         }
     ],

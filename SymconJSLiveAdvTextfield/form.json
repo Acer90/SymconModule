@@ -159,7 +159,7 @@
                         { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveAdvTextfield_LoadConfigurationFile($id, $Config_fileData);"}
                     ]
                 },
-                { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveAdvTextfield_GetConfigurationLink($id);" }
+                { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveAdvTextfield_GetConfigurationLink($id, true);" }
             ]
         }
     ],
