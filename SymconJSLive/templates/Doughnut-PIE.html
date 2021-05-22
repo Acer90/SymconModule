@@ -8,8 +8,10 @@
 </head>
 <script src="/hook/JSLive/js/jquery.min.js"></script>
 <script src="/hook/JSLive/js/util.js"></script>
-<script src="/hook/JSLive/js/chartjs/2.8.0/Chart.js"></script>
-<script src="/hook/JSLive/js/chartjs/2.8.0/plugins/chartjs-plugin-datalabels.min.js"></script>
+<script src="/hook/JSLive/js/chartjs/3.2.1/chart.min.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/moment/2.27.0/Moment.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-adapter-moment.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-plugin-datalabels.min.js" charset="utf-8"></script>
 
 <body>
 <div id="data"></div>
@@ -17,34 +19,37 @@
 <canvas id="myChart"></canvas>
 
 <script>
-    var myChart;
+    let myChart;
 
-    var config_global = {GLOBAL};
+    let config_global = {GLOBAL};
 
-    var config_data = {DATA};
-    var config_legend = {LEGEND};
-    var config_tooltips = {TOOLTIPS};
-    var config_title = {TITLE};
+    let config_data = [];//{/DATA};
+    let config_legend = {LEGEND};
+    let config_tooltips = {TOOLTIPS};
+    let config_title = {TITLE};
 
-    var confiuration = {CONFIG};
+    let confiuration = {CONFIG};
+
+    let last_reload = 0; //Damit der Chart nur einmal neugeladen wird!
+    let isReloading = true;
 
     function updateChartconfig(){
         try {
+            //Eneable Datalabels
+            Chart.register(ChartDataLabels);
+
             var config = {
                 type: confiuration.type,
                 data: config_data,
                 options: {
                     animation: {
-                        duration: 500,                   // general animation time
-                        easing: 'linear',
+                        duration: confiuration.animation_duration,
+                        easing: confiuration.animation_easing,
                     },
                     hover: {
                         animationDuration: 0           // duration of animations when hovering an item
                     },
-                    responsiveAnimationDuration: 500,    // animation duration after a resize
-                    title: config_title,
-                    legend: config_legend,
-                    tooltips: config_tooltips,
+                    responsiveAnimationDuration: 0,    // animation duration after a resize
                     layout: {
                         padding: {
                             left: 0,
@@ -53,26 +58,63 @@
                             bottom: 0
                         }
                     },
+                    responsive: true,
+                    aspectRatio: 2.1,
                     plugins: {
+                        title: config_title,
+                        legend: config_legend,
+                        tooltip: config_tooltips,
                         datalabels: {
-                            display: confiuration.datalabels_enabled,
-                            color: confiuration.datalabels_fontColor,
-                            font: {
-                                size: confiuration.datalabels_fontSize,
-                                family: confiuration.datalabls_fontFamily
-                            },
-                            clamp: confiuration.datalabels_clamp,
+                            display: false,
                             align: confiuration.datalabels_align,
                             anchor: confiuration.datalabels_anchoring,
+
+                            borderRadius: confiuration.datalabels_borderRadius,
+                            borderWidth: confiuration.datalabels_borderWidth,
+                            font: {
+                                size: confiuration.datalabels_fontSize,
+                                family: confiuration.datalabels_fontFamily
+                            },
+                            color: confiuration.datalabels_fontColor,
+                            //clip: true,
+                            clamp: true,
                             formatter: function(value, context) {
-                                str = config_data.prefix[context.dataIndex] + value + config_data.suffix[context.dataIndex];
-                                if(value === "" || value === 0) str = "";
-                                return str;
+                                var str = value;
+                                if(str === 0 || str === null || str === "") return "";
+
+                                if(context.dataset.datalabels.showPrefix){
+                                    str = config_data.prefix[context.dataIndex] + str;
+                                }
+                                if(context.dataset.datalabels.showSuffix){
+                                    str = str + config_data.suffix[context.dataIndex];
+                                }
+
+                                return  str;
+                            },
+                            backgroundColor: function(context) {
+                                var str = context.dataset.data[context.dataIndex];
+                                if(str === 0 || str === null || str === "") return "rgba(0,0,0,0)";
+
+                                if(context.dataset.datalabels.useBackgroundColor){
+                                    return context.dataset.backgroundColor;
+                                }else{
+                                    return context.dataset.datalabels.BackgroundColor;
+                                }
+                            },
+                            borderColor: function(context) {
+                                var str = context.dataset.data[context.dataIndex];
+                                if(str === 0 || str === null || str === "") return "rgba(0,0,0,0)";
+
+                                if(context.dataset.datalabels.useBorderColor){
+                                    return context.dataset.borderColor;
+                                }else{
+                                    return context.dataset.datalabels.BorderColor;
+                                }
                             }
                         }
                     },
-                    circumference: Math.PI * (confiuration.rotation_length / 180),
-                    rotation: Math.PI * (confiuration.rotation_start / 180)
+                    circumference: confiuration.rotation_length,
+                    rotation: confiuration.rotation_start
                 }
             };
 
@@ -80,7 +122,7 @@
             t_callpack = {
                 label: UpdateTooltipLabel
             };
-            config.options.tooltips.callbacks = t_callpack;
+            config.options.plugins.tooltip.callbacks = t_callpack;
 
             return config;
         } catch (e) {
@@ -124,7 +166,7 @@
         isUpdated = false;
 
         myChart.data.datasets.forEach(function(part, index){
-            var_arr = part.Variables;
+            var_arr = part.variables;
 
             if(var_arr.includes(id_val)){
                 var_index = var_arr.indexOf(id_val)
@@ -139,6 +181,27 @@
         if(isUpdated){
             myChart.update();
         }
+    }
+
+    function ReloadChart(dt_val){
+        //deoppelten Reload verhinden!
+        if(last_reload === dt_val) return;
+        last_reload = dt_val;
+        isReloading = true;
+
+
+        //sync load of all Data
+        $.getJSON( "/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}", function( data ) {
+            config_data = data.DATASETS;
+            confiuration = data.CONFIG;
+
+            console.log("RELOAD CHART Full!");
+            if(typeof myChart !== "undefined") myChart.destroy();
+            var ctx = document.getElementById('myChart');
+            myChart = new Chart(ctx, updateChartconfig());
+            last_update = Date.now();
+            isReloading = false;
+        });
     }
 
     async function PullNewData(refreshRate){
@@ -161,15 +224,15 @@
         }
     }
 
-    function UpdateTooltipLabel(tooltipItem, data){
-        var dataset = data.datasets[tooltipItem.datasetIndex];
+    function UpdateTooltipLabel(tooltipItem){
+        var dataset = tooltipItem.dataset
 
         var Suffix = "";
         var Prefix = "";
         var blocks = [];
 
-        Suffix = data.suffix[tooltipItem.datasetIndex];
-        Prefix = data.prefix[tooltipItem.datasetIndex];
+        Suffix = config_data.suffix[tooltipItem.datasetIndex];
+        Prefix = config_data.prefix[tooltipItem.datasetIndex];
 
         if (dataset.label) {
             blocks.push(dataset.label + ': ');
@@ -177,34 +240,33 @@
         if (Prefix !== "") {
             blocks.push(Prefix);
         }
-        blocks.push(dataset.data[tooltipItem.index])
+        blocks.push(dataset.data[tooltipItem.dataIndex])
         if (Suffix !== "") {
             blocks.push(Suffix);
         }
         return blocks.join('');
     }
 
-
-
-    window.onload = function() {
+    function bootUp(){
         try {
-            var ctx = document.getElementById('myChart');
-            myChart = new Chart(ctx, updateChartconfig());
+            //load config after Startup
+            var dt_val = Math.floor(Date.now() / 1000);
+            ReloadChart(dt_val);
 
-            if (config_global.LocalAddress == "" && config_global.LocalDataMode == 0) {
-                //pullup Mode local
-                refreshRate = config_global.LocalRefreshTime;
-                PullNewData(refreshRate);
-            } else if (config_global.RemoteAddress == "" && config_global.RemoteDataMode == 0) {
-                //pullup Mode remote
-                refreshRate = config_global.RefreshTime;
+            if (config_global.DataMode === 0) {
+                //pullup Mode
+                var refreshRate = config_global.RefreshTime;
                 PullNewData(refreshRate);
             } else {
                 connect();
             }
         }catch (e) {
-            alert("Doughnut-Pie | ", e);
+            alert("Doughnut-Pie | ", e.message);
         }
+    }
+
+    window.onload = function() {
+        bootUp();
     }
 </script>
 </body>

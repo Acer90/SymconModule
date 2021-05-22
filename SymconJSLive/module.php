@@ -35,6 +35,8 @@ class SymconJSLive extends WebHookModule {
     public function ApplyChanges() {
         //Never delete this line!
         parent::ApplyChanges();
+
+        $this->SetStatus("102");
     }
 
     /**
