@@ -418,6 +418,7 @@ class JSLiveModule extends IPSModule
 
         //HTMLBOX and Chache!
         //$this->UpdateOutput();
+        $this->SetBuffer("Output", "");
         $this->UpdateIframe();
 
         //Update MessageSink
