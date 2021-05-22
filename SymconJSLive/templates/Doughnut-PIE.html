@@ -38,6 +38,12 @@
             //Eneable Datalabels
             Chart.register(ChartDataLabels);
 
+            //autoratio
+            ratio = confiuration.Ratio;
+            if(ratio === 0){
+                ratio = window.innerWidth / window.innerHeight;
+            }
+
             var config = {
                 type: confiuration.type,
                 data: config_data,
@@ -59,7 +65,7 @@
                         }
                     },
                     responsive: true,
-                    aspectRatio: confiuration.Ratio,
+                    aspectRatio: ratio,
                     plugins: {
                         title: config_title,
                         legend: config_legend,
@@ -270,21 +276,28 @@
     }
 
     window.onload = function() {
+        ResizeChart();
         bootUp();
     }
 
-    window.addEventListener('load', ResizeChart);
     window.addEventListener('resize', ResizeChart);
     window.addEventListener('orientationchange', ResizeChart);
 
     function ResizeChart() {
+        ratio = confiuration.Ratio;
+        if(ratio === 0){
+            ratio = window.innerWidth / window.innerHeight;
+        }
+
         var size = window.innerHeight;
-        if(size < window.innerHeight) size = window.innerHeight;
+        if(size < window.innerHeight) size = window.innerWidth;
 
         //reload
         var ctx = document.getElementById('chart-container');
-        ctx.style.width = (size*confiuration.Ratio)-20+"px";
-        ctx.style.height = size-20+"px";
+        //ctx.style.width = (size*ratio)+"px";
+        ctx.style.height = size+"px";
+
+        if(typeof myChart !== "undefined") myChart.options.aspectRatio = ratio;
     }
 </script>
 </body>
