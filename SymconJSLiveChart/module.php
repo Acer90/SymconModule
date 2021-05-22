@@ -489,7 +489,7 @@ class SymconJSLiveChart extends JSLiveModule{
 
             if(empty($item["Title"])){
                 //Load Variablen Name wenn label leer ist
-                $singelOutput["label"] = IPS_GetVariableIDByName($item["Variable"]);
+                $singelOutput["label"] = IPS_GetObject($item["Variable"])["ObjectName"];
             }else{
                 $singelOutput["label"] = $item["Title"];
             }
