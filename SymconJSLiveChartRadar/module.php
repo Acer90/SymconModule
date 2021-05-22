@@ -118,13 +118,14 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         $identIdlist[] = IPS_GetObjectIDByIdent("Relativ", $this->InstanceID);
         $this->SetBuffer("IdentIDList", json_encode($identIdlist));
 
-        $this->SetReceiveDataFilter('.*instance\\\":[ \\\"]*'.$this->InstanceID.'[\\\”]*.*');
+        
     }
     public function RequestAction($Ident, $Value) {
         $this->SetValue($Ident, $Value);
     }
 
     public function ReceiveData($JSONString) {
+        parent::ReceiveData($JSONString);
         $jsonData = json_decode($JSONString, true);
         $buffer = json_decode($jsonData['Buffer'], true);
 
@@ -139,7 +140,8 @@ class SymconJSLiveRadarChart extends JSLiveModule{
             case "getData":
                 return $this->GetData($buffer['queryData']);
             default:
-                $this->SendDebug("ReceiveData", "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
+               if($buffer['cmd'] != "UpdateCache")
+                    $this->SendDebug("ReceiveData", "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
                 break;
         }
 

@@ -124,7 +124,7 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->EnableAction("StartDate");
         $this->EnableAction("Relativ");
 
-        $this->SetReceiveDataFilter('.*instance\\\":[ \\\"]*'.$this->InstanceID.'[\\\”]*.*');
+        
 
         $this->SetStatus(102);
 
@@ -184,6 +184,7 @@ class SymconJSLiveChart extends JSLiveModule{
     }
 
     public function ReceiveData($JSONString) {
+        parent::ReceiveData($JSONString);
         $jsonData = json_decode($JSONString, true);
         $buffer = json_decode($jsonData['Buffer'], true);
 
@@ -200,7 +201,8 @@ class SymconJSLiveChart extends JSLiveModule{
             case "getData":
                 return $this->GetData($buffer['queryData']);
             default:
-                $this->SendDebug("ReceiveData", "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
+               if($buffer['cmd'] != "UpdateCache")
+                    $this->SendDebug("ReceiveData", "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
                 break;
         }
     }

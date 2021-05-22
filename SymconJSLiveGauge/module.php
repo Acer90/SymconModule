@@ -94,10 +94,11 @@ class SymconJSLiveGauge extends JSLiveModule{
         //Never delete this line!
         parent::ApplyChanges();
 
-        $this->SetReceiveDataFilter('.*instance\\\":[ \\\"]*'.$this->InstanceID.'[\\\”]*.*');
+        
     }
 
     public function ReceiveData($JSONString) {
+        parent::ReceiveData($JSONString);
         $jsonData = json_decode($JSONString, true);
         $buffer = json_decode($jsonData['Buffer'], true);
 
@@ -113,7 +114,8 @@ class SymconJSLiveGauge extends JSLiveModule{
             case "getData":
                 return $this->GetData($buffer['queryData']);
             default:
-                $this->SendDebug("ReceiveData", "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
+               if($buffer['cmd'] != "UpdateCache")
+                    $this->SendDebug("ReceiveData", "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
                 break;
         }
 

@@ -395,10 +395,23 @@ class JSLiveModule extends IPSModule
     }
 
     //Cache and Htmlbox
+    public function ReceiveData($JSONString)
+    {
+        $jsonData = json_decode($JSONString, true);
+        $buffer = json_decode($jsonData['Buffer'], true);
+
+        if($buffer["cmd"] === "UpdateCache"){
+            $this->SetBuffer("Output", "");
+            $this->SendDataToSocketClient($this->InstanceID, 10506, array());
+            $this->UpdateIframe();
+        }
+    }
     public function ApplyChanges()
     {
         //Never delete this line!
         parent::ApplyChanges();
+
+        $this->SetReceiveDataFilter('.*instance\\\":[ \\\"]*('.$this->InstanceID.'|0)[\\\”]*.*');
 
         //updateindetnlist
         $this->UpdateIdentList();
