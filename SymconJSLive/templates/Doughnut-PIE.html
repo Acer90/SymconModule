@@ -59,7 +59,7 @@
                         }
                     },
                     responsive: true,
-                    aspectRatio: 2,
+                    aspectRatio: confiuration.Ratio,
                     plugins: {
                         title: config_title,
                         legend: config_legend,
@@ -278,10 +278,13 @@
     window.addEventListener('orientationchange', ResizeChart);
 
     function ResizeChart() {
+        var size = window.innerHeight;
+        if(size < window.innerHeight) size = window.innerHeight;
+
         //reload
         var ctx = document.getElementById('chart-container');
-        ctx.style.width = (window.innerHeight*2)+"px";
-        ctx.style.height = window.innerHeight+"px";
+        ctx.style.width = (size*confiuration.Ratio)-20+"px";
+        ctx.style.height = size-20+"px";
     }
 </script>
 </body>

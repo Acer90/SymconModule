@@ -17,6 +17,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyBoolean("EnableViewport", true);
         $this->RegisterPropertyInteger("IFrameHeight", 0);
+        $this->RegisterPropertyInteger("Ratio", 2);
 
         //title
         $this->RegisterPropertyString("title_text", "");
