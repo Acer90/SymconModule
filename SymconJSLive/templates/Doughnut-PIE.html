@@ -13,10 +13,10 @@
 <script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-adapter-moment.js" charset="utf-8"></script>
 <script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-plugin-datalabels.min.js" charset="utf-8"></script>
 
-<body>
-<div id="data"></div>
-
-<canvas id="myChart"></canvas>
+<body style="text-align: center;">
+<div class="chart-container" id="chart-container" style="position: relative; margin: 0 auto;">
+    <canvas id="myChart"></canvas>
+</div>
 
 <script>
     let myChart;
@@ -59,7 +59,7 @@
                         }
                     },
                     responsive: true,
-                    aspectRatio: 2.1,
+                    aspectRatio: 2,
                     plugins: {
                         title: config_title,
                         legend: config_legend,
@@ -271,6 +271,17 @@
 
     window.onload = function() {
         bootUp();
+    }
+
+    window.addEventListener('load', ResizeChart);
+    window.addEventListener('resize', ResizeChart);
+    window.addEventListener('orientationchange', ResizeChart);
+
+    function ResizeChart() {
+        //reload
+        var ctx = document.getElementById('chart-container');
+        ctx.style.width = (window.innerHeight*2)+"px";
+        ctx.style.height = window.innerHeight+"px";
     }
 </script>
 </body>
