@@ -73,14 +73,14 @@ GUID des Modules (z.B. wenn Instanz per PHP angelegt werden soll):
 | Daten Modus       | string    | Websocket     | Beschreibung unter 4. [Hinweise zur Verwendung](#4-hinweise-zur-verwendung)
 | Interval Abfrage-Zeit | int       | 3             | in Sekunden
 
-**Viewport Eisntellungen**
+**Viewport Einstellungen**
 
 | Eigenschaft       | Typ       | Standardwert  | Info                                                                      |
 | :---------------: | :-------: | :-----------: | :-----------------------------------------------------------------------: |
 | Aktivieren        | bool      | true          | Damit Engräte die Ausgabe der Module automatisch skalieren können
 | Content           | string    | width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1, user-scalable=no | Html-Parameter der Viewport Configuratzion
 
-**Expert Eisntellungen**
+**Expert Einstellungen**
 
 | Eigenschaft       | Typ       | Standardwert  | Info                                                                      |
 | :---------------: | :-------: | :-----------: | :-----------------------------------------------------------------------: |

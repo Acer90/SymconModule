@@ -18,7 +18,7 @@
 <script>
     let gauge;
 
-    let curValue = {VALUE};
+    let curValue = 0; //{/VALUE}
     let config_global = {GLOBAL};
     let config_ticks = {TICKS};
     let config_highlights = {HIGHLIGHTS};
@@ -40,7 +40,7 @@
 
                 units: confiuration.plate_unit,
 
-                value: {VALUE},
+                value: curValue,
                 minValue: confiuration.min,
                 maxValue: confiuration.max,
 

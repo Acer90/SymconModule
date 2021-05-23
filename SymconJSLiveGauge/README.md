@@ -1,11 +1,11 @@
 [![Version](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
 [![Version](https://img.shields.io/badge/Symcon%20Version-5.3%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-5-3-%28Stable%29-Changelog)
-# SymconJSLive Gauge
 
+# SymconJSLive Gauge
 Verwendet https://canvas-gauges.com/ um animierte Messinstrumente(Gauges) dazustellen.
+![Animierte Gauge](https://github.com/Acer90/SymconModule/blob/alpha/imgs/Gauge.gif?raw=true)
 
 ## Dokumentation
-
 **Inhaltsverzeichnis**
 
 1. [Funktionsumfang](#1-funktionsumfang)
@@ -20,7 +20,7 @@ Verwendet https://canvas-gauges.com/ um animierte Messinstrumente(Gauges) dazust
 10. [Lizenz](#10-lizenz)
 
 ## 1. Funktionsumfang
-  Dieses Modul dient als Schnittstelle zwischen den JSLive Modulen und der Webhook Instance
+  Mit hilfe dieses Modules können Animierte Gauges für IP-Symcon erstellt werden.
 
 ## 2. Voraussetzungen
   - IPS ab Version 5.3
@@ -30,75 +30,40 @@ Verwendet https://canvas-gauges.com/ um animierte Messinstrumente(Gauges) dazust
 
 ## 4. Hinweise zur Verwendung
 
-###Daten-Modus
-####Websocket (Empfohlen)
-- Bei diesen Modus baut der Client über den Webhook und Splitter eine Verbindung zum jeweiligen Modul auf. 
-Dabei werden nur Daten bei Veränderung von werden an den Client mitgeteilt.
-
-####Interval
-- Ist Interval aktiv, fragt der Client über die API des JSLive Moduls im unter "Abfrage-Zeit" angegebenen Interval ab.
-Achtung dieser Modus sorgt für einen erhöhten Datentransfer, und belastet bei Verwendung den Connect-Dienst.
-
 ## 5. Einrichten und Aktionen
+- Für die Verwendung des Moduls wird die Splitter instance benötigt, diese wird so fern noch nicht angelegt automatisch beim anlegen des Moduls mit erstellt.
 
-der JSLive-Splitter kann auch ohne konfiguration verwendet werden, aus Sicherheitsgründen sollte aber ein Password
-gesetzt werden. Dieses verhindert vor unbefugten zugriff Dritter!
-
-**Connect Adresse laden**
-  - Lädt die Adresse vom Connect Modul
-
-**Benutzerdefiniert Vorlagen laden**
-  - Dient zum exportieren der Vorlagen, diese können im Anschluss angepasst und einzelnen Modulen unter 
-    Expert => Vorlagen-Skript zugewiesen werden.
-  - Zum exportieren ist die angabe einer Kategorie nötig(Die Stammkategorie ist nicht zulässig!)
+**Öffne Linkn**
+- Öffnet den Ausgabe link im Browser
+- Der Button "Öffne Link" funktioniert nur wenn im Splitter eine Adresse gesetzt ist!
 
 ## 6. PHP-Befehlsreferenz
-
 Keine PHP-Befehlsreferenz nötig
 
 ## 7. Parameter / Modul-Infos
-
 GUID des Modules (z.B. wenn Instanz per PHP angelegt werden soll):  
 
 | Instanz           | GUID                                   |
 | :---------------: | :------------------------------------: |
-| Splitter          | {9FFF3FC0-FD51-C289-FA36-BC1C370946CF} |
+| Device            | {71B93700-9659-97C6-AD83-984C2B44139F} |
 
-**Allgemeine Einstellungen**
-
-| Eigenschaft       | Typ       | Standardwert  | Info                                                                      |
-| :---------------: | :-------: | :-----------: | :-----------------------------------------------------------------------: |
-| Passwort          | string    |               | Password für den Webhook-Zugriff
-| Adresse           | string    | http://127.0.0.1:3777 | Webadresse des IP-Symcon Servers
-| Daten Modus       | string    | Websocket     | Beschreibung unter 4. [Hinweise zur Verwendung](#4-hinweise-zur-verwendung)
-| Interval Abfrage-Zeit | int       | 3             | in Sekunden
-
-**Viewport Eisntellungen**
-
-| Eigenschaft       | Typ       | Standardwert  | Info                                                                      |
-| :---------------: | :-------: | :-----------: | :-----------------------------------------------------------------------: |
-| Aktivieren        | bool      | true          | Damit Engräte die Ausgabe der Module automatisch skalieren können
-| Content           | string    | width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1, user-scalable=no | Html-Parameter der Viewport Configuratzion
-
-**Expert Eisntellungen**
+**Expert Einstellungen**
 
 | Eigenschaft       | Typ       | Standardwert  | Info                                                                      |
 | :---------------: | :-------: | :-----------: | :-----------------------------------------------------------------------: |
 | Debug             | bool      | false         | Dienst zur erweiterten Ausgabe in Symcon
 | Verwende Cache    | bool      | true          | Aktiviert den Cache-Support des Browsers
-| Verwende Kompression | bool   | true          | Aktiviert die GZip Kompression und verringert den Datenverbrauch
-| Frame benutzt den vollen Link als Quelle | bool | false | Bei Aktivierung werden alle Iframes auf einen Absoluten Pfad umgestellt.(**Bei Verwendung von Aio-Neo nötig!**)
-
+| Erstelle HTMLBox  | bool      | true          | erstellt eine Htmlbox mit Iframe zur Instance
+| Vorlage Skript    | int       |               | Hier kann eine Custom Vorlage importiert werden, für weiter Informationen siehe Export von Vorlagen im Splitter Modul
+| Viewport aktivieren | bool    | true          | Damit Engräte die Ausgabe der Module automatisch skalieren können
+| Iframe Höhe       | int       | 0             | 0 = Auto, sonnst kann hier die höhe in Px angegeben werden.
 
 ## 8. Datenaustausch
-
  folgt später...
 
 ## 9. Anhang
-
 - [canvas-gauges](https://canvas-gauges.com/)
 
 ## 10. Lizenz
-
   IPS-Modul:  
   [GNU GENERAL PUBLIC LICENSE](http://www.gnu.org/licenses/)  
