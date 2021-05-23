@@ -198,7 +198,7 @@ class SymconJSLiveGauge extends JSLiveModule{
         }
         $majorticks[] = $max;
 
-        $this->SendDebug("TEST", print_r($majorticks, true), 0);
+        //$this->SendDebug("TEST", print_r($majorticks, true), 0);
         return $majorticks;
     }
 
