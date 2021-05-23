@@ -88,7 +88,7 @@ GUID des Modules (z.B. wenn Instanz per PHP angelegt werden soll):
 | Debug             | bool      | false         | Dienst zur erweiterten Ausgabe in Symcon
 | Verwende Cache    | bool      | true          | Aktiviert den Cache-Support des Browsers
 | Verwende Kompression | bool   | true          | Aktiviert die GZip Kompression und verringert den Datenverbrauch
-| Frame benutzt den vollen Link als Quelle | bool | false | Bei aktivierungen werden alle Iframes auf einen Absoluten Pfad umgestellt
+| Frame benutzt den vollen Link als Quelle | bool | false | Bei Aktivierung werden alle Iframes auf einen Absoluten Pfad umgestellt.(**Bei Verwendung von Aio-Neo nötig!**)
 
 
 ## 8. Datenaustausch
