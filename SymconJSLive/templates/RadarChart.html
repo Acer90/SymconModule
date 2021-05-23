@@ -9,17 +9,22 @@
 
 <script src="/hook/JSLive/js/jquery.min.js"></script>
 <script src="/hook/JSLive/js/util.js"></script>
-<script src="/hook/JSLive/js/chartjs/2.8.0/Chart.js"></script>
+<script src="/hook/JSLive/js/chartjs/3.2.1/chart.min.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/moment/2.27.0/Moment.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-adapter-moment.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-plugin-streaming.min.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-plugin-datalabels.min.js" charset="utf-8"></script>
 
-<body>
-<canvas id="myChart"></canvas>
-
+<body style="text-align: center;">
+    <div class="chart-container" id="chart-container" style="position: relative; margin: 0 auto;">
+        <canvas id="myChart"></canvas>
+    </div>
 <script>
     var myChart;
 
     var config_global = {GLOBAL};
 
-    var config_dataset = {DATASETS};
+    var config_dataset = []; // {/DATASETS}
     var config_legend = {LEGEND};
     var config_tooltips = {TOOLTIPS};
     var config_title = {TITLE};
@@ -39,6 +44,16 @@
 
     function updateChartconfig(){
         try {
+            //Eneable Datalabels
+            Chart.register(ChartDataLabels);
+
+            //autoratio
+            ratio = confiuration.Ratio;
+            if(ratio === 0){
+                ratio = window.innerWidth / window.innerHeight;
+            }
+
+
             var config = {
                 type: 'radar',
                 data: {
@@ -47,24 +62,76 @@
                 },
                 options: {
                     animation: {
-                        duration: 500,                   // general animation time
-                        easing: 'linear',
+                        duration: confiuration.animation_duration,
+                        easing: confiuration.animation_easing,
                     },
                     hover: {
                         animationDuration: 0           // duration of animations when hovering an item
                     },
                     responsive: true,
-                    aspectRatio: 1.1,
-                    responsiveAnimationDuration: 500,    // animation duration after a resize
-                    title: config_title,
-                    legend: config_legend,
-                    tooltips: config_tooltips,
+                    aspectRatio: ratio,
+                    responsiveAnimationDuration: 0,    // animation duration after a resize
+                    plugins: {
+                        title: config_title,
+                        legend: config_legend,
+                        tooltip: config_tooltips,
+                        datalabels: {
+                            display: false,
+                            align: confiuration.datalabels_align,
+                            anchor: confiuration.datalabels_anchoring,
+
+                            borderRadius: confiuration.datalabels_borderRadius,
+                            borderWidth: confiuration.datalabels_borderWidth,
+                            font: {
+                                size: confiuration.datalabels_fontSize,
+                                family: confiuration.datalabels_fontFamily
+                            },
+                            color: confiuration.datalabels_fontColor,
+                            clip: true,
+                            clamp: true,
+                            formatter: function(value, context) {
+                                var str = value;
+                                if(str === null || str === 0 || str === "") return "";
+
+                                if(context.dataset.datalabels.showPrefix){
+                                    str = context.chart.config.options.scales[context.dataset.yAxisID].Prefix + str;
+                                }
+                                if(context.dataset.datalabels.showSuffix){
+                                    str = str + context.chart.config.options.scales[context.dataset.yAxisID].Suffix;
+                                }
+
+                                return  str;
+                            },
+                            backgroundColor: function(context) {
+                                var val = context.dataset.data[context.dataIndex];
+                                if(val === null || val === 0 || val === "") return "";
+
+                                if(context.dataset.datalabels.useBackgroundColor){
+                                    return context.dataset.backgroundColor;
+                                }else{
+                                    return context.dataset.datalabels.BackgroundColor;
+                                }
+                            },
+                            borderColor: function(context) {
+                                var val = context.dataset.data[context.dataIndex];
+                                if(val === null || val === 0 || val === "") return "";
+
+                                if(context.dataset.datalabels.useBorderColor){
+                                    return context.dataset.borderColor;
+                                }else{
+                                    return context.dataset.datalabels.BorderColor;
+                                }
+                            }
+                        }
+                    },
                     scale: {
                         pointLabels: {
                             display: confiuration.axes_pointLabels_display,
                             color: confiuration.axes_pointLabels_color,
-                            fontSize: confiuration.axes_pointLabels_fontSize,
-                            fontFamily: confiuration.axes_pointLabels_fontFamily
+                            font:{
+                                size: confiuration.axes_pointLabels_fontSize,
+                                family: confiuration.axes_pointLabels_fontFamily
+                            }
                         },
                         gridLines: {
                             display: confiuration.axes_gridLines_display,
@@ -78,10 +145,13 @@
                             lineWidth: confiuration.axes_angleLines_lineWidth
                         },
                         ticks: {
-                            fontColor: confiuration.axes_ticks_fontColor,
-                            fontSize: confiuration.axes_ticks_fontSize,
+                            color: confiuration.axes_ticks_fontColor,
                             backdropColor: confiuration.axes_ticks_backdropColor,
-                            fontFamily: confiuration.axes_ticks_fontFamily
+                            font: {
+                                size: confiuration.axes_ticks_fontSize,
+                                family: confiuration.axes_ticks_fontFamily
+                            }
+
                         },
 
                         display: confiuration.axes_display
@@ -101,7 +171,7 @@
             t_callpack = {
                 label: UpdateTooltipLabel
             };
-            config.options.tooltips.callbacks = t_callpack;
+            config.options.plugins.tooltip.callbacks = t_callpack;
 
             return config;
         } catch (e) {
@@ -125,7 +195,7 @@
                 location.reload();
             } else if(data.Message == 10603) {
                 UpdateChart(data.SenderID, data.Data[3], data.Data[0]);
-                ReloadChart(dt_val, data.SenderID);
+                ReloadChart(data.SenderID, data.Data[3]);
             }
         };
 
@@ -173,24 +243,88 @@
             });
         });
     }
-    function ReloadChart(dt_val, id_val = 0){
-        if(last_reload === dt_val) return;
-        if(!update_vars.includes(id_val) && id_val !== 0) return;
+    function ReloadChart(id_val, dt_val, val = null){
+        //deoppelten Reload verhinden!
+        if(last_reload == dt_val) return;
+        if(!update_vars.includes(id_val)) return;
+        last_reload = dt_val;
+        isReloading = true;
 
-        $.getJSON( "/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}", function( data ) {
-            config_dataset = data.DATASETS;
-            config_labels = data.LABELS;
-            confiuration =  data.CONFIG;
+        if(confiuration.ID_Period === id_val && val !== null) confiuration.Period = val;
+        if(confiuration.ID_Relativ === id_val && val !== null) confiuration.Relativ = val;
 
-            myChart.data.labels = config_labels;
-            myChart.data.datasets = config_dataset;
+        if(confiuration.data_loadAsync){
+            config_dataset = [];
+            config_xaxes = {};
+            config_axes = {};
 
-            console.log("RELOAD CHART!");
-            myChart.update();
+            //First Load Config!!
+            $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&loadConfig=1", function( data ) {
+                confiuration =  data.CONFIG;
+                console.log("Configuration: ", JSON.stringify(data));
 
-            last_reload = Date.now();
-            UpdateLastValue();
-        });
+                //then load XAxes
+                $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&loadLabels=1", function (data) {
+                    //console.log("update Offset: ", data);
+                    config_labels = data.LABELS;
+                    console.log("Labels: ", JSON.stringify(data));
+
+                    //load VariablesData Async
+                    confiuration.Var_List.forEach(function (Variable) {
+                        $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&var=" + Variable, function (data) {
+                            //console.log("update Offset: ", data);
+                            config_dataset.push(data.DATASETS[0]);
+                            Object.assign(config_axes, data.AXES);
+
+                            console.log("Async Dataset " + Variable + " loaded");
+                            console.log("Dataset: ", JSON.stringify(data));
+
+                            if(typeof myChart === "undefined"){
+                                console.log("RELOAD CHART Full!");
+                                var ctx = document.getElementById('myChart');
+                                myChart = new Chart(ctx, updateChartconfig());
+                            }else{
+                                myChart.data.labels = config_labels;
+                                myChart.data.datasets = config_dataset;
+
+                                console.log("RELOAD CHART!");
+                                myChart.update();
+                            }
+
+                            last_reload = Date.now();
+                            UpdateLastValue();
+
+                            isReloading = false;
+                        });
+                    });
+                });
+            });
+        }else{
+            //sync load of all Data
+            $.getJSON( "/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}", function( data ) {
+                config_dataset = data.DATASETS;
+                config_labels = data.LABELS;
+                confiuration =  data.CONFIG;
+
+
+                if(typeof myChart === "undefined"){
+                    console.log("RELOAD CHART Full!");
+                    var ctx = document.getElementById('myChart');
+                    myChart = new Chart(ctx, updateChartconfig());
+                }else{
+                    myChart.data.labels = config_labels;
+                    myChart.data.datasets = config_dataset;
+
+                    console.log("RELOAD CHART!");
+                    myChart.update();
+                }
+
+                last_reload = Date.now();
+                UpdateLastValue();
+
+                isReloading = false;
+            });
+        }
     }
     async function PullNewData(refreshRate, isWebsocket){
         refreshRate = refreshRate * 1000;
@@ -372,7 +506,50 @@
     }
 
 
+    function bootUp(){
+        try {
+            //load config after Startup
+            var dt_val = Math.floor(Date.now() / 1000);
+            ReloadChart(update_vars[0], dt_val, null, true);
 
+            if (config_global.DataMode === 0) {
+                //pullup Mode
+                var refreshRate = config_global.RefreshTime;
+                PullNewData(refreshRate);
+            } else {
+                connect();
+            }
+        }catch (e) {
+            alert("Radarchart | ", e.message);
+        }
+    }
+
+    window.onload = function() {
+        ResizeChart();
+        bootUp();
+    }
+
+    window.addEventListener('resize', ResizeChart);
+    window.addEventListener('orientationchange', ResizeChart);
+
+    function ResizeChart() {
+        ratio = confiuration.Ratio;
+        if(ratio === 0){
+            ratio = window.innerWidth / window.innerHeight;
+        }
+
+        var size = window.innerHeight;
+        if(size < window.innerHeight) size = window.innerWidth;
+
+        //reload
+        var ctx = document.getElementById('chart-container');
+        ctx.style.width = (size*ratio)-20+"px";
+        ctx.style.height = size-20+"px";
+
+        if(typeof myChart !== "undefined") myChart.options.aspectRatio = ratio;
+    }
+
+    /*
     window.onload = function() {
         try {
             var ctx = document.getElementById('myChart');
@@ -402,7 +579,7 @@
         }catch (e) {
             alert(e);
         }
-    }
+    }*/
 </script>
 </body>
 </html>
