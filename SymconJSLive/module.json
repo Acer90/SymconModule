@@ -3,7 +3,7 @@
   "name": "SymconJSLive",
   "type": 2,
   "vendor": "Swen Babenschneider",
-  "aliases": ["Symcon Javascript Live"],
+  "aliases": ["JSLive"],
   "parentRequirements": [],
   "childRequirements": ["{79D59629-E9C5-44F1-0F34-0FBC5C88F307}"],
   "implemented": ["{751AABD7-E31D-024C-5CC0-82AC15B84095}"],
