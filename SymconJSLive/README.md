@@ -1,3 +1,6 @@
+[![Version](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
+[![Version](https://img.shields.io/badge/Modul%20Version-3.23-blue.svg)]()
+[![Version](https://img.shields.io/badge/Symcon%20Version-5.3%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-5-3-%28Stable%29-Changelog)
 # SymconJSLive Splitter
 
 Splitter für alle JSLive Module
@@ -18,7 +21,7 @@ Splitter für alle JSLive Module
 10. [Lizenz](#10-lizenz)
 
 ## 1. Funktionsumfang
-  Dieses Modul Dient als Schnittstelle zwischen den JSLive Modulen und der Webhook Instance
+  Dieses Modul dient als Schnittstelle zwischen den JSLive Modulen und der Webhook Instance
 
 ## 2. Voraussetzungen
   - IPS ab Version 5.3
@@ -67,7 +70,7 @@ GUID des Modules (z.B. wenn Instanz per PHP angelegt werden soll):
 | Eigenschaft       | Typ       | Standardwert  | Info                                                                      |
 | :---------------: | :-------: | :-----------: | :-----------------------------------------------------------------------: |
 | Passwort          | string    |               | Password für den Webhook-Zugriff
-| Adresse           | string    | http://127.0.0.1:3777 | Webadresse zu IP-Symcon adresse
+| Adresse           | string    | http://127.0.0.1:3777 | Webadresse des IP-Symcon Servers
 | Daten Modus       | string    | Websocket     | Beschreibung unter 4. [Hinweise zur Verwendung](#4-hinweise-zur-verwendung)
 | Interval Abfrage-Zeit | int       | 3             | in Sekunden
 
@@ -90,7 +93,7 @@ GUID des Modules (z.B. wenn Instanz per PHP angelegt werden soll):
 
 ## 8. Datenaustausch
 
- folgt später....
+ folgt später...
 
 ## 9. Anhang
 
