@@ -2,10 +2,19 @@
   "translations": {
     "de": {
       "Password": "Passwort",
-      "Local Address": "Lokale Adresse",
-      "Remote Address": "Remote Adresse",
-      "Template Category": "Vorlagen Kategorie",
-      "Local IPs": "lokale IP-Adressbereiche"
+      "Address": "Adresse",
+      "Data Mode": "Daten-Modus",
+      "Pull": "Interval",
+      "Websocket": "Websocket",
+      "Pull Refresh Time": "Interval Abfrage-Zeit",
+      "sec.": "sek.",
+      "Enable": "Aktivieren",
+      "Contend": "Content",
+      "Enable Cache": "Verwende Cache",
+      "Enable Compression": "Verwende Kompression",
+      "Iframe use FullLink": "IFrame benutzt den vollen Link als Quelle",
+      "Load Connect Address": "Connect Adresse laden",
+      "Load Custom Templates": "Benutzerdefiniert Vorlagen laden"
     }
   }
 }

@@ -346,7 +346,7 @@ class SymconJSLive extends WebHookModule {
 
         return $output;
     }
-    public static function isHttps(array $server)
+    private static function isHttps(array $server)
     {
         if (array_key_exists("HTTPS", $server) && 'on' === $server["HTTPS"]) {
             return true;
