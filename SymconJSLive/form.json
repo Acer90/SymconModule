@@ -9,13 +9,13 @@
                 { "caption": "Websocket", "value": 1 }
             ]
         },
-        { "type": "NumberSpinner", "name": "RefreshTime", "caption": "Pull Refresh Time" },
+        { "type": "NumberSpinner", "name": "RefreshTime", "caption": "Pull Refresh Time", "minimum": 0, "suffix": "sec." },
         {
             "type": "ExpansionPanel",
             "caption": "Viewport Settings",
             "items": [
                 { "type": "CheckBox", "name": "EnableViewport", "caption": "Enable"},
-                { "type": "ValidationTextBox", "name": "viewport_content", "caption": "Content", "width": "100%" }
+                { "type": "ValidationTextBox", "name": "viewport_content", "caption": "Contend", "width": "100%" }
             ]
         },
         {
@@ -35,7 +35,7 @@
 
         {
             "type": "ExpansionPanel",
-            "caption": "Load Custome Templates",
+            "caption": "Load Custom Templates",
             "items": [
                 { "type": "SelectCategory", "name": "TemplateCategoryID", "caption": "Template Category" },
                 { "type": "Button", "label": "Load Templates", "onClick": " echo SymconJSLive_UpdateTemplates($id, $TemplateCategoryID);" }
