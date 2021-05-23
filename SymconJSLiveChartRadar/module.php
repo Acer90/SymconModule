@@ -17,6 +17,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         $this->RegisterPropertyString("customScale", "[]");
         $this->RegisterPropertyBoolean("EnableViewport", true);
         $this->RegisterPropertyInteger("IFrameHeight", 0);
+        $this->RegisterPropertyInteger("Ratio", 0);
 
         //title
         $this->RegisterPropertyString("title_text", "");
@@ -73,21 +74,25 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         $this->RegisterPropertyInteger("tooltips_backgroundColor", 0);
         $this->RegisterPropertyInteger("tooltips_cornerRadius", 5);
 
+        //Animation
+        $this->RegisterPropertyInteger("animation_duration", 500);
+        $this->RegisterPropertyString("animation_easing", "linear");
+
         //Data
         $this->RegisterPropertyInteger("data_minValue", 0);
         $this->RegisterPropertyInteger("data_maxValue", 360);
         $this->RegisterPropertyInteger("data_sections", 16);
         $this->RegisterPropertyInteger("data_precision", 0);
+        $this->RegisterPropertyBoolean("data_loadAsync", true);
 
         //Datalabels
-        $this->RegisterPropertyBoolean("datalabels_enabled", true);
-        $this->RegisterPropertyString("datalabels_anchoring", "start");
+        $this->RegisterPropertyString("datalabels_anchoring", "center");
         $this->RegisterPropertyString("datalabels_align", "center");
-        $this->RegisterPropertyBoolean("datalabels_clamp", false);
         $this->RegisterPropertyInteger("datalabels_fontSize", 12);
         $this->RegisterPropertyInteger("datalabels_fontColor", 0);
         $this->RegisterPropertyString("datalabels_fontFamily", "");
-        $this->RegisterPropertyInteger("datalabels_borderRadius", 12);
+        $this->RegisterPropertyInteger("datalabels_borderWidth", 1);
+        $this->RegisterPropertyInteger("datalabels_borderRadius", 2);
 
         //dataset
         $this->RegisterPropertyString("Datasets", "[]");
@@ -137,6 +142,8 @@ class SymconJSLiveRadarChart extends JSLiveModule{
                 return $this->ExportConfiguration();
             case "getContend":
                 return $this->GetOutput();
+            case "getUpdate":
+                return $this->GetUpdate($buffer['queryData']);
             case "getData":
                 return $this->GetData($buffer['queryData']);
             default:
@@ -169,10 +176,48 @@ class SymconJSLiveRadarChart extends JSLiveModule{
 
         return $scriptData;
     }
+    public function GetUpdate(array $querydata){
+        $updateData = array();
+
+        if(array_key_exists("loadconfig", $querydata)) {
+            $updateData["CONFIG"] = $this->GetConfigurationData();
+        }
+        elseif(array_key_exists("loadLabels", $querydata)) {
+            $data = $this->GenerateLabels();
+            if(count($data["alias"]) > 0){
+                //labels ersetzen
+                $updateData["LABELS"] = $data["alias"];
+            }else{
+                $updateData["LABELS"] = $data["labels"];
+            }
+        }
+        elseif(array_key_exists("var", $querydata)) {
+            //einzelnen datensatz laden!
+            $variable = $querydata["var"];
+            $labels = $this->GenerateLabels();
+
+            $data = $this->GenerateDataSet($labels["labels"], $variable);
+            $updateData["DATASETS"] = $data["datasets"];
+        }else{
+            $labels = $this->GenerateLabels();
+            $data = $this->GenerateDataSet($labels["labels"]);
+            $updateData["DATASETS"] = $data["datasets"];
+            if(count($labels["alias"]) > 0){
+                //labels ersetzen
+                $updateData["LABELS"] = $labels["alias"];
+            }else{
+                $updateData["LABELS"] = $labels["labels"];
+            }
+            $updateData["CONFIG"] = $this->GetConfigurationData();
+        }
+
+        return json_encode($updateData);
+    }
     private function GetData(array $querydata){
         $output = array();
         $load_vars = array();
         $datasets = json_decode($this->ReadPropertyString("Datasets"), true);
+        $labels = $this->GenerateLabels();
 
         //find custome Variabeles
         foreach ($datasets as $item){
@@ -187,8 +232,9 @@ class SymconJSLiveRadarChart extends JSLiveModule{
                 $result = json_decode(GetValue($item["Variable"]), true);
                 if (json_last_error() === 0) {
                     $s_output["Variable"] = $item["Variable"];
-                    $data = $this->GenerateDataSet();
-                    $s_output["Value"] = $this->GetCustomData($data["labels"], $result);
+
+                    $data = $this->GenerateDataSet($labels["labels"]);
+                    $s_output["Value"] = $this->GetCustomData($labels["labels"], $result);
 
                     $output[] = $s_output;
                 }else{
@@ -221,13 +267,14 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         $htmlData = str_replace("{TITLE}", $this->json_encode_advanced($this->GenerateTitleData()), $htmlData);
 
         //datasets and labels
-        $data = $this->GenerateDataSet();
+        $labels = $this->GenerateLabels();
+        $data = $this->GenerateDataSet($labels["labels"]);
         $htmlData = str_replace("{DATASETS}", $this->json_encode_advanced($data["datasets"]), $htmlData);
-        if(count($data["alias"]) > 0){
+        if(count($labels["alias"]) > 0){
             //labels ersetzen
-            $htmlData = str_replace("{LABELS}", $this->json_encode_advanced($data["alias"]), $htmlData);
+            $htmlData = str_replace("{LABELS}", $this->json_encode_advanced($labels["alias"]), $htmlData);
         }else{
-            $htmlData = str_replace("{LABELS}", $this->json_encode_advanced($data["labels"]), $htmlData);
+            $htmlData = str_replace("{LABELS}", $this->json_encode_advanced($labels["labels"]), $htmlData);
         }
 
         //Legend
@@ -301,18 +348,16 @@ class SymconJSLiveRadarChart extends JSLiveModule{
 
         if($this->ReadPropertyInteger("legend_fontColor") >= 0){
             $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("legend_fontColor"));
-            $output["labels"]["fontColor"] = "rgb(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"]. ")";
+            $output["labels"]["color"] = "rgb(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"]. ")";
         }
-        $output["labels"]["fontSize"] = $this->ReadPropertyInteger("legend_fontSize");
+        $output["labels"]["font"]["size"] = $this->ReadPropertyInteger("legend_fontSize");
         $output["labels"]["boxWidth"] = $this->ReadPropertyInteger("legend_boxWidth");
-        $output["labels"]["fontFamily"] = $this->ReadPropertyString("legend_fontFamily");
+        $output["labels"]["font"]["family"] = $this->ReadPropertyString("legend_fontFamily");
 
         return $output;
 
     }
-    private function GenerateDataSet(){
-        $archiveControlID = IPS_GetInstanceListByModuleID('{43192F0B-135B-4CE7-A0A7-1475603F3060}')[0];
-        $output["datasets"] = array();
+    private function GenerateLabels(){
         $output["labels"] = array();
         $output["alias"] = array();
 
@@ -354,11 +399,31 @@ class SymconJSLiveRadarChart extends JSLiveModule{
             }
         }
 
+        return $output;
+    }
+
+    private function GenerateDataSet($labels, $var = 0){
+        $output["datasets"] = array();
+
         //datasets erstellen
         $datasets = json_decode($this->ReadPropertyString("Datasets"),true);
         if(!is_array($datasets)){
             $this->SendDebug("GenerateDataSet", "No Variables set!", 0);
             return "{}";
+        }
+
+        if($var > 0){
+            foreach($datasets as $key => $id)
+            {
+                if($var != $id["Variable"]){
+                    //$this->SendDebug("GenerateDataSet", "ITEM(".$key.") " . $id["Variable"], 0);
+                    unset($datasets[$key]);
+                }
+            }
+        }else{
+            //sortieren aufsteigend nach order
+            $arr_order = array_column($datasets, 'Order');
+            array_multisort($arr_order, SORT_ASC , $datasets);
         }
 
         $starData = $this->GetCorrectStartDate();
@@ -411,21 +476,28 @@ class SymconJSLiveRadarChart extends JSLiveModule{
                 $result = json_decode(GetValue($item["Variable"]), true);
 
                 if (json_last_error() === 0) {
-                    $singelOutput["data"] = $this->GetCustomData($output["labels"], $result);
+                    $singelOutput["data"] = $this->GetCustomData($labels, $result);
                 }else{
                     continue;
                 }
             }else{
-                $singelOutput["data"] = $this->GetArchivData($output["labels"], $item["Variable"], $item["Offset"], $date_start, $date_end, $Aggregationsstufe, $starData["datasets"]);
+                $singelOutput["data"] = $this->GetArchivData($labels, $item["Variable"], $item["Offset"], $date_start, $date_end, $Aggregationsstufe, $item["Mode"], $starData["datasets"]);
             }
 
-            if(!empty($item["Dash"])){
-                $dashData = @json_decode($item["Dash"], true);
-                if ($dashData !== null){
-                    $singelOutput["borderDash"] = $dashData;
+            //BorderDash
+            $dash_arr = $item["Dash"];
+            if(is_array($dash_arr) && count($dash_arr)){
+                //sortieren aufsteigend nach order
+                $arr_order = array_column($dash_arr, 'Order');
+                array_multisort($arr_order, SORT_ASC , $dash_arr);
+
+                $dash = array();
+                foreach($dash_arr as $d_item){
+                    $dash[] = $d_item["Length"];
                 }
-            }
 
+                $singelOutput["borderDash"] = $dash;
+            }
 
             //Pointstyle
             $singelOutput["pointRadius"] = $this->ReadPropertyInteger("point_radius");
@@ -436,6 +508,53 @@ class SymconJSLiveRadarChart extends JSLiveModule{
             $singelOutput["digits"] = $this->ReadPropertyInteger("data_precision");
 
 
+            //datalabels
+            if($item["datalabels_enable"]){
+                $datalabels = array();
+                $datalabels["display"] = true;
+
+                if($item["datalabels_BackgroundColor"] >= 0){
+                    $datalabels["useBackgroundColor"] = false;
+                    $rgbdata = $this->HexToRGB($item["datalabels_BackgroundColor"]);
+                    $datalabels["BackgroundColor"] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($item["datalabels_BackgroundColor_Alpha"], 2, '.', '').")";
+
+                }else{
+                    $datalabels["useBackgroundColor"] = true;
+                }
+
+                if($item["datalabels_BorderColor"] >= 0) {
+                    $datalabels["useBorderColor"] = false;
+                    $rgbdata = $this->HexToRGB($item["datalabels_BorderColor"]);
+                    $datalabels["BorderColor"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["datalabels_BorderColor_Alpha"], 2, '.', '') . ")";
+                }else{
+                    $datalabels["useBorderColor"] = true;
+                }
+
+                if($item["datalabels_BorderColor"] >= 0) {
+                    $datalabels["useBorderColor"] = false;
+                    $rgbdata = $this->HexToRGB($item["datalabels_BorderColor"]);
+                    $datalabels["BorderColor"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["datalabels_BorderColor_Alpha"], 2, '.', '') . ")";
+                }else{
+                    $datalabels["useBorderColor"] = true;
+                }
+
+                if($item["datalabels_FontColor"] >= 0) {
+                    $rgbdata = $this->HexToRGB($item["datalabels_FontColor"]);
+                    $datalabels["color"] = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
+                }else{
+                    $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("datalabels_fontColor"));
+                    $datalabels["color"] = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
+                }
+                //$datalabels[""] = $item["datalabels_"];
+
+                $datalabels["showPrefix"] = $item["datalabels_showPrefix"];
+                $datalabels["showSuffix"] = $item["datalabels_showSuffix"];
+
+                //"visible": false,
+
+                $singelOutput["datalabels"] = $datalabels;
+            }
+
 
             $output["datasets"][] = $singelOutput;
         }
@@ -443,7 +562,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         return $output;
     }
 
-    private function GetArchivData(array $labels, int $varId, int $offset, int $date_start, int $date_end, int $Aggregationsstufe, int $lastDatasets = 0, bool $jsconfig = true){
+    private function GetArchivData(array $labels, int $varId, int $offset, int $date_start, int $date_end, int $Aggregationsstufe, $datamode, int $lastDatasets = 0, bool $jsconfig = true){
         $archiveControlID = IPS_GetInstanceListByModuleID('{43192F0B-135B-4CE7-A0A7-1475603F3060}')[0];
         $period = $this->GetValue("Period");
         $counter = false;
@@ -500,6 +619,8 @@ class SymconJSLiveRadarChart extends JSLiveModule{
 
         $oldVal = 0;
         $output = array_fill(0, count($labels), 0);
+        $count = 0;
+        $sum = 0;
 
         foreach ($archivData as $item) {
             //label finden!
@@ -533,7 +654,15 @@ class SymconJSLiveRadarChart extends JSLiveModule{
             }
 
             if($index >= 0 && count($output) > $index){
-                $output[$index] = $output[$index] + 1;
+                if($datamode == "counter"){
+                    $output[$index] = $output[$index] + 1;
+                }else{
+                    //mode average
+                    $count = + 1;
+                    $sum = $val;
+
+                    $output[$index] = round($sum /$count, $precision);
+                }
             }else{
                 $this->SendDebug("GetArchivData", "Index wrong! (".$val.") => ". $index, 0);
             }
@@ -592,7 +721,8 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         //customVars
         //find custome Variabeles
         $datasets = json_decode($output["Datasets"], true);
-        $c_vars = array();
+        $output["CustomVars"] = array();
+        $output["Var_List"] = array();
         foreach ($datasets as $item){
             if(!IPS_VariableExists($item["Variable"])) {
                 $this->SendDebug("GetUpdate", "VARIABLE " .$item["Variable"] . " NOT EXIST!", 0);
@@ -601,10 +731,11 @@ class SymconJSLiveRadarChart extends JSLiveModule{
 
             $VariableType = IPS_GetVariable($item["Variable"])["VariableType"];
             if($VariableType == 3) {
-                $c_vars[] = $item["Variable"];
+                $output["CustomVars"][] = $item["Variable"];
             }
+
+            $output["Var_List"][] = $item["Variable"];
         }
-        $output["CustomVars"] = $c_vars;
 
         //remove Dataset
         unset($output["Datasets"]);
