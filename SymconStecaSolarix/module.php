@@ -1,4 +1,4 @@
-<?
+<?php
  // Klassendefinition
     class StecaSolarix extends IPSModule {
         public function __construct(int $InstanceID) {

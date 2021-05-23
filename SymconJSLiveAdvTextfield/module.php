@@ -1,4 +1,4 @@
-<?
+<?php
 include_once (__DIR__ . '/../SymconJSLive/libs/JSLiveModule.php');
 
 class SymconJSLiveAdvTextfield extends JSLiveModule{

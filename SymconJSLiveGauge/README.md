@@ -1,8 +1,8 @@
 [![Version](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
 [![Version](https://img.shields.io/badge/Symcon%20Version-5.3%20%3E-green.svg)](https://www.symcon.de/forum/threads/30857-IP-Symcon-5-3-%28Stable%29-Changelog)
-# SymconJSLive Splitter
+# SymconJSLive Gauge
 
-Splitter für alle JSLive Module
+Verwendet https://canvas-gauges.com/ um animierte Messinstrumente(Gauges) dazustellen.
 
 ## Dokumentation
 
@@ -41,8 +41,8 @@ Achtung dieser Modus sorgt für einen erhöhten Datentransfer, und belastet bei 
 
 ## 5. Einrichten und Aktionen
 
-Der JSLive-Splitter kann auch ohne Konfiguration verwendet werden, aus Sicherheitsgründen sollte aber ein Passwort
-verwendet werden. Dieses schützt, vor unbefugten zugriff Dritter!
+der JSLive-Splitter kann auch ohne konfiguration verwendet werden, aus Sicherheitsgründen sollte aber ein Password
+gesetzt werden. Dieses verhindert vor unbefugten zugriff Dritter!
 
 **Connect Adresse laden**
   - Lädt die Adresse vom Connect Modul
@@ -95,6 +95,8 @@ GUID des Modules (z.B. wenn Instanz per PHP angelegt werden soll):
  folgt später...
 
 ## 9. Anhang
+
+- [canvas-gauges](https://canvas-gauges.com/)
 
 ## 10. Lizenz
 

@@ -1,4 +1,4 @@
-<?
+<?php
     // Klassendefinition
     class SymconWS2812 extends IPSModule {
         public function __construct($InstanceID) {

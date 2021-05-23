@@ -1,4 +1,4 @@
-<?
+<?php
     require_once('lib/snmp.php');
 
     class IPSSNMP extends IPSModule {
