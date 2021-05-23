@@ -17,7 +17,7 @@
 <script>
     let gauge;
 
-    let curValue = {VALUE};
+    let curValue = 0; //{/VALUE}
     let config_global = {GLOBAL};
     let config_ticks = {TICKS};
     let config_highlights = {HIGHLIGHTS};
@@ -40,7 +40,7 @@
 
                 units: confiuration.plate_unit,
 
-                value: {VALUE},
+                value: curValue,
                 minValue: confiuration.min,
                 maxValue: confiuration.max,
 
@@ -119,6 +119,13 @@
 
             gauge = new LinearGauge(gauge_config);
             gauge.draw();
+
+            //laden das aktuellen Wertes
+            $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                data.forEach(function (part, index) {
+                    UpdateGauge(part.Variable, part.Value);
+                });
+            });
         }catch (e){
             alert(e);
         }
@@ -135,10 +142,10 @@
 
         ws.onmessage = function(e) {
             data = JSON.parse(e.data);
-            if(data.Message == 10506) {
+            if(data.Message === 10506) {
                 //refresh webseite
                 location.reload();
-            } else if(data.Message == 10603) {
+            } else if(data.Message === 10603) {
                 UpdateGauge(data.SenderID, data.Data[0]);
             }
         };
@@ -158,11 +165,7 @@
 
     function UpdateGauge(id_val, val){
         isUpdated = false;
-
-        if(id_val == confiuration.Variable){
-            //console.log(val);
-            gauge.value = val;
-        }
+        gauge.value = val;
     }
 
     async function PullNewData(refreshRate){
@@ -189,12 +192,8 @@
         try {
             LoadGauge();
 
-            if (config_global.LocalAddress == "" && config_global.LocalDataMode == 0) {
+            if (config_global.Address === "" && config_global.DataMode === 0) {
                 //pullup Mode local
-                refreshRate = config_global.LocalRefreshTime;
-                PullNewData(refreshRate);
-            } else if (config_global.RemoteAddress == "" && config_global.RemoteDataMode == 0) {
-                //pullup Mode remote
                 refreshRate = config_global.RefreshTime;
                 PullNewData(refreshRate);
             } else {
