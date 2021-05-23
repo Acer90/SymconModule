@@ -1,4 +1,4 @@
-<?
+<?php
 // Klassendefinition
 class SymconIBeaconScanner extends IPSModule
 {

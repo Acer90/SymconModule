@@ -1,4 +1,4 @@
-<?
+<?php
 include_once (__DIR__ . '/../SymconJSLive/libs/JSLiveModule.php');
 
 class SymconJSLiveGauge extends JSLiveModule{
@@ -189,13 +189,16 @@ class SymconJSLiveGauge extends JSLiveModule{
         $ticks = json_decode($this->ReadPropertyString("Ticks"), true);
         $min = $this->ReadPropertyInteger("min");
         $max = $this->ReadPropertyInteger("max");
-        $majorticks = array();
+        array_multisort(array_column($ticks, 'Value'), SORT_ASC, $ticks);
 
+        $majorticks = array();
         $majorticks[] = $min;
         foreach ($ticks as $tick) {
             $majorticks[] = $tick["Value"];
         }
         $majorticks[] = $max;
+
+        $this->SendDebug("TEST", print_r($majorticks, true), 0);
         return $majorticks;
     }
 

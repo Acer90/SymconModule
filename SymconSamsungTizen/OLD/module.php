@@ -1,4 +1,4 @@
-<?
+<?php
 
 // Klassendefinition
 require_once('wol.php');

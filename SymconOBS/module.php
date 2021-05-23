@@ -1,4 +1,4 @@
-<?
+<?php
  // Klassendefinition
     class OBS extends IPSModule {
         public function __construct($InstanceID) {

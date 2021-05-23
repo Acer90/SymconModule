@@ -1,4 +1,4 @@
-<?
+<?php
     // Klassendefinition
     class BlueIris extends IPSModule {
         protected function SetBuffer($Name, $Daten)
