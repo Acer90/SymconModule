@@ -8,8 +8,8 @@
             "options": [
                 { "caption": "CanvasGauges-Radial", "value": "CanvasGauges-Radial" },
                 { "caption": "CanvasGauges-Linear", "value": "CanvasGauges-Linear" },
-                { "caption":  "CanvasGauges-Linear(vertical)", "value":  "CanvasGauges-Linear(vertical)"},
-                { "caption":  "CanvasGauges-Compass", "value":  "CanvasGauges-Compass"}
+                { "caption": "CanvasGauges-Linear(vertical)", "value": "CanvasGauges-Linear(vertical)"},
+                { "caption": "CanvasGauges-Compass", "value": "CanvasGauges-Compass"}
 
             ]
         },
@@ -54,10 +54,20 @@
             "items": [
                 { "type": "CheckBox", "name": "plate_display", "caption": "Display"},
                 { "type": "ValidationTextBox", "name": "plate_unit", "caption": "Unit" },
-                { "type": "SelectColor", "name": "plate_colorPlate", "caption": "color Plate" },
-                { "type": "HorizontalSlider", "name": "plate_colorPlate_Alpha", "caption": "Color Plate Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 },
-                { "type": "SelectColor", "name": "plate_colorPlateEnd", "caption": "Color Plate End" },
-                { "type": "HorizontalSlider", "name": "plate_colorPlateEnd_Alpha", "caption": "Color Plate End Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "SelectColor", "name": "plate_colorPlate", "caption": "color Plate" },
+                        { "type": "HorizontalSlider", "name": "plate_colorPlate_Alpha", "caption": "Color Plate Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 },
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "SelectColor", "name": "plate_colorPlateEnd", "caption": "Color Plate End" },
+                        { "type": "HorizontalSlider", "name": "plate_colorPlateEnd_Alpha", "caption": "Color Plate End Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                    ]
+                }
             ]
         },
         {
@@ -74,10 +84,20 @@
                 { "type": "NumberSpinner", "name": "needle_start", "caption": "Start", "suffix": "%" },
                 { "type": "NumberSpinner", "name": "needle_end", "caption": "End", "suffix": "%" },
                 { "type": "NumberSpinner", "name": "needle_width", "caption": "Width", "suffix": "px" },
-                { "type": "SelectColor", "name": "needle_colorNeedle", "caption": "Color Needle" },
-                { "type": "HorizontalSlider", "name": "needle_colorNeedle_Alpha", "caption": "Color Needle Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 },
-                { "type": "SelectColor", "name": "needle_colorNeedleEnd", "caption": "Color Needle End" },
-                { "type": "HorizontalSlider", "name": "needle_colorNeedleEnd_Alpha", "caption": "Color Needle End Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "SelectColor", "name": "needle_colorNeedle", "caption": "Color Needle" },
+                        { "type": "HorizontalSlider", "name": "needle_colorNeedle_Alpha", "caption": "Color Needle Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 },
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "SelectColor", "name": "needle_colorNeedleEnd", "caption": "Color Needle End" },
+                        { "type": "HorizontalSlider", "name": "needle_colorNeedleEnd_Alpha", "caption": "Color Needle End Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                    ]
+                }
             ]
         },
         {
@@ -111,8 +131,13 @@
                         { "caption": "Syne Mono", "value": "Syne Mono" }
                     ]
                 },
-                { "type": "SelectColor", "name": "valuebox_colorValueBoxBackground", "caption": "Background Color" },
-                { "type": "HorizontalSlider", "name": "valuebox_colorValueBoxBackground_Alpha", "caption": "Background Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "SelectColor", "name": "valuebox_colorValueBoxBackground", "caption": "Background Color" },
+                        { "type": "HorizontalSlider", "name": "valuebox_colorValueBoxBackground_Alpha", "caption": "Background Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                    ]
+                }
             ]
         },
         {
@@ -122,10 +147,20 @@
                 { "type": "CheckBox", "name": "progressbar_display", "caption": "Display"},
                 { "type": "NumberSpinner", "name": "progressbar_barWidth", "caption": "Width", "suffix": "px" },
                 { "type": "NumberSpinner", "name": "progressbar_barShadow", "caption": "Shadow", "suffix": "px" },
-                { "type": "SelectColor", "name": "progressbar_colorBar", "caption": "Color" },
-                { "type": "HorizontalSlider", "name": "progressbar_colorBar_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 },
-                { "type": "SelectColor", "name": "progressbar_colorBarProgress", "caption": "Color Progress" },
-                { "type": "HorizontalSlider", "name": "progressbar_colorBarProgress_Alpha", "caption": "Color Progress Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "SelectColor", "name": "progressbar_colorBar", "caption": "Color" },
+                        { "type": "HorizontalSlider", "name": "progressbar_colorBar_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 },
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "SelectColor", "name": "progressbar_colorBarProgress", "caption": "Color Progress" },
+                        { "type": "HorizontalSlider", "name": "progressbar_colorBarProgress_Alpha", "caption": "Color Progress Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                    ]
+                }
             ]
         },
         {
@@ -215,7 +250,7 @@
                         {
                             "caption": "To",
                             "name": "To",
-                            "width": "150px",
+                            "width": "auto",
                             "add": 0,
                             "edit": {
                                 "type": "NumberSpinner",
@@ -235,7 +270,8 @@
                             "caption": "HighlightColor Alpha",
                             "name": "HighlightColor_Alpha",
                             "width": "180px",
-                            "add": 1.0,
+                            "visible": false,
+                            "add": 1,
                             "edit": {
                                 "type": "NumberSpinner",
                                 "digits": 2,
