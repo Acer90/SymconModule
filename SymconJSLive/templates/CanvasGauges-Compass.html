@@ -17,7 +17,7 @@
 <script>
     let gauge;
 
-    let curValue = {VALUE};
+    let curValue = 0; //{/VALUE}
     let config_global = {GLOBAL};
     let config_ticks = {TICKS};
     let config_highlights = {HIGHLIGHTS};
@@ -35,6 +35,8 @@
             gauge_config = {
                 renderTo: 'gauge',
                 height: window.innerHeight - 20,
+
+                value: curValue,
                 minValue: 0,
                 maxValue: 360,
                 majorTicks: [
