@@ -47,6 +47,8 @@ GUID des Modules (z.B. wenn Instanz per PHP angelegt werden soll):
 | :---------------: | :------------------------------------: |
 | Device            | {71B93700-9659-97C6-AD83-984C2B44139F} |
 
+**Allgemeine Einstellungen**
+
 ![Gauge Overview](https://github.com/Acer90/SymconModule/blob/alpha/imgs/Gauge-Overview.png?raw=true)
 
 1. Titel
