@@ -56,7 +56,10 @@ GUID des Modules (z.B. wenn Instanz per PHP angelegt werden soll):
 3. Nadel/Zeiger (Needle)
 4. Wert (ValueBox)
 5. Fortschrittsbalken (Progressbar)
-6.  Schritte/Zwischenwerte (Ticks)
+6. Schritte/Zwischenwerte (Ticks)
+
+Weitere Infos:
+https://canvas-gauges.com/documentation/user-guide/configuration#gauge-specific-configuration-options
 
 **Expert Einstellungen**
 
