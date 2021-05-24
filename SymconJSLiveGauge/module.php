@@ -32,9 +32,9 @@ class SymconJSLiveGauge extends JSLiveModule{
         $this->RegisterPropertyBoolean("plate_display", false);
         $this->RegisterPropertyString("plate_unit", "");
         $this->RegisterPropertyInteger("plate_colorPlate", 16777215);
-        $this->RegisterPropertyInteger("plate_colorPlate_Alpha", 1);
+        $this->RegisterPropertyFloat("plate_colorPlate_Alpha", 1);
         $this->RegisterPropertyInteger("plate_colorPlateEnd", 16777215);
-        $this->RegisterPropertyInteger("plate_colorPlateEnd_Alpha", 1);
+        $this->RegisterPropertyFloat("plate_colorPlateEnd_Alpha", 1);
 
         //Needle
         $this->RegisterPropertyBoolean("needle_display", false);
@@ -43,15 +43,15 @@ class SymconJSLiveGauge extends JSLiveModule{
         $this->RegisterPropertyInteger("needle_end", 80);
         $this->RegisterPropertyInteger("needle_width", 2);
         $this->RegisterPropertyInteger("needle_colorNeedle", 0);
-        $this->RegisterPropertyInteger("needle_colorNeedle_Alpha", 1);
+        $this->RegisterPropertyFloat("needle_colorNeedle_Alpha", 1);
         $this->RegisterPropertyInteger("needle_colorNeedleEnd", 0);
-        $this->RegisterPropertyInteger("needle_colorNeedleEnd_Alpha", 1);
+        $this->RegisterPropertyFloat("needle_colorNeedleEnd_Alpha", 1);
 
         //Valuebox
         $this->RegisterPropertyBoolean("valuebox_display", false);
         $this->RegisterPropertyInteger("valuebox_fontSize", 14);
         $this->RegisterPropertyInteger("valuebox_colorValueBoxBackground", 0);
-        $this->RegisterPropertyInteger("valuebox_colorValueBoxBackground_Alpha", 1);
+        $this->RegisterPropertyFloat("valuebox_colorValueBoxBackground_Alpha", 1);
         $this->RegisterPropertyString("valuebox_fontFamily", "");
 
         //Progressbar
@@ -59,9 +59,9 @@ class SymconJSLiveGauge extends JSLiveModule{
         $this->RegisterPropertyInteger("progressbar_barWidth", 5);
         $this->RegisterPropertyInteger("progressbar_barShadow", 1);
         $this->RegisterPropertyInteger("progressbar_colorBar", 0);
-        $this->RegisterPropertyInteger("progressbar_colorBar_Alpha", 1);
+        $this->RegisterPropertyFloat("progressbar_colorBar_Alpha", 1);
         $this->RegisterPropertyInteger("progressbar_colorBarProgress", 0);
-        $this->RegisterPropertyInteger("progressbar_colorBarProgress_Alpha", 1);
+        $this->RegisterPropertyFloat("progressbar_colorBarProgress_Alpha", 1);
 
         //Ticks
         $this->RegisterPropertyString("ticks_fontFamily", "");
