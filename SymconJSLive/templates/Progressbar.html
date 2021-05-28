@@ -94,7 +94,7 @@
     function LoadBarConfig(){
         output = {};
 
-        if(confiuration.shape_svg !== ""){
+        if(confiuration.shape_svg === true){
             output["img"] = "/hook/JSLive/getSVG?Instance={INSTANCE}&pw={PASSWORD}";
             //output["img"] = "data:image/jpeg;base64," + confiuration.shape_svg;
             //output["img-size"] = "1500,500";
@@ -104,7 +104,7 @@
         }
 
         output["type"] =  confiuration.Type;
-        if(confiuration.shape_svg === "" && confiuration.shape_path === "")  output["preset"] =  confiuration.shape_preset; //fan line bubble circle
+        if(confiuration.shape_svg === false && confiuration.shape_path === "")  output["preset"] =  confiuration.shape_preset; //fan line bubble circle
 
         output["precision"] = confiuration.data_precision;
         if(confiuration.data_precisionCustom !== 0)  output["precision"] = confiuration.data_precisionCustom;
@@ -130,6 +130,9 @@
         output["fill-dir"] = confiuration.fill_dir;
         output["fill-background-extrude"] = confiuration.fill_backgroundExtrude;
         output["fill-background"] = confiuration.fill_backgroundColor;
+
+        //load img
+        if(confiuration.fill_backgroundFile === true) output["fill"] = "/hook/JSLive/getFillImg?Instance={INSTANCE}&pw={PASSWORD}";
 
         //override
         if(confiuration.override_stroke !== "") output["stroke"] = confiuration.override_stroke;

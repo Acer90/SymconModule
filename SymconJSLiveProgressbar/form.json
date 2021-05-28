@@ -134,7 +134,17 @@
                     "items": [
                         { "type": "Label", "caption": "Fill:", "width": "100px" },
                         { "type": "SelectColor", "name": "fill_color", "caption": "Color", "width": "150px"},
-                        { "type": "HorizontalSlider", "name": "fill_color_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05}
+                        { "type": "HorizontalSlider", "name": "fill_color_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05},
+                        { "type": "Label", "caption": "Or", "width": "50px" },
+                        { "type": "Select", "name": "fill_backgroundFileType", "caption": "Filetype", "width": "100px",
+                            "options": [
+                                { "caption": ".gif", "value": "image/gif" },
+                                { "caption": ".jpg", "value": "image/jpeg" },
+                                { "caption": ".png", "value": "image/png" },
+                                { "caption": ".svg", "value": "image/svg+xml" }
+                            ]
+                        },
+                        { "type": "SelectFile", "name": "fill_backgroundFile", "caption": "File", "extensions": ".svg,.jpg,.jpeg,.png,.gif", "width": "150px"}
                     ]
                 },
                 {

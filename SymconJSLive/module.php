@@ -166,6 +166,8 @@ class SymconJSLive extends WebHookModule {
                 header('Content-type: application/json');
             }elseif (strtolower($Type) == "loadfile"){
                 //Here Do Nothing
+            }elseif (strtolower($Type) == "getfillimg"){
+                //Here Do Nothing
             }else{
                 header("Content-Type: text/html");
             }
@@ -200,14 +202,19 @@ class SymconJSLive extends WebHookModule {
                     $contend = $this->ReplacePlaceholder($contend, $queryData["instance"], $arr_data["EnableViewport"]);
                 }
             }
-            elseif(strtolower($Type) == "loadfile"){
+            elseif(strtolower($Type) == "loadfile") {
                 $arr_data = json_decode($contend[0], true);
-                if(strtolower($arr_data["Type"]) == "css"){
+                if (strtolower($arr_data["Type"]) == "css") {
                     header('Content-type: text/css');
-                }else{
+                } else {
                     header("Content-type: text/javascript");
                 }
                 $contend = $arr_data["Contend"];
+                $useCache = true;
+            }elseif(strtolower($Type) == "getfillimg"){
+                $arr_data = json_decode($contend[0], true);
+                header('Content-type: '. $arr_data["Type"]);
+                $contend = base64_decode($arr_data["Contend"]);
                 $useCache = true;
             }else{
                 $contend = $contend[0];

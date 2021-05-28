@@ -38,6 +38,8 @@ class SymconJSLiveProgressbar extends JSLiveModule{
         $this->RegisterPropertyInteger("stroke_Dash2", 0);
 
         //Fill
+        $this->RegisterPropertyString("fill_backgroundFile", "");
+        $this->RegisterPropertyString("fill_backgroundFileType", "image/jpeg");
         $this->RegisterPropertyString("fill_dir", "ltr");
         $this->RegisterPropertyInteger("fill_color", 0);
         $this->RegisterPropertyFloat("fill_color_Alpha", 1.0);
@@ -87,6 +89,8 @@ class SymconJSLiveProgressbar extends JSLiveModule{
                 return $this->GetData($buffer['queryData']);
             case "getSVG":
                 return $this->GetSVG();
+            case "getFillImg":
+                return $this->GetFillImg();
             default:
                if($buffer['cmd'] != "UpdateCache")
                     $this->SendDebug("ReceiveData", "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
@@ -127,13 +131,19 @@ class SymconJSLiveProgressbar extends JSLiveModule{
         }
         return json_encode($output);
     }
-    public function GetSVG(){
+    private function GetSVG(){
         $output = $this->ReadPropertyString("shape_svg");
         if(!empty($output)){
             $output = base64_decode($output);
         }
 
         return $output;
+    }
+    private function GetFillImg(){
+        $output = $this->ReadPropertyString("fill_backgroundFile");
+        $type = $this->ReadPropertyString("fill_backgroundFileType");
+
+        return json_encode(array("Contend" => $output, "Type" => $type));
     }
 
     private function ReplacePlaceholder(string $htmlData){
@@ -191,6 +201,19 @@ class SymconJSLiveProgressbar extends JSLiveModule{
         //sufix und Prefix abrufen
         $output["suffix"] = "";
         $output["prefix"] = "";
+
+        if(!empty($output["shape_svg"])){
+            $output["shape_svg"] = true;
+        }else{
+            $output["shape_svg"] = false;
+        }
+
+
+        if(!empty($output["fill_backgroundFile"])){
+            $output["fill_backgroundFile"] = true;
+        }else{
+            $output["fill_backgroundFile"] = false;
+        }
 
         //$output["Test"] = IPS_GetVariable($output["Variable"]);
         if(IPS_VariableExists($output["Variable"]) && !empty(IPS_GetVariable($output["Variable"])["VariableProfile"])){
