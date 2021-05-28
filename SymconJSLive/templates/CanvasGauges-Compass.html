@@ -134,7 +134,9 @@
             data = JSON.parse(e.data);
             if(data.Message === 10506) {
                 //refresh webseite
-                location.reload();
+                setTimeout(function (){
+                    location.reload();
+                },1000);
             } else if(data.Message === 10603) {
                 UpdateGauge(data.SenderID, data.Data[0]);
             }
