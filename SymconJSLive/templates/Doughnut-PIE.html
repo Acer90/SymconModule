@@ -5,6 +5,12 @@
     {VIEWPORT} <!-- Dont Remove this line, it can be disabled at intstance! -->
     <title>{TITLE_TEXT}</title>
     {FONTS} <!-- Need for Custom font Family !-->
+
+    <style>
+        html {
+            font-size: 1.5vw;
+        }
+    </style>
 </head>
 <script src="/hook/JSLive/js/jquery.min.js"></script>
 <script src="/hook/JSLive/js/util.js"></script>
@@ -17,6 +23,7 @@
 <div class="chart-container" id="chart-container" style="position: relative; margin: 0 auto;">
     <canvas id="myChart"></canvas>
 </div>
+
 
 <script>
     let myChart;
