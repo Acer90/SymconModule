@@ -170,7 +170,9 @@
             data = JSON.parse(e.data);
             if(data.Message == 10506) {
                 //refresh webseite
-                location.reload();
+                setTimeout(function (){
+                    location.reload();
+                },1000);
             } else if(data.Message == 10603) {
                 if(!confiuration.data_pullModeinMinute && confiuration.Period !== 7){
                     UpdateChart(data.SenderID, data.Data[3], data.Data[0]);

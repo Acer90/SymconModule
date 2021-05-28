@@ -1,10 +1,74 @@
 {
   "translations": {
     "de": {
+      "Main:": "Haupt:",
+      "End:": "Ende:",
+      "Arrow": "Pfeil",
+      "Line": "Linie",
+      "Start": "Start",
+      "End": "Ende",
+      "Plate": "Platte",
+      "Needle": "Nadel/Zeiger",
+      "Valuebox": "Wert",
+      "Background:": "Hintergrund:",
+      "Progressbar": "Fortschrittsbalken",
+      "Progress:": "Fortschritt",
+      "Ticks": "Schritte/Zwischenwerte",
+
+      "From": "Von",
+      "To": "Bis",
+      "HighlightColor": "Farbe",
+      "HighlightColor Alpha": "Transparenz/Alpha",
+
+      "Radial Gauge Settings": "Einstellungen der Radialanzeige",
+      "Start Angle": "Startwinkel",
+      "Ticks Angle": "Winkel der Anzeige",
+      "Linear Gauge Settings": "Einstellungen der Linearanzeige",
+      "Tick Side": "Seite Schritte",
+      "Number Side": "Seite Nummern",
+      "Needle Side": "Seite Nadel",
+
+      "Variable": "Variable",
+      "Min": "Min",
+      "Max": "Max",
+      "Template": "Vorlage",
+
+      "Unit": "Einheit",
+      "Value": "Wert",
+
+      "Display": "Anzeigen",
+      "Color": "Farbe",
+      "Alpha": "Transparenz/Alpha",
+      "Font": "Schrift",
+      "Size": "Größe",
+      "Family": "Art",
+      "Width": "Breite",
+      "Shadow": "Schatten",
+
+      "Left": "Links",
+      "Right": "Rechts",
+      "Both": "Beidseitig",
+
+      "Duration": "Dauer",
+      "Rule": "Regel",
+
+      "Expert": "Experte",
+      "Debug": "Debug",
+      "Enable Cache": "Verwende Cache",
+      "Create HTMLBox": "Erstelle HTMLBox",
+      "Template Script": "Vorlagen Skript",
+      "Viewport Enable": "Aktiviere Viewport",
+      "IFrame Height": "IFrame Höhe",
+
 	  "Get Link": "Öffne Link",
-	  "Load Confiuration": "lade Konfiguration",
-	  "Status OK!": "Status Ok!",
-	  "Create HTMLBox": "Erstelle HTMLBox"
+      "Configuration": "Konfiguration",
+      "Load from other Modul": "Einstellungen von einen anderen Modul laden",
+      "Load": "Laden",
+      "Load from File": "Einstellungen aus einer Konfigurationsdatei laden",
+      "File": "Datei",
+      "Export": "Export Konfigurationsdatei",
+
+	  "Status OK!": "Status Ok!"
     }
   }
 }
