@@ -26,7 +26,7 @@
                     "items": [
                         { "type": "Label", "caption": "Font:", "width": "100px" },
                         { "type": "NumberSpinner", "name": "title_fontSize", "caption": "Size" , "width": "100px", "suffix": "px", "minimum": 0, "stepSize": 1},
-                        { "type": "SelectColor", "name": "title_fontColor", "caption": "FColor" , "width": "150px"},
+                        { "type": "SelectColor", "name": "title_fontColor", "caption": "Color" , "width": "150px"},
                         { "type": "Select", "name": "title_fontFamily", "caption": "Family", "width": "150px",
                             "options": [
                                 { "caption": "-Default-", "value": "" },
@@ -173,8 +173,8 @@
             "caption": "Rotation",
             "items": [
                 { "type": "Label", "caption": "Works only with doughnut!" },
-                { "type": "NumberSpinner", "name": "rotation_start", "caption": "Rotation Start", "suffix": "°", "minimum": 0, "maximum": 360},
-                { "type": "NumberSpinner", "name": "rotation_length", "caption": "Rotation Length", "suffix": "°", "minimum": 0, "maximum": 360}
+                { "type": "NumberSpinner", "name": "rotation_start", "caption": "Start", "suffix": "°", "minimum": 0, "maximum": 360},
+                { "type": "NumberSpinner", "name": "rotation_length", "caption": "Length", "suffix": "°", "minimum": 0, "maximum": 360}
             ]
         },
         {
@@ -383,7 +383,7 @@
                                 }
                             },
                             {
-                                "caption": "BackgroundColor",
+                                "caption": "Background Color",
                                 "name": "BackgroundColor",
                                 "width": "130px",
                                 "add": 0,
@@ -392,7 +392,7 @@
                                 }
                             },
                             {
-                                "caption": "BackgroundColor Alpha",
+                                "caption": "Background Color Alpha",
                                 "name": "BackgroundColor_Alpha",
                                 "width": "180px",
                                 "add": 0.5,
@@ -404,7 +404,7 @@
                                 }
                             },
                             {
-                                "caption": "BorderColor",
+                                "caption": "Border Color",
                                 "name": "BorderColor",
                                 "width": "120px",
                                 "add": 0,
