@@ -114,6 +114,7 @@ class JSLiveModule extends IPSModule
         $withScript = false;
 
         if(array_key_exists("scripts", $queryData) && $queryData["scripts"] >= 1) $withScript = true;
+        $withScript = true;
 
         //$output["queryData"] = json_encode($queryData);
         $output["ModulID"] = IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"];

@@ -112,9 +112,7 @@
 
             //laden das aktuellen Wertes
             $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
-                data.forEach(function (part, index) {
-                    UpdateGauge(part.Variable, part.Value);
-                });
+                UpdateGauge(data.Variable, data.Value);
             });
         }catch (e) {
             alert(e);
@@ -165,9 +163,7 @@
         while (true){
             try {
                 $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
-                    data.forEach(function (part, index) {
-                        UpdateGauge(part.Variable, part.Value);
-                    });
+                    UpdateGauge(data.Variable, data.Value);
                 });
 
                 //Control Variables
@@ -183,12 +179,8 @@
             //if no font is load then here Start load guage
             if(!confiuration.font_isSet) LoadGauge();
 
-            if (config_global.LocalAddress == "" && config_global.LocalDataMode == 0) {
+            if (config_global.DataMode === 0) {
                 //pullup Mode local
-                refreshRate = config_global.LocalRefreshTime;
-                PullNewData(refreshRate);
-            } else if (config_global.RemoteAddress == "" && config_global.RemoteDataMode == 0) {
-                //pullup Mode remote
                 refreshRate = config_global.RefreshTime;
                 PullNewData(refreshRate);
             } else {
