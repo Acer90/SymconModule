@@ -392,6 +392,18 @@
                                 }
                             },
                             {
+                                "caption": "BackgroundColor Alpha",
+                                "name": "BackgroundColor_Alpha",
+                                "width": "180px",
+                                "add": 0.5,
+                                "edit": {
+                                    "type": "HorizontalSlider",
+                                    "stepSize": 0.05,
+                                    "maximum": 1,
+                                    "minimum": 0
+                                }
+                            },
+                            {
                                 "caption": "BorderColor",
                                 "name": "BorderColor",
                                 "width": "120px",
@@ -401,24 +413,13 @@
                                 }
                             },
                             {
-                                "caption": "BackgroundColor Alpha",
-                                "name": "BackgroundColor_Alpha",
-                                "width": "180px",
-                                "add": 0.5,
-                                "edit": {
-                                    "type": "NumberSpinner",
-                                    "digits": 2,
-                                    "maximum": 1,
-                                    "minimum": 0
-                                }
-                            },{
                                 "caption": "BorderColor Alpha",
                                 "name": "BorderColor_Alpha",
                                 "width": "150px",
                                 "add": 1.0,
                                 "edit": {
-                                    "type": "NumberSpinner",
-                                    "digits": 2,
+                                    "type": "HorizontalSlider",
+                                    "stepSize": 0.05,
                                     "maximum": 1,
                                     "minimum": 0
                                 }
