@@ -122,7 +122,7 @@ _Variablen (Liste in Datensätze)_
 | Debug             | bool      | false         | Dienst zur erweiterten Ausgabe in Symcon
 | Verwende Cache    | bool      | true          | Aktiviert den Cache-Support des Browsers
 | Erstelle HTMLBox  | bool      | true          | erstellt eine Htmlbox mit Iframe zur Instance
-| Vorlage Skript    | int       |               | Hier kann eine Custom Vorlage importiert werden, für weiter Informationen siehe Export von Vorlagen im Splitter Modul
+| Vorlage Skript    | int       |               | Hier kann eine Custom Vorlage importiert werden, für weitere Informationen siehe Export von Vorlagen im Splitter Modul
 | Viewport aktivieren | bool    | true          | Damit Engräte die Ausgabe der Module automatisch skalieren können
 | Iframe Höhe       | int       | 0             | 0 = Auto, sonnst kann hier die höhe in Px angegeben werden.
 | Benutzerdefiniertes Verhältnis | float | 0.0  | 0 = Auto, Gibt das Verhältnis von Breite zu Höhe an.
