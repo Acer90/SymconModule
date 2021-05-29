@@ -3,7 +3,8 @@
 
 # SymconJSLive DoughnutPie
 Verwendet https://www.chartjs.org/ um Echtzeit Donat- o. Kuchendiagramme dazustellen!
-[Animierte Gauge](https://github.com/Acer90/SymconModule/blob/alpha/imgs/DougtnutPie.gif?raw=true)
+
+![Animierte Dougtnut](https://github.com/Acer90/SymconModule/blob/alpha/imgs/DougtnutPie.gif?raw=true)
 
 ## Dokumentation
 **Inhaltsverzeichnis**
@@ -20,7 +21,7 @@ Verwendet https://www.chartjs.org/ um Echtzeit Donat- o. Kuchendiagramme dazuste
 10. [Lizenz](#10-lizenz)
 
 ## 1. Funktionsumfang
-  Mit hilfe dieses Modules können Animierte Gauges für IP-Symcon erstellt werden.
+  Mit hilfe dieses Modules können animierte Donat- und Kuchendiagramme für IP-Symcon erstellt werden.
 
 ## 2. Voraussetzungen
   - IPS ab Version 5.3
@@ -49,7 +50,7 @@ GUID des Modules (z.B. wenn Instanz per PHP angelegt werden soll):
 
 **Allgemeine Einstellungen**
 
-![Gauge Overview](https://github.com/Acer90/SymconModule/blob/alpha/imgs/Gauge-Overview.png?raw=true)
+![Gauge Overview](https://github.com/Acer90/SymconModule/blob/alpha/imgs/DougnutPie-Overview.png?raw=true)
 
 1. Titel
 2. Platte (Plate)
