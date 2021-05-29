@@ -100,6 +100,7 @@
                             clamp: true,
                             formatter: function(value, context) {
                                 var str = value["y"];
+                                if(str === 0 || str === null || str === "") return "";
 
                                 if(context.dataset.datalabels.showPrefix){
                                     str = context.chart.config.options.scales[context.dataset.yAxisID].Prefix + str;
@@ -111,6 +112,8 @@
                                 return  str;
                             },
                             backgroundColor: function(context) {
+                                var str = context.dataset.data[context.dataIndex].y;
+                                if(str === 0 || str === null || str === "") return "rgba(0,0,0,0)";
                                 if(context.dataset.datalabels.useBackgroundColor){
                                     return context.dataset.backgroundColor;
                                 }else{
@@ -118,6 +121,8 @@
                                 }
                             },
                             borderColor: function(context) {
+                                var str = context.dataset.data[context.dataIndex].y;
+                                if(str === 0 || str === null || str === "") return "rgba(0,0,0,0)";
                                 if(context.dataset.datalabels.useBorderColor){
                                     return context.dataset.borderColor;
                                 }else{
