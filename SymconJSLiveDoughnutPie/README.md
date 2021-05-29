@@ -34,7 +34,7 @@ Verwendet https://www.chartjs.org/ um Echtzeit Donat- o. Kuchendiagramme dazuste
 ## 5. Einrichten und Aktionen
 - Für die Verwendung des Moduls wird die Splitter instance benötigt, diese wird so fern noch nicht angelegt automatisch beim anlegen des Moduls mit erstellt.
 
-**Öffne Linkn**
+**Öffne Link**
 - Öffnet den Ausgabe link im Browser
 - Der Button "Öffne Link" funktioniert nur wenn im Splitter eine Adresse gesetzt ist!
 
@@ -46,21 +46,74 @@ GUID des Modules (z.B. wenn Instanz per PHP angelegt werden soll):
 
 | Instanz           | GUID                                   |
 | :---------------: | :------------------------------------: |
-| Device            | {71B93700-9659-97C6-AD83-984C2B44139F} |
+| Device            | {9419245E-CE2E-F949-AAB6-714E2045632F} |
 
 **Allgemeine Einstellungen**
 
 ![Gauge Overview](https://github.com/Acer90/SymconModule/blob/alpha/imgs/DougnutPie-Overview.png?raw=true)
 
-1. Titel
-2. Platte (Plate)
-3. Nadel/Zeiger (Needle)
-4. Wert (ValueBox)
-5. Fortschrittsbalken (Progressbar)
-6. Schritte/Zwischenwerte (Ticks)
+**1. Titel**
+
+**2. Legende**
+
+**3. Tooltip**
+
+**4. Drehung (Rotation)**
+
+| Eigenschaft       | Typ       | Standardwert  | Info                                                                      |
+| :---------------: | :-------: | :-----------: | :-----------------------------------------------------------------------: |
+| Start             | Int       | 180           | Winkel an den die Drehung beginnt
+| Länge             | Int       | 360           | Winkel um wie weit gedreht wird
+
+**5. Animation**
+
+| Eigenschaft       | Typ       | Standardwert  | Info                                                                      |
+| :---------------: | :-------: | :-----------: | :-----------------------------------------------------------------------: |
+| Dauer             | Int       | 500           | Dauer der Animation in ms
+| Übergangsfunktion | String    | linear        | Siehe https://easings.net/
+
+**6. Datalabels**
 
 Weitere Infos:
-https://canvas-gauges.com/documentation/user-guide/configuration#gauge-specific-configuration-options
+https://next--chartjs-plugin-datalabels.netlify.app/
+
+**7. Daten Einstellungen**
+
+| Eigenschaft       | Typ       | Standardwert  | Info                                                                      |
+| :---------------: | :-------: | :-----------: | :-----------------------------------------------------------------------: |
+| Genauigkeit/Präzision | Int   | 0.01 (2)      | Gibt an auf welche Nachkommastelle Werte im Diagramm gerundet werden.        
+
+**8. Datensatz (Liste)**
+
+| Eigenschaft       | Typ       | Standardwert  | Info                                                                      |
+| :---------------: | :-------: | :-----------: | :-----------------------------------------------------------------------: |
+| Reihenfolge       | Int       | 0             | Reihenfolge in der die Datensätze geladen werden.
+| Titel             | String    |               | Titel des Datensatzes (Aktuell ohne Verwendung)
+| Variablen         | String    | []            | Liste siehe _Variablen (Liste in Datensätze)_
+| Datalabels        | bool      | true          | Aktiviert Datalabels für den Datensatz
+| Datal. Anchoring  | String    | Globale Einstsllung | Legt fest an welcher stelle die Datalabls verankert werden.
+| Datal. Hintergr.  | Int       | -1            | Transparent(-1) verwendet die Globalen Einstllungen
+| Datal. Hintergr. Transparenz/Alpha  | Float       | 0.50            | Wird nur berücksichtigt wenn eine Farbe gesetzt ist
+| Datal. Randfarb.  | Int       | -1            | Transparent(-1) verwendet die Globalen Einstllungen
+| Datal. Randfarb. Transparenz/Alpha  | Float       | 1.00            | Wird nur berücksichtigt wenn eine Farbe gesetzt ist
+| Datal. Textfarb.  | Int       | -1            | Transparent(-1) verwendet die Globalen Einstllungen
+| Datal. Prefix     | bool      | false         | Datalabels mit Prefix anzeigen
+| Datal. Suffix     | bool      | false         | Datalabels mit suffix anzeigen
+
+_Variablen (Liste in Datensätze)_
+
+| Eigenschaft       | Typ       | Standardwert  | Info                                                                      |
+| :---------------: | :-------: | :-----------: | :-----------------------------------------------------------------------: |
+| Reihenfolge       | Int       | 0             | Reihenfolge in der die Datensätze geladen werden.
+| Title             | String    |               | Beschriftung der Variable unter der diese In Tooltips und Legende angezeigt werden
+| Variable          | Int       | 0             | **Nur Variable vom Typ Int oder Float zulässig!**
+| Profile           | String    |               | Dient zum auslesen des Suffix/Prefix
+| Hintergrundfarbe  | Int       | 0             |
+| Hintergrundfarbe Transparenz/Alpha  | Float       | 0.50             |
+| Randfarbe         | Int       | 0             |
+| Randfarbe Transparenz/Alpha  | Float       | 1.00             |
+| Randbreite        | Int       | 2             | Angabe in px
+
 
 **Expert Einstellungen**
 
@@ -73,11 +126,15 @@ https://canvas-gauges.com/documentation/user-guide/configuration#gauge-specific-
 | Viewport aktivieren | bool    | true          | Damit Engräte die Ausgabe der Module automatisch skalieren können
 | Iframe Höhe       | int       | 0             | 0 = Auto, sonnst kann hier die höhe in Px angegeben werden.
 
+Weitere Infos:
+https://www.chartjs.org/docs/latest/charts/doughnut.html
+
 ## 8. Datenaustausch
  folgt später...
 
 ## 9. Anhang
-- [canvas-gauges](https://canvas-gauges.com/)
+- [ChartJS](https://www.chartjs.org/)
+- [Datalabels](https://next--chartjs-plugin-datalabels.netlify.app/)
 
 ## 10. Lizenz
   IPS-Modul:  

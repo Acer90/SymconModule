@@ -33,7 +33,7 @@ Verwendet https://canvas-gauges.com/ um animierte Messinstrumente(Gauges) dazust
 ## 5. Einrichten und Aktionen
 - Für die Verwendung des Moduls wird die Splitter instance benötigt, diese wird so fern noch nicht angelegt automatisch beim anlegen des Moduls mit erstellt.
 
-**Öffne Linkn**
+**Öffne Link**
 - Öffnet den Ausgabe link im Browser
 - Der Button "Öffne Link" funktioniert nur wenn im Splitter eine Adresse gesetzt ist!
 
