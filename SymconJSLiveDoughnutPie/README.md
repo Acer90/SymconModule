@@ -125,6 +125,7 @@ _Variablen (Liste in Datensätze)_
 | Vorlage Skript    | int       |               | Hier kann eine Custom Vorlage importiert werden, für weiter Informationen siehe Export von Vorlagen im Splitter Modul
 | Viewport aktivieren | bool    | true          | Damit Engräte die Ausgabe der Module automatisch skalieren können
 | Iframe Höhe       | int       | 0             | 0 = Auto, sonnst kann hier die höhe in Px angegeben werden.
+| Benutzerdefiniertes Verhältnis | float        | 0 = Auto, Gibt das Verhältnis von Breite zu Höhe an.
 
 Weitere Infos:
 https://www.chartjs.org/docs/latest/charts/doughnut.html
