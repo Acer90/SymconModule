@@ -1,0 +1,14 @@
+name: Run Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout module
+        uses: actions/checkout@master
+        with:
+          submodules: true
+      - name: Run tests 
+        uses: symcon/action-tests@master
