@@ -9,8 +9,8 @@ class SymconJSLiveGauge extends JSLiveModule{
         $this->ConnectParent("{9FFF3FC0-FD51-C289-FA36-BC1C370946CF}");
 
         $this->RegisterPropertyInteger("Variable", 0);
-        $this->RegisterPropertyInteger("min", 0);
-        $this->RegisterPropertyInteger("max", 1000);
+        $this->RegisterPropertyFloat("min", 0);
+        $this->RegisterPropertyFloat("max", 1000);
         $this->RegisterPropertyString("template", "CanvasGauges-Radial");
 
         //Expert
@@ -187,16 +187,16 @@ class SymconJSLiveGauge extends JSLiveModule{
 
     private function GenerateTicks(){
         $ticks = json_decode($this->ReadPropertyString("Ticks"), true);
-        $min = $this->ReadPropertyInteger("min");
-        $max = $this->ReadPropertyInteger("max");
+        $min = $this->ReadPropertyFloat("min");
+        $max = $this->ReadPropertyFloat("max");
         array_multisort(array_column($ticks, 'Value'), SORT_ASC, $ticks);
 
         $majorticks = array();
-        $majorticks[] = $min;
+        $majorticks[] =  number_format($min, 2, '.', '');
         foreach ($ticks as $tick) {
-            $majorticks[] = $tick["Value"];
+            $majorticks[] = number_format($tick["Value"], 2, '.', '');
         }
-        $majorticks[] = $max;
+        $majorticks[] =  number_format($max, 2, '.', '');
 
         //$this->SendDebug("TEST", print_r($majorticks, true), 0);
         return $majorticks;
@@ -205,11 +205,12 @@ class SymconJSLiveGauge extends JSLiveModule{
     private function GenerateHighlights(){
         $arr = json_decode($this->ReadPropertyString("Highlights"), true);
         $highlights = array();
+        array_multisort(array_column($arr, 'From'), SORT_ASC, $arr);
 
         foreach ($arr as $item){
             $highlight_item = array();
-            $highlight_item["from"] = $item["From"];
-            $highlight_item["to"] = $item["To"];
+            $highlight_item["from"] =  number_format($item["From"], 2, '.', '');
+            $highlight_item["to"] =  number_format($item["To"], 2, '.', '');
 
             $rgbdata = $this->HexToRGB($item["HighlightColor"]);
             $highlight_item["color"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["HighlightColor_Alpha"], 2, '.', '') . ")";

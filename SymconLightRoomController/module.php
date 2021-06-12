@@ -377,7 +377,6 @@ class LightRoomController extends IPSModule
             $this->SendDebug("ControlLight", "Waring! InstanceId 0 not allowed!",0);
             return;
         }
-
         $instance_info = IPS_GetInstance($instance);
 
         /*  Mode 0 = Zustand
@@ -420,6 +419,55 @@ class LightRoomController extends IPSModule
                     HM_WriteValueBoolean($instance, "STATE", $zustand);
                     HM_WriteValueFloat($instance, "LEVEL", ($helligkeit / 100.0));
                     HM_WriteValueInteger($instance, 'COLOR', $farbe);
+                }
+                break;
+            case "{E5BB36C6-A70B-EB23-3716-9151A09AC8A2}":
+                //zigbee2mqtt
+                $var_color = 0;
+                $var_state = 0;
+                $var_level = 0;
+                $var_temp = 0;
+                foreach(IPS_GetObject($instance)["ChildrenIDs"] as $var_item){
+                    $obj = IPS_GetObject($var_item);
+
+                    switch($obj["ObjectIdent"]){
+
+                        case "Z2M_Brightness":
+                            $var_level = $var_item;
+                            break;
+                        case "Z2M_ColorTemp":
+                            $var_temp = $var_item;
+                            break;
+                        case "Z2M_State":
+                        case "Z2M_Statel1":
+                        case "Z2M_Statel2":
+                        case "Z2M_Statel3":
+                        case "Z2M_Statel4":
+                            $var_state = $var_item;
+                            break;
+                        case "Z2M_Color":
+                            $this->SendDebug("ControlLight", "Ident:".$obj["ObjectIdent"],0);
+                            $var_color = $var_item;
+                            break;
+                    }
+                }
+                //$this->SendDebug("ControlLight", "Mode:".$mode,0);
+                //$this->SendDebug("ControlLight", "state:".$var_state."|level:".$var_level."|temp:".$var_temp."|color:".$var_color,0);
+
+                if($mode == 0 && IPS_VariableExists($var_state)) RequestAction($var_state, $zustand);
+                elseif($mode == 1) {
+                    if(IPS_VariableExists($var_level)) RequestAction($var_level, round($helligkeit * 2.55));
+                    //if(IPS_VariableExists($var_state)) RequestAction($var_state, $zustand);
+                }
+                elseif($mode == 2){
+                    if(IPS_VariableExists($var_level)) RequestAction($var_level, round($helligkeit * 2.55));
+                    if(IPS_VariableExists($var_temp)) RequestAction($var_temp, $temperatur);
+                    //if(IPS_VariableExists($var_state)) RequestAction($var_state, $zustand);
+                }
+                elseif($mode == 3){
+                    if(IPS_VariableExists($var_color)) RequestAction($var_color, $farbe);
+                    if(IPS_VariableExists($var_level)) RequestAction($var_level, round($helligkeit * 2.55));
+                    //if(IPS_VariableExists($var_state)) RequestAction($var_state, $zustand);
                 }
                 break;
             default:
