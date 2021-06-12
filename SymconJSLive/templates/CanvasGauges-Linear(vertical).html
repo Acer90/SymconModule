@@ -26,103 +26,101 @@
 
     function LoadGauge(){
         try {
-            //fontstyle
-            document.getElementById("gauge").style.fontFamily = confiuration.style_fontFamily;
-
-            if (!confiuration.title_display) confiuration.title_text = false;
-            if (!confiuration.plate_unit) confiuration.plate_unit = false;
-            if (!confiuration.progressbar_display) confiuration.progressbar_barWidth = 0;
-
-            gauge_config = {
-                renderTo: 'gauge',
-                height: window.innerHeight - 20,
-                width: ((window.innerHeight - 20) / 4),
-
-                units: confiuration.plate_unit,
-
-                value: curValue,
-                minValue: confiuration.min,
-                maxValue: confiuration.max,
-
-                //title
-                title: confiuration.title_text, //false deaktiviert!
-                colorTitle: confiuration.title_fontColor,
-                fontTitleSize: confiuration.title_fontSize,
-
-                //plate
-                colorPlate: confiuration.plate_colorPlate,
-                colorPlateEnd: confiuration.plate_colorPlateEnd,
-                borderShadowWidth: 0,
-                borderOuterWidth: 0,
-                borders: false,
-
-                //needle
-                needle: confiuration.needle_display,//show needle
-                needleType: confiuration.needle_Type, // arrow
-                needleStart: confiuration.needle_start, //in %
-                needleEnd: confiuration.needle_end,//in %
-                needleWidth: confiuration.needle_width, //in Px
-                colorNeedle: confiuration.needle_colorNeedle,
-                colorNeedleEnd: confiuration.needle_colorNeedleEnd,
-                needleSide: confiuration.linear_needleSide, //“right”, “both” => nur bei linear
-
-                //valuebox
-                valueBox: confiuration.valuebox_display,
-                colorValueBoxBackground: confiuration.valuebox_colorValueBoxBackground,
-                colorValueBoxShadow: false,//'rgba(255, 0, 122, 0)'
-
-                valueBoxBorderRadius: 0,
-                valueTextShadow: false,
-                valueBoxStroke: 0,
-                valueBoxWidth: 10,
-
-                //progressbar
-                colorBar: confiuration.progressbar_colorBar,
-                colorBarProgress: confiuration.progressbar_colorBarProgress,
-                barShadow: confiuration.progressbar_barShadow,
-                barWidth: confiuration.progressbar_barWidth,
-                barBeginCircle: false,
-                //barStartPosition: 'right',
-
-                //Ticks
-                tickSide: confiuration.linear_tickSide, //“right”, “both”. => nur bei linear
-                numberSide: confiuration.linear_numberSide, //“right”, “both”. => nur bei linear
-                startAngle: confiuration.radial_startAngle, //=> nur bei Radial
-                ticksAngle: confiuration.radial_ticksAngle,//=> nur bei Radial
-                colorMajorTicks: confiuration.ticks_colorMajorTick,
-                colorMinorTicks: confiuration.ticks_colorMinorTicks,
-                colorUnits: confiuration.ticks_colorUnits,
-                colorNumbers: confiuration.ticks_colorNumbers,
-                minorTicks: confiuration.ticks_minorTicks,
-                strokeTicks: confiuration.ticks_strokeTicks,
-                highlightsWidth: confiuration.ticks_highlightsWidth,
-                highlights: config_highlights,
-                majorTicks: config_ticks,
-                fontNumbersSize: confiuration.ticks_fontSize,
-
-
-                animationRule: confiuration.animation_rule, //'linear', //”, “quad”, “quint”, “cycle”, “bounce”, “elastic”  “dequad”, “dequint”, “decycle”, “debounce”, “delastic”.
-                animationDuration: confiuration.animation_duration
-            }
-
-            if(confiuration.title_fontFamily !== ""){
-                gauge_config.fontTitle = confiuration.title_fontFamily;
-            }
-
-            if(confiuration.ticks_fontFamily !== ""){
-                gauge_config.fontNumbers = confiuration.ticks_fontFamily;
-            }
-
-            if(confiuration.valuebox_fontFamily !== ""){
-                gauge_config.fontValue = confiuration.valuebox_fontFamily;
-            }
-
-            gauge = new LinearGauge(gauge_config);
-            gauge.draw();
-
             //laden das aktuellen Wertes
             $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
-                UpdateGauge(data.Variable, data.Value);
+                //fontstyle
+                document.getElementById("gauge").style.fontFamily = confiuration.style_fontFamily;
+
+                if (!confiuration.title_display) confiuration.title_text = false;
+                if (!confiuration.plate_unit) confiuration.plate_unit = false;
+                if (!confiuration.progressbar_display) confiuration.progressbar_barWidth = 0;
+
+                gauge_config = {
+                    renderTo: 'gauge',
+                    height: window.innerHeight - 20,
+                    width: ((window.innerHeight - 20) / 4),
+
+                    units: confiuration.plate_unit,
+
+                    value: data.Value,
+                    minValue: confiuration.min,
+                    maxValue: confiuration.max,
+
+                    //title
+                    title: confiuration.title_text, //false deaktiviert!
+                    colorTitle: confiuration.title_fontColor,
+                    fontTitleSize: confiuration.title_fontSize,
+
+                    //plate
+                    colorPlate: confiuration.plate_colorPlate,
+                    colorPlateEnd: confiuration.plate_colorPlateEnd,
+                    borderShadowWidth: 0,
+                    borderOuterWidth: 0,
+                    borders: false,
+
+                    //needle
+                    needle: confiuration.needle_display,//show needle
+                    needleType: confiuration.needle_Type, // arrow
+                    needleStart: confiuration.needle_start, //in %
+                    needleEnd: confiuration.needle_end,//in %
+                    needleWidth: confiuration.needle_width, //in Px
+                    colorNeedle: confiuration.needle_colorNeedle,
+                    colorNeedleEnd: confiuration.needle_colorNeedleEnd,
+                    needleSide: confiuration.linear_needleSide, //“right”, “both” => nur bei linear
+
+                    //valuebox
+                    valueBox: confiuration.valuebox_display,
+                    colorValueBoxBackground: confiuration.valuebox_colorValueBoxBackground,
+                    colorValueBoxShadow: false,//'rgba(255, 0, 122, 0)'
+
+                    valueBoxBorderRadius: 0,
+                    valueTextShadow: false,
+                    valueBoxStroke: 0,
+                    valueBoxWidth: 10,
+
+                    //progressbar
+                    colorBar: confiuration.progressbar_colorBar,
+                    colorBarProgress: confiuration.progressbar_colorBarProgress,
+                    barShadow: confiuration.progressbar_barShadow,
+                    barWidth: confiuration.progressbar_barWidth,
+                    barBeginCircle: false,
+                    //barStartPosition: 'right',
+
+                    //Ticks
+                    tickSide: confiuration.linear_tickSide, //“right”, “both”. => nur bei linear
+                    numberSide: confiuration.linear_numberSide, //“right”, “both”. => nur bei linear
+                    startAngle: confiuration.radial_startAngle, //=> nur bei Radial
+                    ticksAngle: confiuration.radial_ticksAngle,//=> nur bei Radial
+                    colorMajorTicks: confiuration.ticks_colorMajorTick,
+                    colorMinorTicks: confiuration.ticks_colorMinorTicks,
+                    colorUnits: confiuration.ticks_colorUnits,
+                    colorNumbers: confiuration.ticks_colorNumbers,
+                    minorTicks: confiuration.ticks_minorTicks,
+                    strokeTicks: confiuration.ticks_strokeTicks,
+                    highlightsWidth: confiuration.ticks_highlightsWidth,
+                    highlights: config_highlights,
+                    majorTicks: config_ticks,
+                    fontNumbersSize: confiuration.ticks_fontSize,
+
+
+                    animationRule: confiuration.animation_rule, //'linear', //”, “quad”, “quint”, “cycle”, “bounce”, “elastic”  “dequad”, “dequint”, “decycle”, “debounce”, “delastic”.
+                    animationDuration: confiuration.animation_duration
+                }
+
+                if(confiuration.title_fontFamily !== ""){
+                    gauge_config.fontTitle = confiuration.title_fontFamily;
+                }
+
+                if(confiuration.ticks_fontFamily !== ""){
+                    gauge_config.fontNumbers = confiuration.ticks_fontFamily;
+                }
+
+                if(confiuration.valuebox_fontFamily !== ""){
+                    gauge_config.fontValue = confiuration.valuebox_fontFamily;
+                }
+
+                gauge = new LinearGauge(gauge_config);
+                gauge.draw();
             });
         }catch (e){
             alert(e);
@@ -203,7 +201,7 @@
     }
 
     document.fonts.ready.then(function () {
-        gauge.update();
+        if(typeof gauge !== 'undefined') gauge.update();
     });
 </script>
 </body>

@@ -441,6 +441,15 @@
                     }
                 },
                 {
+                    "caption": "Reference",
+                    "name": "Reference",
+                    "width": "200px",
+                    "add": 0,
+                    "edit": {
+                        "type": "SelectVariable"
+                    }
+                },
+                {
                     "caption": "Title",
                     "name": "Title",
                     "width": "auto",

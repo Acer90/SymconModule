@@ -193,7 +193,7 @@
 
     document.fonts.ready.then(function () {
         //if font is load then here Start load guage
-        if(confiuration.font_isSet) LoadGauge();
+        if(typeof gauge !== 'undefined') gauge.update();
     });
 </script>
 </body>

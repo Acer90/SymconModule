@@ -481,7 +481,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
                     continue;
                 }
             }else{
-                $singelOutput["data"] = $this->GetArchivData($labels, $item["Variable"], $item["Offset"], $date_start, $date_end, $Aggregationsstufe, $item["Mode"], $starData["datasets"]);
+                $singelOutput["data"] = $this->GetArchivData($labels, $item["Variable"], $item["Reference"], $item["Offset"], $date_start, $date_end, $Aggregationsstufe, $item["Mode"], $starData["datasets"]);
             }
 
             //BorderDash
@@ -562,7 +562,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         return $output;
     }
 
-    private function GetArchivData(array $labels, int $varId, int $offset, int $date_start, int $date_end, int $Aggregationsstufe, $datamode, int $lastDatasets = 0, bool $jsconfig = true){
+    private function GetArchivData(array $labels, int $varId, $ref_varId, int $offset, int $date_start, int $date_end, int $Aggregationsstufe, $datamode, int $lastDatasets = 0, bool $jsconfig = true){
         $archiveControlID = IPS_GetInstanceListByModuleID('{43192F0B-135B-4CE7-A0A7-1475603F3060}')[0];
         $period = $this->GetValue("Period");
         $counter = false;
@@ -572,7 +572,13 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         $sections = $this->ReadPropertyInteger("data_sections");
         $precision = $this->ReadPropertyInteger("data_precision");
 
-        $VariableType = IPS_GetVariable($varId)["VariableType"]; // 0: Boolean, 1: Integer, 2: Float, 3: String)
+        $useRef = true;
+        if(!IPS_VariableExists($ref_varId)){
+            $ref_varId = $varId;
+            $useRef = false;
+        }
+
+        $VariableType = IPS_GetVariable($ref_varId)["VariableType"]; // 0: Boolean, 1: Integer, 2: Float, 3: String)
          //$this->SendDebug("TEST", "VarType => ". $VariableType,0);
 
         if($VariableType == 2){
@@ -610,10 +616,10 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         $mode = "";
         if(6 <= $period){
             //hohe auflösung für tag
-            $archivData = AC_GetLoggedValues($archiveControlID, $varId, $date_start, $date_end, 0);
+            $archivData = AC_GetLoggedValues($archiveControlID, $ref_varId, $date_start, $date_end, 0);
             $mode = "Value";
         }else{
-            $archivData = AC_GetAggregatedValues($archiveControlID, $varId, $Aggregationsstufe, $date_start, $date_end, 0);
+            $archivData = AC_GetAggregatedValues($archiveControlID, $ref_varId, $Aggregationsstufe, $date_start, $date_end, 0);
             $mode = "Avg";
         }
 
@@ -621,18 +627,55 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         $output = array_fill(0, count($labels), 0);
         $count = 0;
         $sum = 0;
+        $count_archivData = count($archivData);
 
-        foreach ($archivData as $item) {
+        foreach ($archivData as $a_key => $item) {
             //label finden!
-            $val = $item[$mode];
+            if($useRef){
+                $ref = $item[$mode];
+                $val = 0;
+
+                $t_start = $item["TimeStamp"];
+                $t_end = time();
+                if($a_key < ($count_archivData-1)){
+                    $t_end = $archivData[$a_key+1]["TimeStamp"];
+                }
+
+                $this->SendDebug("TEST", "Ref:".$ref." | Start:".$t_start." | End:".$t_end,0);
+
+                if(6 <= $period){
+                    //hohe auflösung für tag
+                    $sub_archivData = AC_GetLoggedValues($archiveControlID, $varId, $t_start, $t_end, 0);
+                }else{
+                    $sub_archivData = AC_GetAggregatedValues($archiveControlID, $varId, $Aggregationsstufe, $t_start, $t_end, 0);
+                }
+                $sub_count = count($sub_archivData);
+
+                if($datamode == "counter"){
+                    $val = $sub_count;
+                }else {
+                    //mode average
+                    $sub_sum = 0;
+                    foreach ($sub_archivData as $sub_item) {
+                        $sub_sum = $sub_sum + $sub_item[$mode];
+                    }
+                    if($sub_count > 0){
+                        $val = round(($sub_sum / $sub_count), $precision);
+                    }
+                }
+            }else{
+                $val = $item[$mode];
+                $ref = $item[$mode];
+            }
+
             if($VariableType == 2){
-                $val = round($val, $precision);
+                $ref = round($ref, $precision);
                 //$this->SendDebug("GetArchivData", "Value (".$val.")", 0);
             }
             if($VariableType == 1 || $VariableType == 2) {
-                if ($val > $max || $val < $min) {
+                if ($ref > $max || $ref < $min) {
                     //verwerfen auserhalb des bereiches
-                    $this->SendDebug("GetArchivData", "Datasets Skip Value  " . $min . " < " . $val . " > " . $max, 0);
+                    $this->SendDebug("GetArchivData", "Datasets Skip Value  " . $min . " < " . $ref . " > " . $max, 0);
                     continue;
                 }
             }
@@ -641,21 +684,25 @@ class SymconJSLiveRadarChart extends JSLiveModule{
             if($VariableType == 1 || $VariableType == 2) {
                 $closest = null;
                 foreach ($labels as $key => $item) {
-                    if ($closest === null || abs($val - $closest) >= abs($item - $val)) {
+                    if ($closest === null || abs($ref - $closest) >= abs($item - $ref)) {
                         $closest = $item;
                         $index = $key;
                     }
                 }
             }elseif($VariableType == 3){
                 //bei string sriekt den namen suchen und mit tolower arbeiten
-                if(in_array(strtolower($val), $labels)){
-                    $index = array_search(strtolower($val), $labels);
+                if(in_array(strtolower($ref), $labels)){
+                    $index = array_search(strtolower($ref), $labels);
                 }
             }
 
             if($index >= 0 && count($output) > $index){
                 if($datamode == "counter"){
-                    $output[$index] = $output[$index] + 1;
+                    if($useRef){
+                        $output[$index] = $output[$index] + $val;
+                    }else{
+                        $output[$index] = $output[$index] + 1;
+                    }
                 }else{
                     //mode average
                     $count = + 1;
@@ -670,6 +717,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
 
         return $output;
     }
+
     private function GetCustomData(array $labels, array $arr){
         $output = array();
 
