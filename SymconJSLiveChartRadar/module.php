@@ -365,7 +365,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         $customScale = json_decode($this->ReadPropertyString("customScale"), true);
         $customScale_Mode = $this->ReadPropertyBoolean("customScale_mode");
 
-        if(count($customScale) > 0 &&  $customScale_Mode){
+        if(count($customScale) > 0 && $customScale_Mode){
             $arr_order = array_column($customScale, 'Order');
             array_multisort($arr_order, SORT_ASC , $customScale);
 
@@ -386,7 +386,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
             for($i = 1; $i <= $sections; $i++){
                 $output["labels"][] = round(($i * $jump), $precision);
             }
-            $output["labels"][] = round($end, $precision);
+            //$output["labels"][] = round($end, $precision);
 
             if(count($customScale) > 0 ){
                 $output["alias"] = $output["labels"];
@@ -397,6 +397,8 @@ class SymconJSLiveRadarChart extends JSLiveModule{
                     }
                 }
             }
+
+            $this->SendDebug("GenerateLabels", json_encode($output["labels"]), 0);
         }
 
         return $output;
@@ -578,8 +580,8 @@ class SymconJSLiveRadarChart extends JSLiveModule{
             $useRef = false;
         }
 
+        if($this->ReadPropertyBoolean("Debug")) $this->SendDebug("GetArchivData", "Get ArchivData for => " . $varId,0);
         $VariableType = IPS_GetVariable($ref_varId)["VariableType"]; // 0: Boolean, 1: Integer, 2: Float, 3: String)
-         //$this->SendDebug("TEST", "VarType => ". $VariableType,0);
 
         if($VariableType == 2){
             //nur bei float runden
@@ -614,6 +616,10 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         }
 
         $mode = "";
+        if($this->ReadPropertyBoolean("Debug")) {
+            $this->SendDebug("GetArchivData", "Periode: " . $period . " | Start:" . gmdate("d-m-Y H:i:s", $date_start) . " | End:" . gmdate("d-m-Y H:i:s", $date_end), 0);
+        }
+
         if(6 <= $period){
             //hohe auflösung für tag
             $archivData = AC_GetLoggedValues($archiveControlID, $ref_varId, $date_start, $date_end, 0);
@@ -623,33 +629,42 @@ class SymconJSLiveRadarChart extends JSLiveModule{
             $mode = "Avg";
         }
 
+        //$this->SendDebug("GetArchivData", json_encode($archivData),0);
+
         $oldVal = 0;
         $output = array_fill(0, count($labels), 0);
+        $output_count = array_fill(0, count($labels), 0); //for Debug only
         $count = 0;
         $sum = 0;
         $count_archivData = count($archivData);
+
+        //sortieren der ausgabe
+        $arr_order = array_column($archivData, 'TimeStamp');
+        array_multisort($arr_order, SORT_ASC , $archivData);
 
         foreach ($archivData as $a_key => $item) {
             //label finden!
             if($useRef){
                 $ref = $item[$mode];
                 $val = 0;
+                if($a_key >= ($count_archivData-1)) continue; //letzten seitraum überspringen
 
                 $t_start = $item["TimeStamp"];
-                $t_end = time();
-                if($a_key < ($count_archivData-1)){
-                    $t_end = $archivData[$a_key+1]["TimeStamp"];
-                }
-
-                $this->SendDebug("TEST", "Ref:".$ref." | Start:".$t_start." | End:".$t_end,0);
+                $t_end = $archivData[$a_key+1]["TimeStamp"];
 
                 if(6 <= $period){
                     //hohe auflösung für tag
                     $sub_archivData = AC_GetLoggedValues($archiveControlID, $varId, $t_start, $t_end, 0);
                 }else{
+                    $t_time = microtime();
                     $sub_archivData = AC_GetAggregatedValues($archiveControlID, $varId, $Aggregationsstufe, $t_start, $t_end, 0);
+                    //$this->SendDebug("Test", round((microtime()-$t_time)*1000)."ms", 0);
                 }
                 $sub_count = count($sub_archivData);
+
+                if($this->ReadPropertyBoolean("Debug")){
+                    $this->SendDebug("GetArchivData", "Ref:".$ref." | Start:".gmdate("d-m-Y H:i:s", $t_start)." | End:".gmdate("d-m-Y H:i:s", $t_end)." | Count:".$sub_count,0);
+                }
 
                 if($datamode == "counter"){
                     $val = $sub_count;
@@ -662,6 +677,9 @@ class SymconJSLiveRadarChart extends JSLiveModule{
                     if($sub_count > 0){
                         $val = round(($sub_sum / $sub_count), $precision);
                     }
+                }
+                if($this->ReadPropertyBoolean("Debug")) {
+                    $this->SendDebug("GetArchivData", "Ref:" . $ref . " | Val:" . $val, 0);
                 }
             }else{
                 $val = $item[$mode];
@@ -708,11 +726,17 @@ class SymconJSLiveRadarChart extends JSLiveModule{
                     $count = + 1;
                     $sum = $val;
 
+                    $output_count[$index]++;
                     $output[$index] = round($sum /$count, $precision);
                 }
             }else{
                 $this->SendDebug("GetArchivData", "Index wrong! (".$val.") => ". $index, 0);
             }
+        }
+
+        if($this->ReadPropertyBoolean("Debug")){
+            $this->SendDebug("GetArchivData", "OUPUT => ".json_encode($output), 0);
+            $this->SendDebug("GetArchivData", "OUPUT_COUNT => ".json_encode($output_count), 0);
         }
 
         return $output;
@@ -819,7 +843,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
                     $date_start->setDate(($date_end->format('Y') - 9), 1, 1);
                     $date_start->setTime(0, 0, 0);
 
-                    $Aggregationsstufe = 4;
+                    $Aggregationsstufe = 3;
                     break;
                 case 1:
                     //Jahr
@@ -829,7 +853,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
                     $date_start->setDate(($date_end->format('Y')), $date_start->format('m')-11, 1);
                     $date_start->setTime(0, 0, 0);
 
-                    $Aggregationsstufe = 3;
+                    $Aggregationsstufe = 2;
                     break;
                 case 2:
                     //Quartal
@@ -839,7 +863,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
                     $date_start->setDate(($date_end->format('Y')), $date_start->format('m')-2, 1);
                     $date_start->setTime(0, 0, 0);
 
-                    $Aggregationsstufe = 3;
+                    $Aggregationsstufe = 1;
                     break;
                 case 3:
                     //Monat
@@ -859,7 +883,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
                     $date_start->setDate(($date_end->format('Y')), $date_start->format('m'), $date_start->format('d')-6);
                     $date_start->setTime(0, 0, 0);
 
-                    $Aggregationsstufe = 1;
+                    $Aggregationsstufe = 0;
                     break;
                 case 5:
                     //Tag

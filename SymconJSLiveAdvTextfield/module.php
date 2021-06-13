@@ -52,9 +52,9 @@ class SymconJSLiveAdvTextfield extends JSLiveModule{
     }
 
     public function ReceiveData($JSONString) {
-
-        //if($buffer["instance"] != $this->InstanceID) return;
-        //$this->SendDebug("ReceiveData", $jsonData['Buffer']. " =>" . $this->InstanceID, 0);
+        parent::ReceiveData($JSONString);
+        $jsonData = json_decode($JSONString, true);
+        $buffer = json_decode($jsonData['Buffer'], true);
 
         switch($buffer['cmd']) {
             case "exportConfiguration":

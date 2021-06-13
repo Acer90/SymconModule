@@ -954,11 +954,12 @@ class SymconJSLiveChart extends JSLiveModule{
             }
         }
 
-
         $output["Var_List"] = array();
+        $output["Has_Bar"] = false;
 
         foreach (json_decode($output["Datasets"], true) as $item){
             if(IPS_VariableExists($item["Variable"])) $output["Var_List"][] = $item["Variable"];
+            if($item["Type"] == "bar") $output["Has_Bar"] = true;
         }
 
         //remove Dataset

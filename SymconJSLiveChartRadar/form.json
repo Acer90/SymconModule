@@ -130,8 +130,8 @@
                                 { "caption": "Syne Mono", "value": "Syne Mono" }
                             ]
                         },
-                        { "type": "SelectColor", "name": "axes_ticks_backdropColor", "caption": "BackdropColorr", "width": "150px"},
-                        { "type": "HorizontalSlider", "name": "axes_ticks_backdropColor_Alpha", "caption": "Ticks BackdropColor Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                        { "type": "SelectColor", "name": "axes_ticks_backdropColor", "caption": "BackdropColor", "width": "150px"},
+                        { "type": "HorizontalSlider", "name": "axes_ticks_backdropColor_Alpha", "caption": "BackdropColor Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
                     ]
                 }
             ]
@@ -140,8 +140,8 @@
             "type": "ExpansionPanel",
             "caption": "Points",
             "items": [
-                { "type": "NumberSpinner", "name": "point_radius", "caption": "Point Radius" },
-                { "type": "NumberSpinner", "name": "point_hoverRadius", "caption": "Point Hover-Radius"},
+                { "type": "NumberSpinner", "name": "point_radius", "caption": "Radius" },
+                { "type": "NumberSpinner", "name": "point_hoverRadius", "caption": "Hover-Radius"},
                 { "type": "Select", "name": "points_Style", "caption": "Style",
                     "options": [
                         { "caption": "circle", "value": "circle" },
@@ -470,7 +470,7 @@
                     }
                 },
                 {
-                    "caption": "BackgroundColor",
+                    "caption": "Background Color",
                     "name": "BackgroundColor",
                     "width": "130px",
                     "add": 0,
@@ -479,7 +479,7 @@
                     }
                 },
                 {
-                    "caption": "BackgroundColor Alpha",
+                    "caption": "Background Color Alpha",
                     "name": "BackgroundColor_Alpha",
                     "width": "50px",
                     "visible": false,
@@ -492,7 +492,7 @@
                     }
                 },
                 {
-                    "caption": "BorderColor",
+                    "caption": "Border Color",
                     "name": "BorderColor",
                     "width": "120px",
                     "add": 0,
@@ -501,7 +501,7 @@
                     }
                 },
                 {
-                    "caption": "BorderColor Alpha",
+                    "caption": "Border Color Alpha",
                     "name": "BorderColor_Alpha",
                     "width": "50px",
                     "visible": false,
@@ -632,7 +632,7 @@
                     }
                 },
                 {
-                    "caption": "Datalabels show Prefix",
+                    "caption": "Datalabels Override show Prefix",
                     "name": "datalabels_showPrefix",
                     "add": false,
                     "visible": false,
@@ -641,7 +641,7 @@
                     }
                 },
                 {
-                    "caption": "Datalabels show Suffix",
+                    "caption": "Datalabels Override show Suffix",
                     "name": "datalabels_showSuffix",
                     "add": false,
                     "visible": false,
