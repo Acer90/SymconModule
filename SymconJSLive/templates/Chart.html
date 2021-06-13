@@ -7,7 +7,7 @@
     {FONTS} <!-- Need for Custom font Family !-->
 </head>
 <script src="/hook/JSLive/js/jquery.min.js" ></script>
-<script src="/hook/JSLive/js/chartjs/3.2.1/chart.min.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/chartjs/3.3.2/chart.min.js" charset="utf-8"></script>
 <script src="/hook/JSLive/js/moment/2.27.0/Moment.js" charset="utf-8"></script>
 <script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-adapter-moment.js" charset="utf-8"></script>
 <script src="/hook/JSLive/js/chartjs/3.2.1/plugins/chartjs-plugin-streaming.min.js" charset="utf-8"></script>
@@ -179,7 +179,9 @@
                     location.reload();
                 },1000);
             } else if(data.Message == 10603) {
-                if(!confiuration.data_pullModeinMinute && confiuration.Period !== 7){
+                if(confiuration.data_pullModeinMinute && confiuration.Period === 7){
+                    //ignore update date, wenn pullmode for minute active
+                }else{
                     UpdateChart(data.SenderID, data.Data[3], data.Data[0]);
                 }
 
@@ -425,6 +427,10 @@
     async function UpdateConfiguration() {
         while (true){
             try {
+                if(!confiuration.Relativ) {
+                    RefreshChart_Absolute();
+                };
+
                 if(confiuration.Relativ && offset_isSet){
                     UpdateOffsetData_Relativ();
                 }
@@ -489,6 +495,39 @@
         return newDate;
     }
 
+    function GetPeriodTimespan(){
+        var period = confiuration["Period"];
+
+        switch(period){
+            case 0:
+                //dekade
+                return 1000 * 60 * 60 * 24 * 7* 366; //3 max mögliche schaltjahre in dekade
+            case 1:
+                //Jahr
+                return 1000 * 60 * 60 * 24 * 7 *31;
+            case 2:
+                //quartal
+                return 1000 * 60 * 60 * 24 * 7* 31;
+            case 3:
+                //Monat
+                return 1000 * 60 * 60 * 24; //vom längsten monat ausgehend
+            case 4:
+                //woche
+                return 1000 * 60 * 60 * 24;
+            case 5:
+                //tag
+                return 1000 * 60 * 60;
+            case 6:
+                //stunde
+                return 1000 * 60;
+            case 7:
+                //minute
+                return 5000;
+            default: return -1;
+        }
+
+    }
+
     function RemoveOldData() {
         if (myChart.options.scales.x.type != "realtime") {
             itemDate = myChart.options.scales.x.min;
@@ -496,11 +535,13 @@
             //löschdatum holen
             myChart.data.datasets.forEach(function (part, index) {
                 rDate = GetRemoveDate(UpdateDate(itemDate, part.highRes));
+                rDate = rDate.getTime() - GetPeriodTimespan(); //letzten 30 sekunden noch vorhalten
+
                 //console.log("part" ,part);
                 // in jeder chart älteres Daten löschen
                 myChart.data.datasets[index].data.forEach(function (spart, sindex) {
                     //beginend von vorn
-                    if (spart.x <= rDate.getTime()) {
+                    if (spart.x <= rDate) {
                         //löschen wenn älter
                         //console.log("lösche Index:", sindex);
                         myChart.data.datasets[index].data.splice(sindex, 1);
@@ -519,31 +560,60 @@
 
                 if (offset > 0 && c > 0) {
 
+                    //mehr daten laden wenn Bar vorhanden
                     start = Math.floor((part.data[c].x) / 1000);
                     end = Math.floor((curDate) / 1000);
 
                     highRes = part.highRes;
-                    $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}&var=" + part.Variable + "&offset=" + offset + "&hires=" + highRes + "&start=" + start + "&end=" + end, function (data) {
+                    link = "/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}&var=" + part.Variable + "&offset=" + offset + "&hires=" + highRes + "&start=" + start + "&end=" + end;
+                    $.getJSON(link, function (data) {
                         //console.log("update Offset: ", data);
 
-                        data.archiv.forEach(function (apart, aindex) {
-                            myChart.data.datasets[index].data.push(apart);
-                            isUpdated = true;
+                        data[0].archiv.forEach(function (apart, aindex) {
+                            required = {x: apart.x};
+                            results = [];
+                            results = getMatchingKeys(myChart.data.datasets[index].data, required);
+
+                            if(results.length > 0){
+                                myChart.data.datasets[index].data[results[0]] = apart;
+                            }else{
+                                myChart.data.datasets[index].data.push(apart);
+                            }
+                            myChart.update();
                         });
                     });
                 }
 
             });
-
-            myChart.update(0);
         }
     }
-    async function UpdateOffsetData_Absolute(curDate) {
+    function RefreshChart_Absolute(curDate) {
+        if (myChart.options.scales.x.type != "realtime") {
+            curDate = Date.now();
+            if(myChart.options.scales.x.max < curDate){
+                dateData = GetStartEndDate(curDate);
+                myChart.options.scales.x.min = dateData.start;
+                myChart.options.scales.x.max = dateData.end;
+                myChart.update();
+
+                UpdateOffsetData_Absolute();
+            }
+        }
+    }
+
+    async function UpdateOffsetData_Absolute() {
         //absolute Mode
         //console.log("UpdateOffsetData_Absolute");
         dateData = GetStartEndDate(Date.now());
-        start = Math.floor(dateData.start / 1000);
-        end = Math.floor(dateData.end / 1000) + 1000;
+
+        //mehr daten laden wenn Bar vorhanden
+        offsetTime = 0;
+        if(confiuration.Has_Bar){
+            offsetTime = GetPeriodTimespan();
+        }
+
+        start = Math.floor(dateData.start / 1000) - offsetTime;
+        end = Math.floor(dateData.end / 1000) + offsetTime;
 
         myChart.data.datasets.forEach(function (part, index) {
             offset = part.offset;
@@ -555,7 +625,7 @@
                 $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}&var=" + part.Variable + "&offset=" + offset + "&hires=" + highRes + "&start=" + start + "&end=" + end, function (data) {
                     //console.log("update Offset: ", data);
 
-                    data.archiv.forEach(function (apart, aindex) {
+                    data[0].archiv.forEach(function (apart, aindex) {
                         myChart.data.datasets[index].data.push(apart);
                         isUpdated = true;
                     });

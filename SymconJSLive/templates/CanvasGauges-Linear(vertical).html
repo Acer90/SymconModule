@@ -162,6 +162,7 @@
     }
 
     function UpdateGauge(id_val, val){
+        if(typeof gauge === 'undefined') return;
         isUpdated = false;
         gauge.value = val;
     }

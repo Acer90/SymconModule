@@ -173,6 +173,7 @@
     }
 
     function UpdateGauge(id_val, val){
+        if(typeof gauge === 'undefined') return;
         isUpdated = false;
         if(val < confiuration.min) val = confiuration.min;
         if(val > confiuration.max) val = confiuration.max;
