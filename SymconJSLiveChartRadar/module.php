@@ -1183,15 +1183,6 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         IPS_SetConfiguration($this->InstanceID, json_encode($confData));
         IPS_ApplyChanges($this->InstanceID);
     }
-    public function GetLink(bool $local = true){
-        $sendData = array("InstanceID" => $this->InstanceID, "Type" => "GetLink", "local" => $local);
-        $pData = $this->SendDataToParent(json_encode([
-            'DataID' => "{751AABD7-E31D-024C-5CC0-82AC15B84095}",
-            'Buffer' => utf8_encode(json_encode($sendData)),
-        ]));
-
-        return $pData;
-    }
 }
 
 ?>
