@@ -720,8 +720,7 @@
         {
             "type": "RowLayout",
             "items": [
-                { "type": "Button", "label": "Get Link (Local)", "onClick": " echo SymconJSLiveRadarChart_GetLink($id, True);" },
-                { "type": "Button", "label": "Get Link (Remote)", "onClick": " echo SymconJSLiveRadarChart_GetLink($id, False);" }
+                { "type": "Button", "label": "Get Link", "onClick": " echo SymconJSLiveRadarChart_GetLink($id);" }
             ]
         },
         {
