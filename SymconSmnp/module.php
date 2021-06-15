@@ -96,7 +96,7 @@
             print_r($snmp->get($ip, '.1.3.6.1.4.1.318.1.1.1.4.2.3.0', ['community' => $community]));
         }*/
 
-        public function ReadSNMP(array $oid_array) {
+        public function ReadSNMP($oid_array) {
 
             if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP", json_encode($oid_array), 0);
 
