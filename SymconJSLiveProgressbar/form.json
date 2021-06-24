@@ -26,7 +26,7 @@
                                 { "caption": "0.001", "value": 0.001 }
                             ]
                         },
-                        { "type": "NumberSpinner", "name": "data_precisionCustom", "caption": "Custome Precision", "digits": 3}
+                        { "type": "NumberSpinner", "name": "data_precisionCustom", "caption": "Custom Precision", "digits": 3}
                     ]
                 },
                 {
@@ -94,7 +94,7 @@
                         { "type": "Label", "caption": "Main:", "width": "100px" },
                         { "type": "NumberSpinner", "name": "stroke_width", "caption": "width", "suffix": "px", "minimum": 0, "stepSize": 1, "width": "100px"},
                         { "type": "SelectColor", "name": "stroke_color", "caption": "Color", "width": "150px"},
-                        { "type": "HorizontalSlider", "name": "stroke_color_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05}
+                        { "type": "HorizontalSlider", "name": "stroke_color_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05}
                     ]
                 },
                 {
@@ -103,7 +103,7 @@
                         { "type": "Label", "caption": "Trail:", "width": "100px" },
                         { "type": "NumberSpinner", "name": "stroke_trailWidth", "caption": "width", "suffix": "px", "minimum": 0, "stepSize": 1, "width": "100px"},
                         { "type": "SelectColor", "name": "stroke_trailColor", "caption": "Color", "width": "150px"},
-                        { "type": "HorizontalSlider", "name": "stroke_trailColor_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05}
+                        { "type": "HorizontalSlider", "name": "stroke_trailColor_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05}
                     ]
                 },
                 {
@@ -134,7 +134,7 @@
                     "items": [
                         { "type": "Label", "caption": "Fill:", "width": "100px" },
                         { "type": "SelectColor", "name": "fill_color", "caption": "Color", "width": "150px"},
-                        { "type": "HorizontalSlider", "name": "fill_color_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05},
+                        { "type": "HorizontalSlider", "name": "fill_color_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05},
                         { "type": "Label", "caption": "Or", "width": "50px" },
                         { "type": "Select", "name": "fill_backgroundFileType", "caption": "Filetype", "width": "100px",
                             "options": [
@@ -152,7 +152,7 @@
                     "items": [
                         { "type": "Label", "caption": "Background:", "width": "100px" },
                         { "type": "SelectColor", "name": "fill_backgroundColor", "caption": "Color", "width": "150px"},
-                        { "type": "HorizontalSlider", "name": "fill_backgroundColor_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05}
+                        { "type": "HorizontalSlider", "name": "fill_backgroundColor_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05}
                     ]
                 },
                 { "type": "NumberSpinner", "name": "fill_backgroundExtrude", "caption": "Background Extrude", "suffix": "px", "minimum": 0, "stepSize": 1}
@@ -169,9 +169,9 @@
                         { "caption": "Bottom", "value": "bottom" }
                     ]
                 },
-                { "type": "NumberSpinner", "name": "style_fontSize", "caption": "Font Size", "suffix": "px" },
-                { "type": "SelectColor", "name": "style_fontColor", "caption": "Font Color" },
-                { "type": "Select", "name": "style_fontFamily", "caption": "font Family",
+                { "type": "NumberSpinner", "name": "style_fontSize", "caption": "Size", "suffix": "px" },
+                { "type": "SelectColor", "name": "style_fontColor", "caption": "Color" },
+                { "type": "Select", "name": "style_fontFamily", "caption": "Family",
                     "options": [
                         { "caption": "-Default-", "value": "" },
                         { "caption": "Amatic SC", "value": "Amatic SC" },
