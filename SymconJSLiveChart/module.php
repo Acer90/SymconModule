@@ -558,9 +558,19 @@ class SymconJSLiveChart extends JSLiveModule{
             $digits = 2;
 
             //Pointstyle
-            $singelOutput["pointRadius"] = $this->ReadPropertyInteger("point_radius");
             $singelOutput["pointHoverRadius"] = $this->ReadPropertyInteger("point_hoverRadius");
-            $singelOutput["pointStyle"] = $this->ReadPropertyString("points_Style");
+            //Pointsytle for chart, or global
+            if(array_key_exists("PointStyle", $item) && !empty($item["PointStyle"])) {
+                $singelOutput["pointStyle"] = $item["PointStyle"];
+            }else{
+                $singelOutput["pointStyle"] = $this->ReadPropertyString("points_Style");
+            }
+            //Pointradius for chart, or global
+            if(array_key_exists("PointRadius", $item) && $item["PointRadius"] >= 0) {
+                $singelOutput["pointRadius"] = $item["PointRadius"];
+            }else{
+                $singelOutput["pointRadius"] = $this->ReadPropertyInteger("point_radius");
+            }
 
             if(IPS_GetVariable($item["Variable"])["VariableType"] == 0){
                 //nur bei Bool variablen!

@@ -94,6 +94,9 @@
       "Border Color": "Randfarbe",
       "Border Color Alpha": "Randfarbe Transparenz",
 
+      "Override Point Style":  "Überschreibe Punkt-Stil",
+      "Override Point Size": "Überschreibe Punkt-Größe",
+
       "Datalabels Override Anchoring": "Datalabels überschreibe Verankerung",
       "Datalabels Override BackgroundColor": "Datalabels überschreibe Hintergrundfarbe",
       "Datalabels Override BackgroundColor Alpha": "Datalabels überschreibe Hintergrundfarbe Transparenz",

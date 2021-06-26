@@ -140,7 +140,7 @@
             "type": "ExpansionPanel",
             "caption": "Points",
             "items": [
-                { "type": "NumberSpinner", "name": "point_radius", "caption": "Radius" },
+                { "type": "NumberSpinner", "name": "point_radius", "caption": "Size" },
                 { "type": "NumberSpinner", "name": "point_hoverRadius", "caption": "Hover-Radius"},
                 { "type": "Select", "name": "points_Style", "caption": "Style",
                     "options": [
@@ -563,6 +563,42 @@
                                     "suffix": "px"
                                 }
                             }
+                        ]
+                    }
+                },
+                {
+                    "caption": "Override Point Size",
+                    "name": "PointRadius",
+                    "width": "50px",
+                    "visible": false,
+                    "add": -1,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 0,
+                        "minimum": -1,
+                        "suffix": "px"
+                    }
+                },
+                {
+                    "caption": "Override Point Style",
+                    "name": "PointStyle",
+                    "width": "50px",
+                    "visible": false,
+                    "add": "",
+                    "edit": {
+                        "type": "Select",
+                        "options": [
+                            { "caption": "-Use Default-", "value": "" },
+                            { "caption": "circle", "value": "circle" },
+                            { "caption": "cross", "value": "cross" },
+                            { "caption": "crossRot", "value": "crossRot" },
+                            { "caption": "dash", "value": "dash" },
+                            { "caption": "line", "value": "line" },
+                            { "caption": "rect", "value": "rect" },
+                            { "caption": "rectRounded", "value": "rectRounded" },
+                            { "caption": "rectRot", "value": "rectRot" },
+                            { "caption": "star", "value": "star" },
+                            { "caption": "triangle", "value": "triangle" }
                         ]
                     }
                 },

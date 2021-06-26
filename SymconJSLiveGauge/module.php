@@ -73,6 +73,7 @@ class SymconJSLiveGauge extends JSLiveModule{
         $this->RegisterPropertyInteger("ticks_colorMinorTicks", 0);
         $this->RegisterPropertyInteger("ticks_colorUnits", 0);
         $this->RegisterPropertyInteger("ticks_colorNumbers", 0);
+        $this->RegisterPropertyBoolean("ticks_exactTicks", false);
 
         //animation
         $this->RegisterPropertyString("animation_rule", "linear");

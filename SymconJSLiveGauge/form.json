@@ -220,7 +220,13 @@
                 },
                 { "type": "CheckBox", "name": "ticks_strokeTicks", "caption": "Stroke Ticks"},
                 { "type": "NumberSpinner", "name": "ticks_highlightsWidth", "caption": "Highlights Width" },
-                { "type": "NumberSpinner", "name": "ticks_minorTicks", "caption": "Minor Ticks" },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "NumberSpinner", "name": "ticks_minorTicks", "caption": "Minor Ticks" },
+                        { "type": "CheckBox", "name": "ticks_exactTicks", "caption": "Exact Ticks"}
+                    ]
+                },
                 { "type": "SelectColor", "name": "ticks_colorMajorTick", "caption": "Color Major Tick" },
                 { "type": "SelectColor", "name": "ticks_colorMinorTicks", "caption": "Color Minor Ticks" },
                 { "type": "SelectColor", "name": "ticks_colorUnits", "caption": "color Units" },
