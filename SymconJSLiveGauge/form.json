@@ -2,8 +2,16 @@
     "elements":
     [
         { "type": "SelectVariable", "name": "Variable", "caption": "Variable" },
-        { "type": "NumberSpinner", "name": "min", "caption": "Min" ,"digits": 2 },
-        { "type": "NumberSpinner", "name": "max", "caption": "Max" ,"digits": 2 },
+        { "type": "NumberSpinner", "name": "min", "caption": "Min" ,"digits": 3 },
+        { "type": "NumberSpinner", "name": "max", "caption": "Max" ,"digits": 3 },
+        { "type": "Select", "name": "precision", "caption": "Precision",
+            "options": [
+                { "caption": "1", "value": 0 },
+                { "caption": "0.1", "value": 1 },
+                { "caption": "0.01", "value": 2 },
+                { "caption": "0.001", "value": 3 }
+            ]
+        },
         { "type": "Select", "name": "template", "caption": "Template",
             "options": [
                 { "caption": "CanvasGauges-Radial", "value": "CanvasGauges-Radial" },
@@ -250,7 +258,7 @@
                             "add": 0,
                             "edit": {
                                 "type": "NumberSpinner",
-                                "digits": 2
+                                "digits": 3
                             }
                         }
                     ]
@@ -274,7 +282,7 @@
                             "add": 0,
                             "edit": {
                                 "type": "NumberSpinner",
-                                "digits": 2
+                                "digits": 3
                             }
                         },
                         {
@@ -284,7 +292,7 @@
                             "add": 0,
                             "edit": {
                                 "type": "NumberSpinner",
-                                "digits": 2
+                                "digits": 3
                             }
                         },
                         {

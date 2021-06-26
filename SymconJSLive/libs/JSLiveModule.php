@@ -264,6 +264,18 @@ class JSLiveModule extends IPSModule
                         if (IPS_VariableExists($var["Variable"])) {
                             $varList[] = $var["Variable"];
                         }
+
+                        if (IPS_VariableExists($var["Color"])) {
+                            $varList[] = $var["Color"];
+                        }
+
+                        if (IPS_VariableExists($var["ColorTemperature"])) {
+                            $varList[] = $var["ColorTemperature"];
+                        }
+
+                        if (IPS_VariableExists($var["Switch Temperature"])) {
+                            $varList[] = $var["Switch Temperature"];
+                        }
                     }
                 }
 

@@ -11,6 +11,7 @@ class SymconJSLiveGauge extends JSLiveModule{
         $this->RegisterPropertyInteger("Variable", 0);
         $this->RegisterPropertyFloat("min", 0);
         $this->RegisterPropertyFloat("max", 1000);
+        $this->RegisterPropertyInteger("precision", 0);
         $this->RegisterPropertyString("template", "CanvasGauges-Radial");
 
         //Expert
@@ -94,8 +95,6 @@ class SymconJSLiveGauge extends JSLiveModule{
     public function ApplyChanges() {
         //Never delete this line!
         parent::ApplyChanges();
-
-        
     }
 
     public function ReceiveData($JSONString) {
@@ -177,7 +176,7 @@ class SymconJSLiveGauge extends JSLiveModule{
         }else{
             $this->SendDebug("ReplacePlaceholder", "Variable (".$this->ReadPropertyInteger("Variable").") NOT EXIST!", 0);
         }
-        $htmlData = str_replace("{VALUE}", number_format($val, 2, '.', ''), $htmlData);
+        $htmlData = str_replace("{VALUE}", number_format($val, $this->ReadPropertyInteger("precision"), '.', ''), $htmlData);
 
         //Load Fonts
         $arr = array($this->ReadPropertyString("valuebox_fontFamily"), $this->ReadPropertyString("ticks_fontFamily"), $this->ReadPropertyString("title_fontFamily"));
@@ -193,11 +192,11 @@ class SymconJSLiveGauge extends JSLiveModule{
         array_multisort(array_column($ticks, 'Value'), SORT_ASC, $ticks);
 
         $majorticks = array();
-        $majorticks[] =  number_format($min, 2, '.', '');
+        $majorticks[] =  number_format($min, $this->ReadPropertyInteger("precision"), '.', '');
         foreach ($ticks as $tick) {
-            $majorticks[] = number_format($tick["Value"], 2, '.', '');
+            $majorticks[] = number_format($tick["Value"], $this->ReadPropertyInteger("precision"), '.', '');
         }
-        $majorticks[] =  number_format($max, 2, '.', '');
+        $majorticks[] =  number_format($max, $this->ReadPropertyInteger("precision"), '.', '');
 
         //$this->SendDebug("TEST", print_r($majorticks, true), 0);
         return $majorticks;
@@ -210,11 +209,11 @@ class SymconJSLiveGauge extends JSLiveModule{
 
         foreach ($arr as $item){
             $highlight_item = array();
-            $highlight_item["from"] =  number_format($item["From"], 2, '.', '');
-            $highlight_item["to"] =  number_format($item["To"], 2, '.', '');
+            $highlight_item["from"] =  number_format($item["From"], $this->ReadPropertyInteger("precision"), '.', '');
+            $highlight_item["to"] =  number_format($item["To"], $this->ReadPropertyInteger("precision"), '.', '');
 
             $rgbdata = $this->HexToRGB($item["HighlightColor"]);
-            $highlight_item["color"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["HighlightColor_Alpha"], 2, '.', '') . ")";
+            $highlight_item["color"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["HighlightColor_Alpha"], $this->ReadPropertyInteger("precision"), '.', '') . ")";
 
             $highlights[] = $highlight_item;
         }
@@ -234,7 +233,7 @@ class SymconJSLiveGauge extends JSLiveModule{
 
                 if(array_key_exists($key."_Alpha", $output)){
                     $rgbdata = $this->HexToRGB($val);
-                    $output[$key] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", ".number_format($output[$key."_Alpha"], 2, '.', '') .")";
+                    $output[$key] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", ".number_format($output[$key."_Alpha"], $this->ReadPropertyInteger("precision"), '.', '') .")";
                 }else{
                     $rgbdata = $this->HexToRGB($val);
                     $output[$key] = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
