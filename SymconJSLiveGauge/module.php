@@ -234,7 +234,7 @@ class SymconJSLiveGauge extends JSLiveModule{
 
                 if(array_key_exists($key."_Alpha", $output)){
                     $rgbdata = $this->HexToRGB($val);
-                    $output[$key] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", ".number_format($output[$key."_Alpha"], $this->ReadPropertyInteger("precision"), '.', '') .")";
+                    $output[$key] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", ".number_format($output[$key."_Alpha"], 2, '.', '') .")";
                 }else{
                     $rgbdata = $this->HexToRGB($val);
                     $output[$key] = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
