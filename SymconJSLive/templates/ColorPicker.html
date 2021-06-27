@@ -26,7 +26,7 @@
     let config_global = {GLOBAL};
     let config_variabels = {VARIABELS};
     let config_layout = {LAYOUT};
-    let confiuration = {CONFIG};
+    let configuration = {CONFIG};
 
     let colors_ids = [];
     let colorsTemperatures_ids = [];
@@ -48,13 +48,13 @@
                 wdh = window.innerWidth - 20;
             }
 
-            if (confiuration.manWidth > 0) {
-                wdh = confiuration.manWidth;
+            if (configuration.manWidth > 0) {
+                wdh = configuration.manWidth;
             }
 
             //alert("Breite: " + wdh);
 
-            if (confiuration.layout_Direction === "vertical") {
+            if (configuration.layout_Direction === "vertical") {
                 wdh = wdh - laydata.width_s;
 
                 if (laydata.counter_wheelbox > 0) {
@@ -63,13 +63,13 @@
             }
 
             config = {
-                layoutDirection: confiuration.layout_Direction,
+                layoutDirection: configuration.layout_Direction,
                 layout: laydata.output,
                 colors: GenerateColorData(),
                 width: wdh,
-                borderColor: confiuration.style_borderColor,
-                borderWidth: confiuration.style_borderWidth,
-                handleRadius: confiuration.style_handleRadius
+                borderColor: configuration.style_borderColor,
+                borderWidth: configuration.style_borderWidth,
+                handleRadius: configuration.style_handleRadius
                 //handleSvg: '#handle',
                 //handleProps: {x: -8, y: -20}
 
@@ -95,9 +95,9 @@
                 default:
                 case "Wheel":
                     item["component"] = iro.ui.Wheel;
-                    options["wheelLightness"] = confiuration.wheel_Lightness;
-                    options["wheelAngle"] = confiuration.wheel_Angle;
-                    options["wheelDirection"] = confiuration.wheel_Direction;
+                    options["wheelLightness"] = configuration.wheel_Lightness;
+                    options["wheelAngle"] = configuration.wheel_Angle;
+                    options["wheelDirection"] = configuration.wheel_Direction;
                     counter_wheelbox++;
                     break;
                 case "Box":
@@ -224,7 +224,7 @@
             await sleep(1);
             try {
                 //console.log("UpdateWorker => "+ updateVal.length + " | " + updateId.length);
-                if((last_update + confiuration.DataUpdateRate) <= Date.now() && updateVal.length > 0 && updateId.length > 0){
+                if((last_update + configuration.DataUpdateRate) <= Date.now() && updateVal.length > 0 && updateId.length > 0){
                     last_update = Date.now();
                     //console.log("UpdateWorker => "+ JSON.stringify(updateVal) + " | " + JSON.stringify(updateId));
 

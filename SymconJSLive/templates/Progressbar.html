@@ -28,7 +28,7 @@
 <script>
     var config_global = {GLOBAL};
     var value = {VALUE};
-    var confiuration = {CONFIG};
+    var configuration = {CONFIG};
 
     last_update = Date.now();
 
@@ -40,27 +40,27 @@
             //görße automatisch anpassen
             item.style.width = (window.innerWidth-40)+"px";
 
-            if(confiuration.style_fontPosition === "center"){
+            if(configuration.style_fontPosition === "center"){
                 item.style.height = (window.innerHeight-40)+"px";
             }else{
-                item.style.height = (window.innerHeight-60-confiuration.style_fontSize)+"px";
+                item.style.height = (window.innerHeight-60-configuration.style_fontSize)+"px";
             }
             console.log("Automatic Size: W: " + item.style.width+"px | H: " + item.style.height+ "px");
 
             //wenn text mittig angezeigt werden soll
-            if(confiuration.style_fontPosition === "center"){
+            if(configuration.style_fontPosition === "center"){
                 item.className = item.className + " label-center";
             }
 
             //configuration dashpart
             d_item = document.getElementById("dash_path");
-            if(confiuration.Type === "stroke" && confiuration.shape_path !== "" && confiuration.stroke_Dash1 > 0 && confiuration.stroke_Dash2 > 0){
+            if(configuration.Type === "stroke" && configuration.shape_path !== "" && configuration.stroke_Dash1 > 0 && configuration.stroke_Dash2 > 0){
                 d_item.classList.add("path");
 
                 //set dash configuration
-                d_item.setAttribute("d", confiuration.shape_path);
-                d_item.setAttribute("stroke-dasharray", confiuration.stroke_Dash1 + " " + confiuration.stroke_Dash2);
-                d_item.setAttribute("stroke-width", confiuration.stroke_width);
+                d_item.setAttribute("d", configuration.shape_path);
+                d_item.setAttribute("stroke-dasharray", configuration.stroke_Dash1 + " " + configuration.stroke_Dash2);
+                d_item.setAttribute("stroke-width", configuration.stroke_width);
             }else{
                 //entfernen der Mask damit diese nicht geladen werden kann
                 document.getElementById("mask").remove();
@@ -70,7 +70,7 @@
             //item.append('<style>.wrapper:after{content: "Test";  display: inline;}</style>');
             //$( '<style>.wrapper:after { content: "Test"; }</style>' ).appendTo( "head" )
             var styleElem = document.head.appendChild(document.createElement("style"));
-            styleElem.innerHTML = ".ldBar-label:after {content: \""+confiuration.suffix+"\";}.ldBar-label:before {content: \""+confiuration.prefix+"\";}";
+            styleElem.innerHTML = ".ldBar-label:after {content: \""+configuration.suffix+"\";}.ldBar-label:before {content: \""+configuration.prefix+"\";}";
 
 
             bar = new ldBar(".myBar", LoadBarConfig());
@@ -78,13 +78,13 @@
 
             document.querySelectorAll('.ldBar-label').forEach(function(el) {
                 //Wenn Schrifft ausgeblendet werden soll
-                if(!confiuration.style_fontDisplay){
+                if(!configuration.style_fontDisplay){
                     el.style.display = 'none';
                 }
-                el.style.fontSize = confiuration.style_fontSize+'px';
-                el.style.color = confiuration.style_fontColor;
+                el.style.fontSize = configuration.style_fontSize+'px';
+                el.style.color = configuration.style_fontColor;
                 el.style.content = "px";
-                el.style.fontFamily = confiuration.style_fontFamily;
+                el.style.fontFamily = configuration.style_fontFamily;
             });
         }catch (e) {
             alert(e);
@@ -94,49 +94,49 @@
     function LoadBarConfig(){
         output = {};
 
-        if(confiuration.shape_svg === true){
+        if(configuration.shape_svg === true){
             output["img"] = "/hook/JSLive/getSVG?Instance={INSTANCE}&pw={PASSWORD}";
-            //output["img"] = "data:image/jpeg;base64," + confiuration.shape_svg;
+            //output["img"] = "data:image/jpeg;base64," + configuration.shape_svg;
             //output["img-size"] = "1500,500";
         }
-        else if(confiuration.shape_path !== ""){
-            output["path"] = confiuration.shape_path;
+        else if(configuration.shape_path !== ""){
+            output["path"] = configuration.shape_path;
         }
 
-        output["type"] =  confiuration.Type;
-        if(confiuration.shape_svg === false && confiuration.shape_path === "")  output["preset"] =  confiuration.shape_preset; //fan line bubble circle
+        output["type"] =  configuration.Type;
+        if(configuration.shape_svg === false && configuration.shape_path === "")  output["preset"] =  configuration.shape_preset; //fan line bubble circle
 
-        output["precision"] = confiuration.data_precision;
-        if(confiuration.data_precisionCustom !== 0)  output["precision"] = confiuration.data_precisionCustom;
+        output["precision"] = configuration.data_precision;
+        if(configuration.data_precisionCustom !== 0)  output["precision"] = configuration.data_precisionCustom;
 
         output["value"] = value;
-        output["min"] = confiuration.data_min;
-        output["max"] = confiuration.data_max;
+        output["min"] = configuration.data_min;
+        output["max"] = configuration.data_max;
 
-        output["duration"] = confiuration.data_animationDuration;
-        output["transition-in"] = confiuration.data_animationTransitionIn;
+        output["duration"] = configuration.data_animationDuration;
+        output["transition-in"] = configuration.data_animationTransitionIn;
 
-        hexstr = RGBAToHexA(confiuration.stroke_color_rgb.R,confiuration.stroke_color_rgb.G,confiuration.stroke_color_rgb.B, confiuration.stroke_color_Alpha);
+        hexstr = RGBAToHexA(configuration.stroke_color_rgb.R,configuration.stroke_color_rgb.G,configuration.stroke_color_rgb.B, configuration.stroke_color_Alpha);
         output["stroke"] = hexstr;
-        output["stroke-dir"] = confiuration.stroke_dir;
-        output["stroke-lincap"] = confiuration.stroke_lincap;
-        output["stroke-width"] = confiuration.stroke_width;
-        output["stroke-trail"] = confiuration.stroke_trailColor;
-        output["stroke-trail-width"] = confiuration.stroke_trailWidth;
+        output["stroke-dir"] = configuration.stroke_dir;
+        output["stroke-lincap"] = configuration.stroke_lincap;
+        output["stroke-width"] = configuration.stroke_width;
+        output["stroke-trail"] = configuration.stroke_trailColor;
+        output["stroke-trail-width"] = configuration.stroke_trailWidth;
         output["stroke-dasharray"] = "3 6";
 
-        hexstr = RGBAToHexA(confiuration.fill_color_rgb.R,confiuration.fill_color_rgb.G,confiuration.fill_color_rgb.B, confiuration.fill_color_Alpha); //confiuration.fill_color;
+        hexstr = RGBAToHexA(configuration.fill_color_rgb.R,configuration.fill_color_rgb.G,configuration.fill_color_rgb.B, configuration.fill_color_Alpha); //configuration.fill_color;
         output["fill"] = hexstr;
-        output["fill-dir"] = confiuration.fill_dir;
-        output["fill-background-extrude"] = confiuration.fill_backgroundExtrude;
-        output["fill-background"] = confiuration.fill_backgroundColor;
+        output["fill-dir"] = configuration.fill_dir;
+        output["fill-background-extrude"] = configuration.fill_backgroundExtrude;
+        output["fill-background"] = configuration.fill_backgroundColor;
 
         //load img
-        if(confiuration.fill_backgroundFile === true) output["fill"] = "/hook/JSLive/getFillImg?Instance={INSTANCE}&pw={PASSWORD}";
+        if(configuration.fill_backgroundFile === true) output["fill"] = "/hook/JSLive/getFillImg?Instance={INSTANCE}&pw={PASSWORD}";
 
         //override
-        if(confiuration.override_stroke !== "") output["stroke"] = confiuration.override_stroke;
-        if(confiuration.override_fill !== "") output["fill"] = confiuration.override_fill;
+        if(configuration.override_stroke !== "") output["stroke"] = configuration.override_stroke;
+        if(configuration.override_fill !== "") output["fill"] = configuration.override_fill;
 
         return output;
     }
@@ -191,7 +191,7 @@
         }
     }
     function Update(id_val, val){
-        if(id_val === confiuration.Variable && value !== val){
+        if(id_val === configuration.Variable && value !== val){
             value = val;
             bar.set(value);
         }

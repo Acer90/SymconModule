@@ -29,12 +29,12 @@
     var config_title = {TITLE};
     var config_labels = {LABELS};
 
-    var confiuration = {CONFIG};
+    var configuration = {CONFIG};
 
     var update_vars = [];
     var update_vars_Values = [];
-    update_vars.push(confiuration.ID_Period);
-    update_vars.push(confiuration.ID_Relativ);
+    update_vars.push(configuration.ID_Period);
+    update_vars.push(configuration.ID_Relativ);
 
     var last_update = Date.now();
     var offset_isSet = false;
@@ -47,7 +47,7 @@
             Chart.register(ChartDataLabels);
 
             //autoratio
-            ratio = confiuration.Ratio;
+            ratio = configuration.Ratio;
             if(ratio === 0){
                 ratio = window.innerWidth / window.innerHeight;
             }
@@ -60,8 +60,8 @@
                 },
                 options: {
                     animation: {
-                        duration: confiuration.animation_duration,
-                        easing: confiuration.animation_easing,
+                        duration: configuration.animation_duration,
+                        easing: configuration.animation_easing,
                     },
                     hover: {
                         animationDuration: 0           // duration of animations when hovering an item
@@ -75,16 +75,16 @@
                         tooltip: config_tooltips,
                         datalabels: {
                             display: false,
-                            align: confiuration.datalabels_align,
-                            anchor: confiuration.datalabels_anchoring,
+                            align: configuration.datalabels_align,
+                            anchor: configuration.datalabels_anchoring,
 
-                            borderRadius: confiuration.datalabels_borderRadius,
-                            borderWidth: confiuration.datalabels_borderWidth,
+                            borderRadius: configuration.datalabels_borderRadius,
+                            borderWidth: configuration.datalabels_borderWidth,
                             font: {
-                                size: confiuration.datalabels_fontSize,
-                                family: confiuration.datalabels_fontFamily
+                                size: configuration.datalabels_fontSize,
+                                family: configuration.datalabels_fontFamily
                             },
-                            color: confiuration.datalabels_fontColor,
+                            color: configuration.datalabels_fontColor,
                             clip: true,
                             clamp: true,
                             formatter: function(value, context) {
@@ -124,35 +124,35 @@
                     },
                     scale: {
                         pointLabels: {
-                            display: confiuration.axes_pointLabels_display,
-                            color: confiuration.axes_pointLabels_color,
+                            display: configuration.axes_pointLabels_display,
+                            color: configuration.axes_pointLabels_color,
                             font:{
-                                size: confiuration.axes_pointLabels_fontSize,
-                                family: confiuration.axes_pointLabels_fontFamily
+                                size: configuration.axes_pointLabels_fontSize,
+                                family: configuration.axes_pointLabels_fontFamily
                             }
                         },
                         gridLines: {
-                            display: confiuration.axes_gridLines_display,
-                            color: confiuration.axes_gridLines_color,
-                            LineWidth: confiuration.axes_gridLines_lineWidth,
-                            drawTicks: confiuration.axes_gridLines_drawTicks
+                            display: configuration.axes_gridLines_display,
+                            color: configuration.axes_gridLines_color,
+                            LineWidth: configuration.axes_gridLines_lineWidth,
+                            drawTicks: configuration.axes_gridLines_drawTicks
                         },
                         angleLines: {
-                            display: confiuration.axes_angleLines_display,
-                            color: confiuration.axes_angleLines_color,
-                            lineWidth: confiuration.axes_angleLines_lineWidth
+                            display: configuration.axes_angleLines_display,
+                            color: configuration.axes_angleLines_color,
+                            lineWidth: configuration.axes_angleLines_lineWidth
                         },
                         ticks: {
-                            color: confiuration.axes_ticks_fontColor,
-                            backdropColor: confiuration.axes_ticks_backdropColor,
+                            color: configuration.axes_ticks_fontColor,
+                            backdropColor: configuration.axes_ticks_backdropColor,
                             font: {
-                                size: confiuration.axes_ticks_fontSize,
-                                family: confiuration.axes_ticks_fontFamily
+                                size: configuration.axes_ticks_fontSize,
+                                family: configuration.axes_ticks_fontFamily
                             }
 
                         },
 
-                        display: confiuration.axes_display
+                        display: configuration.axes_display
                     },
                     layout: {
                         padding: {
@@ -212,7 +212,7 @@
         };
     }
     function UpdateChart(id_val, dt_val, value){
-        if(!confiuration.CustomVars.includes(id_val)) return;
+        if(!configuration.CustomVars.includes(id_val)) return;
         //wird nur bei customevariablen ausgeführt!
 
         required = {variable: id_val};
@@ -250,17 +250,17 @@
         last_reload = dt_val;
         isReloading = true;
 
-        if(confiuration.ID_Period === id_val && val !== null) confiuration.Period = val;
-        if(confiuration.ID_Relativ === id_val && val !== null) confiuration.Relativ = val;
+        if(configuration.ID_Period === id_val && val !== null) configuration.Period = val;
+        if(configuration.ID_Relativ === id_val && val !== null) configuration.Relativ = val;
 
-        if(confiuration.data_loadAsync){
+        if(configuration.data_loadAsync){
             config_dataset = [];
             config_xaxes = {};
             config_axes = {};
 
             //First Load Config!!
             $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&loadConfig=1", function( data ) {
-                confiuration =  data.CONFIG;
+                configuration =  data.CONFIG;
                 console.log("Configuration: ", JSON.stringify(data));
 
                 //then load XAxes
@@ -270,7 +270,7 @@
                     console.log("Labels: ", JSON.stringify(data));
 
                     //load VariablesData Async
-                    confiuration.Var_List.forEach(function (Variable) {
+                    configuration.Var_List.forEach(function (Variable) {
                         $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&var=" + Variable, function (data) {
                             //console.log("update Offset: ", data);
                             config_dataset.push(data.DATASETS[0]);
@@ -304,7 +304,7 @@
             $.getJSON( "/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}", function( data ) {
                 config_dataset = data.DATASETS;
                 config_labels = data.LABELS;
-                confiuration =  data.CONFIG;
+                configuration =  data.CONFIG;
 
 
                 if(typeof myChart === "undefined"){
@@ -377,8 +377,8 @@
     }
 
     function GetStartEndDate(date) {
-        period = confiuration.Period;
-        is_relativ = confiuration.Relativ;
+        period = configuration.Period;
+        is_relativ = configuration.Relativ;
         oldDate = new Date(date);
 
         eDate = new Date();
@@ -533,7 +533,7 @@
     window.addEventListener('orientationchange', ResizeChart);
 
     function ResizeChart() {
-        ratio = confiuration.Ratio;
+        ratio = configuration.Ratio;
         if(ratio === 0){
             ratio = window.innerWidth / window.innerHeight;
         }

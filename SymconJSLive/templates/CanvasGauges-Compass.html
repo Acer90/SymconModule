@@ -21,16 +21,16 @@
     let config_global = {GLOBAL};
     let config_ticks = {TICKS};
     let config_highlights = {HIGHLIGHTS};
-    let confiuration = {CONFIG};
+    let configuration = {CONFIG};
 
     function LoadGauge(){
         try {
             //fontstyle
-            document.getElementById("gauge").style.fontFamily = confiuration.style_fontFamily;
+            document.getElementById("gauge").style.fontFamily = configuration.style_fontFamily;
 
-            if (!confiuration.title_display) confiuration.title_text = false;
-            if (!confiuration.plate_unit) confiuration.plate_unit = false;
-            if (!confiuration.progressbar_display) confiuration.progressbar_barWidth = 0;
+            if (!configuration.title_display) configuration.title_text = false;
+            if (!configuration.plate_unit) configuration.plate_unit = false;
+            if (!configuration.progressbar_display) configuration.progressbar_barWidth = 0;
 
             gauge_config = {
                 renderTo: 'gauge',
@@ -56,24 +56,24 @@
                 strokeTicks: false,
                 highlights: false,
 
-                fontNumbersSize: confiuration.ticks_fontSize,
-                title: confiuration.title_text, //false deaktiviert!
-                colorTitle: confiuration.title_fontColor,
-                fontTitleSize: confiuration.title_fontSize,
-                units: confiuration.plate_unit,
+                fontNumbersSize: configuration.ticks_fontSize,
+                title: configuration.title_text, //false deaktiviert!
+                colorTitle: configuration.title_fontColor,
+                fontTitleSize: configuration.title_fontSize,
+                units: configuration.plate_unit,
 
 
-                colorPlate: confiuration.plate_colorPlate,
-                colorPlateEnd: confiuration.plate_colorPlateEnd,
+                colorPlate: configuration.plate_colorPlate,
+                colorPlateEnd: configuration.plate_colorPlateEnd,
 
-                colorMajorTicks: confiuration.ticks_colorMajorTick,
-                colorMinorTicks: confiuration.ticks_colorMinorTicks,
-                colorUnits: confiuration.ticks_colorUnits,
-                colorNumbers: confiuration.ticks_colorNumbers,
-                exactTicks: confiuration.ticks_exactTicks,
+                colorMajorTicks: configuration.ticks_colorMajorTick,
+                colorMinorTicks: configuration.ticks_colorMinorTicks,
+                colorUnits: configuration.ticks_colorUnits,
+                colorNumbers: configuration.ticks_colorNumbers,
+                exactTicks: configuration.ticks_exactTicks,
 
-                colorNeedle: confiuration.needle_colorNeedle,
-                colorNeedleEnd: confiuration.needle_colorNeedleEnd,
+                colorNeedle: configuration.needle_colorNeedle,
+                colorNeedleEnd: configuration.needle_colorNeedleEnd,
                 valueBox: false,
                 valueTextShadow: false,
                 colorCircleInner: "#fff",
@@ -96,16 +96,16 @@
                 borderShadowWidth: 0,
 
                 animationTarget: "plate",
-                animationRule: confiuration.animation_rule, //'linear', //”, “quad”, “quint”, “cycle”, “bounce”, “elastic”  “dequad”, “dequint”, “decycle”, “debounce”, “delastic”.
-                animationDuration: confiuration.animation_duration
+                animationRule: configuration.animation_rule, //'linear', //”, “quad”, “quint”, “cycle”, “bounce”, “elastic”  “dequad”, “dequint”, “decycle”, “debounce”, “delastic”.
+                animationDuration: configuration.animation_duration
             }
 
-            if(confiuration.title_fontFamily !== ""){
-                gauge_config.fontTitle = confiuration.title_fontFamily;
+            if(configuration.title_fontFamily !== ""){
+                gauge_config.fontTitle = configuration.title_fontFamily;
             }
 
-            if(confiuration.ticks_fontFamily !== ""){
-                gauge_config.fontNumbers = confiuration.ticks_fontFamily;
+            if(configuration.ticks_fontFamily !== ""){
+                gauge_config.fontNumbers = configuration.ticks_fontFamily;
             }
 
             gauge = new RadialGauge(gauge_config);

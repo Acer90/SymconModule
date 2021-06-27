@@ -23,7 +23,7 @@
 <script>
     let config_global = {GLOBAL}; // <== Configuration from the Splitter Instance
     let datasets = {DATASETS}; // <== Output with Content/Value from
-    let confiuration = {CONFIG}; // <== configuration of the Instance
+    let configuration = {CONFIG}; // <== configuration of the Instance
 
     let running = false;
     let last_update = Date.now();
@@ -38,7 +38,7 @@
         try {
             //Example
             document.getElementById('test').innerText = JSON.stringify(datasets);
-            document.getElementById("test").style.fontFamily = confiuration.style_fontFamily;
+            document.getElementById("test").style.fontFamily = configuration.style_fontFamily;
 
             //updateValue(datasets[0].O, Date.now()); //<= Besp Update
         }catch (e) {
@@ -117,7 +117,7 @@
             await sleep(1);
             try {
                 //console.log("UpdateWorker => "+ updateVal.length + " | " + updateId.length);
-                if((last_update + confiuration.DataUpdateRate) <= Date.now() && update_itemList.length > 0){
+                if((last_update + configuration.DataUpdateRate) <= Date.now() && update_itemList.length > 0){
                     last_update = Date.now();
                     //console.log("UpdateWorker => "+ JSON.stringify(update_itemList));
 

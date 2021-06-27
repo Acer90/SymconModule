@@ -31,14 +31,14 @@
     let config_title = {TITLE};
     let config_xaxes = {};//{/XAXES};
 
-    let confiuration = {CONFIG};
+    let configuration = {CONFIG};
 
     let update_vars = [];
     let update_vars_Values = [];
-    update_vars.push(confiuration.ID_Period);
-    update_vars.push(confiuration.ID_Now);
-    update_vars.push(confiuration.ID_StartDate);
-    update_vars.push(confiuration.ID_Relativ);
+    update_vars.push(configuration.ID_Period);
+    update_vars.push(configuration.ID_Now);
+    update_vars.push(configuration.ID_StartDate);
+    update_vars.push(configuration.ID_Relativ);
 
     let last_update = Date.now();
     let offset_isSet = false;
@@ -73,8 +73,8 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     animation: {
-                        duration: confiuration.animation_duration,
-                        easing: confiuration.animation_easing,
+                        duration: configuration.animation_duration,
+                        easing: configuration.animation_easing,
                     },
                     hover: {
                         animationDuration: 0           // duration of animations when hovering an item
@@ -86,16 +86,16 @@
                         legend: config_legend,
                         datalabels: {
                             display: false,
-                            align: confiuration.datalabels_align,
-                            anchor: confiuration.datalabels_anchoring,
+                            align: configuration.datalabels_align,
+                            anchor: configuration.datalabels_anchoring,
 
-                            borderRadius: confiuration.datalabels_borderRadius,
-                            borderWidth: confiuration.datalabels_borderWidth,
+                            borderRadius: configuration.datalabels_borderRadius,
+                            borderWidth: configuration.datalabels_borderWidth,
                             font: {
-                                size: confiuration.datalabels_fontSize,
-                                family: confiuration.datalabels_fontFamily
+                                size: configuration.datalabels_fontSize,
+                                family: configuration.datalabels_fontFamily
                             },
-                            color: confiuration.datalabels_fontColor,
+                            color: configuration.datalabels_fontColor,
                             clip: true,
                             clamp: true,
                             formatter: function(value, context) {
@@ -179,7 +179,7 @@
                     location.reload();
                 },1000);
             } else if(data.Message == 10603) {
-                if(confiuration.data_pullModeinMinute && confiuration.Period === 7){
+                if(configuration.data_pullModeinMinute && configuration.Period === 7){
                     //ignore update date, wenn pullmode for minute active
                 }else{
                     UpdateChart(data.SenderID, data.Data[3], data.Data[0]);
@@ -204,7 +204,7 @@
 
     function UpdateChart(id_val, dt_val, value){
         //wenn nicht Now dann kein Update durchführen!
-        if(!confiuration.Now || isReloading) return;
+        if(!configuration.Now || isReloading) return;
 
         isUpdated = false;
 
@@ -215,13 +215,13 @@
         //console.log('Result:', results);
         //nur Updaten wenn ID in Chart exestiert
         if(results.length > 0){
-            period = confiuration["Period"];
+            period = configuration["Period"];
             //updaten des Aktuellen Charts
             results.forEach(function(part, index) {
                 //nur daten ohne Offset hier updaten
                 offset = myChart.data.datasets[part].offset;
                 if(offset == 0) {
-                    precision = Math.pow(10, confiuration.data_precision);
+                    precision = Math.pow(10, configuration.data_precision);
 
                     val = Math.floor(value * precision) /  precision;
                     highRes = myChart.data.datasets[part].highRes;
@@ -296,26 +296,26 @@
         last_reload = dt_val;
         isReloading = true;
 
-        if(confiuration.ID_Period === id_val && val !== null){
-            confiuration.Period = val;
+        if(configuration.ID_Period === id_val && val !== null){
+            configuration.Period = val;
             fullReload = true;
         }
-        if(confiuration.ID_Relativ === id_val && val !== null){
-            confiuration.Relativ = val;
+        if(configuration.ID_Relativ === id_val && val !== null){
+            configuration.Relativ = val;
             fullReload = true;
         }
 
-        if(confiuration.data_loadAsync){
+        if(configuration.data_loadAsync){
             config_dataset = [];
             config_xaxes = {};
             config_axes = {};
 
             //First Load Config!!
             $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&loadConfig=1", function( data ) {
-                if(confiuration.Period != data.Config.Period || confiuration.Relativ != data.Config.Relativ){
+                if(configuration.Period != data.Config.Period || configuration.Relativ != data.Config.Relativ){
                     fullReload = true;
                 }
-                confiuration = data.Config;
+                configuration = data.Config;
                 console.log("Configuration: ", JSON.stringify(data));
 
                 //then load XAxes
@@ -327,9 +327,9 @@
 
 
                     //pullmod at Minute
-                    if (config_global.DataMode !== 0 && confiuration.data_pullModeinMinute && confiuration.Period === 7 && !pullMode) {
+                    if (config_global.DataMode !== 0 && configuration.data_pullModeinMinute && configuration.Period === 7 && !pullMode) {
                         //pullup Mode
-                        var refreshRate = confiuration.data_pullModeRefreshTime;
+                        var refreshRate = configuration.data_pullModeRefreshTime;
                         PullNewData(refreshRate);
                     }else if(config_global.DataMode !== 0){
                         pullModeStopping = true;
@@ -338,7 +338,7 @@
                     //load VariablesData Async
                     var first = true;
                     var counter_var = 0;
-                    confiuration.Var_List.forEach(function (Variable) {
+                    configuration.Var_List.forEach(function (Variable) {
                         $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&var=" + Variable, function (data) {
                             //console.log("update Offset: ", data);
                             config_dataset.push(data.DATASETS[0]);
@@ -384,7 +384,7 @@
         }else{
             //sync load of all Data
             $.getJSON( "/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}", function( data ) {
-                if(confiuration.Period != data.Config.Period || confiuration.Relativ != data.Config.Relativ){
+                if(configuration.Period != data.Config.Period || configuration.Relativ != data.Config.Relativ){
                     fullReload = true;
                 }
 
@@ -392,7 +392,7 @@
                 config_axes = data.AXES;
                 config_xaxes =  data.XAXES;
 
-                confiuration = data.Config;
+                configuration = data.Config;
 
                 //neuerstellen (aufgrund des livestreming plugins!
                 if(fullReload){
@@ -415,8 +415,8 @@
                 isReloading = false;
 
                 //pullmod at Minute
-                if (config_global.DataMode !== 0 && confiuration.data_pullModeinMinute && confiuration.Period === 7 && !pullMode) {
-                    var refreshRate = confiuration.data_pullModeRefreshTime;
+                if (config_global.DataMode !== 0 && configuration.data_pullModeinMinute && configuration.Period === 7 && !pullMode) {
+                    var refreshRate = configuration.data_pullModeRefreshTime;
                     PullNewData(refreshRate);
                 }else if(config_global.DataMode !== 0){
                     pullModeStopping = true;
@@ -427,11 +427,11 @@
     async function UpdateConfiguration() {
         while (true){
             try {
-                if(!confiuration.Relativ) {
+                if(!configuration.Relativ) {
                     RefreshChart_Absolute();
                 };
 
-                if(confiuration.Relativ && offset_isSet){
+                if(configuration.Relativ && offset_isSet){
                     UpdateOffsetData_Relativ();
                 }
 
@@ -444,7 +444,7 @@
     }
 
     function UpdateDate(date, highRes = 7){
-        var period = confiuration["Period"];
+        var period = configuration["Period"];
         var oldDate = new Date(date);
         var newDate = new Date();
 
@@ -496,7 +496,7 @@
     }
 
     function GetPeriodTimespan(){
-        var period = confiuration["Period"];
+        var period = configuration["Period"];
 
         switch(period){
             case 0:
@@ -551,7 +551,7 @@
         }
     }
     function UpdateOffsetData_Relativ() {
-        if (confiuration.Relativ) {
+        if (configuration.Relativ) {
             curDate = Date.now();
 
             myChart.data.datasets.forEach(function (part, index) {
@@ -608,7 +608,7 @@
 
         //mehr daten laden wenn Bar vorhanden
         offsetTime = 0;
-        if(confiuration.Has_Bar){
+        if(configuration.Has_Bar){
             offsetTime = GetPeriodTimespan();
         }
 
@@ -668,8 +668,8 @@
     }
 
     function GetStartEndDate(date) {
-        period = confiuration.Period;
-        is_relativ = confiuration.Relativ;
+        period = configuration.Period;
+        is_relativ = configuration.Relativ;
         oldDate = new Date(date);
 
         eDate = new Date();
@@ -776,8 +776,8 @@
         return { "start": sDate, "end": eDate};
     }
     function GetRemoveDate(date){
-        period = confiuration.Period;
-        is_relativ = confiuration.Relativ;
+        period = configuration.Period;
+        is_relativ = configuration.Relativ;
         oldDate = new Date(date);
         rDate = new Date();
 
@@ -873,8 +873,8 @@
     }
     function checkIsStreaming(){
         //return false;
-        if(confiuration.Relativ == false) return false;
-        switch(confiuration.Period){
+        if(configuration.Relativ == false) return false;
+        switch(configuration.Period){
             case 0:
             case 1:
             case 2:

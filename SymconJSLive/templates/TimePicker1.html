@@ -18,7 +18,7 @@
 <script>
     var config_global = {GLOBAL};
     var value = {VALUE};
-    var confiuration = {CONFIG};
+    var configuration = {CONFIG};
 
     running = false;
     last_update = Date.now();
@@ -29,17 +29,17 @@
             obj.value = unixTimeToString(value);
             UpdateIcon(obj.value);
             document.querySelector("#time").addEventListener("input", updateValue);
-            document.getElementById("time").style.fontFamily = confiuration.style_fontFamily;
+            document.getElementById("time").style.fontFamily = configuration.style_fontFamily;
 
 
             //Style
-            obj.style.backgroundColor = confiuration.style_backgroundColor;
-            obj.style.borderWidth = confiuration.style_borderWidth;
-            obj.style.borderColor = confiuration.style_borderColor;
-            obj.style.borderRadius = confiuration.style_borderRadius;
+            obj.style.backgroundColor = configuration.style_backgroundColor;
+            obj.style.borderWidth = configuration.style_borderWidth;
+            obj.style.borderColor = configuration.style_borderColor;
+            obj.style.borderRadius = configuration.style_borderRadius;
 
-            obj.style.color = confiuration.style_fontColor;
-            obj.style.fontSize = confiuration.style_fontSize + "px";
+            obj.style.color = configuration.style_fontColor;
+            obj.style.fontSize = configuration.style_fontSize + "px";
         } catch (e) {
             alert(e);
         }
@@ -62,11 +62,11 @@
         while (running){
             await sleep(1);
             try {
-                if((last_update + confiuration.DataUpdateRate) <= Date.now()){
+                if((last_update + configuration.DataUpdateRate) <= Date.now()){
                     last_update = Date.now();
 
-                    console.log(Date.now() + " >> UpdateWorker | Update " + confiuration.Variable + " => " + value);
-                    var response = await fetch("/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&var=" +confiuration.Variable+ "&val="+value);
+                    console.log(Date.now() + " >> UpdateWorker | Update " + configuration.Variable + " => " + value);
+                    var response = await fetch("/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&var=" +configuration.Variable+ "&val="+value);
                     console.log(Date.now() + " >> UpdateWorker Response => " + response.statusText + " (" + response.status + ")");
 
                     console.log(Date.now() + " >> UpdateWorker => CLOSE");
@@ -116,7 +116,7 @@
         now = Date.now();
         if(running ) return;
 
-        if(id_val === confiuration.Variable && value !== val){
+        if(id_val === configuration.Variable && value !== val){
             value = val;
 
             obj = document.querySelector("#time");
@@ -132,7 +132,7 @@
         if (reTime.exec(value) || reTime2.exec(value)) {
             const minute = Number(value.substring(3,5));
             const hour = Number(value.substring(0,2)) % 12 + (minute / 60);
-            obj.style.backgroundImage = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><circle cx='20' cy='20' r='18.5' fill='none' stroke='`+confiuration.style_highlightColor1+`' stroke-width='3' /><path d='M20,4 20,8 M4,20 8,20 M36,20 32,20 M20,36 20,32' stroke='`+confiuration.style_highlightColor2+`' stroke-width='1' /><circle cx='20' cy='20' r='2' fill='`+confiuration.style_highlightColor3+`' stroke='`+confiuration.style_highlightColor3+`' stroke-width='2' /></svg>"), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M18.5,24.5 19.5,4 20.5,4 21.5,24.5 Z' fill='`+confiuration.style_highlightColor3+`' style='transform:rotate(${360 * minute / 60}deg); transform-origin: 50% 50%;' /></svg>"), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M18.5,24.5 19.5,8.5 20.5,8.5 21.5,24.5 Z' fill='`+confiuration.style_highlightColor4+`' style='transform:rotate(${360 * hour / 12}deg); transform-origin: 50% 50%;' /></svg>")`;
+            obj.style.backgroundImage = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><circle cx='20' cy='20' r='18.5' fill='none' stroke='`+configuration.style_highlightColor1+`' stroke-width='3' /><path d='M20,4 20,8 M4,20 8,20 M36,20 32,20 M20,36 20,32' stroke='`+configuration.style_highlightColor2+`' stroke-width='1' /><circle cx='20' cy='20' r='2' fill='`+configuration.style_highlightColor3+`' stroke='`+configuration.style_highlightColor3+`' stroke-width='2' /></svg>"), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M18.5,24.5 19.5,4 20.5,4 21.5,24.5 Z' fill='`+configuration.style_highlightColor3+`' style='transform:rotate(${360 * minute / 60}deg); transform-origin: 50% 50%;' /></svg>"), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M18.5,24.5 19.5,8.5 20.5,8.5 21.5,24.5 Z' fill='`+configuration.style_highlightColor4+`' style='transform:rotate(${360 * hour / 12}deg); transform-origin: 50% 50%;' /></svg>")`;
         }
     }
 

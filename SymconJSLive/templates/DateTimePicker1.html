@@ -19,7 +19,7 @@
 <script>
     let config_global = {GLOBAL};
     let value = {VALUE};
-    let confiuration = {CONFIG};
+    let configuration = {CONFIG};
 
     running = false;
     last_update = Date.now();
@@ -29,17 +29,17 @@
             obj = document.querySelector("#datetime");
             obj.value = unixTimeToString(value);
             document.querySelector("#datetime").addEventListener("input", updateValue);
-            document.getElementById("datetime").style.fontFamily = confiuration.style_fontFamily;
+            document.getElementById("datetime").style.fontFamily = configuration.style_fontFamily;
 
 
             //Style
-            obj.style.backgroundColor = confiuration.style_backgroundColor;
-            obj.style.borderWidth = confiuration.style_borderWidth;
-            obj.style.borderColor = confiuration.style_borderColor;
-            obj.style.borderRadius = confiuration.style_borderRadius;
+            obj.style.backgroundColor = configuration.style_backgroundColor;
+            obj.style.borderWidth = configuration.style_borderWidth;
+            obj.style.borderColor = configuration.style_borderColor;
+            obj.style.borderRadius = configuration.style_borderRadius;
 
-            obj.style.color = confiuration.style_fontColor;
-            obj.style.fontSize = confiuration.style_fontSize + "px";
+            obj.style.color = configuration.style_fontColor;
+            obj.style.fontSize = configuration.style_fontSize + "px";
         } catch (e) {
             alert(e);
         }
@@ -61,11 +61,11 @@
         while (running){
             await sleep(1);
             try {
-                if((last_update + confiuration.DataUpdateRate) <= Date.now()){
+                if((last_update + configuration.DataUpdateRate) <= Date.now()){
                     last_update = Date.now();
 
-                    console.log(Date.now() + " >> UpdateWorker | Update " + confiuration.Variable + " => " + value);
-                    var response = await fetch("/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&var=" +confiuration.Variable+ "&val="+value);
+                    console.log(Date.now() + " >> UpdateWorker | Update " + configuration.Variable + " => " + value);
+                    var response = await fetch("/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&var=" +configuration.Variable+ "&val="+value);
                     console.log(Date.now() + " >> UpdateWorker Response => " + response.statusText + " (" + response.status + ")");
 
                     console.log(Date.now() + " >> UpdateWorker => CLOSE");
@@ -115,7 +115,7 @@
         now = Date.now();
         if(running ) return;
 
-        if(id_val === confiuration.Variable && value !== val){
+        if(id_val === configuration.Variable && value !== val){
             value = val;
 
             obj = document.querySelector("#datetime");
