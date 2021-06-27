@@ -34,7 +34,7 @@ class SymconJSLiveColorPicker extends JSLiveModule{
         $this->RegisterPropertyString("Layout", "[]");
 
         //variables
-        $this->RegisterPropertyString("Variables", "[]");
+        $this->RegisterPropertyString("Datasets", "[]");
 
     }
     public function ApplyChanges() {
@@ -104,7 +104,7 @@ class SymconJSLiveColorPicker extends JSLiveModule{
             return "NO VARIABLE, OR VALUE SET!";
         }
 
-        $var_data = json_decode($this->ReadPropertyString("Variables"),true);
+        $var_data = json_decode($this->ReadPropertyString("Datasets"),true);
         $var_ids = array();
         foreach ($var_data as $varItem){
             if($varItem["Color"] > 0)
@@ -140,22 +140,22 @@ class SymconJSLiveColorPicker extends JSLiveModule{
     }
     private function GenerateVariabels(){
         $output = array();
-        $variables = json_decode($this->ReadPropertyString("Variables"), true);
+        $variables = json_decode($this->ReadPropertyString("Datasets"), true);
 
         //load all variables
         foreach ($variables as $item){
             $s_output = array();
-            if(IPS_VariableExists($item["Color"])){
-                $s_output["Color"]["Variable"] = $item["Color"];
-                $s_output["Color"]["Value"] = GetValue($item["Color"]);
+            if(IPS_VariableExists($item["Variable_Color"])){
+                $s_output["Color"]["Variable"] = $item["Variable_Color"];
+                $s_output["Color"]["Value"] = GetValue($item["Variable_Color"]);
             }else{
                 $s_output["Color"]["Variable"] = 0;
                 $s_output["Color"]["Value"] = 0;
             }
 
-            if(IPS_VariableExists($item["ColorTemperature"])){
-                $s_output["Temperature"]["Variable"] = $item["ColorTemperature"];
-                $s_output["Temperature"]["Value"] = GetValue($item["ColorTemperature"]);
+            if(IPS_VariableExists($item["Variable_ColorTemperature"])){
+                $s_output["Temperature"]["Variable"] = $item["Variable_ColorTemperature"];
+                $s_output["Temperature"]["Value"] = GetValue($item["Variable_ColorTemperature"]);
                 $s_output["Temperature"]["isMired"] = $item["isMired"];
             }else{
                 $s_output["Temperature"]["Variable"] = 0;
@@ -163,9 +163,9 @@ class SymconJSLiveColorPicker extends JSLiveModule{
                 $s_output["Temperature"]["isMired"] = false;
             }
 
-            if(IPS_VariableExists($item["SwitchTemperature"])) {
-                $s_output["Mode"]["Variable"] = $item["SwitchTemperature"];
-                $s_output["Mode"]["Value"] = boolval(GetValue($item["SwitchTemperature"]));
+            if(IPS_VariableExists($item["Variable_SwitchTemperature"])) {
+                $s_output["Mode"]["Variable"] = $item["Variable_SwitchTemperature"];
+                $s_output["Mode"]["Value"] = boolval(GetValue($item["Variable_SwitchTemperature"]));
             }else{
                 if(IPS_VariableExists($item["Color"])){
                     $s_output["Mode"]["Variable"] = 0;
@@ -175,7 +175,7 @@ class SymconJSLiveColorPicker extends JSLiveModule{
                     $s_output["Mode"]["Value"] = true;
                 }
             }
-            //$this->SendDebug("Test", "Val => ". $s_output["Mode"]["Value"]. " |ITEM => ". GetValue($item["SwitchTemperature"]),0 );
+            //$this->SendDebug("Test", "Val => ". $s_output["Mode"]["Value"]. " |ITEM => ". $item["Variable_SwitchTemperature"],0 );
 
             $output[] = $s_output;
         }
@@ -212,7 +212,7 @@ class SymconJSLiveColorPicker extends JSLiveModule{
         }
 
         unset($output["Layout"]);
-        unset($output["Variables"]);
+        unset($output["Datasets"]);
         return $output;
     }
 
@@ -227,7 +227,7 @@ class SymconJSLiveColorPicker extends JSLiveModule{
             $confData = json_decode(IPS_GetConfiguration($id), true);
 
             //bestimmte aktuelle einstellungen beibehalten
-            $confData["Variables"]= $this->ReadPropertyString("Variables");
+            $confData["Variables"]= $this->ReadPropertyString("Datasets");
 
             IPS_SetConfiguration($this->InstanceID, json_encode($confData));
             IPS_ApplyChanges($this->InstanceID);

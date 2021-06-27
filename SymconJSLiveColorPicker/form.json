@@ -121,19 +121,19 @@
 
         {
             "type": "List",
-            "name": "Variables",
+            "name": "Datasets",
             "caption": "Variables",
             "rowCount": 5,
             "add": true,
             "delete": true,
             "sort": {
-                "column": "Color",
+                "column": "Variable_Color",
                 "direction": "ascending"
             },
             "columns": [
                 {
                     "caption": "Color",
-                    "name": "Color",
+                    "name": "Variable_Color",
                     "width": "250px",
                     "add": 0,
                     "edit": {
@@ -142,7 +142,7 @@
                 },
                 {
                     "caption": "Color Temperature",
-                    "name": "ColorTemperature",
+                    "name": "Variable_ColorTemperature",
                     "width": "250px",
                     "add": 0,
                     "edit": {
@@ -151,7 +151,7 @@
                 },
                 {
                     "caption": "Switch Temperature",
-                    "name": "SwitchTemperature",
+                    "name": "Variable_SwitchTemperature",
                     "width": "250px",
                     "add": 0,
                     "edit": {

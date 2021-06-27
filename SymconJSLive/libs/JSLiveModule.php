@@ -264,19 +264,19 @@ class JSLiveModule extends IPSModule
                         if (IPS_VariableExists($var["Variable"])) {
                             $varList[] = $var["Variable"];
                         }
-
-                        if (IPS_VariableExists($var["Color"])) {
-                            $varList[] = $var["Color"];
-                        }
-
-                        if (IPS_VariableExists($var["ColorTemperature"])) {
-                            $varList[] = $var["ColorTemperature"];
-                        }
-
-                        if (IPS_VariableExists($var["Switch Temperature"])) {
-                            $varList[] = $var["Switch Temperature"];
-                        }
                     }
+                }
+
+                if (array_key_exists("Variable_Color", $item) && IPS_VariableExists($item["Variable_Color"])) {
+                    $varList[] = $item["Variable_Color"];
+                }
+
+                if (array_key_exists("Variable_ColorTemperature", $item) && IPS_VariableExists($item["Variable_ColorTemperature"])) {
+                    $varList[] = $item["Variable_ColorTemperature"];
+                }
+
+                if (array_key_exists("Variable_SwitchTemperature", $item) && IPS_VariableExists($item["Variable_SwitchTemperature"])) {
+                    $varList[] = $item["Variable_SwitchTemperature"];
                 }
 
                 if(array_key_exists("Object", $item)){
@@ -301,7 +301,14 @@ class JSLiveModule extends IPSModule
             }
         }
 
-        if($this->ReadPropertyBoolean("Debug")) $this->SendDebug("GetVariableList" , json_encode($varList), 0);
+        if(array_key_exists("Variable", $confData)){
+            if(IPS_VariableExists($confData["Variable"])){
+                $varList[] = $confData["Variable"];
+            }
+        }
+
+        //if($this->ReadPropertyBoolean("Debug"))
+            $this->SendDebug("GetVariableList" , json_encode($varList), 0);
         return $varList;
     }
     protected function UpdateMessageSink(array $newVariables){
