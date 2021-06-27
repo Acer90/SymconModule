@@ -128,6 +128,7 @@
                     "items": [
                         { "type": "Label", "caption": "Font", "width": "100px"},
                         { "type": "NumberSpinner", "name": "valuebox_fontSize", "caption": "Size" },
+                        { "type": "SelectColor", "name": "valuebox_fontColor", "caption": "Color" },
                         { "type": "Select", "name": "valuebox_fontFamily", "caption": "Family",
                             "options": [
                                 { "caption": "-Default-", "value": "" },
