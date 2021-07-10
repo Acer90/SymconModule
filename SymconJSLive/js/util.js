@@ -78,3 +78,26 @@ function KelvinToMired(value){
 function MiredToKelvin(value){
     return Math.floor(1000000 / value);
 }
+
+window.detectLocation = function () {
+    // Jump through some hoops and loops for IPSStudio
+    if (window.location.href.substr(0, 5) === "data:") {
+        let data = decodeURI(window.location.href);
+        let match = data.match(/<base href="(http:|https:)\/\/(.*)\/">/);
+        if (match) {
+            return {
+                'protocol': match[1],
+                'host': match[2]
+            }
+        } else {
+            document.write("Cannot detect protocol/host on IPSStudio Client!");
+            throw 'Cannot detect protocol/host on IPSStudio Client!';
+        }
+    } else {
+        // Use the simple way for WebFront + Symcon Apps
+        return {
+            'protocol': window.location.protocol,
+            'host': window.location.host
+        }
+    }
+}

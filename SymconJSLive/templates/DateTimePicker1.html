@@ -77,7 +77,8 @@
         }
     }
     function connect() {
-       var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
+       let location = window.detectLocation();
+        var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
         ws.onopen = function() {
             // subscribe to some channels
             //ws.send(JSON.stringify({

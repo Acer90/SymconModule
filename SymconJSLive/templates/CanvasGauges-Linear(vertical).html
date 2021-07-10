@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     {VIEWPORT} <!-- Dont Remove this line, it can be disabled at intstance! -->
@@ -34,6 +33,8 @@
                 if (!configuration.title_display) configuration.title_text = false;
                 if (!configuration.plate_unit) configuration.plate_unit = false;
                 if (!configuration.progressbar_display) configuration.progressbar_barWidth = 0;
+
+                alert("H:"+window.innerHeight+"px|W:"+window.innerWidth+"px");
 
                 gauge_config = {
                     renderTo: 'gauge',
@@ -132,6 +133,7 @@
     }
 
     function connect() {
+        let location = window.detectLocation();
         var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
         ws.onopen = function() {
             // subscribe to some channels
