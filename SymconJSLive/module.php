@@ -21,6 +21,8 @@ class SymconJSLive extends WebHookModule {
         $this->RegisterPropertyBoolean("EnableViewport", true);
         $this->RegisterPropertyString("viewport_content", "width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1, user-scalable=no");
 
+        $this->RegisterPropertyBoolean("CreateIPSView", true);
+
         //expert
         $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyBoolean("enableCache", false);
@@ -71,6 +73,7 @@ class SymconJSLive extends WebHookModule {
 
 
             header("HTTP/1.1 200 X");
+            header('Access-Control-Allow-Origin: *');
             //http_response_code(200);
             $path_parts = pathinfo($path);
             $mimeType = $this->GetMimeType($path_parts["extension"]);
@@ -144,6 +147,7 @@ class SymconJSLive extends WebHookModule {
             //$this->SendDebug('WebHook', 'Array Server: ' . print_r($_SERVER, true), 0);
 
             header("HTTP/1.1 200 X");
+            header('Access-Control-Allow-Origin: *');
 
             $sendData = array("cmd" => $Type, "instance" => $queryData["instance"], "queryData" => $queryData);
             $contend = $this->SendDataToChildren(json_encode([
@@ -267,7 +271,9 @@ class SymconJSLive extends WebHookModule {
                 $Html = $jsonData["Html"];
                 $ViewPort = $jsonData["ViewPort"];
 
-                return $this->ReplacePlaceholder($Html,  $IntID, $ViewPort);
+                $output = $this->ReplacePlaceholder($Html,  $IntID, $ViewPort);
+                $ipsview = $this->ReadPropertyBoolean("CreateIPSView");
+                return json_encode(array("output" => $output, "ipsview" => $ipsview));
             case "GetLink":
                 $intId = $jsonData["InstanceID"];
 

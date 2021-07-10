@@ -10,6 +10,7 @@
             ]
         },
         { "type": "NumberSpinner", "name": "RefreshTime", "caption": "Pull Refresh Time", "minimum": 0, "suffix": "sec." },
+        { "type": "CheckBox", "name": "CreateIPSView", "caption": "Enable IPSView Support"},
         {
             "type": "ExpansionPanel",
             "caption": "Viewport Settings",

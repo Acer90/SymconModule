@@ -14,6 +14,7 @@ class SymconJSLiveAdvTextfield extends JSLiveModule{
         $this->RegisterPropertyBoolean("Debug", false);
         $this->RegisterPropertyBoolean("EnableCache", true);
         $this->RegisterPropertyBoolean("CreateOutput", true);
+        $this->RegisterPropertyBoolean("CreateIPSView", true);
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyInteger("DataUpdateRate", 50);
         $this->RegisterPropertyBoolean("EnableViewport", true);

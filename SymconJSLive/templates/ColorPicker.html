@@ -42,10 +42,10 @@
     function LoadPicker(){
 
             var laydata = GenerateLayoutData();
-            var wdh = window.innerHeight - 20;
+            var wdh = window.outerHeight - 20;
 
-            if (wdh > window.innerWidth) {
-                wdh = window.innerWidth - 20;
+            if (wdh > window.outerWidth) {
+                wdh = window.outerWidth - 20;
             }
 
             if (configuration.manWidth > 0) {

@@ -694,6 +694,13 @@
                 { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
                 { "type": "CheckBox", "name": "EnableCache", "caption": "Enable Cache"},
                 { "type": "CheckBox", "name": "CreateOutput", "caption": "Create HTMLBox"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "CheckBox", "name": "CreateOutput", "caption": "Create IPSView HTMLBox"},
+                        { "type": "Label", "caption": "Works only if the Option IPSView in Gateway is enabled!"}
+                    ]
+                },
                 { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script"},
                 { "type": "CheckBox", "name": "EnableViewport", "caption": "Viewport Enable"},
                 { "type": "NumberSpinner", "name": "IFrameHeight", "caption": "IFrame Height", "suffix": "px", "minimum": 0 },

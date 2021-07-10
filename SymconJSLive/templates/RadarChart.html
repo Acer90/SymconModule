@@ -49,7 +49,7 @@
             //autoratio
             ratio = configuration.Ratio;
             if(ratio === 0){
-                ratio = window.innerWidth / window.innerHeight;
+                ratio = window.outerWidth / window.outerHeight;
             }
 
             var config = {
@@ -535,11 +535,11 @@
     function ResizeChart() {
         ratio = configuration.Ratio;
         if(ratio === 0){
-            ratio = window.innerWidth / window.innerHeight;
+            ratio = window.outerWidth / window.outerHeight;
         }
 
-        var size = window.innerHeight;
-        if(size < window.innerHeight) size = window.innerWidth;
+        var size = window.outerHeight;
+        if(size < window.outerHeight) size = window.outerWidth;
 
         //reload
         var ctx = document.getElementById('chart-container');

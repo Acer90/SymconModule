@@ -14,212 +14,214 @@
 <body>
 <canvas id="gauge"></canvas>
 
-<script>
-    let gauge;
+<script type="text/javascript">
+    {
+        let gauge;
 
-    let curValue = 0; //{/VALUE}
-    let config_global = {GLOBAL};
-    let config_ticks = {TICKS};
-    let config_highlights = {HIGHLIGHTS};
-    let configuration = {CONFIG};
+        let curValue = 0; //{/VALUE}
+        let config_global = {GLOBAL};
+        let config_ticks = {TICKS};
+        let config_highlights = {HIGHLIGHTS};
+        let configuration = {CONFIG};
 
-    function LoadGauge(){
-        try {
-            $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
-                document.getElementById("gauge").style.fontFamily = configuration.style_fontFamily;
-
-                if (!configuration.title_display) configuration.title_text = false;
-                if (!configuration.plate_unit) configuration.plate_unit = false;
-                if (!configuration.progressbar_display) configuration.progressbar_barWidth = 0;
-
-                gauge_config = {
-                    renderTo: 'gauge',
-
-                    width: window.innerWidth - 20,
-                    height: window.innerHeight - 20,
-
-                    units: configuration.plate_unit,
-
-                    value: data.Value,
-                    minValue: configuration.min,
-                    maxValue: configuration.max,
-
-                    //title
-                    title: configuration.title_text, //false deaktiviert!
-                    colorTitle: configuration.title_fontColor,
-                    fontTitleSize: configuration.title_fontSize,
-
-                    //plate
-                    colorPlate: configuration.plate_colorPlate,
-                    colorPlateEnd: configuration.plate_colorPlateEnd,
-                    borderShadowWidth: 0,
-                    borderOuterWidth: 0,
-                    borders: false,
-
-                    //needle
-                    needle: configuration.needle_display,//show needle
-                    needleType: configuration.needle_Type, // arrow
-                    needleStart: configuration.needle_start, //in %
-                    needleEnd: configuration.needle_end,//in %
-                    needleWidth: configuration.needle_width, //in Px
-                    colorNeedle: configuration.needle_colorNeedle,
-                    colorNeedleEnd: configuration.needle_colorNeedleEnd,
-                    //needleSide: configuration.linear_needleSide, //“right”, “both” => nur bei linear
-
-                    //valuebox
-                    valueBox: configuration.valuebox_display,
-                    colorValueBoxBackground: configuration.valuebox_colorValueBoxBackground,
-                    colorValueBoxShadow: false,//'rgba(255, 0, 122, 0)'
-
-                    valueBoxBorderRadius: 0,
-                    valueTextShadow: false,
-                    valueBoxStroke: 0,
-                    valueBoxWidth: 10,
-                    valueDec: configuration.precision,
-                    valueInt: 1,
-                    colorValueText: configuration.valuebox_fontColor,
-
-                    //progressbar
-                    colorBar: configuration.progressbar_colorBar,
-                    colorBarProgress: configuration.progressbar_colorBarProgress,
-                    barShadow: configuration.progressbar_barShadow,
-                    barWidth: configuration.progressbar_barWidth,
-                    barBeginCircle: false,
-                    //barStartPosition: 'right',
-
-                    //Ticks
-                    tickSide: configuration.linear_tickSide, //“right”, “both”. => nur bei linear
-                    numberSide: configuration.linear_numberSide, //“right”, “both”. => nur bei linear
-                    startAngle: configuration.radial_startAngle, //=> nur bei Radial
-                    ticksAngle: configuration.radial_ticksAngle,//=> nur bei Radial
-                    colorMajorTicks: configuration.ticks_colorMajorTick,
-                    colorMinorTicks: configuration.ticks_colorMinorTicks,
-                    colorUnits: configuration.ticks_colorUnits,
-                    colorNumbers: configuration.ticks_colorNumbers,
-                    minorTicks: configuration.ticks_minorTicks,
-                    strokeTicks: configuration.ticks_strokeTicks,
-                    highlightsWidth: configuration.ticks_highlightsWidth,
-                    highlights: config_highlights,
-                    majorTicks: config_ticks,
-                    fontNumbersSize: configuration.ticks_fontSize,
-                    exactTicks: configuration.ticks_exactTicks,
-
-                    needleCircleSize: 50,
-                    needleCircleOuter: 10,
-                    colorNeedleCircleOuter: 'rgba(0,0,0,0)',
-                    colorNeedleShadowDown: 'rgba(0,0,0,0)',
-                    needleCircleOuter: true,
-                    needleCircleInner: false,
-                    colorNeedleShadowDown: 'rgba(0,0,0,0)',
-                    colorNeedleCircleOuter: 'rgba(0,0,0,0)',
-                    colorNeedleCircleOuterEnd: 'rgba(0,0,0,0)',
-                    colorNeedleCircleInner: 'rgba(255,255,255,1)',
-                    colorNeedleCircleInnerEnd: 'rgba(255,255,255,1)',
-
-
-                    animationRule: configuration.animation_rule, //'linear', //”, “quad”, “quint”, “cycle”, “bounce”, “elastic”  “dequad”, “dequint”, “decycle”, “debounce”, “delastic”.
-                    animationDuration: configuration.animation_duration
-
-                }
-
-                if(configuration.title_fontFamily !== ""){
-                    gauge_config.fontTitle = configuration.title_fontFamily;
-                }
-
-                if(configuration.ticks_fontFamily !== ""){
-                    gauge_config.fontNumbers = configuration.ticks_fontFamily;
-                }
-
-                if(configuration.valuebox_fontFamily !== ""){
-                    gauge_config.fontValue = configuration.valuebox_fontFamily;
-                }
-
-                gauge = new RadialGauge(gauge_config);
-                gauge.draw();
-            });
-        }catch (e){
-            alert(e);
-        }
-    }
-
-    function connect() {
-        var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
-        ws.onopen = function() {
-            // subscribe to some channels
-            //ws.send(JSON.stringify({
-            //.... some message the I must send when I connect ....
-            //}));
-        };
-
-        ws.onmessage = function(e) {
-            data = JSON.parse(e.data);
-            if(data.Message === 10506) {
-                //refresh webseite
-                setTimeout(function (){
-                    location.reload();
-                },1000);
-            } else if(data.Message === 10603) {
-                UpdateGauge(data.SenderID, data.Data[0]);
-            }
-        };
-
-        ws.onclose = function(e) {
-            console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
-            setTimeout(function() {
-                connect();
-            }, 1000);
-        };
-
-        ws.onerror = function(err) {
-            console.error('Socket encountered error: ', err.message, 'Closing socket');
-            ws.close();
-        };
-    }
-
-    function UpdateGauge(id_val, val){
-        if(typeof gauge === 'undefined') return;
-        isUpdated = false;
-        if(val < configuration.min) val = configuration.min;
-        if(val > configuration.max) val = configuration.max;
-
-        gauge.value = val;
-    }
-
-    async function PullNewData(refreshRate){
-        refreshRate = refreshRate * 1000;
-        while (true){
+        function LoadGauge() {
             try {
                 $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
-                    UpdateGauge(data.Variable, data.Value);
+                    document.getElementById("gauge").style.fontFamily = configuration.style_fontFamily;
+
+                    if (!configuration.title_display) configuration.title_text = false;
+                    if (!configuration.plate_unit) configuration.plate_unit = false;
+                    if (!configuration.progressbar_display) configuration.progressbar_barWidth = 0;
+
+
+                    gauge_config = {
+                        renderTo: 'gauge',
+
+                        width: window.innerWidth-20,
+                        height: window.innerHeight-20,
+
+                        units: configuration.plate_unit,
+
+                        value: data.Value,
+                        minValue: configuration.min,
+                        maxValue: configuration.max,
+
+                        //title
+                        title: configuration.title_text, //false deaktiviert!
+                        colorTitle: configuration.title_fontColor,
+                        fontTitleSize: configuration.title_fontSize,
+
+                        //plate
+                        colorPlate: configuration.plate_colorPlate,
+                        colorPlateEnd: configuration.plate_colorPlateEnd,
+                        borderShadowWidth: 0,
+                        borderOuterWidth: 0,
+                        borders: false,
+
+                        //needle
+                        needle: configuration.needle_display,//show needle
+                        needleType: configuration.needle_Type, // arrow
+                        needleStart: configuration.needle_start, //in %
+                        needleEnd: configuration.needle_end,//in %
+                        needleWidth: configuration.needle_width, //in Px
+                        colorNeedle: configuration.needle_colorNeedle,
+                        colorNeedleEnd: configuration.needle_colorNeedleEnd,
+                        //needleSide: configuration.linear_needleSide, //“right”, “both” => nur bei linear
+
+                        //valuebox
+                        valueBox: configuration.valuebox_display,
+                        colorValueBoxBackground: configuration.valuebox_colorValueBoxBackground,
+                        colorValueBoxShadow: false,//'rgba(255, 0, 122, 0)'
+
+                        valueBoxBorderRadius: 0,
+                        valueTextShadow: false,
+                        valueBoxStroke: 0,
+                        valueBoxWidth: 10,
+                        valueDec: configuration.precision,
+                        valueInt: 1,
+                        colorValueText: configuration.valuebox_fontColor,
+
+                        //progressbar
+                        colorBar: configuration.progressbar_colorBar,
+                        colorBarProgress: configuration.progressbar_colorBarProgress,
+                        barShadow: configuration.progressbar_barShadow,
+                        barWidth: configuration.progressbar_barWidth,
+                        barBeginCircle: false,
+                        //barStartPosition: 'right',
+
+                        //Ticks
+                        tickSide: configuration.linear_tickSide, //“right”, “both”. => nur bei linear
+                        numberSide: configuration.linear_numberSide, //“right”, “both”. => nur bei linear
+                        startAngle: configuration.radial_startAngle, //=> nur bei Radial
+                        ticksAngle: configuration.radial_ticksAngle,//=> nur bei Radial
+                        colorMajorTicks: configuration.ticks_colorMajorTick,
+                        colorMinorTicks: configuration.ticks_colorMinorTicks,
+                        colorUnits: configuration.ticks_colorUnits,
+                        colorNumbers: configuration.ticks_colorNumbers,
+                        minorTicks: configuration.ticks_minorTicks,
+                        strokeTicks: configuration.ticks_strokeTicks,
+                        highlightsWidth: configuration.ticks_highlightsWidth,
+                        highlights: config_highlights,
+                        majorTicks: config_ticks,
+                        fontNumbersSize: configuration.ticks_fontSize,
+                        exactTicks: configuration.ticks_exactTicks,
+
+                        needleCircleSize: 50,
+                        needleCircleOuter: 10,
+                        colorNeedleCircleOuter: 'rgba(0,0,0,0)',
+                        colorNeedleShadowDown: 'rgba(0,0,0,0)',
+                        needleCircleOuter: true,
+                        needleCircleInner: false,
+                        colorNeedleShadowDown: 'rgba(0,0,0,0)',
+                        colorNeedleCircleOuter: 'rgba(0,0,0,0)',
+                        colorNeedleCircleOuterEnd: 'rgba(0,0,0,0)',
+                        colorNeedleCircleInner: 'rgba(255,255,255,1)',
+                        colorNeedleCircleInnerEnd: 'rgba(255,255,255,1)',
+
+
+                        animationRule: configuration.animation_rule, //'linear', //”, “quad”, “quint”, “cycle”, “bounce”, “elastic”  “dequad”, “dequint”, “decycle”, “debounce”, “delastic”.
+                        animationDuration: configuration.animation_duration
+
+                    }
+
+                    if (configuration.title_fontFamily !== "") {
+                        gauge_config.fontTitle = configuration.title_fontFamily;
+                    }
+
+                    if (configuration.ticks_fontFamily !== "") {
+                        gauge_config.fontNumbers = configuration.ticks_fontFamily;
+                    }
+
+                    if (configuration.valuebox_fontFamily !== "") {
+                        gauge_config.fontValue = configuration.valuebox_fontFamily;
+                    }
+
+                    gauge = new RadialGauge(gauge_config);
+                    gauge.draw();
                 });
-
-                //Control Variables
-            }catch (e) {
-                console.log("PullNewData => ", e);
+            } catch (e) {
+                //alert(e);
             }
-            await sleep(refreshRate);
         }
-    }
 
-    window.onload = function() {
-        try {
-            LoadGauge();
-            if (config_global.DataMode === 0) {
-                //pullup Mode local
-                refreshRate = config_global.RefreshTime;
-                PullNewData(refreshRate);
-            } else {
-                connect();
+        function connect() {
+            var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
+            ws.onopen = function () {
+                // subscribe to some channels
+                //ws.send(JSON.stringify({
+                //.... some message the I must send when I connect ....
+                //}));
+            };
+
+            ws.onmessage = function (e) {
+                data = JSON.parse(e.data);
+                if (data.Message === 10506) {
+                    //refresh webseite
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1000);
+                } else if (data.Message === 10603) {
+                    UpdateGauge(data.SenderID, data.Data[0]);
+                }
+            };
+
+            ws.onclose = function (e) {
+                console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+                setTimeout(function () {
+                    connect();
+                }, 1000);
+            };
+
+            ws.onerror = function (err) {
+                console.error('Socket encountered error: ', err.message, 'Closing socket');
+                ws.close();
+            };
+        }
+
+        function UpdateGauge(id_val, val) {
+            if (typeof gauge === 'undefined') return;
+            isUpdated = false;
+            if (val < configuration.min) val = configuration.min;
+            if (val > configuration.max) val = configuration.max;
+
+            gauge.value = val;
+        }
+
+        async function PullNewData(refreshRate) {
+            refreshRate = refreshRate * 1000;
+            while (true) {
+                try {
+                    $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                        UpdateGauge(data.Variable, data.Value);
+                    });
+
+                    //Control Variables
+                } catch (e) {
+                    console.log("PullNewData => ", e);
+                }
+                await sleep(refreshRate);
             }
-        }catch (e) {
-            alert("Gauge Radial | ",e);
         }
+
+        window.onload = function () {
+            try {
+                LoadGauge();
+                if (config_global.DataMode === 0) {
+                    //pullup Mode local
+                    refreshRate = config_global.RefreshTime;
+                    PullNewData(refreshRate);
+                } else {
+                    connect();
+                }
+            } catch (e) {
+                //alert("Gauge Radial | ", e);
+            }
+        }
+
+        document.fonts.ready.then(function () {
+            if (typeof gauge !== 'undefined') gauge.update();
+        });
     }
-
-    document.fonts.ready.then(function () {
-        if(typeof gauge !== 'undefined') gauge.update();
-    });
-
 </script>
 </body>
 </html>
