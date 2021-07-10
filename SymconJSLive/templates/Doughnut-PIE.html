@@ -48,7 +48,7 @@
             //autoratio
             ratio = configuration.Ratio;
             if(ratio === 0){
-                ratio = window.outerWidth / window.outerHeight;
+                ratio = window.innerWidth / window.innerHeight;
             }
 
             var config = {
@@ -144,7 +144,11 @@
     }
 
     function connect() {
-        var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
+       if(location['protocol'] !== "data:"){
+            var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
+        }else{
+            var ws = new WebSocket(location.ancestorOrigins[0].replace(/^http/, 'ws') + "/hook/JSLive/WS/" + {INSTANCE});
+        }
         ws.onopen = function() {
             // subscribe to some channels
             //ws.send(JSON.stringify({
@@ -295,11 +299,11 @@
     function ResizeChart() {
         ratio = configuration.Ratio;
         if(ratio === 0){
-            ratio = window.outerWidth / window.outerHeight;
+            ratio = window.innerWidth / window.innerHeight;
         }
 
-        var size = window.outerHeight;
-        if(size < window.outerHeight) size = window.outerWidth;
+        var size = window.innerHeight;
+        if(size < window.innerHeight) size = window.innerWidth;
 
         //reload
         var ctx = document.getElementById('chart-container');

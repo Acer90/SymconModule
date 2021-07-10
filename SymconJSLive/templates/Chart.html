@@ -54,8 +54,8 @@
 
             //set Window to canvas
             var ctx = document.getElementById('chart-container');
-            ctx.style.width = window.outerWidth - 20+"px";
-            ctx.style.height = window.outerHeight - 20+"px";
+            ctx.style.width = window.innerWidth - 20+"px";
+            ctx.style.height = window.innerHeight - 20+"px";
 
             //modify dataset
             config_dataset.forEach(function (part, index) {
@@ -163,7 +163,11 @@
     }
 
     function connect() {
-        var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
+       if(location['protocol'] !== "data:"){
+            var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
+        }else{
+            var ws = new WebSocket(location.ancestorOrigins[0].replace(/^http/, 'ws') + "/hook/JSLive/WS/" + {INSTANCE});
+        }
         ws.onopen = function() {
             // subscribe to some channels
             //ws.send(JSON.stringify({
@@ -954,8 +958,8 @@
     function ResizeChart() {
         //reload
         var ctx = document.getElementById('chart-container');
-        ctx.style.width = window.outerWidth - 20+"px";
-        ctx.style.height = window.outerHeight - 20+"px";
+        ctx.style.width = window.innerWidth - 20+"px";
+        ctx.style.height = window.innerHeight - 20+"px";
     }
 
 

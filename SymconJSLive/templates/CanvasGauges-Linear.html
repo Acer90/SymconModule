@@ -36,8 +36,8 @@
                 gauge_config = {
                     renderTo: 'gauge',
 
-                    width: window.outerWidth - 20,
-                    height: ((window.outerWidth - 20) / 4),
+                    width: window.innerHeight - 20,
+                    height: ((window.innerHeight - 20) / 4),
 
                     units: configuration.plate_unit,
 
@@ -54,7 +54,7 @@
                     colorPlate: configuration.plate_colorPlate,
                     colorPlateEnd: configuration.plate_colorPlateEnd,
                     borderShadowWidth: 0,
-                    borderOuterWidth: 0,
+                    borderinnerWidth: 0,
                     borders: false,
 
                     //needle
@@ -131,7 +131,12 @@
     }
 
     function connect() {
-        var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
+        if(location['protocol'] !== "data:"){
+            var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
+        }else{
+            var ws = new WebSocket(location.ancestorOrigins[0].replace(/^http/, 'ws') + "/hook/JSLive/WS/" + {INSTANCE});
+        }
+
         ws.onopen = function() {
             // subscribe to some channels
             //ws.send(JSON.stringify({

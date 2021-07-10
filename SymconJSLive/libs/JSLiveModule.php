@@ -359,7 +359,7 @@ class JSLiveModule extends IPSModule
         $gw_id = IPS_GetInstance($this->InstanceID)["ConnectionID"];
         if ($SenderID == $gw_id && $Message == 10503) {
             //$this->SendDebug("MessageSink", "Update Output!",0);
-            //$this->UpdateOutput();
+            $this->UpdateOutput();
             $this->UpdateIframe();
             return;
         }
