@@ -7,19 +7,13 @@
 </head>
 <script src="/hook/JSLive/js/jquery.min.js"></script>
 <script src="/hook/JSLive/js/util.js"></script>
-<script src="/hook/JSLive/js/iro/5.5.0/iro.js"></script>
+<!--<script src="/hook/JSLive/js/iro/5.5.0/iro.js"></script>-->
+
+<script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
+
 
 
 <body style="text-align: center;">
-<svg style="display:none;">
-    <defs>
-        <g id="handle" stroke-width="2" fill="#fff" stroke="#000">
-            <g transform="translate(-2.000000, 0.000000)">
-                <path d="M11.5201888,0.98376551 C13.6952297,0.98376551 15.8701457,1.81608292 17.5295957,3.48022772 C19.1901518,5.14549409 20.0201888,7.32814902 20.0201888,9.51067916 C20.0201888,11.5892784 19.2673214,13.6679882 17.7611695,15.299761 L17.529597,15.541119 L16.751934,16.320985 L16.3895078,16.6844379 L15.7908391,17.2848025 L11.5201888,21.5675509 L6.56546871,16.5987948 L6.06410518,16.096011 C4.16105924,14.1875741 3.18084887,11.8968269 3.09234842,9.65314602 C3.00270091,7.38038455 3.8309449,5.16482966 5.5107793,3.48023034 C7.17023192,1.81608292 9.34514792,0.98376551 11.5201888,0.98376551 Z M11.5,6 C10.5335017,6 9.65850169,6.39175084 9.02512627,7.02512627 C8.39175084,7.65850169 8,8.53350169 8,9.5 C8,10.4664983 8.39175084,11.3414983 9.02512627,11.9748737 C9.65850169,12.6082492 10.5335017,13 11.5,13 C12.4664983,13 13.3414983,12.6082492 13.9748737,11.9748737 C14.6082492,11.3414983 15,10.4664983 15,9.5 C15,8.53350169 14.6082492,7.65850169 13.9748737,7.02512627 C13.3414983,6.39175084 12.4664983,6 11.5,6 Z" id="Combined-Shape"></path>
-            </g>
-        </g>
-    </defs>
-</svg>
 <div id="picker"></div>
 
 <script>
@@ -74,6 +68,8 @@
                 //handleProps: {x: -8, y: -20}
 
             };
+
+            //config = {};
 
             return config;
         try {
@@ -156,7 +152,7 @@
         colorsTemperaturesMode_ids = [];
 
         config_variabels.forEach(function (part, index){
-            if(part.Color.Variable === 0 || part.Temperature.Variable === 0){
+            if(part.Color.Variable === 0 && part.Temperature.Variable === 0){
                 console.log("Überspinge Farbe => keine avriable gesetzt!");
             }else{
                 if(part.Mode.Variable > 0 && part.Mode.Value){
@@ -183,7 +179,6 @@
     }
 
     colorPicker.on('color:change', function(color) {
-
         console.log(Date.now() + " >> ChangeColor (" + color.index + ") => " + color.rgb);
 
         id = config_variabels[color.index].Color.Variable;
@@ -248,7 +243,7 @@
     }
 
     function connect() {
-       let location = window.detectLocation();
+        let location = window.detectLocation();
         var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
         ws.onopen = function() {
             // subscribe to some channels

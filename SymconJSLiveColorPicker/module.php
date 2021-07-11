@@ -108,11 +108,11 @@ class SymconJSLiveColorPicker extends JSLiveModule{
         $var_data = json_decode($this->ReadPropertyString("Datasets"),true);
         $var_ids = array();
         foreach ($var_data as $varItem){
-            if($varItem["Color"] > 0)
-                $var_ids[] = $varItem["Color"];
+            if($varItem["Variable_Color"] > 0)
+                $var_ids[] = $varItem["Variable_Color"];
 
-            if($varItem["ColorTemperature"] > 0)
-                $var_ids[] = $varItem["ColorTemperature"];
+            if($varItem["Variable_ColorTemperature"] > 0)
+                $var_ids[] = $varItem["Variable_ColorTemperature"];
         }
 
         if(!in_array($querydata["var"], $var_ids)){
@@ -122,7 +122,7 @@ class SymconJSLiveColorPicker extends JSLiveModule{
 
         $this->SendDebug("SetData", "Update Variable " . $querydata["var"] ." => " .$querydata["val"], 0 );
         RequestAction($querydata["var"], $querydata["val"]);
-        $this->SendDebug("SetData", "Update Variable => OK", 0 );
+        //$this->SendDebug("SetData", "Update Variable => OK", 0 );
         return "OK";
     }
 
@@ -168,7 +168,7 @@ class SymconJSLiveColorPicker extends JSLiveModule{
                 $s_output["Mode"]["Variable"] = $item["Variable_SwitchTemperature"];
                 $s_output["Mode"]["Value"] = boolval(GetValue($item["Variable_SwitchTemperature"]));
             }else{
-                if(IPS_VariableExists($item["Color"])){
+                if(IPS_VariableExists($item["Variable_Color"])){
                     $s_output["Mode"]["Variable"] = 0;
                     $s_output["Mode"]["Value"] = false;
                 }else{

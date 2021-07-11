@@ -79,6 +79,11 @@ function MiredToKelvin(value){
     return Math.floor(1000000 / value);
 }
 
+/**
+ * This Function is Created bei IPSymcon => PostionTracking Modul (Source: https://github.com/paresy/PositionTracking/blob/master/PositionTracking/map.html)
+ * Thanks to Paresy to create this
+ * @returns {{protocol: *, host: *}|{protocol: string, host: string}}
+ */
 window.detectLocation = function () {
     // Jump through some hoops and loops for IPSStudio
     if (window.location.href.substr(0, 5) === "data:") {
