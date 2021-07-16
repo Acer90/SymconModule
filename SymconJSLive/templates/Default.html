@@ -17,7 +17,8 @@
 <body>
 
 <!-- Start Content Area for HTML-Code -->
-<div id="test"></div>
+<div id="window"></div>
+<div id="data"></div>
 <!-- End Content Area for HTML-Code -->
 
 <script>
@@ -37,8 +38,9 @@
         //USE TRY and CATCH to see Errors on IPSView/Neo
         try {
             //Example
-            document.getElementById('test').innerText = JSON.stringify(datasets);
-            document.getElementById("test").style.fontFamily = configuration.style_fontFamily;
+            document.getElementById('window').innerText = "Resolution: " + window.innerWidth + "x" + window.innerHeight + "px";
+            document.getElementById('data').innerText = JSON.stringify(datasets);
+            document.getElementById("data").style.fontFamily = configuration.style_fontFamily;
 
             //updateValue(datasets[0].O, Date.now()); //<= Besp Update
         }catch (e) {
