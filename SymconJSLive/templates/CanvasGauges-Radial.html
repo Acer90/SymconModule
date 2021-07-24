@@ -23,8 +23,14 @@
     let config_highlights = {HIGHLIGHTS};
     let configuration = {CONFIG};
 
+    let separator_char = "";
+
     function LoadGauge() {
         try {
+            if(configuration.valuebox_separator){
+                separator_char = ".";
+            }
+
             $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
                 document.getElementById("gauge").style.fontFamily = configuration.style_fontFamily;
 
@@ -44,6 +50,7 @@
                     value: data.Value,
                     minValue: configuration.min,
                     maxValue: configuration.max,
+                    valueText: number_format(data.Value, configuration.precision, ',', separator_char),
 
                     //title
                     title: configuration.title_text, //false deaktiviert!
@@ -185,6 +192,9 @@
         if (val > configuration.max) val = configuration.max;
 
         gauge.value = val;
+        gauge.update({
+            valueText: number_format(val, configuration.precision, ',', separator_char)
+        });
     }
 
     async function PullNewData(refreshRate) {

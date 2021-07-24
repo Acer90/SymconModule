@@ -123,6 +123,8 @@
             "caption": "Valuebox",
             "items": [
                 { "type": "CheckBox", "name": "valuebox_display", "caption": "Display"},
+                { "type": "CheckBox", "name": "valuebox_separator", "caption": "Show separators"},
+
                 {
                     "type": "RowLayout",
                     "items": [

@@ -51,6 +51,7 @@ class SymconJSLiveGauge extends JSLiveModule{
 
         //Valuebox
         $this->RegisterPropertyBoolean("valuebox_display", false);
+        $this->RegisterPropertyBoolean("valuebox_separator", false);
         $this->RegisterPropertyInteger("valuebox_fontSize", 14);
         $this->RegisterPropertyInteger("valuebox_fontColor", 0);
         $this->RegisterPropertyInteger("valuebox_colorValueBoxBackground", 0);
