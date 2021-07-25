@@ -161,7 +161,7 @@
             if(data.Message == 10506) {
                 //refresh webseite
                 setTimeout(function (){
-                    location.reload();
+                    window.location.reload(false);
                 },1000);
             } else if(data.Message == 10603) {
                 //check Objects exist
