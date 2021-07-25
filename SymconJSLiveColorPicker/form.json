@@ -28,7 +28,7 @@
             "type": "ExpansionPanel",
             "caption": "Layout",
             "items": [
-                { "type": "Select", "name": "layout_Direction", "caption": "Layout Direction",
+                { "type": "Select", "name": "layout_Direction", "caption": "Direction",
                     "options": [
                         { "caption": "Side by side", "value": "horizontal" },
                         { "caption": "One below the other", "value": "vertical" }
@@ -72,7 +72,7 @@
                             }
                         },
                         {
-                            "caption": "Slider Type",
+                            "caption": "Type",
                             "name": "sliderType",
                             "width": "200px",
                             "add": "hue",
@@ -91,7 +91,7 @@
                             }
                         },
                         {
-                            "caption": "Slider Size",
+                            "caption": "Size",
                             "name": "sliderSize",
                             "width": "auto",
                             "add": 40,
@@ -102,7 +102,7 @@
                             }
                         },
                         {
-                            "caption": "Slider Shape",
+                            "caption": "Shape",
                             "name": "sliderShape",
                             "width": "150px",
                             "add": "",
@@ -127,44 +127,31 @@
             "add": true,
             "delete": true,
             "sort": {
-                "column": "Variable_Color",
+                "column": "Variable",
                 "direction": "ascending"
             },
             "columns": [
                 {
-                    "caption": "Color",
-                    "name": "Variable_Color",
-                    "width": "250px",
+                    "caption": "Variable",
+                    "name": "Variable",
+                    "width": "500px",
                     "add": 0,
                     "edit": {
                         "type": "SelectVariable"
                     }
                 },
                 {
-                    "caption": "Color Temperature",
-                    "name": "Variable_ColorTemperature",
-                    "width": "250px",
-                    "add": 0,
-                    "edit": {
-                        "type": "SelectVariable"
-                    }
-                },
-                {
-                    "caption": "Switch Temperature",
-                    "name": "Variable_SwitchTemperature",
-                    "width": "250px",
-                    "add": 0,
-                    "edit": {
-                        "type": "SelectVariable"
-                    }
-                },
-                {
-                    "caption": "Mired",
-                    "name": "isMired",
+                    "caption": "Mode",
+                    "name": "Mode",
                     "width": "auto",
-                    "add": false,
+                    "add": "color",
                     "edit": {
-                        "type": "CheckBox"
+                        "type": "Select",
+                        "options": [
+                            {"caption": "Color", "value": "color"},
+                            {"caption": "Kelvin", "value": "kelvin"},
+                            {"caption": "Mired", "value": "mired"}
+                        ]
                     }
                 }
             ]

@@ -22,13 +22,10 @@
     let config_layout = {LAYOUT};
     let configuration = {CONFIG};
 
-    let colors_ids = [];
-    let colorsTemperatures_ids = [];
-    let colorsTemperaturesMode_ids = [];
-
     let colorPicker = new iro.ColorPicker("#picker",  LoadPicker());
 
     let last_update = Date.now();
+    let last_changes = [];
     let updateId = [];
     let updateVal = [];
     let running = false;
@@ -144,34 +141,31 @@
 
         return {"output": output, "width_s": width_s, "counter_wheelbox": counter_wheelbox};
     }
+
     function GenerateColorData(){
         var output = [];
 
-        colors_ids = [];
-        colorsTemperatures_ids = [];
-        colorsTemperaturesMode_ids = [];
-
         config_variabels.forEach(function (part, index){
-            if(part.Color.Variable === 0 && part.Temperature.Variable === 0){
-                console.log("Überspinge Farbe => keine avriable gesetzt!");
+            if(part.Variable === 0){
+                console.log(Date.now() + " >> GenerateColorData | Überspinge Farbe => keine Variable gesetzt!");
             }else{
-                if(part.Mode.Variable > 0 && part.Mode.Value){
-                    //temperture Mode
-                    temp = part.Temperature.Value;
-
-                    if(part.Temperature.isMired){
+                switch(part.Mode) {
+                    case "color":
+                        output.push(hexToRgb(part.Value));
+                        break;
+                    case "kelvin":
+                        temp = part.Value;
+                        output.push(colorTemperatureToRGB(temp));
+                        break;
+                    case "mired":
+                        temp = part.Value;
                         temp = MiredToKelvin(temp);
-                    }
-                    output.push(colorTemperatureToRGB(temp));
-                }else{
-                    //color Mode
-                    output.push(hexToRgb(part.Color.Value));
+                        output.push(colorTemperatureToRGB(temp));
+                        break;
+                    default:
+                        console.log(Date.now() + " >> GenerateColorData | Überspinge "+part.Variable+" falscher Modus => " + part.Mode);
+                        break
                 }
-
-                colors_ids.push(part.Color.Variable);
-                colorsTemperatures_ids.push(part.Temperature.Variable);
-                colorsTemperaturesMode_ids.push(part.Mode.Variable);
-
             }
         });
 
@@ -181,22 +175,26 @@
     colorPicker.on('color:change', function(color) {
         console.log(Date.now() + " >> ChangeColor (" + color.index + ") => " + color.rgb);
 
-        id = config_variabels[color.index].Color.Variable;
-        val = hexToInt(color.rgb);
+        id = config_variabels[color.index].Variable;
 
-        val2 = color.kelvin;
-        if(config_variabels[color.index].Temperature.isMired){
-            val2 = KelvinToMired(val2);
+        switch(config_variabels[color.index].Mode) {
+            case "color":
+                val = hexToInt(color.rgb);
+                break;
+            case "kelvin":
+
+                break;
+            case "mired":
+                val = color.kelvin;
+                val = KelvinToMired(val);
+                break;
+            default:
+                console.log(Date.now() + " >> onChange | Überspinge "+part.Variable+" falscher Modus => " + part.Mode);
+                break
         }
 
-        config_variabels[color.index].Color.Value = val;
-        config_variabels[color.index].Temperature.Value = val;
+        config_variabels[color.index].Value = val;
 
-        if(config_variabels[color.index].Mode.Value){
-            id = config_variabels[color.index].Temperature.Variable;
-            val = val2;
-
-        }
 
         if(updateId.includes(id)){
             //updaten
@@ -224,6 +222,8 @@
                     //console.log("UpdateWorker => "+ JSON.stringify(updateVal) + " | " + JSON.stringify(updateId));
 
                     for (i = 0; i < updateVal.length; i++) {
+                        last_changes.push({var: updateId[i], val: updateVal[i], date: new Date()})
+
                         console.log(Date.now() + " >> UpdateWorker | Update " + JSON.stringify(updateVal) + " | " + JSON.stringify(updateId));
                         console.log(Date.now() + " >> UpdateWorker | URL: /hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&var=" +updateId[i]+ "&val="+updateVal[i]);
                         var response = await fetch("/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&var=" +updateId[i]+ "&val="+updateVal[i]);
@@ -257,7 +257,7 @@
             if(data.Message == 10506) {
                 //refresh webseite
                 setTimeout(function (){
-                    location.reload();
+                    window.location.reload(false);
                 },1000);
             } else if(data.Message == 10603) {
                 UpdateColorPicker(data.SenderID, data.Data[0]);
@@ -282,35 +282,45 @@
         now = Date.now();
         if(running ) return;
 
-        if(colors_ids.includes(id_val)){
+        //ignore color update form this Device
+        var itemFound = false;
+        var remDate = new Date();
+        remDate.setSeconds(remDate.getSeconds() - 15);
+        last_changes.forEach(function (itm, index) {
+            if(itemFound) return;
+
+            if(itm.date <= remDate){
+                last_changes.splice(index, 1);
+                return;
+            }
+
+            if(itm.var === id_val){
+                //lösche ältere einträge
+                if(itm.val === val){
+                    itemFound = true
+                    return;
+                }
+
+                //remove Item
+                last_changes.splice(index, 1);
+            }
+        });
+
+        if(itemFound) {
+            return;
+        }
+
+        required = {Variable: id_val};
+        results = [];
+        results = getMatchingKeys(config_variabels, required);
+        if(results.length > 0){
             //änderung farbe
-            index = colors_ids.indexOf(id_val);
+            index = results[0];
 
-            if(config_variabels[index].Color.Value !== val){
-                console.log(Date.now() + " >> UpdateColorPicker (Color)" + index + " => " + val+ " (" + config_variabels[index].Color.Value + ")");
-                config_variabels[index].Color.Value = val;
+            if(config_variabels[index].Value !== val){
+                console.log(Date.now() + " >> UpdateColorPicker (Color)" + index + " => " + val + " (" + config_variabels[index].Value + ")");
+                config_variabels[index].Value = val;
                 isUpdated = true;
-            }
-        }
-
-        if(colorsTemperatures_ids.includes(id_val)){
-            //änderung temperture!!
-            index = colorsTemperatures_ids.indexOf(id_val);
-
-            if(config_variabels[index].Temperature.Value !== val){
-                config_variabels[index].Temperature.Value = val;
-                console.log(Date.now() + " >> UpdateColorPicker (Temp)" + index + " => " + val+ " (" + config_variabels[index].Temperature.Value + ")");
-                isUpdated = true;
-            }
-        }
-
-        if(colorsTemperaturesMode_ids.includes(id_val)){
-            //änderung des Moduses
-            index =  colorsTemperaturesMode_ids.indexOf(id_val);
-
-            if(config_variabels[index].Mode.Value !== val){
-                config_variabels[index].Mode.Value = val;
-                console.log(Date.now() + " >> UpdateColorPicker (Mode)" + index + " => " + val + " (" + config_variabels[index].Mode.Value + ")");
             }
         }
 

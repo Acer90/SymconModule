@@ -267,18 +267,7 @@ class JSLiveModule extends IPSModule
                     }
                 }
 
-                if (array_key_exists("Variable_Color", $item) && IPS_VariableExists($item["Variable_Color"])) {
-                    $varList[] = $item["Variable_Color"];
-                }
-
-                if (array_key_exists("Variable_ColorTemperature", $item) && IPS_VariableExists($item["Variable_ColorTemperature"])) {
-                    $varList[] = $item["Variable_ColorTemperature"];
-                }
-
-                if (array_key_exists("Variable_SwitchTemperature", $item) && IPS_VariableExists($item["Variable_SwitchTemperature"])) {
-                    $varList[] = $item["Variable_SwitchTemperature"];
-                }
-
+                //Custom Modul
                 if(array_key_exists("Object", $item)){
 
                 }

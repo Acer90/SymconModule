@@ -14,7 +14,7 @@ class SymconJSLiveColorPicker extends JSLiveModule{
         $this->RegisterPropertyBoolean("CreateOutput", true);
         $this->RegisterPropertyBoolean("CreateIPSView", true);
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
-        $this->RegisterPropertyInteger("DataUpdateRate", 50);
+        $this->RegisterPropertyInteger("DataUpdateRate", 250);
         $this->RegisterPropertyInteger("manWidth", 0);
         $this->RegisterPropertyBoolean("EnableViewport", true);
         $this->RegisterPropertyInteger("IFrameHeight", 0);
@@ -108,11 +108,8 @@ class SymconJSLiveColorPicker extends JSLiveModule{
         $var_data = json_decode($this->ReadPropertyString("Datasets"),true);
         $var_ids = array();
         foreach ($var_data as $varItem){
-            if($varItem["Variable_Color"] > 0)
-                $var_ids[] = $varItem["Variable_Color"];
-
-            if($varItem["Variable_ColorTemperature"] > 0)
-                $var_ids[] = $varItem["Variable_ColorTemperature"];
+            if($varItem["Variable"] > 0)
+                $var_ids[] = $varItem["Variable"];
         }
 
         if(!in_array($querydata["var"], $var_ids)){
@@ -145,40 +142,15 @@ class SymconJSLiveColorPicker extends JSLiveModule{
 
         //load all variables
         foreach ($variables as $item){
-            $s_output = array();
-            if(IPS_VariableExists($item["Variable_Color"])){
-                $s_output["Color"]["Variable"] = $item["Variable_Color"];
-                $s_output["Color"]["Value"] = GetValue($item["Variable_Color"]);
-            }else{
-                $s_output["Color"]["Variable"] = 0;
-                $s_output["Color"]["Value"] = 0;
-            }
+            if(IPS_VariableExists($item["Variable"])){
+                $s_output = array();
 
-            if(IPS_VariableExists($item["Variable_ColorTemperature"])){
-                $s_output["Temperature"]["Variable"] = $item["Variable_ColorTemperature"];
-                $s_output["Temperature"]["Value"] = GetValue($item["Variable_ColorTemperature"]);
-                $s_output["Temperature"]["isMired"] = $item["isMired"];
-            }else{
-                $s_output["Temperature"]["Variable"] = 0;
-                $s_output["Temperature"]["Value"] = 0;
-                $s_output["Temperature"]["isMired"] = false;
-            }
+                $s_output["Variable"] = $item["Variable"];
+                $s_output["Value"] = GetValue($item["Variable"]);
+                $s_output["Mode"] = $item["Mode"];
 
-            if(IPS_VariableExists($item["Variable_SwitchTemperature"])) {
-                $s_output["Mode"]["Variable"] = $item["Variable_SwitchTemperature"];
-                $s_output["Mode"]["Value"] = boolval(GetValue($item["Variable_SwitchTemperature"]));
-            }else{
-                if(IPS_VariableExists($item["Variable_Color"])){
-                    $s_output["Mode"]["Variable"] = 0;
-                    $s_output["Mode"]["Value"] = false;
-                }else{
-                    $s_output["Mode"]["Variable"] = 0;
-                    $s_output["Mode"]["Value"] = true;
-                }
+                $output[] = $s_output;
             }
-            //$this->SendDebug("Test", "Val => ". $s_output["Mode"]["Value"]. " |ITEM => ". $item["Variable_SwitchTemperature"],0 );
-
-            $output[] = $s_output;
         }
 
         return $output;
