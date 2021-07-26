@@ -40,12 +40,12 @@
                 if (!configuration.plate_unit) configuration.plate_unit = false;
                 if (!configuration.progressbar_display) configuration.progressbar_barWidth = 0;
 
-                //alert("H:"+window.innerHeight+"px|W:"+window.innerWidth+"px");
+                //alert("H:"+Get_WindowHeight()+"px|W:"+Get_WindowWidth()+"px");
 
                 gauge_config = {
                     renderTo: 'gauge',
-                    height: window.innerHeight - 20,
-                    width: ((window.innerHeight - 20) / 4),
+                    height: Get_WindowHeight() - 20,
+                    width: ((Get_WindowHeight() - 20) / 4),
 
                     units: configuration.plate_unit,
 

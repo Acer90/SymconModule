@@ -38,12 +38,12 @@
         try {
             item = document.getElementById("Bar");
             //görße automatisch anpassen
-            item.style.width = (window.innerWidth-40)+"px";
+            item.style.width = (Get_WindowWidth()-40)+"px";
 
             if(configuration.style_fontPosition === "center"){
-                item.style.height = (window.innerHeight-40)+"px";
+                item.style.height = (Get_WindowHeight()-40)+"px";
             }else{
-                item.style.height = (window.innerHeight-60-configuration.style_fontSize)+"px";
+                item.style.height = (Get_WindowHeight()-60-configuration.style_fontSize)+"px";
             }
             console.log("Automatic Size: W: " + item.style.width+"px | H: " + item.style.height+ "px");
 

@@ -33,10 +33,10 @@
     function LoadPicker(){
 
             var laydata = GenerateLayoutData();
-            var wdh = window.innerHeight - 20;
+            var wdh = Get_WindowHeight() - 20;
 
-            if (wdh > window.innerWidth) {
-                wdh = window.innerWidth - 20;
+            if (wdh > Get_WindowWidth()) {
+                wdh = Get_WindowWidth() - 20;
             }
 
             if (configuration.manWidth > 0) {

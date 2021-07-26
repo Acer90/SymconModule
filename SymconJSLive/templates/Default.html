@@ -38,7 +38,7 @@
         //USE TRY and CATCH to see Errors on IPSView/Neo
         try {
             //Example
-            document.getElementById('window').innerText = "Resolution: " + window.innerWidth + "x" + window.innerHeight + "px";
+            document.getElementById('window').innerText = "Resolution: " + Get_WindowWidth() + "x" + Get_WindowHeight() + "px";
             document.getElementById('data').innerText = JSON.stringify(datasets);
             document.getElementById("data").style.fontFamily = configuration.style_fontFamily;
 

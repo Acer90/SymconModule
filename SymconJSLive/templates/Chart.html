@@ -54,8 +54,8 @@
 
             //set Window to canvas
             var ctx = document.getElementById('chart-container');
-            ctx.style.width = window.innerWidth - 20+"px";
-            ctx.style.height = window.innerHeight - 20+"px";
+            ctx.style.width = Get_WindowWidth() - 20+"px";
+            ctx.style.height = Get_WindowHeight() - 20+"px";
 
             //modify dataset
             config_dataset.forEach(function (part, index) {
@@ -979,8 +979,8 @@
     function ResizeChart() {
         //reload
         var ctx = document.getElementById('chart-container');
-        ctx.style.width = window.innerWidth - 20+"px";
-        ctx.style.height = window.innerHeight - 20+"px";
+        ctx.style.width = Get_WindowWidth() - 20+"px";
+        ctx.style.height = Get_WindowHeight() - 20+"px";
     }
 
 

@@ -16,6 +16,8 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyBoolean("EnableViewport", true);
         $this->RegisterPropertyInteger("IFrameHeight", 0);
+        $this->RegisterPropertyInteger("overrideWidth", 0);
+        $this->RegisterPropertyInteger("overrideHeight", 0);
 
         //title
         $this->RegisterPropertyString("title_text", "");

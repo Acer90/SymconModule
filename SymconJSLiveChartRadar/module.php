@@ -18,6 +18,8 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         $this->RegisterPropertyString("customScale", "[]");
         $this->RegisterPropertyBoolean("EnableViewport", true);
         $this->RegisterPropertyInteger("IFrameHeight", 0);
+        $this->RegisterPropertyInteger("overrideWidth", 0);
+        $this->RegisterPropertyInteger("overrideHeight", 0);
         $this->RegisterPropertyInteger("Ratio", 0);
 
         //title

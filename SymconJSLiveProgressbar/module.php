@@ -62,6 +62,8 @@ class SymconJSLiveProgressbar extends JSLiveModule{
         $this->RegisterPropertyInteger("TemplateScriptID", 0);
         $this->RegisterPropertyBoolean("EnableViewport", true);
         $this->RegisterPropertyInteger("IFrameHeight", 0);
+        $this->RegisterPropertyInteger("overrideWidth", 0);
+        $this->RegisterPropertyInteger("overrideHeight", 0);
 
         $this->RegisterPropertyString("override_stroke", "");
         $this->RegisterPropertyString("override_fill", "");

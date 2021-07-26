@@ -174,6 +174,14 @@
                 { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script"},
                 { "type": "CheckBox", "name": "EnableViewport", "caption": "Viewport Enable"},
                 { "type": "NumberSpinner", "name": "IFrameHeight", "caption": "IFrame Height", "suffix": "px", "minimum": 0 },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Override Size"},
+                        { "type": "NumberSpinner", "name": "overrideWidth", "caption": "Width", "suffix": "px", "minimum": 0 },
+                        { "type": "NumberSpinner", "name": "overrideHeight", "caption": "Height", "suffix": "px", "minimum": 0 }
+                    ]
+                },
                 { "type": "NumberSpinner", "name": "DataUpdateRate", "caption": "Data Update Rate", "minimum": 0, "suffix": "ms", "digits": 0 },
                 { "type": "NumberSpinner", "name": "manWidth", "caption": "Manual Width", "suffix": "px" }
 

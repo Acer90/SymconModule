@@ -79,6 +79,18 @@ function MiredToKelvin(value){
     return Math.floor(1000000 / value);
 }
 
+function Get_WindowWidth(){
+    var r_val = window.innerWidth;
+    if(configuration.overrideWidth > 0) r_val = configuration.overrideWidth;
+    return r_val;
+}
+
+function Get_WindowHeight(){
+    var r_val = window.innerHeight;
+    if(configuration.overrideHeight > 0) r_val = configuration.overrideHeight;
+    return r_val;
+}
+
 function number_format(number, decimals, dec_point, thousands_sep) {
     // Strip all characters but numerical ones.
     number = (number + '').replace(/[^0-9+\-Ee.]/g, '');

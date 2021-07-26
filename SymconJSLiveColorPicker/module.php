@@ -18,6 +18,8 @@ class SymconJSLiveColorPicker extends JSLiveModule{
         $this->RegisterPropertyInteger("manWidth", 0);
         $this->RegisterPropertyBoolean("EnableViewport", true);
         $this->RegisterPropertyInteger("IFrameHeight", 0);
+        $this->RegisterPropertyInteger("overrideWidth", 0);
+        $this->RegisterPropertyInteger("overrideHeight", 0);
 
 
         //style
