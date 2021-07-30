@@ -186,14 +186,20 @@
     }
 
     function UpdateGauge(id_val, val) {
+        //only if Gauge Loaded
         if (typeof gauge === 'undefined') return;
         isUpdated = false;
+
+        //Set Max and min for val
+        valText = val;
         if (val < configuration.min) val = configuration.min;
         if (val > configuration.max) val = configuration.max;
 
         gauge.value = val;
+
+        //update text
         gauge.update({
-            valueText: number_format(val, configuration.precision, ',', separator_char)
+            valueText: number_format(valText, configuration.precision, ',', separator_char)
         });
     }
 
