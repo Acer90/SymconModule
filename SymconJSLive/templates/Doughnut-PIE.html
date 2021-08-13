@@ -51,6 +51,17 @@
                 ratio = Get_WindowWidth() / Get_WindowHeight();
             }
 
+            var dl_fontConf = {
+                size: configuration.datalabels_fontSize,
+                family: configuration.datalabels_fontFamily
+            };
+
+            if(configuration.datalabels_fontFamily === ""){
+                dl_fontConf = {
+                    size: configuration.datalabels_fontSize
+                };
+            }
+
             var config = {
                 type: configuration.type,
                 data: config_data,
@@ -84,10 +95,7 @@
 
                             borderRadius: configuration.datalabels_borderRadius,
                             borderWidth: configuration.datalabels_borderWidth,
-                            font: {
-                                size: configuration.datalabels_fontSize,
-                                family: configuration.datalabels_fontFamily
-                            },
+                            font: dl_fontConf,
                             color: configuration.datalabels_fontColor,
                             //clip: true,
                             clamp: true,
@@ -96,10 +104,10 @@
                                 if(str === 0 || str === null || str === "") return "";
 
                                 if(context.dataset.datalabels.showPrefix){
-                                    str = config_data.prefix[context.dataIndex] + str;
+                                    str = context.dataset.datalabels.prefix + str;
                                 }
                                 if(context.dataset.datalabels.showSuffix){
-                                    str = str + config_data.suffix[context.dataIndex];
+                                    str = str + context.dataset.datalabels.suffix;
                                 }
 
                                 return  str;

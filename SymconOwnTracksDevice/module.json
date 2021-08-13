@@ -1,0 +1,11 @@
+{
+  "id": "{F837BFA6-A285-47BB-D9ED-7B5311CA0AA9}",
+  "name": "SymconOwnTracksDevice",
+  "type": 5,
+  "vendor": "Swen Babenschneider",
+  "aliases": ["OwnTracks Device"],
+  "parentRequirements": ["{F44C5A22-901B-EF5B-6F52-36D0816DB3C8}"],
+  "childRequirements": [],
+  "implemented": ["{62113C61-A9A1-2799-AC22-496C1F85AFDB}"],
+  "prefix": "SymconOwnTracksDevice"
+}

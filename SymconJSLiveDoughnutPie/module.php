@@ -324,17 +324,10 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
 
                     $rgbdata = $this->HexToRGB($varitem["BorderColor"]);
                     $singelOutput["borderColor"][] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($varitem["BorderColor_Alpha"], 2, '.', '').")";
-
-
-                    if(IPS_VariableProfileExists($varitem["Profile"])) {
-                        $profilData = IPS_GetVariableProfile($varitem["Profile"]);
-                        $output["prefix"][] = $profilData["Prefix"];
-                        $output["suffix"][] = $profilData["Suffix"];
-                    }
                 }else{
                     if(empty($varitem["Label"])){
                         //Load Variablen Name wenn label leer ist
-                        $output["labels"][] = IPS_GetVariableIDByName($varitem["Variable"]);
+                        $output["labels"][] = IPS_GetObject($varitem["Variable"])["ObjectName"];
                     }else{
                         $output["labels"][] = $varitem["Label"];
                     }
@@ -349,11 +342,6 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
                     $singelOutput["borderColor"][] = "rgba(" . $rgbdata["R"] .", " . $rgbdata["G"] .", " . $rgbdata["B"].", " . number_format($varitem["BorderColor_Alpha"], 2, '.', '').")";
 
                     $singelOutput["borderWidth"][] = $varitem["BorderWidth"];
-                    if(IPS_VariableProfileExists($varitem["Profile"])) {
-                        $profilData = IPS_GetVariableProfile($varitem["Profile"]);
-                        $output["prefix"][] = $profilData["Prefix"];
-                        $output["suffix"][] = $profilData["Suffix"];
-                    }
                     $i++;
                 }
             }
@@ -402,8 +390,14 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
 
                 $datalabels["showPrefix"] = $item["datalabels_showPrefix"];
                 $datalabels["showSuffix"] = $item["datalabels_showSuffix"];
-
                 //"visible": false,
+
+                //Profil definieren
+                if(IPS_VariableProfileExists($item["Profile"])) {
+                    $profilData = IPS_GetVariableProfile($item["Profile"]);
+                    $datalabels["prefix"] = $profilData["Prefix"];
+                    $datalabels["suffix"] = $profilData["Suffix"];
+                }
 
                 $singelOutput["datalabels"] = $datalabels;
             }

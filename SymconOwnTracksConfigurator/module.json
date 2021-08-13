@@ -1,0 +1,11 @@
+{
+  "id": "{8492D2E1-0902-AF8B-8DA8-85460F4ECB0C}",
+  "name": "SymconOwnTracksConfigurator",
+  "type": 5,
+  "vendor": "Swen Babenschneider",
+  "aliases": ["OwnTracks Configurator"],
+  "parentRequirements": ["{C503A878-0DDB-F664-5529-BD8F603D8465}"],
+  "childRequirements": [],
+  "implemented": ["{EEE1C60C-8CEF-A927-C09A-58835A627DA5}"],
+  "prefix": "SymconOwnTracksConfigurator"
+}

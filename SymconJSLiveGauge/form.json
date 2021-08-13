@@ -67,7 +67,40 @@
             "caption": "Plate",
             "items": [
                 { "type": "CheckBox", "name": "plate_display", "caption": "Display"},
-                { "type": "ValidationTextBox", "name": "plate_unit", "caption": "Unit" },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Unit:", "width": "100px" },
+                        { "type": "ValidationTextBox", "name": "plate_unit", "caption": "Unit" },
+                        { "type": "NumberSpinner", "name": "plate_unit_fontSize", "caption": "Size" , "width": "100px", "suffix": "px", "minimum": 0, "stepSize": 1},
+                        { "type": "SelectColor", "name": "plate_unit_fontColor", "caption": "Color" , "width": "150px"},
+                        { "type": "Select", "name": "plate_unit_fontFamily", "caption": "Family", "width": "150px",
+                            "options": [
+                                { "caption": "-Default-", "value": "" },
+                                { "caption": "Amatic SC", "value": "Amatic SC" },
+                                { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                                { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                                { "caption": "Codystar", "value": "Codystar" },
+                                { "caption": "Comfortaa", "value": "Comfortaa" },
+                                { "caption": "Cookie", "value": "Cookie" },
+                                { "caption": "Dancing Script", "value": "Dancing Script" },
+                                { "caption": "Gurajada", "value": "Gurajada" },
+                                { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                                { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                                { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                                { "caption": "Medula One", "value": "Medula One" },
+                                { "caption": "Open Sans", "value": "Open Sans" },
+                                { "caption": "Orbitron", "value": "Orbitron" },
+                                { "caption": "Roboto", "value": "Roboto" },
+                                { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                                { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                                { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                                { "caption": "Space Mono", "value": "Space Mono" },
+                                { "caption": "Syne Mono", "value": "Syne Mono" }
+                            ]
+                        }
+                    ]
+                },
                 {
                     "type": "RowLayout",
                     "items": [
@@ -240,7 +273,6 @@
                 },
                 { "type": "SelectColor", "name": "ticks_colorMajorTick", "caption": "Color Major Tick" },
                 { "type": "SelectColor", "name": "ticks_colorMinorTicks", "caption": "Color Minor Ticks" },
-                { "type": "SelectColor", "name": "ticks_colorUnits", "caption": "color Units" },
                 { "type": "SelectColor", "name": "ticks_colorNumbers", "caption": "color Numbers" },
                 {
                     "type": "List",
@@ -257,7 +289,7 @@
                         {
                             "caption": "Value",
                             "name": "Value",
-                            "width": "150px",
+                            "width": "auto",
                             "add": 0,
                             "edit": {
                                 "type": "NumberSpinner",

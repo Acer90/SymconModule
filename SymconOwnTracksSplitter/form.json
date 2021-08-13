@@ -1,0 +1,15 @@
+{
+    "elements":
+    [
+        { "type": "PasswordTextBox", "name": "Password", "caption": "Passwort" }
+
+    ],
+    "actions":
+    [
+        { "type": "Button", "label": "Load Connect Address", "onClick": " echo SymconOwnTracksSplitter_Test($id);" }
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Status OK!" }
+    ]
+}

@@ -35,6 +35,9 @@ class SymconJSLiveGauge extends JSLiveModule{
         //Plate
         $this->RegisterPropertyBoolean("plate_display", false);
         $this->RegisterPropertyString("plate_unit", "");
+        $this->RegisterPropertyInteger("plate_unit_fontSize", 20);
+        $this->RegisterPropertyInteger("plate_unit_fontColor", 0);
+        $this->RegisterPropertyString("plate_unit_fontFamily", "");
         $this->RegisterPropertyInteger("plate_colorPlate", 16777215);
         $this->RegisterPropertyFloat("plate_colorPlate_Alpha", 1);
         $this->RegisterPropertyInteger("plate_colorPlateEnd", 16777215);
@@ -77,7 +80,6 @@ class SymconJSLiveGauge extends JSLiveModule{
         $this->RegisterPropertyInteger("ticks_minorTicks", 5);
         $this->RegisterPropertyInteger("ticks_colorMajorTick", 0);
         $this->RegisterPropertyInteger("ticks_colorMinorTicks", 0);
-        $this->RegisterPropertyInteger("ticks_colorUnits", 0);
         $this->RegisterPropertyInteger("ticks_colorNumbers", 0);
         $this->RegisterPropertyBoolean("ticks_exactTicks", false);
 

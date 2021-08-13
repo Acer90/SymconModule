@@ -125,8 +125,6 @@ class SymconJSLiveRadarChart extends JSLiveModule{
         $identIdlist[] = IPS_GetObjectIDByIdent("Period", $this->InstanceID);
         $identIdlist[] = IPS_GetObjectIDByIdent("Relativ", $this->InstanceID);
         $this->SetBuffer("IdentIDList", json_encode($identIdlist));
-
-        
     }
     public function RequestAction($Ident, $Value) {
         $this->SetValue($Ident, $Value);
@@ -450,7 +448,8 @@ class SymconJSLiveRadarChart extends JSLiveModule{
 
             if(empty($item["Title"])){
                 //Load Variablen Name wenn label leer ist
-                $singelOutput["label"] = IPS_GetVariableIDByName($item["Variable"]);
+                if(IPS_VariableExists($item["Variable"]))
+                    $singelOutput["label"] = IPS_GetObject($item["Variable"])["ObjectName"];
             }else{
                 $singelOutput["label"] = $item["Title"];
             }

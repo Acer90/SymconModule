@@ -1,0 +1,11 @@
+{
+  "id": "{435AD1C7-B416-2B64-FE5D-4BD0FB3DD385}",
+  "name": "SymconOwnTracksSplitter",
+  "type": 2,
+  "vendor": "Swen Babenschneider",
+  "aliases": [" OwnTracks Splitter"],
+  "parentRequirements": [],
+  "childRequirements": ["{62113C61-A9A1-2799-AC22-496C1F85AFDB}", "{EEE1C60C-8CEF-A927-C09A-58835A627DA5}"],
+  "implemented": ["{F44C5A22-901B-EF5B-6F52-36D0816DB3C8}", "{C503A878-0DDB-F664-5529-BD8F603D8465}"],
+  "prefix": "SymconOwnTracksSplitter"
+}

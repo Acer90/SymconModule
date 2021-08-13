@@ -45,8 +45,6 @@
                     width: Get_WindowWidth()-20,
                     height: Get_WindowHeight()-20,
 
-                    units: configuration.plate_unit,
-
                     value: data.Value,
                     minValue: configuration.min,
                     maxValue: configuration.max,
@@ -63,6 +61,10 @@
                     borderShadowWidth: 0,
                     borderinnerWidth: 0,
                     borders: false,
+                    units: configuration.plate_unit,
+                    colorUnits: configuration.plate_unit_fontColor,
+                    fontUnits: configuration.plate_unit_fontFamily,
+                    fontUnitsSize: configuration.plate_unit_fontSize,
 
                     //needle
                     needle: configuration.needle_display,//show needle
@@ -103,7 +105,6 @@
                     ticksAngle: configuration.radial_ticksAngle,//=> nur bei Radial
                     colorMajorTicks: configuration.ticks_colorMajorTick,
                     colorMinorTicks: configuration.ticks_colorMinorTicks,
-                    colorUnits: configuration.ticks_colorUnits,
                     colorNumbers: configuration.ticks_colorNumbers,
                     minorTicks: configuration.ticks_minorTicks,
                     strokeTicks: configuration.ticks_strokeTicks,

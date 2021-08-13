@@ -329,6 +329,15 @@
                     }
                 },
                 {
+                    "caption": "Profile",
+                    "name": "Profile",
+                    "width": "200px",
+                    "add": "",
+                    "edit": {
+                        "type": "SelectProfile"
+                    }
+                },
+                {
                     "name": "Variables",
                     "caption": "Variables",
                     "width": "150ox",
@@ -371,15 +380,6 @@
                                 "add": 0,
                                 "edit": {
                                     "type": "SelectVariable"
-                                }
-                            },
-                            {
-                                "caption": "Profile",
-                                "name": "Profile",
-                                "width": "120px",
-                                "add": "",
-                                "edit": {
-                                    "type": "SelectProfile"
                                 }
                             },
                             {
@@ -521,7 +521,7 @@
                 {
                     "caption": "Datalabels show Prefix",
                     "name": "datalabels_showPrefix",
-                    "add": false,
+                    "add": true,
                     "visible": false,
                     "edit": {
                         "type": "CheckBox"
@@ -530,7 +530,7 @@
                 {
                     "caption": "Datalabels show Suffix",
                     "name": "datalabels_showSuffix",
-                    "add": false,
+                    "add": true,
                     "visible": false,
                     "edit": {
                         "type": "CheckBox"
