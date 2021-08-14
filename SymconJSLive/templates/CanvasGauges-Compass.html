@@ -23,6 +23,8 @@
     let config_highlights = {HIGHLIGHTS};
     let configuration = {CONFIG};
 
+    let fontLoaded = false;
+
     function LoadGauge(){
         try {
             //fontstyle
@@ -188,6 +190,11 @@
         try {
             LoadGauge();
 
+            if(fontLoaded){
+                //update if font is loaded
+                gauge.update();
+            }
+
             if (config_global.DataMode === 0) {
                 //pullup Mode local
                 refreshRate = config_global.RefreshTime;
@@ -202,7 +209,10 @@
 
     document.fonts.ready.then(function () {
         //if font is load then here Start load guage
-        if(typeof gauge !== 'undefined') gauge.update();
+        if(typeof gauge !== 'undefined'){
+            gauge.update();
+        }
+        fontLoaded = true;
     });
 </script>
 </body>

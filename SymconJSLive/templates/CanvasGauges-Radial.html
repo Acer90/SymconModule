@@ -24,6 +24,7 @@
     let configuration = {CONFIG};
 
     let separator_char = "";
+    let fontLoaded = false;
 
     function LoadGauge() {
         try {
@@ -224,6 +225,12 @@
     window.onload = function () {
         try {
             LoadGauge();
+
+            if(fontLoaded){
+                //update if font is loaded
+                gauge.update();
+            }
+
             if (config_global.DataMode === 0) {
                 //pullup Mode local
                 refreshRate = config_global.RefreshTime;
@@ -237,7 +244,10 @@
     }
 
     document.fonts.ready.then(function () {
-        if (typeof gauge !== 'undefined') gauge.update();
+        if(typeof gauge !== 'undefined'){
+            gauge.update();
+        }
+        fontLoaded = true;
     });
 </script>
 </body>
