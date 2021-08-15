@@ -97,7 +97,7 @@
                             },
                             color: configuration.datalabels_fontColor,
                             clip: true,
-                            clamp: true,
+                            clamp: false,
                             formatter: function(value, context) {
                                 var str = value["y"];
                                 if(str === 0 || str === null || str === "") return "";

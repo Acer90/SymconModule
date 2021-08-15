@@ -388,15 +388,19 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
                     $datalabels["anchor"] = $item["datalabels_anchoring"];
                 }
 
-                $datalabels["showPrefix"] = $item["datalabels_showPrefix"];
-                $datalabels["showSuffix"] = $item["datalabels_showSuffix"];
-                //"visible": false,
-
                 //Profil definieren
                 if(IPS_VariableProfileExists($item["Profile"])) {
                     $profilData = IPS_GetVariableProfile($item["Profile"]);
                     $datalabels["prefix"] = $profilData["Prefix"];
                     $datalabels["suffix"] = $profilData["Suffix"];
+
+                    $datalabels["showPrefix"] = $item["datalabels_showPrefix"];
+                    $datalabels["showSuffix"] = $item["datalabels_showSuffix"];
+                }else{
+                    $datalabels["prefix"] = "";
+                    $datalabels["suffix"] = "";
+                    $datalabels["showPrefix"] = false;
+                    $datalabels["showSuffix"] = false;
                 }
 
                 $singelOutput["datalabels"] = $datalabels;

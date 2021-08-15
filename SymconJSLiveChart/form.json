@@ -758,7 +758,7 @@
     ],
     "actions":
     [
-        { "type": "Button", "label": "Get Link (Remote)", "onClick": " echo SymconJSLiveChart_GetLink($id);" },
+        { "type": "Button", "label": "Get Link", "onClick": " echo SymconJSLiveChart_GetLink($id);" },
         {
             "type": "ExpansionPanel",
             "caption": "Configuration",

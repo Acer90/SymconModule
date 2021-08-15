@@ -477,6 +477,14 @@ class SymconJSLiveChart extends JSLiveModule{
 
         $emptyGrpID = 0;
 
+        //Stack aktivieren
+        $isStacked = false;
+        foreach($datasets as $item) {
+            if ($item["StackGroup"] > 0) {
+                $isStacked = true;
+            }
+        }
+
         foreach($datasets as $item){
             if($this->ReadPropertyBoolean("Debug"))
                 $this->SendDebug("GenerateDataSet", "ITEM " .json_encode($item), 0);
@@ -547,10 +555,8 @@ class SymconJSLiveChart extends JSLiveModule{
             }
 
             //stackerd Chart
-            $isStacked = false;
             if($item["StackGroup"] > 0){
                 $singelOutput["stack"] = $item["Profile"]."-" .$item["StackGroup"];
-                $isStacked = true;
             }else{
                 $singelOutput["stack"] = $emptyGrpID."Stack";
             }
