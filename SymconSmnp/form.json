@@ -86,7 +86,7 @@
     ],
     "actions":
     [
-        { "type": "Button", "label": "Test", "onClick": " echo 'Name: '.IPSSNMP_ReadSNMP($id, '.1.3.6.1.2.1.1.5.0')['.1.3.6.1.2.1.1.5.0'];" },
+        { "type": "Button", "label": "Test", "onClick": " print_r(IPSSNMP_ReadSNMP($id, ['1.3.6.1.2.1.1.5.0']));" },
         { "type": "Button", "label": "Check Speed Port-01", "onClick": "echo 'Speed Port-01: '.IPSSNMP_ReadSNMP($id, '.1.3.6.1.2.1.2.2.1.5.1')['.1.3.6.1.2.1.2.2.1.5.1'];" },
         { "type": "Button", "label": "Sync", "onClick": "echo IPSSNMP_SyncData($id);" },
         { "type": "Label", "label": "GetPorts" },

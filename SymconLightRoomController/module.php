@@ -423,51 +423,41 @@ class LightRoomController extends IPSModule
                 break;
             case "{E5BB36C6-A70B-EB23-3716-9151A09AC8A2}":
                 //zigbee2mqtt
-                $var_color = 0;
-                $var_state = 0;
-                $var_level = 0;
-                $var_temp = 0;
-                foreach(IPS_GetObject($instance)["ChildrenIDs"] as $var_item){
-                    $obj = IPS_GetObject($var_item);
+                $PayloadSet = array();
 
-                    switch($obj["ObjectIdent"]){
+                $strZustand = 'off';
+                if($zustand) $strZustand = 'on';
 
-                        case "Z2M_Brightness":
-                            $var_level = $var_item;
-                            break;
-                        case "Z2M_ColorTemp":
-                            $var_temp = $var_item;
-                            break;
-                        case "Z2M_State":
-                        case "Z2M_Statel1":
-                        case "Z2M_Statel2":
-                        case "Z2M_Statel3":
-                        case "Z2M_Statel4":
-                            $var_state = $var_item;
-                            break;
-                        case "Z2M_Color":
-                            $this->SendDebug("ControlLight", "Ident:".$obj["ObjectIdent"],0);
-                            $var_color = $var_item;
-                            break;
-                    }
+                if($mode == 0){
+                    $PayloadSet['state'] = $strZustand;
+                    $PayloadSet['transition'] = 1;
                 }
-                //$this->SendDebug("ControlLight", "Mode:".$mode,0);
-                //$this->SendDebug("ControlLight", "state:".$var_state."|level:".$var_level."|temp:".$var_temp."|color:".$var_color,0);
-
-                if($mode == 0 && IPS_VariableExists($var_state)) RequestAction($var_state, $zustand);
                 elseif($mode == 1) {
-                    if(IPS_VariableExists($var_level)) RequestAction($var_level, round($helligkeit * 2.55));
-                    //if(IPS_VariableExists($var_state)) RequestAction($var_state, $zustand);
+                    $PayloadSet['state'] = $strZustand;
+                    $PayloadSet['brightness'] = round($helligkeit * 2.54);
+                    $PayloadSet['transition'] = 1;
                 }
                 elseif($mode == 2){
-                    if(IPS_VariableExists($var_level)) RequestAction($var_level, round($helligkeit * 2.55));
-                    if(IPS_VariableExists($var_temp)) RequestAction($var_temp, $temperatur);
-                    //if(IPS_VariableExists($var_state)) RequestAction($var_state, $zustand);
+                    $PayloadSet['state'] = $strZustand;
+                    $PayloadSet['brightness'] = round($helligkeit * 2.54);
+                    $PayloadSet['color_temp'] = $temperatur;
+                    $PayloadSet['transition'] = 1;
                 }
                 elseif($mode == 3){
-                    if(IPS_VariableExists($var_color)) RequestAction($var_color, $farbe);
-                    if(IPS_VariableExists($var_level)) RequestAction($var_level, round($helligkeit * 2.55));
-                    //if(IPS_VariableExists($var_state)) RequestAction($var_state, $zustand);
+                    $PayloadSet['state'] = $strZustand;
+                    $PayloadSet['brightness'] = round($helligkeit * 2.54);
+                    $PayloadSet['transition'] = 1;
+
+                    $rgb = $this->HexToRGB($farbe);
+                    $PayloadSet['color']['r'] = $rgb['r'];
+                    $PayloadSet['color']['g'] = $rgb['g'];
+                    $PayloadSet['color']['b'] = $rgb['b'];
+                }
+
+                //Ausführen wenn array gefüllt ist
+                if(count($PayloadSet) > 0){
+                    $PayloadJSON = json_encode($PayloadSet, JSON_UNESCAPED_SLASHES);
+                    Z2M_Command($instance, 'set', $PayloadJSON);
                 }
                 break;
             default:
@@ -759,6 +749,15 @@ class LightRoomController extends IPSModule
 
         $this->UpdateSceneList();
         $this->GetCurrentScene();
+    }
+
+    protected function HexToRGB($value)
+    {
+        $RGB = [];
+        $RGB['r'] = (($value >> 16) & 0xFF);
+        $RGB['g'] = (($value >> 8) & 0xFF);
+        $RGB['b'] = ($value & 0xFF);
+        return $RGB;
     }
 
 

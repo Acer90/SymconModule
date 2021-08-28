@@ -1,0 +1,44 @@
+{
+  "name": "freedsx/asn1",
+  "description": "An ASN.1 library for PHP.",
+  "homepage": "https://github.com/FreeDSx/ASN1",
+  "keywords": [
+    "ASN.1",
+    "ASN1",
+    "BER",
+    "DER",
+    "X.690"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Chad Sikorra",
+      "email": "Chad.Sikorra@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.1"
+  },
+  "require-dev": {
+    "phpspec/phpspec": "^5.1|^6.1",
+    "phpstan/phpstan": "^0.11.15",
+    "friends-of-phpspec/phpspec-code-coverage": "^4.3"
+  },
+  "suggest": {
+    "ext-gmp": "For big integer support in Integer/Enumerated/OID types and tag numbers."
+  },
+  "autoload": {
+    "psr-4": {"FreeDSx\\Asn1\\": "src/FreeDSx/Asn1"}
+  },
+  "scripts": {
+    "test-coverage": [
+      "phpspec run --no-interaction -c phpspec.cov.yml"
+    ],
+    "test": [
+      "phpspec run --no-interaction"
+    ],
+    "analyse": [
+      "phpstan analyse"
+    ]
+  }
+}

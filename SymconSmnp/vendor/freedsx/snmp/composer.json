@@ -1,0 +1,34 @@
+{
+  "name": "freedsx/snmp",
+  "description": "A Pure PHP SNMP Library",
+  "homepage": "https://github.com/FreeDSx/SNMP",
+  "keywords": [
+    "SNMP"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Chad Sikorra",
+      "email": "Chad.Sikorra@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.1",
+    "freedsx/asn1": "^0.4.0",
+    "freedsx/socket": "^0.3.0"
+  },
+  "require-dev": {
+    "phpspec/phpspec": "^5.0",
+    "friendsofphp/php-cs-fixer": "^2.0.0"
+  },
+  "suggest": {
+    "ext-openssl": "For SNMP privacy encryption support.",
+    "ext-gmp": "Needed for counter64 bigint SNMP values."
+  },
+  "config": {
+    "bin-dir": "bin"
+  },
+  "autoload": {
+    "psr-4": {"FreeDSx\\Snmp\\": "src/FreeDSx/Snmp"}
+  }
+}

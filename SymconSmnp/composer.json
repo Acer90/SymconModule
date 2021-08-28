@@ -1,0 +1,5 @@
+{
+    "require": {
+        "freedsx/snmp": "^0.4.0"
+    }
+}

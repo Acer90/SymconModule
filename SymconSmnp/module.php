@@ -1,7 +1,11 @@
 <?php
     require_once('lib/snmp.php');
+    require(__DIR__ . '/vendor/autoload.php');
+    use FreeDSx\Snmp\SnmpClient;
+    use FreeDSx\Snmp\Exception\SnmpRequestException;
+    use FreeDSx\Snmp\Oid;
 
-    class IPSSNMP extends IPSModule {
+class IPSSNMP extends IPSModule {
         public function __construct(int $InstanceID) {
             parent::__construct($InstanceID);
         }
@@ -112,87 +116,27 @@
             $SNMPEngineID = $this->ReadPropertyInteger("SNMPEngineID");
             $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
             $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
-             
-            $snmp = new ipssnmpclass();
-            $snmp_sdata = array();
-            $snmp->timeout = $SNMPTimeout;
+
+            $snmp = new SnmpClient([
+                'host' =>  $SNMPIPAddress,
+                'version' => (int)$SNMPVersion,
+                'community' => $SNMPCommunity,
+            ]);
 
             if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP","Use SNMPVersion => ".$SNMPVersion, 0);
-
-            switch($SNMPVersion){
-                case "1";
-                    $snmp->version = SNMP_VERSION_1;
-                    $snmp_sdata = ['community' => $SNMPCommunity];
-                    break;
-                case "2";
-                    $snmp->version = SNMP_VERSION_2;
-                    $snmp_sdata = ['community' => $SNMPCommunity];
-                    break;
-                case "2c";
-                    $snmp->version = SNMP_VERSION_2C;
-                    $snmp_sdata = ['community' => $SNMPCommunity];
-                    break;
-                case "2u";
-                    $snmp->version = SNMP_VERSION_2U;
-                    $snmp_sdata = ['community' => $SNMPCommunity];
-                    break;
-                case "3";
-                    $snmp->version = SNMP_VERSION_3;
-                    $snmp_sdata = ['v3_flags'=> SNMP_AUTH_PRIV, 'v3_user'=>$SNMPSecurityName,'v3_auth'=>$SNMPAuthenticationPassword, 'v3_priv'=>$SNMPPrivacyPassword, 'v3_hash'=>$SNMPAuthenticationProtocol, 'v3_crypt_algorithm'=>$SNMPPrivacyProtocol, 'v3_engine_id'=>$SNMPEngineID, 'v3_context_engine_id'=>$SNMPContextEngine, 'v3_context_name'=>$SNMPContextName];
-                    break;
-            }
-            $out = [];
-
+            $out = array();
             if(is_array($oid_array)){
-                if($SNMPVersion == "1"){
-                    if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP","Version 1 supports only single requests!", 0);
-                    foreach($oid_array as $oid){
-                        $r = $snmp->get($SNMPIPAddress, $oid, $snmp_sdata); //Version 1 can´t bulk_get
-                        $out = $out + $r;
-                        if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP",$oid. " => ".json_encode($r), 0);
-                    }
-                }else{
-                    $new_oid_array = array();
+                $oids = @call_user_func_array (array($snmp, "get"), $oid_array);
 
-                    foreach($oid_array as $oid) {
-                        $add_oid = $oid;
-                        if ($add_oid[0] != ".") $add_oid = "." . $add_oid;
-
-                        $oid_split = explode(".", $add_oid);
-                        $last_id = $oid_split[count($oid_split) - 1];
-
-                        if ($last_id == 0) {
-                            $add_oid = substr($add_oid, 0, -2);
-                        } else {
-                            //edit last ID
-                            $c = -2;
-                            While (true) {
-                                $last_char = substr($add_oid, $c);
-
-                                if (strpos($last_char, '.') !== false) {
-                                    #conatins "."
-                                    $add_oid = substr($add_oid, 0, $c) . "." . ($last_id - 1);
-                                    break;
-                                }
-
-                                $c--;
-                            }
-                        }
-
-                        if (!in_array($add_oid, $new_oid_array)) {
-                            $new_oid_array[] = $add_oid;
-                        }
-                    }
-
-                    if(count($new_oid_array)> 0) {
-                        if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP","Bulk-Request => ".json_encode($new_oid_array), 0);
-                        $out = $snmp->bulk_get($SNMPIPAddress, $new_oid_array, $snmp_sdata);
-                        if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP","OUTPUT => ".json_encode($out), 0);
-                    }
+                foreach($oids as $oid) {
+                    $out[$oid->getOid()] = (string)$oid->getValue();
                 }
+
+                if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP", json_encode($out), 0);
             }
             else{
-                $out = $snmp->get($SNMPIPAddress, $oid_array, $snmp_sdata);
+                //$out = $snmp->get($SNMPIPAddress, $oid_array, $snmp_sdata);
+                $out[$oid_array] = @$snmp->getValue($oid_array).PHP_EOL;;
                 if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP",$oid_array. " => ".json_encode($out), 0);
             }
 
@@ -266,36 +210,33 @@
             $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
             $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
 
-            $snmp = new ipssnmpclass();
-            $snmp_sdata = array();
-            $snmp->timeout = $SNMPTimeout;
+            $snmp = new SnmpClient([
+                'host' =>  $SNMPIPAddress,
+                'version' => (int)$SNMPVersion,
+                'community' => $SNMPCommunity,
+            ]);
 
-            if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("WriteSNMPbyOID","Use SNMPVersion => ".$SNMPVersion, 0);
-
-            switch($SNMPVersion){
-                case "1";
-                    $snmp->version = SNMP_VERSION_1;
-                    $snmp_sdata = ['community' => $SNMPCommunity];
-                    break;
-                case "2";
-                    $snmp->version = SNMP_VERSION_2;
-                    $snmp_sdata = ['community' => $SNMPCommunity];
-                    break;
-                case "2c";
-                    $snmp->version = SNMP_VERSION_2C;
-                    $snmp_sdata = ['community' => $SNMPCommunity];
-                    break;
-                case "2u";
-                    $snmp->version = SNMP_VERSION_2U;
-                    $snmp_sdata = ['community' => $SNMPCommunity];
-                    break;
-                case "3";
-                    $snmp->version = SNMP_VERSION_3;
-                    $snmp_sdata = ['v3_flags'=> SNMP_AUTH_PRIV, 'v3_user'=>$SNMPSecurityName,'v3_auth'=>$SNMPAuthenticationPassword, 'v3_priv'=>$SNMPPrivacyPassword, 'v3_hash'=>$SNMPAuthenticationProtocol, 'v3_crypt_algorithm'=>$SNMPPrivacyProtocol, 'v3_engine_id'=>$SNMPEngineID, 'v3_context_engine_id'=>$SNMPContextEngine, 'v3_context_name'=>$SNMPContextName];
-                    break;
+            try {
+                switch($type){
+                    case "BigCounter": $snmp->set(Oid::fromBigCounter($oid, $value));
+                    case "Counter": $snmp->set(Oid::fromCounter($oid, $value));
+                    case "Integer": $snmp->set(Oid::fromInteger($oid, (int)$value));
+                    case "IpAddress": $snmp->set(Oid::fromIpAddress($oid, $value));
+                    case "Oid": $snmp->set(Oid::fromOid($oid, $value));
+                    case "String": $snmp->set(Oid::fromString($oid, $value));
+                    case "Timeticks": $snmp->set(Oid::fromTimeticks($oid, $value));
+                    case "UnsignedInt": $snmp->set(Oid::fromUnsignedInt($oid, $value));
+                    case "Asn1": $snmp->set(Oid::fromAsn1($oid));
+                }
+            } catch (SnmpRequestException $e) {
+                //echo $e->getMessage();
             }
 
-            $snmp->set($SNMPIPAddress, $oid, $value, $type, $snmp_sdata);
+            /*
+            $oid = $snmp->get($value);
+            $oid->get($value)->setValue($value).PHP_EOL;*/
+
+            if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("WriteSNMPbyOID","Use SNMPVersion => ".$SNMPVersion, 0);
             return true;
         }
 
@@ -367,47 +308,7 @@
                 }
             }
 
-            $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
-            $SNMPTimeout = $this->ReadPropertyInteger("SNMPTimeout");
-            $SNMPVersion = $this->ReadPropertyString("SNMPVersion");
-            $SNMPCommunity = $this->ReadPropertyString("SNMPCommunity");
-            $SNMPSecurityName = $this->ReadPropertyString("SNMPSecurityName");
-            $SNMPAuthenticationProtocol = $this->ReadPropertyString("SNMPAuthenticationProtocol");
-            $SNMPAuthenticationPassword = $this->ReadPropertyString("SNMPAuthenticationPassword");
-            $SNMPPrivacyProtocol = $this->ReadPropertyString("SNMPPrivacyProtocol");
-            $SNMPPrivacyPassword = $this->ReadPropertyString("SNMPPrivacyPassword");
-            $SNMPEngineID = $this->ReadPropertyInteger("SNMPEngineID");
-            $SNMPContextName = $this->ReadPropertyString("SNMPContextName");
-            $SNMPContextEngine = $this->ReadPropertyInteger("SNMPContextEngine");
-
-            $snmp = new ipssnmpclass();
-            $snmp_sdata = array();
-            $snmp->timeout = $SNMPTimeout;
-
-            switch ($SNMPVersion) {
-                case "1";
-                    $snmp->version = SNMP_VERSION_1;
-                    $snmp_sdata = ['community' => $SNMPCommunity];
-                    break;
-                case "2";
-                    $snmp->version = SNMP_VERSION_2;
-                    $snmp_sdata = ['community' => $SNMPCommunity];
-                    break;
-                case "2c";
-                    $snmp->version = SNMP_VERSION_2C;
-                    $snmp_sdata = ['community' => $SNMPCommunity];
-                    break;
-                case "2u";
-                    $snmp->version = SNMP_VERSION_2U;
-                    $snmp_sdata = ['community' => $SNMPCommunity];
-                    break;
-                case "3";
-                    $snmp->version = SNMP_VERSION_3;
-                    $snmp_sdata = ['v3_flags'=> SNMP_AUTH_PRIV, 'v3_user'=>$SNMPSecurityName,'v3_auth'=>$SNMPAuthenticationPassword, 'v3_priv'=>$SNMPPrivacyPassword, 'v3_hash'=>$SNMPAuthenticationProtocol, 'v3_crypt_algorithm'=>$SNMPPrivacyProtocol, 'v3_engine_id'=>$SNMPEngineID, 'v3_context_engine_id'=>$SNMPContextEngine, 'v3_context_name'=>$SNMPContextName];
-                    break;
-            }
-
-            $snmp->set($SNMPIPAddress, $oid, $value, $type, $snmp_sdata);
+            $this->WriteSNMPbyOID($oid, $value, $type);
             return true;
         }
 
@@ -445,43 +346,43 @@
 
                     switch ($oid) {
                         case stristr($oid, 'PortStatus100') || stristr($oid, 'PortStatus1000'):
-                            $add_oid = ".1.3.6.1.2.1.2.2.1.7." . $port_id;
+                            $add_oid = "1.3.6.1.2.1.2.2.1.7." . $port_id;
                             if (!in_array($add_oid, $oids)) {
                                 $oids[] = $add_oid;
                                 $i++;
                             }
-                            $add_oid = ".1.3.6.1.2.1.2.2.1.8." . $port_id;
+                            $add_oid = "1.3.6.1.2.1.2.2.1.8." . $port_id;
                             if (!in_array($add_oid, $oids)) {
                                 $oids[] = $add_oid;
                                 $i++;
                             }
-                            $add_oid = ".1.3.6.1.2.1.2.2.1.5." . $port_id;
+                            $add_oid = "1.3.6.1.2.1.2.2.1.5." . $port_id;
                             if (!in_array($add_oid, $oids)) {
                                 $oids[] = $add_oid;
                                 $i++;
                             }
                             break;
                         case stristr($oid, 'PortUtilizationRX') || stristr($oid, 'PortMbitRX'):
-                            $add_oid = ".1.3.6.1.2.1.2.2.1.10." . $port_id;
+                            $add_oid = "1.3.6.1.2.1.2.2.1.10." . $port_id;
                             if (!in_array($add_oid, $oids)) {
                                 $oids[] = $add_oid;
                                 $i++;
                             }
                             break;
                         case stristr($oid, 'PortUtilizationTX') || stristr($oid, 'PortMbitTX'):
-                            $add_oid = ".1.3.6.1.2.1.2.2.1.16." . $port_id;
+                            $add_oid = "1.3.6.1.2.1.2.2.1.16." . $port_id;
                             if (!in_array($add_oid, $oids)) {
                                 $oids[] = $add_oid;
                                 $i++;
                             }
                             break;
                         case stristr($oid, 'PortUtilizationTRX') || stristr($oid, 'PortUtilizationFD-TRX'):
-                            $add_oid = ".1.3.6.1.2.1.2.2.1.10." . $port_id;
+                            $add_oid = "1.3.6.1.2.1.2.2.1.10." . $port_id;
                             if (!in_array($add_oid, $oids)) {
                                 $oids[] = $add_oid;
                                 $i++;
                             }
-                            $add_oid = ".1.3.6.1.2.1.2.2.1.16." . $port_id;
+                            $add_oid = "1.3.6.1.2.1.2.2.1.16." . $port_id;
                             if (!in_array($add_oid, $oids)) {
                                 $oids[] = $add_oid;
                                 $i++;
@@ -500,6 +401,8 @@
             $output = $output + $this->ReadSNMP($oids);
             //print_r($output);
 
+
+
             foreach ($Devices as &$Device) {
                 $oid = $Device["oid"];
                 if (empty($oid)) continue;
@@ -511,7 +414,6 @@
                 if (IPS_VariableExists($instanceID) && !empty($this->GetBuffer($instanceID . "-lastvalue"))) $lastvalue = $this->GetBuffer($instanceID . "-lastvalue"); else $lastvalue = 0;
                 if (IPS_VariableExists($instanceID) && !empty($this->GetBuffer($instanceID . "-lastchange"))) $lastchange = $this->GetBuffer($instanceID . "-lastchange"); else $lastchange = 0;
                 if (isset($Device["speed"])) $speed = $Device["speed"]; else $speed = 100;
-
 
                 if (stristr($oid, '|')) {
 
@@ -541,21 +443,21 @@
 
                     switch($oid){
                         case stristr($oid,'PortStatus100') || stristr($oid,'PortStatus1000'):
-                            $search_oid = ".1.3.6.1.2.1.2.2.1.7." . $port_id;
+                            $search_oid = "1.3.6.1.2.1.2.2.1.7." . $port_id;
                             if(!array_key_exists($search_oid, $output)) continue 2;
                             if($output[$search_oid] == 2){
                                 if($this->GetValue($ident) != -1)$this->SetValue($ident, -1);
                                 $this->SendDebug("SetValue",  $oid." (".$instanceID.") => -1", 0);
                                 continue 2;
                             }
-                            $search_oid = ".1.3.6.1.2.1.2.2.1.8." . $port_id;
+                            $search_oid = "1.3.6.1.2.1.2.2.1.8." . $port_id;
                             if(!array_key_exists($search_oid, $output)) continue 2;
                             if($output[$search_oid] == 2){
                                 if($this->GetValue($ident) != 0)$this->SetValue($ident, 0);
                                 $this->SendDebug("SetValue",  $oid." (".$instanceID.") => 0", 0);
                                 continue 2;
                             }
-                            $search_oid = ".1.3.6.1.2.1.2.2.1.5." . $port_id;
+                            $search_oid = "1.3.6.1.2.1.2.2.1.5." . $port_id;
                             if(!array_key_exists($search_oid, $output)) continue 2;
                             $value = $output[$search_oid] * $this->ReadPropertyInteger("SNMPSpeedModify");
 
@@ -577,7 +479,7 @@
                             $this->SendDebug("SetValue",  $oid." (".$instanceID.") =>".$svalue, 0);
                             break;
                         case stristr($oid,'PortUtilizationRX'):
-                            $search_oid = ".1.3.6.1.2.1.2.2.1.10." . $port_id;
+                            $search_oid = "1.3.6.1.2.1.2.2.1.10." . $port_id;
                             if(!array_key_exists($search_oid, $output)) continue 2;
 
                             if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
@@ -602,7 +504,7 @@
                             $this->SetBuffer($instanceID."-lastchange", time());
                             break;
                         case stristr($oid,'PortUtilizationTX'):
-                            $search_oid = ".1.3.6.1.2.1.2.2.1.16." . $port_id;
+                            $search_oid = "1.3.6.1.2.1.2.2.1.16." . $port_id;
                             if(!array_key_exists($search_oid, $output)) continue 2;
 
                             if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
@@ -626,7 +528,7 @@
                             $this->SetBuffer($instanceID."-lastchange", time());
                             break;
                         case stristr($oid,'PortMbitRX'):
-                            $search_oid = ".1.3.6.1.2.1.2.2.1.10." . $port_id;
+                            $search_oid = "1.3.6.1.2.1.2.2.1.10." . $port_id;
                             if(!array_key_exists($search_oid, $output)) continue 2;
 
                             if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
@@ -651,7 +553,7 @@
                             $this->SetBuffer($instanceID."-lastchange", time());
                             break;
                         case stristr($oid,'PortMbitTX'):
-                            $search_oid = ".1.3.6.1.2.1.2.2.1.16." . $port_id;
+                            $search_oid = "1.3.6.1.2.1.2.2.1.16." . $port_id;
                             if(!array_key_exists($search_oid, $output)) continue 2;
 
                             if(empty($lastchange) || empty($lastvalue) || !is_numeric($lastvalue)){
@@ -676,8 +578,8 @@
                             $this->SetBuffer($instanceID."-lastchange", time());
                             break;
                         case stristr($oid,'PortUtilizationTRX'):
-                            $search_oid1 = ".1.3.6.1.2.1.2.2.1.10." . $port_id;
-                            $search_oid2 = ".1.3.6.1.2.1.2.2.1.16." . $port_id;
+                            $search_oid1 = "1.3.6.1.2.1.2.2.1.10." . $port_id;
+                            $search_oid2 = "1.3.6.1.2.1.2.2.1.16." . $port_id;
                             if(!array_key_exists($search_oid1, $output)) continue 2;
                             if(!array_key_exists($search_oid2, $output)) continue 2;
 
@@ -712,8 +614,8 @@
                             $this->SetBuffer($instanceID."-lastchange", time());
                             break;
                         case stristr($oid,'PortUtilizationFD-TRX'):
-                            $search_oid1 = ".1.3.6.1.2.1.2.2.1.10." . $port_id;
-                            $search_oid2 = ".1.3.6.1.2.1.2.2.1.16." . $port_id;
+                            $search_oid1 = "1.3.6.1.2.1.2.2.1.10." . $port_id;
+                            $search_oid2 = "1.3.6.1.2.1.2.2.1.16." . $port_id;
                             if(!array_key_exists($search_oid1, $output)) continue 2;
                             if(!array_key_exists($search_oid2, $output)) continue 2;
 
@@ -751,7 +653,7 @@
                             continue 2;
                     }
                 } else {
-                    if(substr( $oid, 0, 1 ) != ".") $oid = "." . $oid;
+                    //if(substr( $oid, 0, 1 ) != ".") $oid = $oid;
 
                     if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("SyncData","OID => ".$oid ." TYP OID", 0);
                     if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("SyncData",json_encode($output), 0);
