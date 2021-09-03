@@ -26,9 +26,9 @@ class CounterValue extends AbstractValue
 
     protected const ASN1_CLASS = IntegerType::class;
 
-    public function __construct(int $value)
+    public function __construct($value)
     {
-        $this->value = $value;
+        $this->value = intval($value);
     }
 
     /**
