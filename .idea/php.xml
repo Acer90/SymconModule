@@ -3,6 +3,10 @@
   <component name="PhpIncludePathManager">
     <include_path>
       <path value="F:/phpinclude" />
+      <path value="$PROJECT_DIR$/SymconSmnp/vendor/composer" />
+      <path value="$PROJECT_DIR$/SymconSmnp/vendor/freedsx/socket" />
+      <path value="$PROJECT_DIR$/SymconSmnp/vendor/freedsx/snmp" />
+      <path value="$PROJECT_DIR$/SymconSmnp/vendor/freedsx/asn1" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.0">
