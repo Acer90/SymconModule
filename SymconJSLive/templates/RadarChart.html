@@ -59,6 +59,40 @@
                     datasets: config_dataset
                 },
                 options: {
+                    scales: {
+                        r: {
+                            pointLabels: {
+                                display: configuration.axes_pointLabels_display,
+                                color: configuration.axes_pointLabels_color,
+                                font: {
+                                    size: configuration.axes_pointLabels_fontSize,
+                                    family: configuration.axes_pointLabels_fontFamily
+                                }
+                            },
+                            grid: {
+                                display: configuration.axes_gridLines_display,
+                                color: configuration.axes_gridLines_color,
+                                LineWidth: configuration.axes_gridLines_lineWidth,
+                                //drawTicks: configuration.axes_gridLines_drawTicks
+                            },
+                            angleLines: {
+                                display: configuration.axes_angleLines_display,
+                                color: configuration.axes_angleLines_color,
+                                lineWidth: configuration.axes_angleLines_lineWidth
+                            },
+                            ticks: {
+                                display: configuration.axes_gridLines_drawTicks,
+                                color: configuration.axes_ticks_fontColor,
+                                backdropColor: configuration.axes_ticks_backdropColor,
+                                font: {
+                                    size: configuration.axes_ticks_fontSize,
+                                    family: configuration.axes_ticks_fontFamily
+                                }
+
+                            },
+                            display: configuration.axes_display
+                        }
+                    },
                     animation: {
                         duration: configuration.animation_duration,
                         easing: configuration.animation_easing,
@@ -121,38 +155,6 @@
                                 }
                             }
                         }
-                    },
-                    scale: {
-                        pointLabels: {
-                            display: configuration.axes_pointLabels_display,
-                            color: configuration.axes_pointLabels_color,
-                            font:{
-                                size: configuration.axes_pointLabels_fontSize,
-                                family: configuration.axes_pointLabels_fontFamily
-                            }
-                        },
-                        gridLines: {
-                            display: configuration.axes_gridLines_display,
-                            color: configuration.axes_gridLines_color,
-                            LineWidth: configuration.axes_gridLines_lineWidth,
-                            drawTicks: configuration.axes_gridLines_drawTicks
-                        },
-                        angleLines: {
-                            display: configuration.axes_angleLines_display,
-                            color: configuration.axes_angleLines_color,
-                            lineWidth: configuration.axes_angleLines_lineWidth
-                        },
-                        ticks: {
-                            color: configuration.axes_ticks_fontColor,
-                            backdropColor: configuration.axes_ticks_backdropColor,
-                            font: {
-                                size: configuration.axes_ticks_fontSize,
-                                family: configuration.axes_ticks_fontFamily
-                            }
-
-                        },
-
-                        display: configuration.axes_display
                     },
                     layout: {
                         padding: {
