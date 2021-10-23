@@ -21,6 +21,9 @@
       "year": "Jahr",
       "decade": "Dekade",
 
+      "True": "Aktiviert",
+      "False": "Deaktiviert",
+
       "Mode": "Modus",
       "Corner Radius": "Eckradius",
 
@@ -77,6 +80,7 @@
 
       "Override Point Style":  "Überschreibe Punkt-Stil",
       "Override Point Size": "Überschreibe Punkt-Größe",
+      "Override Begin At Zero": "Überschreibe: von Null beginnen",
 
       "Datalabels Override Anchoring": "Datalabels überschreibe Verankerung",
       "Datalabels Override BackgroundColor": "Datalabels überschreibe Hintergrundfarbe",
@@ -92,6 +96,7 @@
       "Draw Border": "Rand zeichen",
       "Draw Ticks": "Zwischenschritte zeichen",
       "Draw On Chart Area": "Im Diagrammbereich zeichen",
+      "Begin At Zero": "Von Null beginnen",
 
       "Custom Ratio": "Benutzerdefiniertes Verhältnis",
 

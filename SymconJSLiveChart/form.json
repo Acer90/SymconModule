@@ -59,6 +59,7 @@
                 { "type": "CheckBox", "name": "axes_drawBorder", "caption": "Draw Border"},
                 { "type": "CheckBox", "name": "axes_drawTicks", "caption": "Draw Ticks"},
                 { "type": "CheckBox", "name": "axes_drawOnChartArea", "caption": "Draw On Chart Area"},
+                { "type": "CheckBox", "name": "axes_beginAtZero", "caption": "Begin At Zero"},
                 { "type": "Select", "name": "axes_labelText", "caption": "Label",
                     "options": [
                         { "caption": "Profilname", "value": 0 },
@@ -599,12 +600,48 @@
                     }
                 },
                 {
+                    "caption": "Axes Stack",
+                    "name": "AxesStack",
+                    "width": "50px",
+                    "add": false,
+                    "edit": {
+                        "type": "CheckBox"
+                    }
+                },
+                {
+                    "caption": "Axes Stack Weight",
+                    "name": "AxesStackWeight",
+                    "width": "50px",
+                    "visible": false,
+                    "add": 1,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 0,
+                        "minimum": 1
+                    }
+                },
+                {
                     "caption": "Dyn. Scale",
                     "name": "DynScale",
                     "width": "50px",
                     "add": false,
                     "edit": {
                         "type": "CheckBox"
+                    }
+                },
+                {
+                    "caption": "Override Begin At Zero",
+                    "name": "beginAtZero",
+                    "width": "50px",
+                    "visible": false,
+                    "add": -1,
+                    "edit": {
+                        "type": "Select",
+                        "options": [
+                            { "caption": "-Use Default-", "value": -1 },
+                            { "caption": "True", "value": 1 },
+                            { "caption": "False", "value": 0 }
+                        ]
                     }
                 },
                 {

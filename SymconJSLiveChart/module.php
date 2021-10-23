@@ -33,6 +33,7 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->RegisterPropertyBoolean("axes_drawBorder", true);
         $this->RegisterPropertyBoolean("axes_drawTicks", true);
         $this->RegisterPropertyBoolean("axes_drawOnChartArea", false);
+        $this->RegisterPropertyBoolean("axes_beginAtZero", false);
         $this->RegisterPropertyInteger("axes_lineWidth", 1);
         $this->RegisterPropertyInteger("axes_labelText", 2);
         $this->RegisterPropertyInteger("axes_labelfontSize", 12);
@@ -46,7 +47,6 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->RegisterPropertyInteger("point_radius", 0);
         $this->RegisterPropertyInteger("point_hoverRadius", 15);
         $this->RegisterPropertyString("points_Style", "circle");
-
 
         //Legend
         $this->RegisterPropertyBoolean("legend_display", true);
@@ -241,11 +241,9 @@ class SymconJSLiveChart extends JSLiveModule{
         elseif(array_key_exists("loadconfig", $querydata)) {
             $updateData["Config"] = $this->GetConfigurationData();
         }
-        elseif(array_key_exists("var", $querydata)) {
+        elseif(array_key_exists("id", $querydata)) {
             //einzelnen datensatz laden!
-            $variable = $querydata["var"];
-
-            $data = $this->GenerateDataSet($variable);
+            $data = $this->GenerateDataSet($querydata["id"]);
             $updateData["DATASETS"] = $data["datasets"];
             $updateData["AXES"] = $data["charts"];
         }else{
@@ -445,7 +443,7 @@ class SymconJSLiveChart extends JSLiveModule{
         return $output;
 
     }
-    private function GenerateDataSet(int $var = 0, bool $getData = true){
+    private function GenerateDataSet(int $index = -1, bool $getData = true){
         $archiveControlID = IPS_GetInstanceListByModuleID('{43192F0B-135B-4CE7-A0A7-1475603F3060}')[0];
         $output["datasets"] = array();
         $output["charts"] = array();
@@ -455,18 +453,25 @@ class SymconJSLiveChart extends JSLiveModule{
             return "{}";
         }
 
-        if($var > 0){
-            foreach($datasets as $key => $id)
+        //sortieren aufsteigend nach order
+        $arr_order = array_column($datasets, 'Order');
+        array_multisort($arr_order, SORT_ASC , $datasets);
+
+        if($index >= 0){
+            if($index > count($datasets)){
+                $this->SendDebug("GenerateDataSet", "INDEX OVERFLOW!", 0);
+                return "{}";
+            }
+            $new_datasets[$index] = $datasets[$index];
+            $datasets = $new_datasets;
+
+            /*foreach($datasets as $key => $id)
             {
                 if($var != $id["Variable"]){
                     //$this->SendDebug("GenerateDataSet", "ITEM(".$key.") " . $id["Variable"], 0);
                     unset($datasets[$key]);
                 }
-            }
-        }else{
-            //sortieren aufsteigend nach order
-            $arr_order = array_column($datasets, 'Order');
-            array_multisort($arr_order, SORT_ASC , $datasets);
+            }*/
         }
 
         $starData = $this->GetCorrectStartDate();
@@ -485,7 +490,7 @@ class SymconJSLiveChart extends JSLiveModule{
             }
         }
 
-        foreach($datasets as $item){
+        foreach($datasets as $key => $item){
             if($this->ReadPropertyBoolean("Debug"))
                 $this->SendDebug("GenerateDataSet", "ITEM " .json_encode($item), 0);
 
@@ -563,6 +568,10 @@ class SymconJSLiveChart extends JSLiveModule{
 
             //Axis
             $axesname = $item["Profile"];
+            if(array_key_exists("AxesStack", $item) && $item["AxesStack"] == true) {
+                $axesname = $axesname.$key;
+            }
+
             $singelOutput["yAxisID"] = $axesname;
             $digits = 2;
 
@@ -583,7 +592,7 @@ class SymconJSLiveChart extends JSLiveModule{
 
             if(IPS_GetVariable($item["Variable"])["VariableType"] == 0){
                 //nur bei Bool variablen!
-                $singelOutput["steppedLine"] = "before";
+                $singelOutput["stepped"] = true;//"before";
             }
 
             //falls noch nicht vorhanden anlegen
@@ -625,26 +634,61 @@ class SymconJSLiveChart extends JSLiveModule{
                 $axisoutput["ticks"]["font"]["size"] = $this->ReadPropertyInteger("axes_tickfontSize");
                 $axisoutput["ticks"]["font"]["family"] = $this->ReadPropertyString("axes_fontFamily");
 
+                //beginAtZero for axes
+                if(array_key_exists("beginAtZero", $item) && $item["beginAtZero"] >= 0){
+                    if($item["beginAtZero"] == 1)
+                        $axisoutput["beginAtZero"] = true;
+                    else
+                        $axisoutput["beginAtZero"] = false;
+                }else{
+                    $axisoutput["beginAtZero"] = $this->ReadPropertyBoolean("axes_beginAtZero");
+                }
+
+                if(array_key_exists("AxesStack", $item) && $item["AxesStack"] == true) {
+                    $axisoutput["stack"] = "stack";
+                    //$axisoutput["offset"] = true;
+                }
+
+                if(array_key_exists("AxesStackWeight", $item)) {
+                    $axisoutput["stackWeight"] = $item["AxesStackWeight"];
+                }
+
                 if(IPS_VariableProfileExists($item["Profile"])){
                     $profilData = IPS_GetVariableProfile($item["Profile"]);
-                    if(($profilData["MaxValue"] != 0 || $profilData["MinValue"]  != 0) && !$item["DynScale"]){
+                    if(IPS_GetVariable($item["Variable"])["VariableType"] == 0){
+                        //nur bei Bool variablen!
+                        //$axisoutput["type"] = 'category';
+                        $axisoutput["ticks"]["precision"] = 0;
 
-                        //$axisoutput["suggestedMax"] = $profilData["MaxValue"];
-                        //$axisoutput["suggestedMin"] = $profilData["MinValue"];
+                        $str_on = "ON";
+                        $str_off = "OFF";
+                        foreach ($profilData["Associations"] as $p_item) {
+                            if($p_item["Value"]){
+                                $str_on = $p_item["Name"];
+                            }else{
+                                $str_off = $p_item["Name"];
+                            }
+                        }
+                        $axisoutput["labels"] = array(1 => $str_on, 0 => $str_off);
+                        $axisoutput["min"] = 0;
+                        $axisoutput["max"] = 1;
+                    }else{
+                        if(($profilData["MaxValue"] != 0 || $profilData["MinValue"]  != 0) && !$item["DynScale"]){
 
-                        $axisoutput["min"] =  $profilData["MinValue"];
-                        $axisoutput["max"] = $profilData["MaxValue"];
+                            //$axisoutput["suggestedMax"] = $profilData["MaxValue"];
+                            //$axisoutput["suggestedMin"] = $profilData["MinValue"];
+
+                            $axisoutput["min"] =  $profilData["MinValue"];
+                            $axisoutput["max"] = $profilData["MaxValue"];
+                        }
+
+                        if($profilData["StepSize"] > 0){
+                            $axisoutput["ticks"]["stepSize"] = $profilData["StepSize"];
+                        }
                     }
 
                     $axisoutput["Prefix"] = $profilData["Prefix"];
                     $axisoutput["Suffix"] = $profilData["Suffix"];
-
-
-                    if($profilData["StepSize"] > 0){
-                        $axisoutput["ticks"]["stepSize"] = $profilData["StepSize"];
-                    }
-
-                    $digits = $profilData["Digits"];
 
                     $axisoutput["title"]["display"] = $this->ReadPropertyBoolean("axes_showLabel");
                     $l_text = "";
@@ -784,7 +828,7 @@ class SymconJSLiveChart extends JSLiveModule{
                 if($relativ) {
                     $output["realtime"]["duration"] = 3600000;
                     $output["realtime"]["delay"] = 0;
-                    $output["realtime"]["ttl"] = $output["realtime"]["duration"] + 30000;
+                    //$output["realtime"]["ttl"] = $output["realtime"]["duration"]*2;
                 }
                 break;
             case 7:
@@ -796,7 +840,7 @@ class SymconJSLiveChart extends JSLiveModule{
                 if($relativ){
                     $output["realtime"]["duration"] = 60000;
                     $output["realtime"]["delay"] = 0;
-                    $output["realtime"]["ttl"] = $output["realtime"]["duration"]+30000;
+                    //$output["realtime"]["ttl"] = $output["realtime"]["duration"]*2;
                 }
                 break;
 
@@ -884,7 +928,6 @@ class SymconJSLiveChart extends JSLiveModule{
         $i = $highResSteps;
         $oldVal = 0;
 
-
         foreach ($archivData as $item) {
             $i--;
             if($i <= 0){
@@ -915,11 +958,26 @@ class SymconJSLiveChart extends JSLiveModule{
 
             $val = round($val, $precision);
 
+            if(count($output) == 0){
+                //start interpolation
+                //$this->SendDebug("TEST", $val, 0);
+                $timestamp = $date_start + $intval_offset;
+                //$output[] = array("x" => (($date_start-60) * 1000), "y" => 0);
+                //$output[] = array("x" => ($timestamp * 1000), "y" => $val);
+            }
+
             $timestamp = $item["TimeStamp"] + $intval_offset;
             $output[] = array("x" => ($timestamp * 1000), "y" => $val);
         }
 
-        //füllen wenn nicht relativ
+        if(count($output) == 0){
+            //interpolation when Null to last value
+            $val = GetValue($varId);
+            if(is_bool($val)) $val = (int)$val;
+            //$this->SendDebug("TEST", $val, 0);
+            $output[] = array("x" => (($date_start) * 1000), "y" => $val);
+            $output[] = array("x" => (time() * 1000), "y" => $val);
+        }
 
         //sortieren aufsteigend nach timestamp
         $arr_timestamp = array_column($output, 'x');
@@ -939,7 +997,6 @@ class SymconJSLiveChart extends JSLiveModule{
         }*/
         if($this->ReadPropertyBoolean("Debug"))
             $this->SendDebug("GetArchivData", "OUTPUT " .json_encode($output), 0);
-
 
         return $output;
     }

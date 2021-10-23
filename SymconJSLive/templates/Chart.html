@@ -213,6 +213,9 @@
         results = [];
         results = getMatchingKeys(config_dataset, required);
 
+        //Convert boolean to int
+        if(typeof value == "boolean") value = value ? 1 : 0;
+
         //console.log('Result:', results);
         //nur Updaten wenn ID in Chart exestiert
         if(results.length > 0){
@@ -363,8 +366,8 @@
                     //load VariablesData Async
                     var first = true;
                     var counter_var = 0;
-                    configuration.Var_List.forEach(function (Variable) {
-                        $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&var=" + Variable, function (data) {
+                    configuration.Var_List.forEach(function (Variable, index) {
+                        $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&id=" + index, function (data) {
                             //console.log("update Offset: ", data);
                             config_dataset.push(data.DATASETS[0]);
                             Object.assign(config_axes, data.AXES);
