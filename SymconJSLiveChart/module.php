@@ -646,7 +646,7 @@ class SymconJSLiveChart extends JSLiveModule{
 
                 if(array_key_exists("AxesStack", $item) && $item["AxesStack"] == true) {
                     $axisoutput["stack"] = "stack";
-                    //$axisoutput["offset"] = true;
+                    //if($key > 0) $axisoutput["offset"] = true;
                 }
 
                 if(array_key_exists("AxesStackWeight", $item)) {
