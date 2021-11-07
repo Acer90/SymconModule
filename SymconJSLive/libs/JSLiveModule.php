@@ -236,7 +236,8 @@ class JSLiveModule extends IPSModule
     }
     public function LoadConfigurationForm(){
         $formData = array();
-        echo $jsonPath = realpath(__DIR__ . "\\..\\..\\" . get_called_class() . "\\form.json");
+        echo __DIR__ . "\\..\\..\\" . get_called_class() . "\\form.json";
+        $jsonPath = realpath(__DIR__ . "\\..\\..\\" . get_called_class() . "\\form.json");
         if($this->ReadPropertyBoolean("Debug")) $this->SendDebug("GetConfigurationForm", $jsonPath, 0 );
         $formData = json_decode(file_get_contents($jsonPath), true);
 
