@@ -230,6 +230,59 @@ class JSLiveModule extends IPSModule
         return $pData;
     }
 
+    //Dynamic Configuration form
+    public function GetConfigurationForm() {
+        return json_encode($this->LoadConfigurationForm());
+    }
+    public function LoadConfigurationForm(){
+        $formData = array();
+        $jsonPath = realpath(__DIR__ . "\\..\\..\\" . get_called_class() . "\\form.json");
+        if($this->ReadPropertyBoolean("Debug")) $this->SendDebug("GetConfigurationForm", $jsonPath, 0 );
+        $formData = json_decode(file_get_contents($jsonPath), true);
+
+        //Remove Confoniguration for Basic => 0; Advance => 1; Expert => 2
+        //$this->SendDebug("BEFOR", json_encode($formData), 0 );
+
+        $formData["elements"] = $this->RecursiveUpdateForm($formData["elements"]);
+        $formData["actions"] = $this->RecursiveUpdateForm($formData["actions"]);
+
+        //$this->SendDebug("AFTER", json_encode($formData), 0 );
+
+        return $formData;
+    }
+    private function RecursiveUpdateForm($arr){
+        foreach ($arr as $key => $item) {
+            //$this->SendDebug("RecursiveUpdateForm", $key, 0 );
+
+            //items Recusive for Items
+            if(array_key_exists("items", $item))$arr[$key]["items"] = $this->RecursiveUpdateForm($arr[$key]["items"]);
+            if(array_key_exists("options", $item))$arr[$key]["options"] = $this->RecursiveUpdateForm($arr[$key]["options"]);
+            if(array_key_exists("columns", $item)) $arr[$key]["columns"] = $this->RecursiveUpdateForm($arr[$key]["columns"]);
+
+            //list options
+            if(array_key_exists("edit", $item) && is_array($item["edit"]) && array_key_exists("columns", $item["edit"])) $arr[$key]["edit"]["columns"] = $this->RecursiveUpdateForm($arr[$key]["edit"]["columns"]);
+            if(array_key_exists("edit", $item) && is_array($item["edit"]) && array_key_exists("options", $item["edit"])) $arr[$key]["edit"]["options"] = $this->RecursiveUpdateForm($arr[$key]["edit"]["options"]);
+
+            //ignore items without viewlevel element
+            if(!array_key_exists("viewlevel", $item)) continue;
+
+            if($arr[$key]["viewlevel"] > $this->ReadPropertyInteger("ViewLevel")){
+                //löschen wenn viewlevel des elements zu hoch
+                unset($arr[$key]);
+            }else{
+                if($this->ReadPropertyBoolean("Debug") && array_key_exists("caption", $item) && $arr[$key]["viewlevel"] > 0){
+                    switch($arr[$key]["viewlevel"]){
+                        case 0: $arr[$key]["caption"] = $arr[$key]["caption"] . " (Basic)";
+                        case 1: $arr[$key]["caption"] = $arr[$key]["caption"] . " (Advance)";
+                        case 2: $arr[$key]["caption"] = $arr[$key]["caption"] . " (Expert)";
+                    }
+                }
+            }
+        }
+
+        return array_values($arr);
+    }
+
     //Messagesink
     private function UpdateIdentList(){
         $arr_Idents = array("Period", "Offset", "Now", "StartDate", "Relativ");

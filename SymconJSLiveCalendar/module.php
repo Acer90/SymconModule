@@ -10,6 +10,7 @@ class SymconJSLiveCalendar extends JSLiveModule{
 
         //Expert
         $this->RegisterPropertyBoolean("Debug", false);
+        $this->RegisterPropertyInteger("ViewLevel", 0);
         $this->RegisterPropertyBoolean("EnableCache", true);
         $this->RegisterPropertyBoolean("CreateOutput", true);
         $this->RegisterPropertyBoolean("CreateIPSView", true);
@@ -19,6 +20,8 @@ class SymconJSLiveCalendar extends JSLiveModule{
         $this->RegisterPropertyInteger("overrideWidth", 0);
         $this->RegisterPropertyInteger("overrideHeight", 0);
 
+        $this->RegisterPropertyString("initialView", "dayGridMonth");
+        $this->RegisterPropertyString("dataEvents", "[]");
     }
     public function ApplyChanges() {
         //Never delete this line!
@@ -26,6 +29,28 @@ class SymconJSLiveCalendar extends JSLiveModule{
 
         $this->RegisterVariableString("Content", $this->Translate("Content"), "", 0);
         
+    }
+
+    public function GetConfigurationForm() {
+        $ical_instances = IPS_GetInstanceListByModuleID("{5127CDDC-2859-4223-A870-4D26AC83622C}");
+        if(count($ical_instances) === 0) return '{ "actions": [ { "type": "Label", "label": "'.$this->Translate("No ModulInstances iCal Calendar Reader found!").'" } ] }';
+
+        //update Items for InstanceSelectList!
+        $formData = $this->LoadConfigurationForm();
+        $key = array_search("dataEvents", array_column($formData["elements"], 'name'));
+
+        $colData = $formData["elements"][$key]["columns"];
+        $colkey = array_search("moduleInstance", array_column($colData, 'name'));
+
+        $options_arr = array();
+        foreach ($ical_instances as $instanceID){
+            $options_arr[] = array("value" => $instanceID, "caption" => $instanceID. " => " . IPS_GetObject($instanceID)["ObjectName"]);
+        }
+
+        $formData["elements"][$key]["columns"][$colkey]["add"] = $options_arr[0]["value"];
+        $formData["elements"][$key]["columns"][$colkey]["edit"]["options"] = $options_arr;
+
+        return json_encode($formData);
     }
 
     public function ReceiveData($JSONString) {
@@ -73,23 +98,6 @@ class SymconJSLiveCalendar extends JSLiveModule{
 
         return $scriptData;
     }
-    private function GetData(array $querydata){
-        $output = array();
-        $output["Variable"] = IPS_GetObjectIDByIdent("Content", $this->InstanceID);
-        $output["Value"] = $this->GetValue("Content");
-        return json_encode($output);
-    }
-    private function SetData(array $querydata){
-        if(!array_key_exists("val", $querydata)){
-            $this->SendDebug('SetData', "NO VALUE SET!", 0);
-            return "NO VALUE SET!";
-        }
-
-        $val = urldecode($querydata["val"]);
-        $this->SendDebug("SetData", "Update Content => " . $val, 0 );
-        $this->SetValue("Content", $val);
-        return "OK";
-    }
     private function GetFeed(array $querydata){
         $output = array();
         if(!array_key_exists("id", $querydata)) return json_encode($output);
@@ -129,12 +137,38 @@ class SymconJSLiveCalendar extends JSLiveModule{
         return json_encode($output);
     }
 
+    private function GetDataEvents(){
+        $output = array();
+        $data = json_decode($this->ReadPropertyString("dataEvents"), true);
+
+        foreach($data as $item){
+            $s_output = array();
+            $s_output["Name"] = $item["Name"];
+            $s_output["Type"] = $item["Type"];
+
+            if($item["Color"] >= 0) {
+                $rgbdata = $this->HexToRGB($item["Color"]);
+                $s_output["color"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($item["Color_Alpha"], 2, '.', '') . ")";
+            }
+
+            if($item["textColor"] >= 0) {
+                $rgbdata = $this->HexToRGB($item["textColor"]);
+                $s_output["textColor"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
+            }
+
+            $s_output["extraParams"] = array("Instance" => $this->InstanceID, "id" => $item["moduleInstance"]);
+
+            $output[] = $s_output;
+        }
+
+        return $output;
+    }
     private function ReplacePlaceholder(string $htmlData){
         //configuration Data
         $htmlData = str_replace("{CONFIG}", $this->json_encode_advanced($this->GetConfigurationData()), $htmlData);
 
-        //Value
-        $htmlData = str_replace("{VALUE}", "'".addslashes($this->GetValue("Content"))."'", $htmlData);
+        //DATAEVENTS
+        $htmlData = str_replace("{DATAEVENTS}",  $this->json_encode_advanced($this->GetDataEvents()), $htmlData);
 
         //Load Fonts
         //$arr = array($this->ReadPropertyString("style_fontFamily"));
@@ -162,7 +196,8 @@ class SymconJSLiveCalendar extends JSLiveModule{
             }
         }
 
-        $output["Variable"] = IPS_GetObjectIDByIdent("Content", $this->InstanceID);
+        //remove Dataset
+        unset($output["dataEvents"]);
 
         return $output;
     }

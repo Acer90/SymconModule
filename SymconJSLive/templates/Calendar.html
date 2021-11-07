@@ -11,7 +11,7 @@
 <script src='/hook/JSLive/js/fullcalendar/main.js'></script>
 <script>
     var config_global = {GLOBAL};
-    var value = {VALUE};
+    var config_dataEvents = {DATAEVENTS};
     var configuration = {CONFIG};
 
     running = false;
@@ -21,58 +21,26 @@
         try {
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
+                initialView: configuration.initialView,
                 height: (Get_WindowHeight()-20),
-                
-                eventSources: [ // siehe https://fullcalendar.io/docs/eventSources
-                    {
-                        url: 'JSLive/getFeed',
-                        extraParams: {
-                            Instance: 33873,
-                            pw: "DbKgOquv",
-                            id: 53624
-                        },
-                        color: 'green',
-                        textColor: 'black',
 
-                        failure: function () {
-                            $('#script-warning').show();
-                        }
-                    },
-                    {
-                        url: 'JSLive/getFeed',
-                        extraParams: {
-                            Instance: 33873,
-                            pw: "DbKgOquv",
-                            id: 26692
-                        },
-                        color: 'orange',
-                        textColor: 'black',
-
-                        failure: function () {
-                            $('#script-warning').show();
-                        }
-                    },
-                    {
-                        url: 'JSLive/getFeed',
-                        extraParams: {
-                            Instance: 33873,
-                            pw: "DbKgOquv",
-                            id: 18032
-                        },
-                        color: 'red',
-                        textColor: 'white',
-
-                        failure: function () {
-                            $('#script-warning').show();
-                        }
-                    }
-                ]
+                eventSources: CreateEventSource()
             });
             calendar.render();
         }catch (e) {
             alert(e);
         }
+    }
+    function CreateEventSource(){
+        config_dataEvents.forEach((element, index) => {
+            config_dataEvents[index]["url"] = 'JSLive/getFeed';
+            config_dataEvents[index]["extraParams"]["pw"] = config_global.Password;
+            config_dataEvents[index]["failure"] = function () {
+                $('#script-warning').show();
+            }
+        });
+
+        return config_dataEvents;
     }
 
     function updateValue(e) {

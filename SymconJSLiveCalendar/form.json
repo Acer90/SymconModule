@@ -1,9 +1,104 @@
 {
     "elements":
     [
+        { "type": "Select", "name": "initialView", "caption": "initial View", "width": "150px",
+            "options": [
+                { "caption": "dayGridMonth", "value": "dayGridMonth" },
+                { "caption": "timeGridDay", "value": "timeGridDay" },
+                { "caption": "timeGridWeek", "value": "timeGridWeek" },
+                { "caption": "listDay", "value": "listDay" },
+                { "caption": "listWeek", "value": "listWeek" },
+                { "caption": "listMonth", "value": "listMonth" },
+                { "caption": "listYear", "value": "listYear" },
+                { "caption": "dayGridDay", "value": "dayGridDay" },
+                { "caption": "dayGridWeek", "value": "dayGridWeek" }
+            ]
+        },
+        {
+            "type": "List",
+            "name": "dataEvents",
+            "caption": "DataEvents",
+            "rowCount": 3,
+            "add": true,
+            "delete": true,
+            "edit": true,
+            "columns": [
+                {
+                    "caption": "Name",
+                    "name": "Name",
+                    "width": "150px",
+                    "add": "",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                },
+                {
+                    "caption": "Type",
+                    "name": "Type",
+                    "width": "100px",
+                    "add": "module",
+                    "edit": {
+                        "type": "Select",
+                        "options": [
+                            {
+                                "caption": "ICAL Modul",
+                                "value": "module"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "caption": "ICal Modul Instance",
+                    "name": "moduleInstance",
+                    "width": "400px",
+                    "add": 0,
+                    "edit": {
+                        "type": "Select",
+                        "options": [
+                            {
+                                "caption": "NoModuleFound",
+                                "value": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "caption": "Color",
+                    "name": "Color",
+                    "width": "100px",
+                    "add": 0,
+                    "edit": {
+                        "type": "SelectColor"
+                    }
+                },
+                {
+                    "caption": "Color Alpha",
+                    "name": "Color_Alpha",
+                    "width": "50px",
+                    "visible": false,
+                    "add": 1.0,
+                    "edit": {
+                        "type": "HorizontalSlider",
+                        "stepSize": 0.05,
+                        "maximum": 1,
+                        "minimum": 0
+                    }
+                },
+                {
+                    "caption": "Text Color",
+                    "name": "textColor",
+                    "width": "100px",
+                    "add": 0,
+                    "edit": {
+                        "type": "SelectColor"
+                    }
+                }
+            ]
+        },
         {
             "type": "ExpansionPanel",
             "caption": "Expert",
+            "viewlevel": 2,
             "items": [
                 { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
                 { "type": "CheckBox", "name": "EnableCache", "caption": "Enable Cache"},
@@ -26,6 +121,13 @@
                         { "type": "NumberSpinner", "name": "overrideHeight", "caption": "Height", "suffix": "px", "minimum": 0 }
                     ]
                 }
+            ]
+        },
+        { "type": "Select", "name": "ViewLevel", "caption": "View Level",
+            "options": [
+                { "caption": "Basic", "value": 0 },
+                { "caption": "Advance", "value": 1 },
+                { "caption": "Expert", "value": 2 }
             ]
         }
     ],

@@ -791,6 +791,13 @@
                     ]
                 }
             ]
+        },
+        { "type": "Select", "name": "ViewLevel", "caption": "View Level",
+            "options": [
+                { "caption": "Basic", "value": 0 },
+                { "caption": "Advance", "value": 1 },
+                { "caption": "Expert", "value": 2 }
+            ]
         }
     ],
     "actions":
