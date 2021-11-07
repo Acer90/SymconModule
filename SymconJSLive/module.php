@@ -134,7 +134,8 @@ class SymconJSLive extends WebHookModule {
                 if (key_exists("pw", $queryData)) {
                     $password = $queryData["pw"];
                 }
-                if($this->ReadPropertyString("Password") != $password){
+                //Keinpassword bei CSS Abfrage!
+                if($this->ReadPropertyString("Password") != $password && strtolower($Type) != "getcss"){
                     $this->SendDebug("WebHook", "WRONG PASSWORD!", 0);
                     echo "";
                     return;
@@ -177,7 +178,6 @@ class SymconJSLive extends WebHookModule {
             }else{
                 header("Content-Type: text/html");
             }
-
 
             $lastmodified = gmdate("D, d M Y H:i:s", time())." GMT";
             $useCache = false;
@@ -222,7 +222,7 @@ class SymconJSLive extends WebHookModule {
                 header('Content-type: '. $arr_data["Type"]);
                 $contend = base64_decode($arr_data["Contend"]);
                 $useCache = true;
-            }elseif (strtolower($Type) == "getCSS"){
+            }elseif (strtolower($Type) == "getcss"){
                 $arr_data = array();
 
                 foreach ($contend as $s_contend){
@@ -232,6 +232,8 @@ class SymconJSLive extends WebHookModule {
                         break;
                     }
                 }
+
+
 
                 if(count($arr_data) == 0){
                     $this->SendDebug("WebHook", "Instance Not in List!", 0);

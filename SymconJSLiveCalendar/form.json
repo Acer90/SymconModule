@@ -15,6 +15,46 @@
             ]
         },
         {
+            "type": "ExpansionPanel",
+            "caption": "Buttons",
+            "items": [
+                { "type": "CheckBox", "name": "buttons_display", "caption": "Display"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Font:", "width": "100px" },
+                        { "type": "NumberSpinner", "name": "buttons_fontSize", "caption": "Size", "width": "100px", "suffix": "em", "minimum": 0, "digits": 2},
+                        { "type": "SelectColor", "name": "buttons_fontColor", "caption": "Color", "width": "150px"},
+                        { "type": "Select", "name": "buttons_fontFamily", "caption": "Family", "width": "150px",
+                            "options": [
+                                { "caption": "-Default-", "value": "" },
+                                { "caption": "Amatic SC", "value": "Amatic SC" },
+                                { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                                { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                                { "caption": "Codystar", "value": "Codystar" },
+                                { "caption": "Comfortaa", "value": "Comfortaa" },
+                                { "caption": "Cookie", "value": "Cookie" },
+                                { "caption": "Dancing Script", "value": "Dancing Script" },
+                                { "caption": "Gurajada", "value": "Gurajada" },
+                                { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                                { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                                { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                                { "caption": "Medula One", "value": "Medula One" },
+                                { "caption": "Open Sans", "value": "Open Sans" },
+                                { "caption": "Orbitron", "value": "Orbitron" },
+                                { "caption": "Roboto", "value": "Roboto" },
+                                { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                                { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                                { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                                { "caption": "Space Mono", "value": "Space Mono" },
+                                { "caption": "Syne Mono", "value": "Syne Mono" }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "type": "List",
             "name": "dataEvents",
             "caption": "DataEvents",
@@ -119,6 +159,15 @@
                         { "type": "Label", "caption": "Override Size"},
                         { "type": "NumberSpinner", "name": "overrideWidth", "caption": "Width", "suffix": "px", "minimum": 0 },
                         { "type": "NumberSpinner", "name": "overrideHeight", "caption": "Height", "suffix": "px", "minimum": 0 }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Custom-CSS"},
+                        { "type": "SelectFile", "name": "CustomCSS", "caption": "File"},
+                        { "type": "Button", "label": "Show", "onClick": " echo SymconJSLiveCalendar_GetCSSLink($id);"},
+                        { "type": "Button", "label": "Show Default", "onClick": " echo SymconJSLiveCalendar_GetDefaultCSSLink($id);"}
                     ]
                 }
             ]

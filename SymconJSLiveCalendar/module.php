@@ -19,6 +19,13 @@ class SymconJSLiveCalendar extends JSLiveModule{
         $this->RegisterPropertyInteger("IFrameHeight", 0);
         $this->RegisterPropertyInteger("overrideWidth", 0);
         $this->RegisterPropertyInteger("overrideHeight", 0);
+        $this->RegisterPropertyString("CustomCSS", "");
+
+        //buttons
+        $this->RegisterPropertyBoolean("buttons_display", True);
+        $this->RegisterPropertyFloat("buttons_fontSize", 1.0);
+        $this->RegisterPropertyInteger("buttons_fontColor", 16777215);
+        $this->RegisterPropertyString("buttons_fontFamily", "");
 
         $this->RegisterPropertyString("initialView", "dayGridMonth");
         $this->RegisterPropertyString("dataEvents", "[]");
@@ -26,6 +33,8 @@ class SymconJSLiveCalendar extends JSLiveModule{
     public function ApplyChanges() {
         //Never delete this line!
         parent::ApplyChanges();
+
+        $this->SetBuffer("OutputCSS", "");
 
         $this->RegisterVariableString("Content", $this->Translate("Content"), "", 0);
         
@@ -37,7 +46,13 @@ class SymconJSLiveCalendar extends JSLiveModule{
 
         //update Items for InstanceSelectList!
         $formData = $this->LoadConfigurationForm();
-        $key = array_search("dataEvents", array_column($formData["elements"], 'name'));
+        $key = 0;
+        foreach ($formData["elements"] as $keyNr => $element) {
+            if (array_key_exists("name", $element) && $element["name"] === "dataEvents") {
+                $key = $keyNr;
+                break;
+            }
+        }
 
         $colData = $formData["elements"][$key]["columns"];
         $colkey = array_search("moduleInstance", array_column($colData, 'name'));
@@ -144,19 +159,60 @@ class SymconJSLiveCalendar extends JSLiveModule{
             //Load data from Cache
             if(empty($this->GetBuffer("OutputCSS"))){
                 //updateCache when empty
-                $this->UpdateOutput();
-                $this->UpdateIframe();
+                $this->SetBuffer("OutputCSS", $this->GenerateCSS());
             }
 
             if($this->ReadPropertyBoolean("Debug"))
                 $this->SendDebug("GetOutput", "Get Data form Cache!", 0);
-            return json_encode(array("Contend" => $this->GetBuffer("Output"), "lastModify" => $this->GetBuffer("LastModifed"), "EnableCache" => $EnableCache, "InstanceID" => $this->InstanceID));
+            return json_encode(array("Contend" => $this->GetBuffer("OutputCSS"), "lastModify" => $this->GetBuffer("LastModifed"), "EnableCache" => $EnableCache, "InstanceID" => $this->InstanceID));
         }else{
-            return json_encode(array("Contend" => $this->GetWebpage(), "lastModify" => time(), "EnableCache" => $EnableCache, "InstanceID" => $this->InstanceID));
+            return json_encode(array("Contend" => $this->GenerateCSS(), "lastModify" => time(), "EnableCache" => $EnableCache, "InstanceID" => $this->InstanceID));
         }
     }
     private function GenerateCSS(){
+        if(!empty($this->ReadPropertyString("CustomCSS"))){
+            $css_String = base64_decode($this->ReadPropertyString("CustomCSS"));
+        }else {
+            $css_String = file_get_contents(realpath(__DIR__ . "/../SymconJSLive/js/fullcalendar/PLACEHOLDER-main.css"));
 
+            $pattern = '/\#([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)#/';
+            preg_match_all($pattern, $css_String, $matches);
+
+            $config = json_decode(IPS_GetConfiguration($this->InstanceID), true);
+
+            if (is_array($matches) && count($matches) > 0) {
+                foreach ($matches[0] as $var) {
+                    $obj = str_replace("#", "", $var);
+
+                    if (array_key_exists($obj, $config)) {
+                        $pos = strpos(strtolower($obj), "color");
+                        if ($pos !== false) {
+                            //wenn es sich um eine Farbe handelt
+                            $str_color = "";
+
+                            if (array_key_exists($obj . "_Alpha", $config)) {
+                                //mit alpha
+                                $rgbdata = $this->HexToRGB($config[$obj]);
+                                $str_color = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($config[$obj . "_Alpha"], 2, '.', '') . ")";
+                            } else {
+                                //ohne Alpha
+                                $rgbdata = $this->HexToRGB($config[$obj]);
+                                $str_color = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
+                            }
+
+                            $css_String = str_replace($var, $str_color, $css_String);
+                        } else {
+                            $val = $config[$obj];
+                            if(is_float($val)) $val = number_format($val, 2, '.', '');
+
+                            $css_String = str_replace($var, $val, $css_String);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $css_String;
     }
 
     private function GetDataEvents(){
@@ -194,8 +250,8 @@ class SymconJSLiveCalendar extends JSLiveModule{
         $htmlData = str_replace("{DATAEVENTS}",  $this->json_encode_advanced($this->GetDataEvents()), $htmlData);
 
         //Load Fonts
-        //$arr = array($this->ReadPropertyString("style_fontFamily"));
-        //$htmlData = str_replace("{FONTS}", $this->LoadFonts($arr), $htmlData);
+        $arr = array($this->ReadPropertyString("buttons_fontFamily"));
+        $htmlData = str_replace("{FONTS}", $this->LoadFonts($arr), $htmlData);
 
         return $htmlData;
     }
@@ -238,6 +294,19 @@ class SymconJSLiveCalendar extends JSLiveModule{
             IPS_SetConfiguration($this->InstanceID, json_encode($confData));
             IPS_ApplyChanges($this->InstanceID);
         }else return "A Instance must be selected!";
+    }
+
+    public function GetCSSLink(){
+        $link = $this->GetLink();
+        $arr = explode("JSLive?", $link);
+
+        return $arr[0]."JSLive"."/getCSS?".$arr[1];
+    }
+    public function GetDefaultCSSLink(){
+        $link = $this->GetLink();
+        $arr = explode("JSLive?", $link);
+
+        return $arr[0]."JSLive"."/js/fullcalendar/main.css";
     }
 }
 
