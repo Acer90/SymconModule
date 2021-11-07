@@ -67,6 +67,8 @@ class SymconJSLiveCalendar extends JSLiveModule{
                 return $this->GetData($buffer['queryData']);
             case "getFeed":
                 return $this->GetFeed($buffer['queryData']);
+            case "getCSS":
+                return $this->GetCSS();
             case "setData":
                 return $this->SetData($buffer['queryData']);
             default:
@@ -136,6 +138,26 @@ class SymconJSLiveCalendar extends JSLiveModule{
         }
         return json_encode($output);
     }
+    private function GetCSS(){
+        $EnableCache = $this->ReadPropertyBoolean("EnableCache");
+        if($EnableCache){
+            //Load data from Cache
+            if(empty($this->GetBuffer("OutputCSS"))){
+                //updateCache when empty
+                $this->UpdateOutput();
+                $this->UpdateIframe();
+            }
+
+            if($this->ReadPropertyBoolean("Debug"))
+                $this->SendDebug("GetOutput", "Get Data form Cache!", 0);
+            return json_encode(array("Contend" => $this->GetBuffer("Output"), "lastModify" => $this->GetBuffer("LastModifed"), "EnableCache" => $EnableCache, "InstanceID" => $this->InstanceID));
+        }else{
+            return json_encode(array("Contend" => $this->GetWebpage(), "lastModify" => time(), "EnableCache" => $EnableCache, "InstanceID" => $this->InstanceID));
+        }
+    }
+    private function GenerateCSS(){
+
+    }
 
     private function GetDataEvents(){
         $output = array();
@@ -163,6 +185,7 @@ class SymconJSLiveCalendar extends JSLiveModule{
 
         return $output;
     }
+
     private function ReplacePlaceholder(string $htmlData){
         //configuration Data
         $htmlData = str_replace("{CONFIG}", $this->json_encode_advanced($this->GetConfigurationData()), $htmlData);

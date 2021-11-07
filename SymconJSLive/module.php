@@ -170,7 +170,9 @@ class SymconJSLive extends WebHookModule {
                 header('Content-type: application/json');
             }elseif (strtolower($Type) == "loadfile"){
                 //Here Do Nothing
-            }elseif (strtolower($Type) == "getfillimg"){
+            }elseif (strtolower($Type) == "getfillimg") {
+                //Here Do Nothing
+            }elseif (strtolower($Type) == "getCSS"){
                 //Here Do Nothing
             }else{
                 header("Content-Type: text/html");
@@ -220,6 +222,28 @@ class SymconJSLive extends WebHookModule {
                 header('Content-type: '. $arr_data["Type"]);
                 $contend = base64_decode($arr_data["Contend"]);
                 $useCache = true;
+            }elseif (strtolower($Type) == "getCSS"){
+                $arr_data = array();
+
+                foreach ($contend as $s_contend){
+                    $c_data = json_decode($contend[0], true);
+                    if($c_data["InstanceID"] == $queryData["instance"]){
+                        $arr_data = $c_data;
+                        break;
+                    }
+                }
+
+                if(count($arr_data) == 0){
+                    $this->SendDebug("WebHook", "Instance Not in List!", 0);
+                    echo "Instance Not in List!";
+                    return;
+                }
+
+                $contend = $arr_data["Contend"];
+                $lastmodified = $arr_data["lastModify"];
+                header('Content-type: text/css');
+                $useCache = true;
+
             }else{
                 $contend = $contend[0];
             }
