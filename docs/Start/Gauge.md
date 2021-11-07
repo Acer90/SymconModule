@@ -2,10 +2,10 @@
 ## Vorlage
  Beschreibung| Bild
 :-------------|----------------:
-Kreisförmigen Anzeige (CanvasGauges-Radial)|<img src="https://raw.githubusercontent.com/Burki24/SymconModule/gh-pages/images/Gauge_radial.gif" width="200" />
-Waagerechte, gerade Anzeige (CanvasGauges-Linear)|<img src="https://raw.githubusercontent.com/Burki24/SymconModule/gh-pages/images/Gauge_Waagerecht.gif" width="200" />
-Senkrechte, gerade Anzeige (CanvasGauges-Linear(vertical))|<img src="https://raw.githubusercontent.com/Burki24/SymconModule/gh-pages/images/Gauge_Senkrecht.gif" width="50" />
-Kompass (Anzeige von z.B. Windrichtung)|<img src="https://raw.githubusercontent.com/Burki24/SymconModule/gh-pages/images/Gauge_Windrose.gif" width="200" />
+Kreisförmigen Anzeige (CanvasGauges-Radial)|<img src="https://raw.githubusercontent.com/acer90/SymconModule/gh-pages/images/Gauge_radial.gif" width="200" />
+Waagerechte, gerade Anzeige (CanvasGauges-Linear)|<img src="https://raw.githubusercontent.com/acer90/SymconModule/gh-pages/images/Gauge_Waagerecht.gif" width="200" />
+Senkrechte, gerade Anzeige (CanvasGauges-Linear(vertical))|<img src="https://raw.githubusercontent.com/acer90/SymconModule/gh-pages/images/Gauge_Senkrecht.gif" width="50" />
+Kompass (Anzeige von z.B. Windrichtung)|<img src="https://raw.githubusercontent.com/acer90/SymconModule/gh-pages/images/Gauge_Windrose.gif" width="200" />
 
 ## Titel
 Erklärt sich wohl von selber. :wink:
@@ -13,8 +13,8 @@ Erklärt sich wohl von selber. :wink:
 ## Platte
  Beschreibung| Bild
 :-------------|----------------:
-Gestaltet den Hintergrund. Die Platte wird immer als ganzes dargestellt. Sollte also nicht zum Einsatz kommen, wenn Ihr nur einen Halbkreis darstellen wollt:|<img src="https://raw.githubusercontent.com/Burki24/SymconModule/gh-pages/images/Gauge_Platte.gif" width="300" />
-Bei der Platte kann man den Farbverlauf gestalten. Dabei ist Haupt die Farbe des Zentrums und Ende die Farbe am Rand. Zusätzlich kann man noch den Transparent-Level bestimmen|<img src="https://raw.githubusercontent.com/Burki24/SymconModule/gh-pages/images/Gauge_Platte_Verlauf.gif" width="500" />
+Gestaltet den Hintergrund. Die Platte wird immer als ganzes dargestellt. Sollte also nicht zum Einsatz kommen, wenn Ihr nur einen Halbkreis darstellen wollt:|<img src="https://raw.githubusercontent.com/acer90/SymconModule/gh-pages/images/Gauge_Platte.gif" width="300" />
+Bei der Platte kann man den Farbverlauf gestalten. Dabei ist Haupt die Farbe des Zentrums und Ende die Farbe am Rand. Zusätzlich kann man noch den Transparent-Level bestimmen|<img src="https://raw.githubusercontent.com/acer90/SymconModule/gh-pages/images/Gauge_Platte_Verlauf.gif" width="500" />
 
 ## Nadel/Zeiger
 Die Nadel definiert das Design des Anzeigers. Hier gibt es zwei Formen:
