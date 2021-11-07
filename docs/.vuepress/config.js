@@ -5,6 +5,7 @@ module.exports = {
     themeConfig: {
         nav: [
             {text: 'Home', link: '/'},
+            {text: 'Config-Demos', link: '/samples/'}
            ],
         sidebar: {
             '/Start/': [

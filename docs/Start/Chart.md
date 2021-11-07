@@ -1,52 +1,66 @@
 # Chart
-## Position
+## Titel Position
   Der Titel kann "Oben", "Links", "Rechts" oder "Unten" vom Chart platziert werden.
 
-  <img src="https://github.com/Acer90/SymconModule/blob/alpha/imgs/Chart_Titel_Oben.png" width="300" />Chart_Titel_Oben
-
-  <img src="https://github.com/Acer90/SymconModule/blob/alpha/imgs/Chart_Titel_links.png" width="100" height="200" />Chart_Titel_Links
-
-
+  Beschreibung|Beispiel
+  :-----|---:
+  Chart Titel Oben|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_titel_oben.gif" height="200" />
+  Chart Titel links|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_titel_links.gif" height="200" />
+  
 ## Achsen
 ### Anzeigen
    Wenn man in den Charts mit DataLabels arbeitet, ist es nicht immer notwendig, die Achsen anzeigen zu lassen. Daher kann man diese abschalten.
 
-   ![Chart_Achsen_Anzeigen](https://github.com/Acer90/SymconModule/blob/alpha/imgs/Chart_Achsen_anzeigen1.png) Aktiviert 
-   ![Chart_Achsen_Anzeigen](https://github.com/Acer90/SymconModule/blob/alpha/imgs/Chart_Achsen_Aus.png) Deaktiviert 
+   Beschreibung|Beispiel
+   :----|----:
+   Achsen eingeblendet|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_Achsen_eingeblendet.gif" />
+   Achsen ausgeblendet|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_Achsen_ausgeblendet.gif" />
 
 ### Beschriftung anzeigen
 Je nachdem, wo man sich die Einheit anzeigen will, ist es möglich, die Achsbeschriftung dementsprechend anzupassen. Wenn also der Chart mit DataLabels angezeigt wird, wo die Einheit dahinter steht, dann braucht man die Einheit nicht an der Achse. Wenn nur Werte oder gar keine DataLabels angezeigt werden, ist es sinnvoll, die Wert-Einheit an der Achse zu zeigen.
 An der Achse können mehrere Varianten angezeigt werden. Entweder nur die Wert-Einheit, oder nur der Name des hinterlegten Profils oder beides, wobei dann die Wert-Einheit in Klammern gesetzt wird.
 
-![Chart_Beschriftung anzeigen](https://github.com/Acer90/SymconModule/blob/alpha/imgs/Chart_Beschriftung_anzeigen.png)
-
-![Chart_Suffix](https://github.com/Acer90/SymconModule/blob/alpha/imgs/Chart_Achsen_anzeigen.png) Suffix 
-![Profil](https://github.com/Acer90/SymconModule/blob/alpha/imgs/Chart_Achse_Profil.png) Profil
-![Chart_Profil_Suffix](https://github.com/Acer90/SymconModule/blob/alpha/imgs/Chart_Achse_Profil_Einheit.png) Profil(Suffix)
+Beschreibung|Beispiel
+:----|------:
+*Einheit* eingeblendet|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_achsen_suffix.gif" />
+*Profil* eingeblendet|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_achse_profil.gif" />
+*Profil & Einheit* eingeblendet|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_achse_profil_einheit.gif" />
 
 ### Rand zeichnen
-Diese Funktion "kästelt" den Chart ein. Dabei wird ein Rand um drei Seiten gezogen: Oben, Unten und Links. Die Rechte Seite bleibt offen.
+Diese Funktion "kästelt" den Chart ein. Dabei wird ein Rand um zwei Seiten gezogen: Unten und Links. Die Rechte Seite und oben bleiben offen.
 
-![Chart_Rand ein](https://github.com/Acer90/SymconModule/blob/alpha/imgs/Chart_Achsen_Rand.png) Eingeschaltet
-![Chart_Rand aus](https://github.com/Acer90/SymconModule/blob/alpha/imgs/Chart_Rand_aus.png) Abgeschaltet
+Beschreibung|Beispiel
+:----|----:
+Rand eingeblendet|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_rand_eingeblendet.gif" />
+Rand ausgeblendet|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_rand_ausgeblendet.gif" />
 
 ### Im Diagrammbereich zeichnen
+
 Um die auf der X-Achse vorhandenen Datenpunkte (im Beispiel die Zeitachse) bei großen Charts besser zu erkennen, gibt es die Möglichkeit an den Verschiedenen Datenpunkten Hilfslinien zu zeichnen. Diese Funktion hat auch Einfluss auf den Punkt "Rand zeichnen". Wird "Im Diagramm zeichnen" deaktiviert, zeichnet die Funktion "Rand zeichnen" nur den linken und unteren Rahmen.
 
-![Chart_Zeichnen_Aus](https://github.com/Acer90/SymconModule/blob/alpha/imgs/Chart_Diagrammbereich_Zeichnen_aus.png) Ausgeschaltet
-![Chart_Zeichnen_ein](https://github.com/Acer90/SymconModule/blob/alpha/imgs/Chart_Diagrammbereich_Zeichnen_an.png) Eingeschaltet
+Wird dagegen Rand zeichnen ausgeschaltet, zeichnet das Modul nur die Zwischenschritte.
+
+Beschreibung|Beispiel
+:----|----:
+Im Diagram zeichnen aktiviert|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_diagramm_zeichnen_aktiviert.gif" />
+Im Diagram zeichnen deaktiviert|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_diagramm_zeichnen_deaktiviert.gif" />
+Im Diagram zeichnen aktiviert, Rand zeichnen deaktiviert|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_diagramm_zeichnen_ohne_rand.gif" />
 
 ## Punkte
-  Punkte werden immer dann eingesetzt, wenn ich im Chart z.B. sehen will, wann ein bestimmter Wert erhoben wurde. Der Eingang eines neuen Wertes wird 
-  dann mittels eines individuell konfigurierbaren Punktes im Chart markiert.
-
-![Chart_Punkte](https://github.com/Acer90/SymconModule/blob/alpha/imgs/Chart_Punkte.png)
+  Beschreibung|Beispiel
+  :---|---:
+  Punkte werden immer dann eingesetzt, wenn ich im Chart z.B. sehen will, wann ein bestimmter Wert erhoben wurde. Der Eingang eines neuen Wertes wird dann mittels eines individuell konfigurierbaren Punktes im Chart markiert.|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_punkte.gif" />
 
 ### Radius
 Der Radius bestimmt die Größe des genutzten Punktes. Dabei ist es egal, ob es sich um einen Punkt, ein Kreuz, oder ähnliches handelt.
 
-10 Punkte![Chart_Radius_10](https://github.com/Acer90/SymconModule/blob/alpha/imgs/Chart_Radius_10_1.png) 
-20 Punkte![Chart_Radius_20](https://github.com/Acer90/SymconModule/blob/alpha/imgs/Chart_Radius_20.png) 
+Punktgröße|Beispiel
+:---|---:
+5 Punkte|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_punkte_5.gif" />
+10 Punkte|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_punkte_10.gif" />
+20 Punkte|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_punkte_20.gif" />
+40 Punkte|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_punkte_40.gif" />
+
 
 ### Hover-Radius
 Wenn man mit Datenpunkten arbeitet, so können bei Annäherung mit der Maus an den Datenpunkt Tooltips angezeigt werden, aus denen z.B. der aktuelle Wert ersichtlich wird. Mittels des "Hover-Radius" kann man einstellen, wie nah man an den Punkt kommen muss, um den Tooltip zu öffnen.

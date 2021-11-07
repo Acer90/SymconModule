@@ -20,5 +20,5 @@ features:
   details:
 - title: JSLiveProgressbar
   details:    
-footer: made bei Acer90
+footer: Modules made by Acer90 | Documentation made with Vuepress by Burki24 
 ---
