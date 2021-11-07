@@ -1,0 +1,11 @@
+{
+  "id": "{46B41C3B-DDAE-BA35-2A1E-6CF4B7F9BF7A}",
+  "name": "SymconJSLiveCalendar",
+  "type": 3,
+  "vendor": "Swen Babenschneider",
+  "aliases": ["JSLive-Calendar"],
+  "parentRequirements": ["{751AABD7-E31D-024C-5CC0-82AC15B84095}"],
+  "childRequirements": [],
+  "implemented": ["{79D59629-E9C5-44F1-0F34-0FBC5C88F307}"],
+  "prefix": "SymconJSLiveCalendar"
+}
