@@ -158,8 +158,11 @@ Der Übergangstyp legt die Art der Animation fest. Informationen zu den verschie
 
 ## Datenlabels
 
-Erläuterung|Beispiel
-:----|:----
-Datenlabels dienen zur permanenten Veranschaulichung der erhobenen Werte|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datenlabel.gif" />
-Wenn die Daten häufig geändert oder abgerufen werden, kann es zu einem Überlagern der Labels kommen.|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datenlabel_viel.gif" />
+Datenlabels dienen zur permanenten Veranschaulichung der erhobenen Werte
+
+<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datenlabel.gif" />
+
+Wenn die Daten häufig geändert oder abgerufen werden, kann es zu einem Überlagern der Labels kommen.
+
+<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datenlabel_viel.gif" />
 
