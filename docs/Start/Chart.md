@@ -168,7 +168,7 @@ Wenn die Daten häufig geändert oder abgerufen werden, kann es zu einem Überla
 <img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datenlabel_viel.gif" />
 
 ### Verankerung
-Die Verankerung legt die Position im Verhältnis zum Datenbunkt fest:
+Die Verankerung legt die Entfernung zum Datenbunkt fest:
 Anfang|Mittig|Ende
 :----:|:----:|:----:
 <img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_verankerung_anfang.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_verankerung_mittig.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_verankerung_ende.gif" />
@@ -178,3 +178,19 @@ Die Ausrichtung bestimmt die Position des DatenLabel zum Datenpunkt
 Anfang|mittig|ende|rechts|unten|links|oben
 :----:|:----:|:----:|:----:|:----|:----:|:----:|
 <img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_Ausrichtung_anfang.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_Ausrichtung_mittig.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_Ausrichtung_ende.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_Ausrichtung_rechts.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_Ausrichtung_unten.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_Ausrichtung_links.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_Ausrichtung_oben.gif" />
+
+### Schrift
+Anpassen der Schrift im Datenlabel. Die möglichen Schriften kann man hier einsehen: [Google Fonts](./Start.Google-Fonts)
+
+### Randbreite
+Die Datenlabels können zum besseren Hervorheben mit einer Umrandung versehen werden.
+Rand: 0|Rand: 1|Rand: 2
+:----:|:----:|:----:
+<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_umrandung_null.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_umrandung_1.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_umrandung_2.gif" />
+
+### Randradius
+Bei den Datenlabels hat man die Möglichkeit die Ecken abzurunden, um diese dem Gesamtbild besser anpassen zu können:
+
+Radius: 5|Radius: 10|Radius: 20
+:----:|:----:|:----:
+<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_umrandung_radius_5.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_umrandung_radius_10.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_umrandung_radius_20.gif" />
