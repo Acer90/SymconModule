@@ -123,17 +123,11 @@ Am nächsten|Average (Entfernt)
 ### Modus
 Über den Modus legt man fest, welche Daten angezeigt werden sollen:
 
-<img src="https://github.com/Acer90/SymconModule/blob/alpha/imgs/Gauge_ToolTip_Index.png" width="200" />
-
-Index: Die zusammenstehenden Punkte werden gelistet
-
-<img src="https://github.com/Acer90/SymconModule/blob/alpha/imgs/Gauge_ToolTip_Datensatz.png" width="200" />
-
-Datensatz: Die Historie zu einem Punkt wird gelistet
-
-<img src="https://github.com/Acer90/SymconModule/blob/alpha/imgs/Gauge_ToolTip_Punkt.png" width="200" />
-
-Punkt: Der Wert des betreffenden Punktes wird einzeln angezeigt
+Beschreibung|Beispiel
+:----|:----
+Index: Die zusammenstehenden Punkte werden gelistet|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_tooltipp_nah.gif" />
+Datensatz: Die Historie zu einem Punkt wird gelistet|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_tooltipp_nah.gif" />
+Punkt: Der Wert des betreffenden Punktes wird einzeln angezeigt|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_tooltipp_nah.gif" />
 
 ### Schrift
 
