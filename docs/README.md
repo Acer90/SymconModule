@@ -5,20 +5,20 @@ actionText: Zu den Anleitungen →
 actionLink: /Start/
 features:
 - title: JSLiveChart
-  details: Anleitungen für die JSLive Module
+  details: Ermöglicht die Darstellung von Daten in Balken- oder Liniendiagrammen
 - title: JSLiveChartRadar
-  details: more informations
+  details: Darstellung von Daten in Abhängigkeit zueinander.
 - title: JSLiveColorPicker
-  details: hopefulls
+  details: Ein moderner Colorpicker für Farbe, Farbtemperatur und Helligkeit.
 - title: LiveCustom
-  details:
+  details: Ein Modul zum Erstellen eigener Erweiterungen (in Vorbereitung)
 - title: DateTimePicker
-  details:
+  details: Einfache Art, um Datumseingaben zu erledigen.
 - title: JSLiveDoughnutPie
-  details:
+  details: Torten und Donut Diagramme zum Darstellen einzelner WErt-Verläufe oder auch kombiniertter Daten-Verläufe.
 - title: JSLiveGauge
-  details:
+  details: Mit der Gauge lassen sich aktuelle Werte sehr anschaulich als Balken-Gauge oder Kreis-Gauge darstellen. Eine spezielle Komponente ist die Kompassdarstellung, z.B. für Windrichtung, etc.
 - title: JSLiveProgressbar
-  details:    
+  details: Darstellung von Fortschrittsanzeigen   
 footer: Modules made by Acer90 | Documentation made with Vuepress by Burki24 
 ---

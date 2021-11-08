@@ -1,5 +1,13 @@
 {
-    "scripts": {
-      "docs:build": "vuepress build docs"
-    }
+  "scripts": {
+    "docs:build": "vuepress build docs"
+  },
+  "devDependencies": {
+    "@vuepress/plugin-back-to-top": "^1.8.2",
+    "vuepress": "^1.8.2"
+  },
+  "dependencies": {
+    "vuepress-plugin-container": "^2.1.5",
+    "yarn": "^1.22.17"
   }
+}
