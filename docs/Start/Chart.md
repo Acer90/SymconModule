@@ -114,7 +114,7 @@ Mit den Tooltips kann man bei Berührung oder Annäherung an einen Datenpunkt De
 ### Position
 Mit der Position kann man bestimmen, ob ein Tooltip dicht am Datenpunkt angezeigt wird (am nächsten), oder etwas weiter entfernt von diesem (Average):
 
-*Beachte: dies funktioniert nur bei Charts mit mehreren Datenquellen*
+*Beachte: dies funktioniert nur bei Charts mit mehreren Datenquellen und im index-modus*
 
 Am nächsten|Average (Entfernt)
 :----|:----
