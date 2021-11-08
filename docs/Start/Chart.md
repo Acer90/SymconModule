@@ -146,9 +146,12 @@ Beispiele:
 
 ### Dauer
 Die Dauer bestimmt, wie schnell oder langsam die Charts aufgebaut werden. Als Beispiel nutze ich hier mal "Linear" als Animation:
+Dauer in ms|Beispiel
+:----|:----
+10ms|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_animation_speed_100.gif" />
+500ms|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_animation_speed_500.gif" />
+1000ms|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_animation_speed_1000.gif" />
+5000ms|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_animation_speed_5000.gif" />
 
-500 Milisekunden <img src="https://github.com/Acer90/SymconModule/blob/alpha/imgs/Gauge_Animation_500.gif" width="200" />
-
-5000 Milisekunden <img src="https://github.com/Acer90/SymconModule/blob/alpha/imgs/Gauge_Animation_5000.gif" width="200" />
 ### Übergangstyp
 Der Übergangstyp legt die Art der Animation fest. Informationen zu den verschiedenen, möglichen Animationen findet Ihr unter: [Easing Functions Cheat Sheet](https://easings.net/)
