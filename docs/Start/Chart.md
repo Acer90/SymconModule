@@ -155,3 +155,8 @@ Dauer in ms|Beispiel
 
 ### Übergangstyp
 Der Übergangstyp legt die Art der Animation fest. Informationen zu den verschiedenen, möglichen Animationen findet Ihr unter: [Easing Functions Cheat Sheet](https://easings.net/)
+
+## Datenlabels
+
+Datenlabels dienen zur **permanenten** Veranschaulichung der erhobenen Werte|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datenlabel.gif" />
+:----|:----
