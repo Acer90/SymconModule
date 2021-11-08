@@ -131,7 +131,7 @@ Punkt: Der Wert des betreffenden Punktes wird einzeln angezeigt|<img src="https:
 
 ### Schrift
 
-Alle bekannten Modifikationen (Farbe, Font, Größe)
+Alle bekannten Modifikationen (Farbe, Font, Größe, Schriftart). Die Schriftarten sind unter https://acer90.github.io/SymconModule/Start/#google-fonts einsehbar.
 
 ### Eckradius
 Über den Eckradius kann man der Tooltip-Bo weiche Kanten geben. 
