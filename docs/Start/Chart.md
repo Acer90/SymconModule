@@ -104,7 +104,7 @@ Die Boxbreite bestimmt die Größe der Farbbox in der Legende:
 
 10|50|100
 :----|:----|:----
-<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_legende_box_10.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_legende_box_50.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_legende_box_100.gif" />
+<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_legende_Box_10.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_legende_Box_50.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_legende_Box_100.gif" />
 
 ## Tooltips
 Beschreibung|Beispiel
