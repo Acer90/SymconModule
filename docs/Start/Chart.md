@@ -162,7 +162,19 @@ Datenlabels dienen zur permanenten Veranschaulichung der erhobenen Werte
 
 <img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datenlabel.gif" />
 
-Wenn die Daten häufig geändert oder abgerufen werden, kann es zu einem Überlagern der Labels kommen.
+<br/><br/>
+Wenn die Daten häufig geändert oder abgerufen werden, kann es zu einem Überlagern der Labels kommen. Hier macht es dann Sinn, entweder den Aktualisierungszyklus zu erweitern oder mit Tooltipps zu arbeiten.
 
 <img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datenlabel_viel.gif" />
 
+### Verankerung
+Die Verankerung legt die Position im Verhältnis zum Datenbunkt fest:
+Anfang|Mittig|Ende
+:----:|:----:|:----:
+<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_verankerung_anfang.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_verankerung_mittig.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_verankerung_ende.gif" />
+
+### Ausrichtung
+Die Ausrichtung bestimmt die Position des DatenLabel zum Datenpunkt
+Anfang|mittig|ende|rechts|unten|links|oben
+:----:|:----:|:----:|:----:|:----|:----:|:----:|
+<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_Ausrichtung_anfang.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_Ausrichtung_mittig.gif.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_Ausrichtung_ende.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_Ausrichtung_rechts.gif.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_Ausrichtung_unten.gif.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_Ausrichtung_links.gif.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_Ausrichtung_oben.gif" />
