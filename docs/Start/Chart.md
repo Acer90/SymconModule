@@ -131,18 +131,16 @@ Punkt: Der Wert des betreffenden Punktes wird einzeln angezeigt|<img src="https:
 
 ### Schrift
 
-Alle bekannten Modifikationen (Farbe, Font, Größe, Schriftart). Die Schriftarten sind unter https://acer90.github.io/SymconModule/Start/#google-fonts einsehbar.
+Alle bekannten Modifikationen (Farbe, Font, Größe, Schriftart). Die Schriftarten sind unter [Google Fonts](./Start.Google-Fonts)  einsehbar.
 
 ### Eckradius
 Über den Eckradius kann man der Tooltip-Bo weiche Kanten geben. 
 
 Beispiele:
 
-0  Punkte <img src="https://github.com/Acer90/SymconModule/blob/alpha/imgs/Gauge_ToolTip_Eck_0.png" width="200" />
-
-10 Punkte <img src="https://github.com/Acer90/SymconModule/blob/alpha/imgs/Gauge_ToolTip_Eck_10.png" width="200" />
-
-30 Punkte <img src="https://github.com/Acer90/SymconModule/blob/alpha/imgs/Gauge_ToolTip_Eck_30.png" width="200" />
+0|10|30
+:----|:----|:----
+<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_tooltipp_ecke_0.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_tooltipp_ecke_10.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_tooltipp_ecke_30.gif" />
 
 ## Animation
 
