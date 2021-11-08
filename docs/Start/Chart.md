@@ -127,7 +127,7 @@ Beschreibung|Beispiel
 :----|:----
 Index: Die zusammenstehenden Punkte werden gelistet|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_tooltipp_index.gif" />
 Datensatz: Die Historie zu einem Punkt wird gelistet|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_tooltipp_datensatz.gif" />
-Punkt: Der Wert des betreffenden Punktes wird einzeln angezeigt|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_tooltipp_pinkt.gif" />
+Punkt: Der Wert des betreffenden Punktes wird einzeln angezeigt|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_tooltipp_punkt.gif" />
 
 ### Schrift
 
