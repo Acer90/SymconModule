@@ -194,3 +194,56 @@ Bei den Datenlabels hat man die Möglichkeit die Ecken abzurunden, um diese dem 
 Radius: 5|Radius: 10|Radius: 20
 :----:|:----:|:----:
 <img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_umrandung_radius_5.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_umrandung_radius_10.gif" />|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_datalabel_umrandung_radius_20.gif" />
+
+## Daten
+
+### Hohe Auflösung
+
+
+### Genauigkeit/Präzision
+
+
+### Datensätze synchron laden
+
+
+### Interval Abfrage bei Minute
+
+
+## Datasets
+
+### Axes Stack
+
+### Dyn. Skalierung
+
+### DataLabels
+
+
+## Experte
+
+### Debug
+
+### Verwende Cache
+
+### Erstelle HTML-Box
+
+### Create IPSView HTMLBox - Works only if the Option IPSView in Gateway is enabled!
+
+### Vorlagen Skript
+
+### Aktiviere Viewport
+
+### IFrame Höhe
+
+### View Level
+
+## Öffne Link
+
+## Konfiguration
+
+### Load from other Modul or Chart
+
+#### Modul
+
+### Einstellungen aus einer Konfigurationsdatei laden
+
+### Export Konfigurationsdatei
