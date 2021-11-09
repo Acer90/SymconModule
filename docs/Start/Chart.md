@@ -221,6 +221,62 @@ Radius: 5|Radius: 10|Radius: 20
 Zum Ergänzen der dargestellten Daten auf "Zufügen" klicken. Daraufhin öffnet sich ein Detail-Fenster:
 <img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement.gif" />
 
+### Reihenfolge
+
+### Typ
+
+JSLive Chart stellt zwei Darstellungstypen zur Verfügung:
+
+Bezeichnung|Beispiel
+: ----:|: ----:
+Line|
+Bar|
+
+Dabei kann jeder Dataset einen eigenen Typ haben. Im gesamten Chart sieht es kombiniert dann so aus:
+<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_Ergebnis.gif" />
+
+### Variable
+
+### Titel
+
+### Profil
+
+### Seite
+
+### Offset
+
+### Hintergrundfarbe
+
+### Randfarbe
+
+### Randbreite
+
+### Gestrichelter Rand
+
+### Hohe Auflösung
+
+### Staffel Gruppe
+
+### Axes Stack
+
+### Dynamische Skalierung
+
+### Überschreibe: Von Null beginnen
+
+### Überschreibe: Punkt-Stil
+
+### Datalabels
+
+### Datalabels: überschreibe
+
+#### Hintergrundfarbe
+
+#### Randfarbe
+
+#### Textfarbe
+
+### Datalabels Prefix/suffix anzeigen
+
 
 ## Experte
 
