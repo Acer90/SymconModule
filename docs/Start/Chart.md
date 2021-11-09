@@ -217,6 +217,10 @@ Radius: 5|Radius: 10|Radius: 20
 
 ### DataLabels
 
+## Dataset erstellen
+Zum Ergänzen der dargestellten Daten auf "Zufügen" klicken. Daraufhin öffnet sich ein Detail-Fenster:
+<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement.gif" />
+
 
 ## Experte
 
