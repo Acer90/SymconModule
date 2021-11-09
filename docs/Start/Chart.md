@@ -228,7 +228,7 @@ Zum Ergänzen der dargestellten Daten auf "Zufügen" klicken. Daraufhin öffnet 
 JSLive Chart stellt zwei Darstellungstypen zur Verfügung:
 
 Bezeichnung|Beispiel
-: ----:|: ----:
+:----:|:----:
 Line|
 Bar|
 
