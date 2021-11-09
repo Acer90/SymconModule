@@ -229,8 +229,8 @@ JSLive Chart stellt zwei Darstellungstypen zur Verfügung:
 
 Bezeichnung|Beispiel
 :----:|:----:
-Line|
-Bar|
+Line|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_linie.gif" />
+Bar|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_bar.gif" />
 
 Dabei kann jeder Dataset einen eigenen Typ haben. Im gesamten Chart sieht es kombiniert dann so aus:
 <img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_Ergebnis.gif" />
