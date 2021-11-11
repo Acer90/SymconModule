@@ -262,10 +262,21 @@ Balken|Linie|Ergebnis
 
 
 ### Hintergrundfarbe
-
+Mit der Hintergrundfarbe bestimmt man die Füllfarbe der Bar oder des Raumes bei der Linie von Null zum Wert:
+Beschreibung|Beispiel
+:----|:----
+Linie|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_hintergrundfarbe_balken.gif" />
+Bar|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_hintergrundfarbe_line.gif" />
 ### Randfarbe
-
+Bestimmt die Rahmenfarbe der Bar oder die Line-Farbe.
 ### Randbreite
+Bestimmt die Breite der Line oder die Umrahmungsbreite der Bar.
+Randbreite|Ergebnis
+:----|:----
+0|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_rand_0.gif" />
+1|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_rand_1.gif" />
+2|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_rand_2.gif" />
+5|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_rand_5.gif" />
 
 ### Gestrichelter Rand
 
