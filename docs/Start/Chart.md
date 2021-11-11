@@ -279,6 +279,12 @@ Randbreite|Ergebnis
 5|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_rand_5.gif" />
 
 ### Gestrichelter Rand
+Der gestrichelte Rand ist gerade für die Line-Darstellung sehr interessant. Er bietet die Möglichkeit, für jede Line (oder Bar) die Gestaltung selbst zu bestimmen. Dafür werden im Formular die einzelnen Striche selbst in der Länge definiert:
+
+<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_rand_gestrichelt.gif" />
+
+Ergibt zum Beispiel folgende Line:
+<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_rand_gestrichelt_Beispiel.gif" />
 
 ### Hohe Auflösung
 
