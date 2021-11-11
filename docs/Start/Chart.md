@@ -236,14 +236,29 @@ Dabei kann jeder Dataset einen eigenen Typ haben. Im gesamten Chart sieht es kom
 <img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_Ergebnis.gif" />
 
 ### Variable
+Die Variable, deren Werte visualisiert werden sollen. 
+**WICHTIG: Das der Variable hinterlegte Profil wird NICHT mit übernommen!!! **
 
 ### Titel
+Der Name unter dem die Daten im Chart (Legende) erscheinen sollen.
 
 ### Profil
+Da das iriginal der Variablen hinterlegte Profil nicht übernommen wird, kann hier ein eigenes zugeordnet werden. Der Vorteil ist, dass man das Profil individuell anpassen kann, damit es der Chart-Darstellung entspricht. Natürlich können auch die bereits angelegten Profile genutzt werden. 
+<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_profil.gif" />
 
 ### Seite
+Dieser Punkt bezieht sich auf die Anzeigeseite der Werte-Achse. In dem u.g. Beispiel befindet sich die Werte-Achse für die Line links und die Werte-Achse für die Balken rechts.
+<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_Ergebnis.gif" />
 
 ### Offset
+Mit dem Offset kann man die Null-Linie ausrichten. 
+
+Balken|Linie|Ergebnis
+:----|:----|:---
+0|0|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_offset.gif" />
+0|5|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_offset_unterschiedlich.gif" />
+5|0|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_offset_linie0.gif" />
+
 
 ### Hintergrundfarbe
 
