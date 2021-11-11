@@ -255,9 +255,10 @@ Mit dem Offset kann man die Null-Linie ausrichten.
 
 Balken|Linie|Ergebnis
 :----|:----|:---
-0|0|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_offset.gif" />
+0|0|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_offset_0.gif" />
 0|5|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_offset_unterschiedlich.gif" />
 5|0|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_offset_linie0.gif" />
+5|5|<img src="https://raw.githubusercontent.com/Acer90/SymconModule/master/docs/images/chart_dataset_listenelement_offset.gif" />
 
 
 ### Hintergrundfarbe
