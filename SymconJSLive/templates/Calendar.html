@@ -9,6 +9,7 @@
 <script src="/hook/JSLive/js/jquery.min.js"></script>
 <script src="/hook/JSLive/js/util.js"></script>
 <script src='/hook/JSLive/js/fullcalendar/main.js'></script>
+    <script src='/hook/JSLive/js/fullcalendar/locales/de.js'></script>
 </head>
 <body>
     <script>
@@ -46,11 +47,7 @@
                         //'prev,next today'
 
                     },
-                    buttonText: { // Button Text umbenennung
-                        timeGridDay: 'Tag',
-                        timeGridWeek:
-                            'Woche',
-                    }
+                    locale: 'de'
                 });
                 calendar.render();
             }catch (e) {

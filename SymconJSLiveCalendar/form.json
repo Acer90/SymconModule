@@ -303,6 +303,14 @@
             "type": "ExpansionPanel",
             "caption": "Table",
             "items": [
+                { "type": "Label", "caption": "Today", "width": "100px" },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "SelectColor", "name": "table_today_backgroundColor", "caption": "Color" },
+                        { "type": "HorizontalSlider", "name": "table_today_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05}
+                    ]
+                },
                 { "type": "Label", "caption": "Header", "width": "100px" },
                 {
                     "type": "RowLayout",

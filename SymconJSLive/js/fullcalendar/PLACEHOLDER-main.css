@@ -1136,8 +1136,8 @@ A VERTICAL event
   left: 0;
   }
 .fc .fc-timegrid-col.fc-day-today {
-      background-color: rgba(255, 220, 40, 0.15);
-      background-color: var(--fc-today-bg-color, rgba(255, 220, 40, 0.15));
+      background-color: #table_today_backgroundColor#;
+      background-color: var(--fc-today-bg-color, #table_today_backgroundColor#);
     }
 .fc .fc-timegrid-col-frame {
     min-height: 100%; /* liquid-hack is below */
@@ -1404,8 +1404,11 @@ A VERTICAL event
   display: table; /* clear floating */
     }
 .fc-theme-standard .fc-list-day-cushion {
-    background-color: #table_backgroundColor#;
-    background-color: var(--fc-neutral-bg-color, #table_backgroundColor#);
+    background-color: #table_header_backgroundColor#;
+    background-color: var(--fc-neutral-bg-color, #table_header_backgroundColor#);
+    color: #table_header_fontColor#;
+    font-family: #table_header_fontFamily#;
+    font-size: #table_header_fontSize##table_header_fontSize_unitType#;
   }
 .fc-direction-ltr .fc-list-day-text,
 .fc-direction-rtl .fc-list-day-side-text {
@@ -1473,5 +1476,6 @@ A VERTICAL event
 .fc .fc-col-header {
     background-color: #table_header_backgroundColor#;
     color: #table_header_fontColor#;
-    font-size: #table_header_fontSize#em;
+    font-size: #table_header_fontSize##table_header_fontSize_unitType#;
+    font-style: #table_header_fontFamily#;
 }

@@ -50,6 +50,9 @@ class SymconJSLiveCalendar extends JSLiveModule{
         $this->RegisterPropertyString("footer_margin_unitType", "em");
 
         //table
+        $this->RegisterPropertyInteger("table_today_backgroundColor", 16768040);
+        $this->RegisterPropertyFloat("table_today_backgroundColor_Alpha", 0.15);
+
         $this->RegisterPropertyInteger("table_backgroundColor", -1);
         $this->RegisterPropertyFloat("table_backgroundColor_Alpha", 0.0);
         $this->RegisterPropertyFloat("table_fontSize", 1.0);
@@ -63,9 +66,6 @@ class SymconJSLiveCalendar extends JSLiveModule{
         $this->RegisterPropertyString("table_header_fontSize_unitType", "em");
         $this->RegisterPropertyInteger("table_header_fontColor", 0);
         $this->RegisterPropertyString("table_header_fontFamily", "");
-
-        $this->RegisterPropertyInteger("table_today_backgroundColor", -1);
-        $this->RegisterPropertyFloat("table_today_backgroundColor_Alpha", 0.0);
 
         $this->RegisterPropertyString("initialView", "dayGridMonth");
         $this->RegisterPropertyString("dataEvents", "[]");
