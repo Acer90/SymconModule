@@ -124,8 +124,7 @@ class SymconJSLiveAdvTextfield extends JSLiveModule{
         $htmlData = str_replace("{VALUE}", "'".addslashes($this->GetValue("Content"))."'", $htmlData);
 
         //Load Fonts
-        $arr = array($this->ReadPropertyString("style_fontFamily"));
-        $htmlData = str_replace("{FONTS}", $this->LoadFonts($arr), $htmlData);
+        $htmlData = str_replace("{FONTS}", $this->LoadFonts(), $htmlData);
 
         return $htmlData;
     }

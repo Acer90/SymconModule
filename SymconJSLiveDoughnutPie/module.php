@@ -199,8 +199,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         $htmlData = str_replace("{CONFIG}", $this->json_encode_advanced($this->GetConfigurationData()), $htmlData);
 
         //Load Fonts
-        $arr = array($this->ReadPropertyString("title_fontFamily") ,$this->ReadPropertyString("legend_fontFamily"), $this->ReadPropertyString("tooltips_fontFamily"), $this->ReadPropertyString("datalabels_fontFamily"));
-        $htmlData = str_replace("{FONTS}", $this->LoadFonts($arr), $htmlData);
+        $htmlData = str_replace("{FONTS}", $this->LoadFonts(), $htmlData);
 
         return $htmlData;
     }

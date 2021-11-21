@@ -22,13 +22,54 @@ class SymconJSLiveCalendar extends JSLiveModule{
         $this->RegisterPropertyString("CustomCSS", "");
 
         //buttons
-        $this->RegisterPropertyBoolean("buttons_display", True);
         $this->RegisterPropertyFloat("buttons_fontSize", 1.0);
+        $this->RegisterPropertyString("buttons_fontSize_unitType", "em");
         $this->RegisterPropertyInteger("buttons_fontColor", 16777215);
         $this->RegisterPropertyString("buttons_fontFamily", "");
 
+        //title
+        $this->RegisterPropertyFloat("title_fontSize", 1.0);
+        $this->RegisterPropertyString("title_fontSize_unitType", "em");
+        $this->RegisterPropertyInteger("title_fontColor", 0);
+        $this->RegisterPropertyString("title_fontFamily", "");
+
+        //Header
+        $this->RegisterPropertyBoolean("header_display", True);
+        $this->RegisterPropertyString("header_Toolbar", "[]");
+        $this->RegisterPropertyInteger("header_backgroundColor", -1);
+        $this->RegisterPropertyFloat("header_backgroundColor_Alpha", 1.0);
+        $this->RegisterPropertyFloat("header_margin", 1.5);
+        $this->RegisterPropertyString("header_margin_unitType", "em");
+
+        //footer
+        $this->RegisterPropertyBoolean("footer_display", True);
+        $this->RegisterPropertyString("footer_Toolbar", "[]");
+        $this->RegisterPropertyInteger("footer_backgroundColor", -1);
+        $this->RegisterPropertyFloat("footer_backgroundColor_Alpha", 1.0);
+        $this->RegisterPropertyFloat("footer_margin", 1.5);
+        $this->RegisterPropertyString("footer_margin_unitType", "em");
+
+        //table
+        $this->RegisterPropertyInteger("table_backgroundColor", -1);
+        $this->RegisterPropertyFloat("table_backgroundColor_Alpha", 0.0);
+        $this->RegisterPropertyFloat("table_fontSize", 1.0);
+        $this->RegisterPropertyString("table_fontSize_unitType", "em");
+        $this->RegisterPropertyInteger("table_fontColor", 0);
+        $this->RegisterPropertyString("table_fontFamily", "");
+
+        $this->RegisterPropertyInteger("table_header_backgroundColor", -1);
+        $this->RegisterPropertyFloat("table_header_backgroundColor_Alpha", 0.0);
+        $this->RegisterPropertyFloat("table_header_fontSize", 1.0);
+        $this->RegisterPropertyString("table_header_fontSize_unitType", "em");
+        $this->RegisterPropertyInteger("table_header_fontColor", 0);
+        $this->RegisterPropertyString("table_header_fontFamily", "");
+
+        $this->RegisterPropertyInteger("table_today_backgroundColor", -1);
+        $this->RegisterPropertyFloat("table_today_backgroundColor_Alpha", 0.0);
+
         $this->RegisterPropertyString("initialView", "dayGridMonth");
         $this->RegisterPropertyString("dataEvents", "[]");
+
     }
     public function ApplyChanges() {
         //Never delete this line!
@@ -192,12 +233,22 @@ class SymconJSLiveCalendar extends JSLiveModule{
 
                             if (array_key_exists($obj . "_Alpha", $config)) {
                                 //mit alpha
-                                $rgbdata = $this->HexToRGB($config[$obj]);
-                                $str_color = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($config[$obj . "_Alpha"], 2, '.', '') . ")";
+                                if($config[$obj] < 0){
+                                    //ausblenden wenn nicht transparent (-1)
+                                    $str_color = "rgba(0, 0, 0, 0)";
+                                }else{
+                                    $rgbdata = $this->HexToRGB($config[$obj]);
+                                    $str_color = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ", " . number_format($config[$obj . "_Alpha"], 2, '.', '') . ")";
+                                }
                             } else {
                                 //ohne Alpha
-                                $rgbdata = $this->HexToRGB($config[$obj]);
-                                $str_color = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
+                                if($config[$obj] < 0){
+                                    //weiß wenn transparent (-1)
+                                    $str_color = "rgb(0, 0, 0)";
+                                }else{
+                                    $rgbdata = $this->HexToRGB($config[$obj]);
+                                    $str_color = "rgb(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
+                                }
                             }
 
                             $css_String = str_replace($var, $str_color, $css_String);
@@ -250,8 +301,7 @@ class SymconJSLiveCalendar extends JSLiveModule{
         $htmlData = str_replace("{DATAEVENTS}",  $this->json_encode_advanced($this->GetDataEvents()), $htmlData);
 
         //Load Fonts
-        $arr = array($this->ReadPropertyString("buttons_fontFamily"));
-        $htmlData = str_replace("{FONTS}", $this->LoadFonts($arr), $htmlData);
+        $htmlData = str_replace("{FONTS}", $this->LoadFonts(), $htmlData);
 
         return $htmlData;
     }

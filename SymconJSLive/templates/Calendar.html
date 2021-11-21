@@ -9,154 +9,175 @@
 <script src="/hook/JSLive/js/jquery.min.js"></script>
 <script src="/hook/JSLive/js/util.js"></script>
 <script src='/hook/JSLive/js/fullcalendar/main.js'></script>
-<script>
-    var config_global = {GLOBAL};
-    var config_dataEvents = {DATAEVENTS};
-    var configuration = {CONFIG};
-
-    running = false;
-    last_update = Date.now();
-
-    function Load(){
-        try {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: configuration.initialView,
-                height: (Get_WindowHeight()-20),
-
-                eventSources: CreateEventSource()
-            });
-            calendar.render();
-        }catch (e) {
-            alert(e);
-        }
-    }
-    function CreateEventSource(){
-        config_dataEvents.forEach((element, index) => {
-            config_dataEvents[index]["url"] = 'JSLive/getFeed';
-            config_dataEvents[index]["extraParams"]["pw"] = config_global.Password;
-            config_dataEvents[index]["failure"] = function () {
-                $('#script-warning').show();
-            }
-        });
-
-        return config_dataEvents;
-    }
-
-    function updateValue(e) {
-        value = this.value;
-        if(!running) UpdateWorker();
-    }
-
-    async function UpdateWorker(){
-        running = true;
-        last_update = Date.now();
-        while (running){
-            await sleep(1);
-            try {
-                if((last_update + configuration.DataUpdateRate) <= Date.now()){
-                    last_update = Date.now();
-
-                    console.log(Date.now() + " >> UpdateWorker | Update => " + value);
-                    var response = await fetch("/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&val="+value);
-                    console.log(Date.now() + " >> UpdateWorker Response => " + response.statusText + " (" + response.status + ")");
-
-                    console.log(Date.now() + " >> UpdateWorker => CLOSE");
-                    running = false;
-                }
-            }catch (e) {
-                console.log(Date.now() + " >> UpdateWorker => ", e);
-            }
-        }
-    }
-    function connect() {
-       let location = window.detectLocation();
-        var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
-        ws.onopen = function() {
-            // subscribe to some channels
-            //ws.send(JSON.stringify({
-            //.... some message the I must send when I connect ....
-            //}));
-        };
-
-        ws.onmessage = function(e) {
-            data = JSON.parse(e.data);
-            if(data.Message == 10506) {
-                //refresh webseite
-                setTimeout(function (){
-                    window.location.reload(false);
-                },1000);
-            } else if(data.Message == 10603) {
-                Update(data.SenderID, data.Data[0]);
-            }
-        };
-
-        ws.onclose = function(e) {
-            console.log(Date.now() + ' >> Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
-            setTimeout(function() {
-                connect();
-            }, 1000);
-        };
-
-        ws.onerror = function(err) {
-            console.error(Date.now() + ' >> Socket encountered error: ', err.message, 'Closing socket');
-            ws.close();
-        };
-    }
-
-    function Update(id_val, val){
-        isUpdated = false;
-        now = Date.now();
-        if(running ) return;
-
-        if(id_val === configuration.Variable && value !== val){
-            value = val;
-
-            obj = document.querySelector("#text");
-            obj.value = value;
-        }
-    }
-
-    async function PullNewData(refreshRate){
-        refreshRate = refreshRate * 1000;
-        while (true){
-            try {
-                $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
-                    Update(data.Variable, data.Value);
-                });
-
-                //Control Variables
-            }catch (e) {
-                console.log(Date.now() + " >> PullNewData => ", e);
-            }
-            await sleep(refreshRate);
-        }
-    }
-
-
-
-    window.onload = function() {
-        try {
-            Load();
-
-            if (config_global.LocalAddress == "" && config_global.LocalDataMode == 0) {
-                //pullup Mode local
-                refreshRate = config_global.LocalRefreshTime;
-                PullNewData(refreshRate);
-            } else if (config_global.RemoteAddress == "" && config_global.RemoteDataMode == 0) {
-                //pullup Mode remote
-                refreshRate = config_global.RefreshTime;
-                PullNewData(refreshRate);
-            } else {
-                connect();
-            }
-        }catch (e) {
-            alert(e);
-        }
-    }
-</script>
 </head>
 <body>
+    <script>
+        var config_global = {GLOBAL};
+        var config_dataEvents = {DATAEVENTS};
+        var configuration = {CONFIG};
+
+        running = false;
+        last_update = Date.now();
+
+        function Load(){
+            try {
+                var calendarEl = document.getElementById('calendar');
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: configuration.initialView,
+                    height: (Get_WindowHeight()-20),
+                    eventSources: CreateEventSource(),
+                    titleFormat: { // siehe https://fullcalendar.io/docs/titleFormat
+                        year: 'numeric', month: 'long', day: 'numeric'
+                    },
+                    slotLabelFormat: {
+                        hour: 'numeric',
+                        hour12: false,
+                        minute:
+                            '2-digit',
+                        meridiem:
+                            'short'
+                    },
+                    headerToolbar: { // Ansicht Kopfzeile
+                        left: 'title',
+                        //'title',
+                        center: 'timeGridDay,timeGridWeek,dayGridMonth',
+                        //'timeGridDay,timeGridWeek,dayGridMonth', // Ansicht und Auswahl des Kalenders
+                        right: 'prev,next today'
+                        //'prev,next today'
+
+                    },
+                    buttonText: { // Button Text umbenennung
+                        timeGridDay: 'Tag',
+                        timeGridWeek:
+                            'Woche',
+                    }
+                });
+                calendar.render();
+            }catch (e) {
+                alert(e);
+            }
+        }
+        function CreateEventSource(){
+            config_dataEvents.forEach((element, index) => {
+                config_dataEvents[index]["url"] = 'JSLive/getFeed';
+                config_dataEvents[index]["extraParams"]["pw"] = config_global.Password;
+                config_dataEvents[index]["failure"] = function () {
+                    $('#script-warning').show();
+                }
+            });
+
+            return config_dataEvents;
+        }
+
+        function updateValue(e) {
+            value = this.value;
+            if(!running) UpdateWorker();
+        }
+
+        async function UpdateWorker(){
+            running = true;
+            last_update = Date.now();
+            while (running){
+                await sleep(1);
+                try {
+                    if((last_update + configuration.DataUpdateRate) <= Date.now()){
+                        last_update = Date.now();
+
+                        console.log(Date.now() + " >> UpdateWorker | Update => " + value);
+                        var response = await fetch("/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&val="+value);
+                        console.log(Date.now() + " >> UpdateWorker Response => " + response.statusText + " (" + response.status + ")");
+
+                        console.log(Date.now() + " >> UpdateWorker => CLOSE");
+                        running = false;
+                    }
+                }catch (e) {
+                    console.log(Date.now() + " >> UpdateWorker => ", e);
+                }
+            }
+        }
+        function connect() {
+            let location = window.detectLocation();
+            var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
+            ws.onopen = function() {
+                // subscribe to some channels
+                //ws.send(JSON.stringify({
+                //.... some message the I must send when I connect ....
+                //}));
+            };
+
+            ws.onmessage = function(e) {
+                data = JSON.parse(e.data);
+                if(data.Message == 10506) {
+                    //refresh webseite
+                    setTimeout(function (){
+                        window.location.reload(false);
+                    },1000);
+                } else if(data.Message == 10603) {
+                    Update(data.SenderID, data.Data[0]);
+                }
+            };
+
+            ws.onclose = function(e) {
+                console.log(Date.now() + ' >> Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+                setTimeout(function() {
+                    connect();
+                }, 1000);
+            };
+
+            ws.onerror = function(err) {
+                console.error(Date.now() + ' >> Socket encountered error: ', err.message, 'Closing socket');
+                ws.close();
+            };
+        }
+
+        function Update(id_val, val){
+            isUpdated = false;
+            now = Date.now();
+            if(running ) return;
+
+            if(id_val === configuration.Variable && value !== val){
+                value = val;
+
+                obj = document.querySelector("#text");
+                obj.value = value;
+            }
+        }
+
+        async function PullNewData(refreshRate){
+            refreshRate = refreshRate * 1000;
+            while (true){
+                try {
+                    $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                        Update(data.Variable, data.Value);
+                    });
+
+                    //Control Variables
+                }catch (e) {
+                    console.log(Date.now() + " >> PullNewData => ", e);
+                }
+                await sleep(refreshRate);
+            }
+        }
+        window.onload = function() {
+            try {
+                Load();
+
+                if (config_global.LocalAddress == "" && config_global.LocalDataMode == 0) {
+                    //pullup Mode local
+                    refreshRate = config_global.LocalRefreshTime;
+                    PullNewData(refreshRate);
+                } else if (config_global.RemoteAddress == "" && config_global.RemoteDataMode == 0) {
+                    //pullup Mode remote
+                    refreshRate = config_global.RefreshTime;
+                    PullNewData(refreshRate);
+                } else {
+                    connect();
+                }
+            }catch (e) {
+                alert(e);
+            }
+        }
+    </script>
     <div id='calendar'></div>
 </body>
 </html>

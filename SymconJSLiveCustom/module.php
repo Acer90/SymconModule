@@ -453,8 +453,7 @@ class SymconJSLiveCustom extends JSLiveModule{
         $htmlData = str_replace("{DATASETS}", $this->GetAllData(), $htmlData);
 
         //Load Fonts
-        $arr = array($this->ReadPropertyString("style_fontFamily"));
-        $htmlData = str_replace("{FONTS}", $this->LoadFonts($arr), $htmlData);
+        $htmlData = str_replace("{FONTS}", $this->LoadFonts(), $htmlData);
 
         //Load Libarys
         $arr = $this->LoadLibraries();

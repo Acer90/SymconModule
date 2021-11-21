@@ -2,14 +2,19 @@
 
 class JSLiveModule extends IPSModule
 {
-    protected function LoadFonts(array $fonts){
+    protected function LoadFonts(){
         $font_list = array();
         $html_str = "";
 
-        //fonts bereinigen!
-        foreach ($fonts as $font){
-            if(!in_array($font, $font_list) && !empty($font)){
-                $font_list[] = $font;
+        //alle fonts settings finden
+        $conf_Data = json_decode(IPS_GetConfiguration($this->InstanceID), true);
+        foreach ($conf_Data as $conf_key => $conf_item){
+            if(strpos($conf_key, "_fontFamily") === false) continue;
+
+            if(!in_array($conf_item, $font_list) && !empty($conf_item)){
+                $font_list[] = $conf_item;
+                if($this->ReadPropertyBoolean("Debug"))
+                    $this->SendDebug("LoadFonts", "New font found => " . $conf_item, 0);
             }
         }
 
@@ -268,8 +273,14 @@ class JSLiveModule extends IPSModule
             if(!array_key_exists("viewlevel", $item)) continue;
 
             if($arr[$key]["viewlevel"] > $this->ReadPropertyInteger("ViewLevel")){
-                //löschen wenn viewlevel des elements zu hoch
-                unset($arr[$key]);
+                if(array_key_exists("viewdisable", $item) && $arr[$key]["viewdisable"] == 1){
+                    //diable wenn viewdisable == 1
+                    $arr[$key]["enabled"] = false;
+                }else{
+                    //löschen wenn viewlevel des elements zu hoch
+                    unset($arr[$key]);
+
+                }
             }else{
                 if($this->ReadPropertyBoolean("Debug") && array_key_exists("caption", $item) && $arr[$key]["viewlevel"] > 0){
                     switch($arr[$key]["viewlevel"]){

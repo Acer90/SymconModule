@@ -287,13 +287,17 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
     align-items: center;
   }
 .fc .fc-toolbar.fc-header-toolbar {
-    margin-bottom: 1.5em;
+    margin-bottom: #header_margin##header_margin_unitType#;
+    background-color: #header_backgroundColor#;
   }
 .fc .fc-toolbar.fc-footer-toolbar {
-    margin-top: 1.5em;
+    margin-top: #footer_margin##footer_margin_unitType#;
+    background-color: #footer_backgroundColor#;
   }
 .fc .fc-toolbar-title {
-    font-size: 1.75em;
+    font-size: #title_fontSize##title_fontSize_unitType#;
+    font-family: #title_fontFamily#;
+    color: #title_fontColor#;
     margin: 0;
   }
 .fc-direction-ltr .fc-toolbar > * > :not(:first-child) {
@@ -711,8 +715,8 @@ A HORIZONTAL event
     z-index: 1; /* container inner z-index's because <tr>s can't do it */
   }
 .fc .fc-daygrid-day.fc-day-today {
-      background-color: rgba(255, 220, 40, 0.15);
-      background-color: var(--fc-today-bg-color, rgba(255, 220, 40, 0.15));
+      background-color: #table_today_backgroundColor#;
+      background-color: var(--fc-today-bg-color, #table_today_backgroundColor#);
     }
 .fc .fc-daygrid-day-frame {
     position: relative;
@@ -1400,8 +1404,8 @@ A VERTICAL event
   display: table; /* clear floating */
     }
 .fc-theme-standard .fc-list-day-cushion {
-    background-color: rgba(208, 208, 208, 0.3);
-    background-color: var(--fc-neutral-bg-color, rgba(208, 208, 208, 0.3));
+    background-color: #table_backgroundColor#;
+    background-color: var(--fc-neutral-bg-color, #table_backgroundColor#);
   }
 .fc-direction-ltr .fc-list-day-text,
 .fc-direction-rtl .fc-list-day-side-text {
@@ -1464,3 +1468,10 @@ A VERTICAL event
   .fc-theme-bootstrap a:not([href]) {
     color: inherit; /* natural color for navlinks */
   }
+
+
+.fc .fc-col-header {
+    background-color: #table_header_backgroundColor#;
+    color: #table_header_fontColor#;
+    font-size: #table_header_fontSize#em;
+}

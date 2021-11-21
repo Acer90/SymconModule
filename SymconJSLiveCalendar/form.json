@@ -1,29 +1,94 @@
 {
     "elements":
     [
-        { "type": "Select", "name": "initialView", "caption": "initial View", "width": "150px",
-            "options": [
-                { "caption": "dayGridMonth", "value": "dayGridMonth" },
-                { "caption": "timeGridDay", "value": "timeGridDay" },
-                { "caption": "timeGridWeek", "value": "timeGridWeek" },
-                { "caption": "listDay", "value": "listDay" },
-                { "caption": "listWeek", "value": "listWeek" },
-                { "caption": "listMonth", "value": "listMonth" },
-                { "caption": "listYear", "value": "listYear" },
-                { "caption": "dayGridDay", "value": "dayGridDay" },
-                { "caption": "dayGridWeek", "value": "dayGridWeek" }
+        {
+            "type": "RowLayout",
+            "items": [
+                { "type": "Select", "name": "initialView", "caption": "initial View", "width": "150px",
+                    "options": [
+                        { "caption": "dayGridMonth", "value": "dayGridMonth" },
+                        { "caption": "timeGridDay", "value": "timeGridDay" },
+                        { "caption": "timeGridWeek", "value": "timeGridWeek" },
+                        { "caption": "listDay", "value": "listDay" },
+                        { "caption": "listWeek", "value": "listWeek" },
+                        { "caption": "listMonth", "value": "listMonth" },
+                        { "caption": "listYear", "value": "listYear" },
+                        { "caption": "dayGridDay", "value": "dayGridDay" },
+                        { "caption": "dayGridWeek", "value": "dayGridWeek" }
+                    ]
+                },
+                { "type": "Label", "caption": "", "width": "1260px" },
+                { "type": "Select", "name": "ViewLevel", "caption": "View Level", "width": "100px",
+                    "options": [
+                        { "caption": "Basic", "value": 0 },
+                        { "caption": "Advance", "value": 1 },
+                        { "caption": "Expert", "value": 2 }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Title",
+            "items": [
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Font:", "width": "100px" },
+                        { "type": "NumberSpinner", "name": "title_fontSize", "caption": "Size", "width": "70px", "minimum": 0, "digits": 2},
+                        { "type": "Select", "name": "title_fontSize_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": 1,
+                            "options": [
+                                { "caption": "%", "value": "%" },
+                                { "caption": "em", "value": "em" },
+                                { "caption": "px", "value": "px" }
+                            ]
+                        },
+                        { "type": "SelectColor", "name": "title_fontColor", "caption": "Color", "width": "150px"},
+                        { "type": "Select", "name": "title_fontFamily", "caption": "Family", "width": "150px",
+                            "options": [
+                                { "caption": "-Default-", "value": "" },
+                                { "caption": "Amatic SC", "value": "Amatic SC" },
+                                { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                                { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                                { "caption": "Codystar", "value": "Codystar" },
+                                { "caption": "Comfortaa", "value": "Comfortaa" },
+                                { "caption": "Cookie", "value": "Cookie" },
+                                { "caption": "Dancing Script", "value": "Dancing Script" },
+                                { "caption": "Gurajada", "value": "Gurajada" },
+                                { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                                { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                                { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                                { "caption": "Medula One", "value": "Medula One" },
+                                { "caption": "Open Sans", "value": "Open Sans" },
+                                { "caption": "Orbitron", "value": "Orbitron" },
+                                { "caption": "Roboto", "value": "Roboto" },
+                                { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                                { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                                { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                                { "caption": "Space Mono", "value": "Space Mono" },
+                                { "caption": "Syne Mono", "value": "Syne Mono" }
+                            ]
+                        }
+                    ]
+                }
             ]
         },
         {
             "type": "ExpansionPanel",
             "caption": "Buttons",
             "items": [
-                { "type": "CheckBox", "name": "buttons_display", "caption": "Display"},
                 {
                     "type": "RowLayout",
                     "items": [
                         { "type": "Label", "caption": "Font:", "width": "100px" },
-                        { "type": "NumberSpinner", "name": "buttons_fontSize", "caption": "Size", "width": "100px", "suffix": "em", "minimum": 0, "digits": 2},
+                        { "type": "NumberSpinner", "name": "buttons_fontSize", "caption": "Size", "width": "70px", "minimum": 0, "digits": 2},
+                        { "type": "Select", "name": "buttons_fontSize_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": 1,
+                            "options": [
+                                { "caption": "%", "value": "%" },
+                                { "caption": "em", "value": "em" },
+                                { "caption": "px", "value": "px" }
+                            ]
+                        },
                         { "type": "SelectColor", "name": "buttons_fontColor", "caption": "Color", "width": "150px"},
                         { "type": "Select", "name": "buttons_fontFamily", "caption": "Family", "width": "150px",
                             "options": [
@@ -55,10 +120,293 @@
             ]
         },
         {
+            "type": "ExpansionPanel",
+            "caption": "Header",
+            "items": [
+                { "type": "CheckBox", "name": "header_display", "caption": "Display"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "SelectColor", "name": "header_backgroundColor", "caption": "Color" },
+                        { "type": "HorizontalSlider", "name": "header_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05}
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "NumberSpinner", "name": "header_margin", "caption": "Button-Space", "width": "100px", "minimum": 0, "digits": 2},
+                        { "type": "Select", "name": "header_margin_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": 1,
+                            "options": [
+                                { "caption": "%", "value": "%" },
+                                { "caption": "em", "value": "em" },
+                                { "caption": "px", "value": "px" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "List",
+                    "name": "header_Toolbar",
+                    "caption": "Header Toolbar",
+                    "rowCount": 5,
+                    "changeOrder": true,
+                    "add": true,
+                    "delete": true,
+                    "edit": true,
+                    "columns": [
+                        {
+                            "caption": "Position",
+                            "name": "Position",
+                            "width": "150px",
+                            "add": "start",
+                            "edit": {
+                                "type": "Select",
+                                "options": [
+                                    { "caption": "start", "value": "start"},
+                                    { "caption": "center", "value": "center"},
+                                    { "caption": "end", "value": "end"}
+                                ]
+                            }
+                        },
+                        {
+                            "caption": "Type",
+                            "name": "Type",
+                            "width": "300px",
+                            "add": "title",
+                            "edit": {
+                                "type": "Select",
+                                "options": [
+                                    { "caption": "title", "value": "title"},
+                                    { "caption": "prev", "value": "prev"},
+                                    { "caption": "next", "value": "next"},
+                                    { "caption": "prevYear", "value": "prevYear"},
+                                    { "caption": "nextYear", "value": "nextYear"},
+                                    { "caption": "today", "value": "today"},
+                                    { "caption": "dayGridMonth", "value": "dayGridMonth" },
+                                    { "caption": "timeGridDay", "value": "timeGridDay" },
+                                    { "caption": "timeGridWeek", "value": "timeGridWeek" },
+                                    { "caption": "listDay", "value": "listDay" },
+                                    { "caption": "listWeek", "value": "listWeek" },
+                                    { "caption": "listMonth", "value": "listMonth" },
+                                    { "caption": "listYear", "value": "listYear" },
+                                    { "caption": "dayGridDay", "value": "dayGridDay" },
+                                    { "caption": "dayGridWeek", "value": "dayGridWeek" }
+                                ]
+                            }
+                        },
+                        {
+                            "caption": "Group-ID",
+                            "name": "groupID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "NumberSpinner",
+                                "minimum": 0,
+                                "stepSize": 1
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Footer",
+            "items": [
+                { "type": "CheckBox", "name": "footer_display", "caption": "Display"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "SelectColor", "name": "footer_backgroundColor", "caption": "Color" },
+                        { "type": "HorizontalSlider", "name": "footer_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05}
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "NumberSpinner", "name": "footer_margin", "caption": "Button-Space", "width": "100px", "minimum": 0, "digits": 2},
+                        { "type": "Select", "name": "footer_margin_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": 1,
+                            "options": [
+                                { "caption": "%", "value": "%" },
+                                { "caption": "em", "value": "em" },
+                                { "caption": "px", "value": "px" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "List",
+                    "name": "footer_Toolbar",
+                    "caption": "Footer Toolbar",
+                    "rowCount": 5,
+                    "changeOrder": true,
+                    "add": true,
+                    "delete": true,
+                    "edit": true,
+                    "columns": [
+                        {
+                            "caption": "Position",
+                            "name": "Position",
+                            "width": "150px",
+                            "add": "start",
+                            "edit": {
+                                "type": "Select",
+                                "options": [
+                                    { "caption": "start", "value": "start"},
+                                    { "caption": "center", "value": "center"},
+                                    { "caption": "end", "value": "end"}
+                                ]
+                            }
+                        },
+                        {
+                            "caption": "Type",
+                            "name": "Type",
+                            "width": "300px",
+                            "add": "title",
+                            "edit": {
+                                "type": "Select",
+                                "options": [
+                                    { "caption": "title", "value": "title"},
+                                    { "caption": "prev", "value": "prev"},
+                                    { "caption": "next", "value": "next"},
+                                    { "caption": "prevYear", "value": "prevYear"},
+                                    { "caption": "nextYear", "value": "nextYear"},
+                                    { "caption": "today", "value": "today"},
+                                    { "caption": "dayGridMonth", "value": "dayGridMonth" },
+                                    { "caption": "timeGridDay", "value": "timeGridDay" },
+                                    { "caption": "timeGridWeek", "value": "timeGridWeek" },
+                                    { "caption": "listDay", "value": "listDay" },
+                                    { "caption": "listWeek", "value": "listWeek" },
+                                    { "caption": "listMonth", "value": "listMonth" },
+                                    { "caption": "listYear", "value": "listYear" },
+                                    { "caption": "dayGridDay", "value": "dayGridDay" },
+                                    { "caption": "dayGridWeek", "value": "dayGridWeek" }
+                                ]
+                            }
+                        },
+                        {
+                            "caption": "Group-ID",
+                            "name": "groupID",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "NumberSpinner",
+                                "minimum": 0,
+                                "stepSize": 1
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Table",
+            "items": [
+                { "type": "Label", "caption": "Header", "width": "100px" },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "SelectColor", "name": "table_header_backgroundColor", "caption": "Color" },
+                        { "type": "HorizontalSlider", "name": "table_header_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05}
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Font:", "width": "100px" },
+                        { "type": "NumberSpinner", "name": "table_header_fontSize", "caption": "Size", "width": "70px", "minimum": 0, "digits": 2},
+                        { "type": "Select", "name": "table_header_fontSize_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": 1,
+                            "options": [
+                                { "caption": "%", "value": "%" },
+                                { "caption": "em", "value": "em" },
+                                { "caption": "px", "value": "px" }
+                            ]
+                        },
+                        { "type": "SelectColor", "name": "table_header_fontColor", "caption": "Color", "width": "150px"},
+                        { "type": "Select", "name": "table_header_fontFamily", "caption": "Family", "width": "150px",
+                            "options": [
+                                { "caption": "-Default-", "value": "" },
+                                { "caption": "Amatic SC", "value": "Amatic SC" },
+                                { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                                { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                                { "caption": "Codystar", "value": "Codystar" },
+                                { "caption": "Comfortaa", "value": "Comfortaa" },
+                                { "caption": "Cookie", "value": "Cookie" },
+                                { "caption": "Dancing Script", "value": "Dancing Script" },
+                                { "caption": "Gurajada", "value": "Gurajada" },
+                                { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                                { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                                { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                                { "caption": "Medula One", "value": "Medula One" },
+                                { "caption": "Open Sans", "value": "Open Sans" },
+                                { "caption": "Orbitron", "value": "Orbitron" },
+                                { "caption": "Roboto", "value": "Roboto" },
+                                { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                                { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                                { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                                { "caption": "Space Mono", "value": "Space Mono" },
+                                { "caption": "Syne Mono", "value": "Syne Mono" }
+                            ]
+                        }
+                    ]
+                },
+                { "type": "Label", "caption": "Body", "width": "100px" },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "SelectColor", "name": "table_backgroundColor", "caption": "Color" },
+                        { "type": "HorizontalSlider", "name": "table_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05}
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Font:", "width": "100px" },
+                        { "type": "NumberSpinner", "name": "table_fontSize", "caption": "Size", "width": "70px", "minimum": 0, "digits": 2},
+                        { "type": "Select", "name": "table_fontSize_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": 1,
+                            "options": [
+                                { "caption": "%", "value": "%" },
+                                { "caption": "em", "value": "em" },
+                                { "caption": "px", "value": "px" }
+                            ]
+                        },
+                        { "type": "SelectColor", "name": "table_fontColor", "caption": "Color", "width": "150px"},
+                        { "type": "Select", "name": "table_fontFamily", "caption": "Family", "width": "150px",
+                            "options": [
+                                { "caption": "-Default-", "value": "" },
+                                { "caption": "Amatic SC", "value": "Amatic SC" },
+                                { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                                { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                                { "caption": "Codystar", "value": "Codystar" },
+                                { "caption": "Comfortaa", "value": "Comfortaa" },
+                                { "caption": "Cookie", "value": "Cookie" },
+                                { "caption": "Dancing Script", "value": "Dancing Script" },
+                                { "caption": "Gurajada", "value": "Gurajada" },
+                                { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                                { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                                { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                                { "caption": "Medula One", "value": "Medula One" },
+                                { "caption": "Open Sans", "value": "Open Sans" },
+                                { "caption": "Orbitron", "value": "Orbitron" },
+                                { "caption": "Roboto", "value": "Roboto" },
+                                { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                                { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                                { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                                { "caption": "Space Mono", "value": "Space Mono" },
+                                { "caption": "Syne Mono", "value": "Syne Mono" }
+                            ]
+                        }
+                    ]
+                }
+
+            ]
+        },
+        {
             "type": "List",
             "name": "dataEvents",
             "caption": "DataEvents",
-            "rowCount": 3,
+            "rowCount": 5,
             "add": true,
             "delete": true,
             "edit": true,
@@ -90,7 +438,7 @@
                 {
                     "caption": "ICal Modul Instance",
                     "name": "moduleInstance",
-                    "width": "400px",
+                    "width": "auto",
                     "add": 0,
                     "edit": {
                         "type": "Select",
@@ -170,13 +518,6 @@
                         { "type": "Button", "label": "Show Default", "onClick": " echo SymconJSLiveCalendar_GetDefaultCSSLink($id);"}
                     ]
                 }
-            ]
-        },
-        { "type": "Select", "name": "ViewLevel", "caption": "View Level",
-            "options": [
-                { "caption": "Basic", "value": 0 },
-                { "caption": "Advance", "value": 1 },
-                { "caption": "Expert", "value": 2 }
             ]
         }
     ],
