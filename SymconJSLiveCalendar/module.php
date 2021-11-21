@@ -327,6 +327,8 @@ class SymconJSLiveCalendar extends JSLiveModule{
 
         //remove Dataset
         unset($output["dataEvents"]);
+        unset($output["header_Toolbar"]);
+        unset($output["footer_Toolbar"]);
 
         return $output;
     }
