@@ -55,8 +55,10 @@
             }
         }
         function CreateEventSource(){
+            let location = window.detectLocation();
+
             config_dataEvents.forEach((element, index) => {
-                config_dataEvents[index]["url"] = 'JSLive/getFeed';
+                config_dataEvents[index]["url"] = location['protocol'] + "//" + location['host'] + "/hook/JSLive/getFeed";
                 config_dataEvents[index]["extraParams"]["pw"] = config_global.Password;
                 config_dataEvents[index]["failure"] = function () {
                     $('#script-warning').show();
