@@ -27,21 +27,17 @@
                     initialView: configuration.initialView,
                     height: (Get_WindowHeight()-20),
                     eventSources: CreateEventSource(),
-                    titleFormat: { // siehe https://fullcalendar.io/docs/titleFormat
-                        year: 'numeric', month: 'long', day: 'numeric'
-                    },
-                    slotLabelFormat: {
-                        hour: 'numeric',
-                        hour12: false,
-                        minute:
-                            '2-digit',
-                        meridiem:
-                            'short'
-                    },
+                    titleFormat: configuration.titleFormat,
                     headerToolbar: configuration.header,
                     footerToolbar: configuration.footer,
+                    weekNumbers: configuration.table_weekNumbers_display,
+                    weekNumberFormat: { week: configuration.table_weekNumberFormat },
                     locale: 'de'
                 });
+
+                if(configuration.table_weekText_display){
+                    //calendar.setOption('locale', 'fr');
+                }
                 calendar.render();
             }catch (e) {
                 alert(e);

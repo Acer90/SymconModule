@@ -26,12 +26,27 @@ class SymconJSLiveCalendar extends JSLiveModule{
         $this->RegisterPropertyString("buttons_fontSize_unitType", "em");
         $this->RegisterPropertyInteger("buttons_fontColor", 16777215);
         $this->RegisterPropertyString("buttons_fontFamily", "");
+        $this->RegisterPropertyInteger("buttons_backgroundColor", 3626869);
+        $this->RegisterPropertyFloat("buttons_backgroundColor_Alpha", 1.00);
+        $this->RegisterPropertyInteger("buttons_backgroundColorHover", 2703703);
+        $this->RegisterPropertyFloat("buttons_backgroundColorHover_Alpha", 1.00);
+        $this->RegisterPropertyInteger("buttons_borderColor", 3626869);
+        $this->RegisterPropertyFloat("buttons_borderColor_Alpha", 1.00);
+        $this->RegisterPropertyFloat("buttons_borderWidth", 0.25);
+        $this->RegisterPropertyString("buttons_borderWidth_unitType", "em");
+        $this->RegisterPropertyString("buttons_borderWidth_Expert", "0.25em 0.25em 0.25em 0.25em");
+        $this->RegisterPropertyFloat("buttons_borderRadius", 0.25);
+        $this->RegisterPropertyString("buttons_borderRadius_unitType", "em");
+        $this->RegisterPropertyString("buttons_borderRadius_Expert", "0.25em 0.25em 0.25em 0.25em");
 
         //title
         $this->RegisterPropertyFloat("title_fontSize", 1.0);
         $this->RegisterPropertyString("title_fontSize_unitType", "em");
         $this->RegisterPropertyInteger("title_fontColor", 0);
         $this->RegisterPropertyString("title_fontFamily", "");
+        $this->RegisterPropertyString("title_formatYear", "numeric");
+        $this->RegisterPropertyString("title_formatMonth", "short");
+        $this->RegisterPropertyString("title_formatDay", "numeric");
 
         //Header
         $this->RegisterPropertyBoolean("header_display", True);
@@ -64,12 +79,26 @@ class SymconJSLiveCalendar extends JSLiveModule{
         $this->RegisterPropertyInteger("table_fontColor", 0);
         $this->RegisterPropertyString("table_fontFamily", "");
 
+        $this->RegisterPropertyInteger("table_borderColor", -1);
+        $this->RegisterPropertyFloat("table_borderColor_Alpha", 1.0);
+        $this->RegisterPropertyFloat("table_borderWidth", 1.0);
+        $this->RegisterPropertyString("table_borderWidth_unitType", "px");
+
         $this->RegisterPropertyInteger("table_header_backgroundColor", -1);
         $this->RegisterPropertyFloat("table_header_backgroundColor_Alpha", 0.0);
         $this->RegisterPropertyFloat("table_header_fontSize", 1.0);
         $this->RegisterPropertyString("table_header_fontSize_unitType", "em");
         $this->RegisterPropertyInteger("table_header_fontColor", 0);
         $this->RegisterPropertyString("table_header_fontFamily", "");
+
+        $this->RegisterPropertyBoolean("table_weekNumbers_display", False);
+        $this->RegisterPropertyString("table_weekNumberFormat", "numeric");
+        $this->RegisterPropertyInteger("table_weekNumber_backgroundColor", -1);
+        $this->RegisterPropertyFloat("table_weekNumber_backgroundColor_Alpha", 0.0);
+        $this->RegisterPropertyFloat("table_weekNumber_fontSize", 1.0);
+        $this->RegisterPropertyString("table_weekNumber_fontSize_unitType", "em");
+        $this->RegisterPropertyInteger("table_weekNumber_fontColor", 0);
+        $this->RegisterPropertyString("table_weekNumber_fontFamily", "");
 
         $this->RegisterPropertyString("initialView", "dayGridMonth");
         $this->RegisterPropertyString("dataEvents", "[]");
@@ -215,6 +244,7 @@ class SymconJSLiveCalendar extends JSLiveModule{
         }
     }
     private function GenerateCSS(){
+        $viewLevel = $this->ReadPropertyInteger("ViewLevel");
         if(!empty($this->ReadPropertyString("CustomCSS"))){
             $css_String = base64_decode($this->ReadPropertyString("CustomCSS"));
         }else {
@@ -259,6 +289,21 @@ class SymconJSLiveCalendar extends JSLiveModule{
                         } else {
                             $val = $config[$obj];
                             if(is_float($val)) $val = number_format($val, 2, '.', '');
+
+                            //wenn expertvariable vorhanden ist
+                            if (array_key_exists($obj . "_Expert", $config)) {
+                                if($viewLevel >= 2){
+                                    $val = $config[$obj . "_Expert"];
+                                }else{
+                                    if (array_key_exists($obj . "_unitType", $config)) {
+                                        $val = $val . $config[$obj . "_unitType"];
+                                    }
+                                }
+                            }else{
+                                if (array_key_exists($obj . "_unitType", $config)) {
+                                    $val = $val . $config[$obj . "_unitType"];
+                                }
+                            }
 
                             $css_String = str_replace($var, $val, $css_String);
                         }
@@ -307,6 +352,18 @@ class SymconJSLiveCalendar extends JSLiveModule{
                 $output[$Name][$item] = $this->GenerateToolbarString($listName);
             }
         }
+
+        return $output;
+    }
+    private function GenerateTitleFormat(){
+        $output = array();
+        $year = $this->ReadPropertyString("title_formatYear");
+        $month = $this->ReadPropertyString("title_formatMonth");
+        $day = $this->ReadPropertyString("title_formatDay");
+
+        if(!empty($year)) $output["year"] = $year;
+        if(!empty($month)) $output["month"] = $month;
+        if(!empty($day)) $output["day"] = $day;
 
         return $output;
     }
@@ -374,6 +431,10 @@ class SymconJSLiveCalendar extends JSLiveModule{
         $toolbarData = $this->GenerateToolbarArray();
         $output["header"] = $toolbarData["header"];
         $output["footer"] = $toolbarData["footer"];
+
+        //gen titleformat
+        $output["titleFormat"] = $this->GenerateTitleFormat();
+
 
         //remove Dataset
         unset($output["dataEvents"]);

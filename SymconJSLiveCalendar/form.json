@@ -36,7 +36,7 @@
                     "items": [
                         { "type": "Label", "caption": "Font:", "width": "100px" },
                         { "type": "NumberSpinner", "name": "title_fontSize", "caption": "Size", "width": "70px", "minimum": 0, "digits": 2},
-                        { "type": "Select", "name": "title_fontSize_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": 1,
+                        { "type": "Select", "name": "title_fontSize_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": true,
                             "options": [
                                 { "caption": "%", "value": "%" },
                                 { "caption": "em", "value": "em" },
@@ -70,6 +70,37 @@
                             ]
                         }
                     ]
+                },
+                {
+                    "type": "RowLayout",
+                    "viewlevel": 1,
+                    "items": [
+                        { "type": "Label", "caption": "Format:", "width": "100px" },
+                        { "type": "Select", "name": "title_formatYear", "caption": "Year", "width": "100px", "viewlevel": 1,
+                            "options": [
+                                { "caption": "", "value": "" },
+                                { "caption": "numeric", "value": "numeric" },
+                                { "caption": "short", "value": "short" },
+                                { "caption": "long", "value": "long" }
+                            ]
+                        },
+                        { "type": "Select", "name": "title_formatMonth", "caption": "Month", "width": "100px", "viewlevel": 1,
+                            "options": [
+                                { "caption": "", "value": "" },
+                                { "caption": "numeric", "value": "numeric" },
+                                { "caption": "short", "value": "short" },
+                                { "caption": "long", "value": "long" }
+                            ]
+                        },
+                        { "type": "Select", "name": "title_formatDay", "caption": "Day", "width": "100px", "viewlevel": 1,
+                            "options": [
+                                { "caption": "", "value": "" },
+                                { "caption": "numeric", "value": "numeric" },
+                                { "caption": "short", "value": "short" },
+                                { "caption": "long", "value": "long" }
+                            ]
+                        }
+                    ]
                 }
             ]
         },
@@ -82,7 +113,7 @@
                     "items": [
                         { "type": "Label", "caption": "Font:", "width": "100px" },
                         { "type": "NumberSpinner", "name": "buttons_fontSize", "caption": "Size", "width": "70px", "minimum": 0, "digits": 2},
-                        { "type": "Select", "name": "buttons_fontSize_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": 1,
+                        { "type": "Select", "name": "buttons_fontSize_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": true,
                             "options": [
                                 { "caption": "%", "value": "%" },
                                 { "caption": "em", "value": "em" },
@@ -116,6 +147,42 @@
                             ]
                         }
                     ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Background", "width": "100px" },
+                        { "type": "SelectColor", "name": "buttons_backgroundColor", "caption": "Color" },
+                        { "type": "HorizontalSlider", "name": "buttons_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05, "viewlevel": 1},
+                        { "type": "SelectColor", "name": "buttons_backgroundColorHover", "caption": "Hover/Active" },
+                        { "type": "HorizontalSlider", "name": "buttons_backgroundColorHover_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05, "viewlevel": 1}
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Border", "width": "100px" },
+                        { "type": "SelectColor", "name": "buttons_borderColor", "caption": "Color" },
+                        { "type": "HorizontalSlider", "name": "buttons_borderColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05, "viewlevel": 1},
+                        { "type": "NumberSpinner", "name": "buttons_borderWidth", "caption": "Width", "width": "100px", "minimum": 0, "digits": 2, "viewlevel": 1,  "viewlevelexactly": true},
+                        { "type": "Select", "name": "buttons_borderWidth_unitType", "caption": "Unit", "width": "50px", "viewlevel": 1, "viewdisable": true, "viewlevelexactly": true,
+                            "options": [
+                                { "caption": "%", "value": "%" },
+                                { "caption": "em", "value": "em" },
+                                { "caption": "px", "value": "px" }
+                            ]
+                        },
+                        { "type": "ValidationTextBox", "name": "buttons_borderWidth_Expert", "caption": "Width (CSS)", "width": "300px", "viewlevel": 2,  "viewlevelexactly": true},
+                        { "type": "NumberSpinner", "name": "buttons_borderRadius", "caption": "Radius", "width": "100px", "minimum": 0, "digits": 2, "viewlevel": 1,  "viewlevelexactly": true},
+                        { "type": "Select", "name": "buttons_borderRadius_unitType", "caption": "Unit", "width": "50px", "viewlevel": 1, "viewdisable": true, "viewlevelexactly": true,
+                            "options": [
+                                { "caption": "%", "value": "%" },
+                                { "caption": "em", "value": "em" },
+                                { "caption": "px", "value": "px" }
+                            ]
+                        },
+                        { "type": "ValidationTextBox", "name": "buttons_borderRadius_Expert", "caption": "Radius (CSS)", "width": "300px", "viewlevel": 2,  "viewlevelexactly": true}
+                    ]
                 }
             ]
         },
@@ -126,17 +193,17 @@
                 { "type": "CheckBox", "name": "header_display", "caption": "Display"},
                 {
                     "type": "RowLayout",
-                    "viewlevel": 1,
                     "items": [
                         { "type": "SelectColor", "name": "header_backgroundColor", "caption": "Color" },
-                        { "type": "HorizontalSlider", "name": "header_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05}
+                        { "type": "HorizontalSlider", "name": "header_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05, "viewlevel": 1}
                     ]
                 },
                 {
                     "type": "RowLayout",
+                    "viewlevel": 1,
                     "items": [
                         { "type": "NumberSpinner", "name": "header_margin", "caption": "Button-Space", "width": "100px", "minimum": 0, "digits": 2},
-                        { "type": "Select", "name": "header_margin_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": 1,
+                        { "type": "Select", "name": "header_margin_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": true,
                             "options": [
                                 { "caption": "%", "value": "%" },
                                 { "caption": "em", "value": "em" },
@@ -319,17 +386,17 @@
                 { "type": "CheckBox", "name": "footer_display", "caption": "Display"},
                 {
                     "type": "RowLayout",
-                    "viewlevel": 1,
                     "items": [
                         { "type": "SelectColor", "name": "footer_backgroundColor", "caption": "Color" },
-                        { "type": "HorizontalSlider", "name": "footer_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05}
+                        { "type": "HorizontalSlider", "name": "footer_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05, "viewlevel": 1}
                     ]
                 },
                 {
                     "type": "RowLayout",
+                    "viewlevel": 1,
                     "items": [
-                        { "type": "NumberSpinner", "name": "footer_margin", "caption": "Button-Space", "width": "100px", "minimum": 0, "digits": 2},
-                        { "type": "Select", "name": "footer_margin_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": 1,
+                        { "type": "NumberSpinner", "name": "footer_margin", "caption": "Top-Space", "width": "100px", "minimum": 0, "digits": 2},
+                        { "type": "Select", "name": "footer_margin_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": true,
                             "options": [
                                 { "caption": "%", "value": "%" },
                                 { "caption": "em", "value": "em" },
@@ -509,111 +576,219 @@
             "type": "ExpansionPanel",
             "caption": "Table",
             "items": [
-                { "type": "Label", "caption": "Today", "width": "100px" },
                 {
-                    "type": "RowLayout",
+                    "type": "ExpansionPanel",
+                    "caption": "Today",
                     "items": [
-                        { "type": "SelectColor", "name": "table_today_backgroundColor", "caption": "Color" },
-                        { "type": "HorizontalSlider", "name": "table_today_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05}
-                    ]
-                },
-                { "type": "Label", "caption": "Header", "width": "100px" },
-                {
-                    "type": "RowLayout",
-                    "items": [
-                        { "type": "SelectColor", "name": "table_header_backgroundColor", "caption": "Color" },
-                        { "type": "HorizontalSlider", "name": "table_header_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05}
-                    ]
-                },
-                {
-                    "type": "RowLayout",
-                    "items": [
-                        { "type": "Label", "caption": "Font:", "width": "100px" },
-                        { "type": "NumberSpinner", "name": "table_header_fontSize", "caption": "Size", "width": "70px", "minimum": 0, "digits": 2},
-                        { "type": "Select", "name": "table_header_fontSize_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": 1,
-                            "options": [
-                                { "caption": "%", "value": "%" },
-                                { "caption": "em", "value": "em" },
-                                { "caption": "px", "value": "px" }
-                            ]
-                        },
-                        { "type": "SelectColor", "name": "table_header_fontColor", "caption": "Color", "width": "150px"},
-                        { "type": "Select", "name": "table_header_fontFamily", "caption": "Family", "width": "150px",
-                            "options": [
-                                { "caption": "-Default-", "value": "" },
-                                { "caption": "Amatic SC", "value": "Amatic SC" },
-                                { "caption": "Architects Daughter", "value": "Architects Daughter" },
-                                { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
-                                { "caption": "Codystar", "value": "Codystar" },
-                                { "caption": "Comfortaa", "value": "Comfortaa" },
-                                { "caption": "Cookie", "value": "Cookie" },
-                                { "caption": "Dancing Script", "value": "Dancing Script" },
-                                { "caption": "Gurajada", "value": "Gurajada" },
-                                { "caption": "Hammersmith One", "value": "Hammersmith One" },
-                                { "caption": "Julius Sans One", "value": "Julius Sans One" },
-                                { "caption": "Major Mono Display", "value": "Major Mono Display" },
-                                { "caption": "Medula One", "value": "Medula One" },
-                                { "caption": "Open Sans", "value": "Open Sans" },
-                                { "caption": "Orbitron", "value": "Orbitron" },
-                                { "caption": "Roboto", "value": "Roboto" },
-                                { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
-                                { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
-                                { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
-                                { "caption": "Space Mono", "value": "Space Mono" },
-                                { "caption": "Syne Mono", "value": "Syne Mono" }
+                        {
+                            "type": "RowLayout",
+                            "items": [
+                                { "type": "Label", "caption": "Background:", "width": "100px" },
+                                { "type": "SelectColor", "name": "table_today_backgroundColor", "caption": "Color" },
+                                { "type": "HorizontalSlider", "name": "table_today_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05}
                             ]
                         }
                     ]
                 },
-                { "type": "Label", "caption": "Body", "width": "100px" },
                 {
-                    "type": "RowLayout",
+                    "type": "ExpansionPanel",
+                    "caption": "Header",
                     "items": [
-                        { "type": "SelectColor", "name": "table_backgroundColor", "caption": "Color" },
-                        { "type": "HorizontalSlider", "name": "table_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05}
+                        {
+                            "type": "RowLayout",
+                            "items": [
+                                { "type": "Label", "caption": "Background:", "width": "100px" },
+                                { "type": "SelectColor", "name": "table_header_backgroundColor", "caption": "Color" },
+                                { "type": "HorizontalSlider", "name": "table_header_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05}
+                            ]
+                        },
+                        {
+                            "type": "RowLayout",
+                            "items": [
+                                { "type": "Label", "caption": "Font:", "width": "100px" },
+                                { "type": "NumberSpinner", "name": "table_header_fontSize", "caption": "Size", "width": "70px", "minimum": 0, "digits": 2},
+                                { "type": "Select", "name": "table_header_fontSize_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": true,
+                                    "options": [
+                                        { "caption": "%", "value": "%" },
+                                        { "caption": "em", "value": "em" },
+                                        { "caption": "px", "value": "px" }
+                                    ]
+                                },
+                                { "type": "SelectColor", "name": "table_header_fontColor", "caption": "Color", "width": "150px"},
+                                { "type": "Select", "name": "table_header_fontFamily", "caption": "Family", "width": "150px",
+                                    "options": [
+                                        { "caption": "-Default-", "value": "" },
+                                        { "caption": "Amatic SC", "value": "Amatic SC" },
+                                        { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                                        { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                                        { "caption": "Codystar", "value": "Codystar" },
+                                        { "caption": "Comfortaa", "value": "Comfortaa" },
+                                        { "caption": "Cookie", "value": "Cookie" },
+                                        { "caption": "Dancing Script", "value": "Dancing Script" },
+                                        { "caption": "Gurajada", "value": "Gurajada" },
+                                        { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                                        { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                                        { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                                        { "caption": "Medula One", "value": "Medula One" },
+                                        { "caption": "Open Sans", "value": "Open Sans" },
+                                        { "caption": "Orbitron", "value": "Orbitron" },
+                                        { "caption": "Roboto", "value": "Roboto" },
+                                        { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                                        { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                                        { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                                        { "caption": "Space Mono", "value": "Space Mono" },
+                                        { "caption": "Syne Mono", "value": "Syne Mono" }
+                                    ]
+                                }
+                            ]
+                        }
                     ]
                 },
                 {
-                    "type": "RowLayout",
+                    "type": "ExpansionPanel",
+                    "caption": "Body",
                     "items": [
-                        { "type": "Label", "caption": "Font:", "width": "100px" },
-                        { "type": "NumberSpinner", "name": "table_fontSize", "caption": "Size", "width": "70px", "minimum": 0, "digits": 2},
-                        { "type": "Select", "name": "table_fontSize_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": 1,
-                            "options": [
-                                { "caption": "%", "value": "%" },
-                                { "caption": "em", "value": "em" },
-                                { "caption": "px", "value": "px" }
+                        {
+                            "type": "RowLayout",
+                            "items": [
+                                { "type": "Label", "caption": "Background:", "width": "100px" },
+                                { "type": "SelectColor", "name": "table_backgroundColor", "caption": "Color" },
+                                { "type": "HorizontalSlider", "name": "table_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05}
                             ]
                         },
-                        { "type": "SelectColor", "name": "table_fontColor", "caption": "Color", "width": "150px"},
-                        { "type": "Select", "name": "table_fontFamily", "caption": "Family", "width": "150px",
+                        {
+                            "type": "RowLayout",
+                            "items": [
+                                { "type": "Label", "caption": "Font:", "width": "100px" },
+                                { "type": "NumberSpinner", "name": "table_fontSize", "caption": "Size", "width": "70px", "minimum": 0, "digits": 2},
+                                { "type": "Select", "name": "table_fontSize_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": true,
+                                    "options": [
+                                        { "caption": "%", "value": "%" },
+                                        { "caption": "em", "value": "em" },
+                                        { "caption": "px", "value": "px" }
+                                    ]
+                                },
+                                { "type": "SelectColor", "name": "table_fontColor", "caption": "Color", "width": "150px"},
+                                { "type": "Select", "name": "table_fontFamily", "caption": "Family", "width": "150px",
+                                    "options": [
+                                        { "caption": "-Default-", "value": "" },
+                                        { "caption": "Amatic SC", "value": "Amatic SC" },
+                                        { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                                        { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                                        { "caption": "Codystar", "value": "Codystar" },
+                                        { "caption": "Comfortaa", "value": "Comfortaa" },
+                                        { "caption": "Cookie", "value": "Cookie" },
+                                        { "caption": "Dancing Script", "value": "Dancing Script" },
+                                        { "caption": "Gurajada", "value": "Gurajada" },
+                                        { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                                        { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                                        { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                                        { "caption": "Medula One", "value": "Medula One" },
+                                        { "caption": "Open Sans", "value": "Open Sans" },
+                                        { "caption": "Orbitron", "value": "Orbitron" },
+                                        { "caption": "Roboto", "value": "Roboto" },
+                                        { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                                        { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                                        { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                                        { "caption": "Space Mono", "value": "Space Mono" },
+                                        { "caption": "Syne Mono", "value": "Syne Mono" }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ExpansionPanel",
+                    "caption": "Border",
+                    "items": [
+                        {
+                            "type": "RowLayout",
+                            "items": [
+                                { "type": "Label", "caption": "Border:", "width": "100px" },
+                                { "type": "SelectColor", "name": "table_borderColor", "caption": "Color" },
+                                { "type": "HorizontalSlider", "name": "table_borderColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05}
+                            ]
+                        },
+                        {
+                            "type": "RowLayout",
+                            "viewlevel": 1,
+                            "items": [
+                                { "type": "Label", "caption": "Width:", "width": "100px" },
+                                { "type": "NumberSpinner", "name": "table_borderWidth", "caption": "Width", "width": "70px", "minimum": 0, "digits": 2},
+                                { "type": "Select", "name": "table_borderWidth_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": true,
+                                    "options": [
+                                        { "caption": "%", "value": "%" },
+                                        { "caption": "em", "value": "em" },
+                                        { "caption": "px", "value": "px" }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ExpansionPanel",
+                    "caption": "Week Numbers",
+                    "items": [
+                        { "type": "CheckBox", "name": "table_weekNumbers_display", "caption": "Display"},
+                        { "type": "Select", "name": "table_weekNumberFormat", "caption": "Family", "width": "150px", "viewlevel": 1,
                             "options": [
-                                { "caption": "-Default-", "value": "" },
-                                { "caption": "Amatic SC", "value": "Amatic SC" },
-                                { "caption": "Architects Daughter", "value": "Architects Daughter" },
-                                { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
-                                { "caption": "Codystar", "value": "Codystar" },
-                                { "caption": "Comfortaa", "value": "Comfortaa" },
-                                { "caption": "Cookie", "value": "Cookie" },
-                                { "caption": "Dancing Script", "value": "Dancing Script" },
-                                { "caption": "Gurajada", "value": "Gurajada" },
-                                { "caption": "Hammersmith One", "value": "Hammersmith One" },
-                                { "caption": "Julius Sans One", "value": "Julius Sans One" },
-                                { "caption": "Major Mono Display", "value": "Major Mono Display" },
-                                { "caption": "Medula One", "value": "Medula One" },
-                                { "caption": "Open Sans", "value": "Open Sans" },
-                                { "caption": "Orbitron", "value": "Orbitron" },
-                                { "caption": "Roboto", "value": "Roboto" },
-                                { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
-                                { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
-                                { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
-                                { "caption": "Space Mono", "value": "Space Mono" },
-                                { "caption": "Syne Mono", "value": "Syne Mono" }
+                                { "caption": "short", "value": "short" },
+                                { "caption": "narrow", "value": "narrow" },
+                                { "caption": "numeric", "value": "numeric" }
+                            ]
+                        },
+                        {
+                            "type": "RowLayout",
+                            "items": [
+                                { "type": "Label", "caption": "Background:", "width": "100px" },
+                                { "type": "SelectColor", "name": "table_weekNumber_backgroundColor", "caption": "Color" },
+                                { "type": "HorizontalSlider", "name": "table_weekNumber_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05}
+                            ]
+                        },
+                        {
+                            "type": "RowLayout",
+                            "items": [
+                                { "type": "Label", "caption": "Font:", "width": "100px" },
+                                { "type": "NumberSpinner", "name": "table_weekNumber_fontSize", "caption": "Size", "width": "70px", "minimum": 0, "digits": 2},
+                                { "type": "Select", "name": "table_weekNumber_fontSize_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": true,
+                                    "options": [
+                                        { "caption": "%", "value": "%" },
+                                        { "caption": "em", "value": "em" },
+                                        { "caption": "px", "value": "px" }
+                                    ]
+                                },
+                                { "type": "SelectColor", "name": "table_weekNumber_fontColor", "caption": "Color", "width": "150px"},
+                                { "type": "Select", "name": "table_weekNumber_fontFamily", "caption": "Family", "width": "150px",
+                                    "options": [
+                                        { "caption": "-Default-", "value": "" },
+                                        { "caption": "Amatic SC", "value": "Amatic SC" },
+                                        { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                                        { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                                        { "caption": "Codystar", "value": "Codystar" },
+                                        { "caption": "Comfortaa", "value": "Comfortaa" },
+                                        { "caption": "Cookie", "value": "Cookie" },
+                                        { "caption": "Dancing Script", "value": "Dancing Script" },
+                                        { "caption": "Gurajada", "value": "Gurajada" },
+                                        { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                                        { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                                        { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                                        { "caption": "Medula One", "value": "Medula One" },
+                                        { "caption": "Open Sans", "value": "Open Sans" },
+                                        { "caption": "Orbitron", "value": "Orbitron" },
+                                        { "caption": "Roboto", "value": "Roboto" },
+                                        { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                                        { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                                        { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                                        { "caption": "Space Mono", "value": "Space Mono" },
+                                        { "caption": "Syne Mono", "value": "Syne Mono" }
+                                    ]
+                                }
                             ]
                         }
                     ]
                 }
-
             ]
         },
         {

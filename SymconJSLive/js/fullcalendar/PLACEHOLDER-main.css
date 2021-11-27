@@ -57,8 +57,8 @@
 }
 .fc-theme-standard td,
   .fc-theme-standard th {
-    border: 1px solid #ddd;
-    border: 1px solid var(--fc-border-color, #ddd);
+    border: #table_borderWidth# solid #table_borderColor#;
+    border: #table_borderWidth# solid var(--fc-border-color, #table_borderColor#);
   }
 /* for FF, which doesn't expand a 100% div within a table cell. use absolute positioning */
 /* inner-wrappers are responsible for being absolute */
@@ -178,9 +178,9 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
     background-color: transparent;
     border: 1px solid transparent;
     padding: 0.4em 0.65em;
-    font-size: #buttons_fontSize#em;
+    font-size: #buttons_fontSize#;
     line-height: 1.5;
-    border-radius: 0.25em;
+    border-radius: #buttons_borderRadius#;
   }
 .fc .fc-button:hover {
     text-decoration: none;
@@ -200,26 +200,26 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
 .fc .fc-button-primary {
     color: #buttons_fontColor#;
     color: var(--fc-button-text-color, #buttons_fontColor#);
-    background-color: #2C3E50;
-    background-color: var(--fc-button-bg-color, #2C3E50);
-    border-color: #2C3E50;
-    border-color: var(--fc-button-border-color, #2C3E50);
+    background-color: #buttons_backgroundColor#;
+    background-color: var(--fc-button-bg-color, #buttons_backgroundColor#);
+    border-color: #buttons_borderColor#;
+    border-color: var(--fc-button-border-color, #buttons_borderColor#);
   }
 .fc .fc-button-primary:hover {
     color: #buttons_fontColor#;
     color: var(--fc-button-text-color, #buttons_fontColor#);
-    background-color: #1e2b37;
-    background-color: var(--fc-button-hover-bg-color, #1e2b37);
-    border-color: #1a252f;
-    border-color: var(--fc-button-hover-border-color, #1a252f);
+    background-color: #buttons_backgroundColorHover#;
+    background-color: var(--fc-button-hover-bg-color, #buttons_backgroundColorHover#);
+    border-color: #buttons_borderColor#;
+    border-color: var(--fc-button-hover-border-color, #buttons_borderColor#);
   }
 .fc .fc-button-primary:disabled { /* not DRY */
     color: #buttons_fontColor#;
     color: var(--fc-button-text-color, #buttons_fontColor#);
-    background-color: #2C3E50;
-    background-color: var(--fc-button-bg-color, #2C3E50);
-    border-color: #2C3E50;
-    border-color: var(--fc-button-border-color, #2C3E50); /* overrides :hover */
+    background-color: #buttons_backgroundColor#;
+    background-color: var(--fc-button-bg-color, #buttons_backgroundColor#);
+    border-color: #buttons_borderColor#;
+    border-color: var(--fc-button-border-color, #buttons_borderColor#); /* overrides :hover */
   }
 .fc .fc-button-primary:focus {
     box-shadow: 0 0 0 0.2rem rgba(76, 91, 106, 0.5);
@@ -228,10 +228,10 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
   .fc .fc-button-primary:not(:disabled).fc-button-active {
     color: #buttons_fontColor#;
     color: var(--fc-button-text-color,#buttons_fontColor#);
-    background-color: #1a252f;
-    background-color: var(--fc-button-active-bg-color, #1a252f);
-    border-color: #151e27;
-    border-color: var(--fc-button-active-border-color, #151e27);
+    background-color: #buttons_backgroundColorHover#;
+    background-color: var(--fc-button-active-bg-color, #buttons_backgroundColorHover#);
+    border-color: #buttons_borderColor#;
+    border-color: var(--fc-button-active-border-color, #buttons_borderColor#);
   }
 .fc .fc-button-primary:not(:disabled):active:focus,
   .fc .fc-button-primary:not(:disabled).fc-button-active:focus {
@@ -287,16 +287,16 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
     align-items: center;
   }
 .fc .fc-toolbar.fc-header-toolbar {
-    margin-bottom: #header_margin##header_margin_unitType#;
+    margin-bottom: #header_margin#;
     background-color: #header_backgroundColor#;
   }
 .fc .fc-toolbar.fc-footer-toolbar {
-    margin-top: #footer_margin##footer_margin_unitType#;
+    margin-top: #footer_margin#;
     background-color: #footer_backgroundColor#;
   }
 .fc .fc-toolbar-title {
-    font-size: #title_fontSize##title_fontSize_unitType#;
-    font-family: #title_fontFamily#;
+    font-size: #title_fontSize#;
+    font-family: '#title_fontFamily#';
     color: #title_fontColor#;
     margin: 0;
   }
@@ -337,8 +337,8 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
     direction: rtl;
   }
 .fc-theme-standard .fc-scrollgrid {
-    border: 1px solid #ddd;
-    border: 1px solid var(--fc-border-color, #ddd); /* bootstrap does this. match */
+    border: 1px solid #table_borderColor#;
+    border: 1px solid var(--fc-border-color, #table_borderColor#); /* bootstrap does this. match */
   }
 .fc .fc-scrollgrid,
     .fc .fc-scrollgrid table { /* all tables (self included) */
@@ -701,15 +701,20 @@ A HORIZONTAL event
 .fc-daygrid-day-frame,
 .fc-daygrid-day-events,
 .fc-daygrid-event-harness { /* for event top/bottom margins */
+    background-color: #table_backgroundColor#;
 }
 .fc-daygrid-day-frame:before, .fc-daygrid-day-events:before, .fc-daygrid-event-harness:before {
-  content: "";
-  clear: both;
-  display: table; }
+    content: "";
+    clear: both;
+    display: table;
+    background-color: #table_backgroundColor#;
+}
 .fc-daygrid-day-frame:after, .fc-daygrid-day-events:after, .fc-daygrid-event-harness:after {
-  content: "";
-  clear: both;
-  display: table; }
+    content: "";
+    clear: both;
+    display: table;
+    background-color: #table_backgroundColor#;
+}
 .fc .fc-daygrid-body { /* a <div> that wraps the table */
     position: relative;
     z-index: 1; /* container inner z-index's because <tr>s can't do it */
@@ -840,10 +845,12 @@ A HORIZONTAL event
     padding: 2px;
     min-width: 1.5em;
     text-align: center;
-    background-color: rgba(208, 208, 208, 0.3);
-    background-color: var(--fc-neutral-bg-color, rgba(208, 208, 208, 0.3));
-    color: #808080;
-    color: var(--fc-neutral-text-color, #808080);
+    background-color: #table_weekNumber_backgroundColor#;
+    background-color: var(--fc-neutral-bg-color, #table_weekNumber_backgroundColor#);
+    color: #table_weekNumber_fontColor#;
+    color: var(--fc-neutral-text-color, #table_weekNumber_fontColor#);
+    font-size: #table_weekNumber_fontSize#;
+    font-family: #table_weekNumber_fontFamily#;
   }
 .fc {
 
@@ -1076,10 +1083,12 @@ A VERTICAL event
   }
 .fc .fc-timegrid-slot { /* a <td> */
     height: 1.5em;
-    border-bottom: 0 /* each cell owns its top border */
+    border-bottom: 0; /* each cell owns its top border */
+    background-color: #table_backgroundColor#;
   }
 .fc .fc-timegrid-slot:empty:before {
       content: '\00a0'; /* make sure there's at least an empty space to create height for height syncing */
+        background-color: #table_backgroundColor#;
     }
 .fc .fc-timegrid-slot-minor {
     border-top-style: dotted;
@@ -1116,6 +1125,7 @@ A VERTICAL event
     display: flex;
     align-items: center; /* vertical align */
     justify-content: flex-end; /* horizontal align. matches text-align below */
+    background-color: #table_backgroundColor#;
   }
 .fc .fc-timegrid-axis-cushion {
     max-width: 60px; /* limits the width of the "all-day" text */
@@ -1325,7 +1335,7 @@ A VERTICAL event
 
 :root {
   --fc-list-event-dot-width: 10px;
-  --fc-list-event-hover-bg-color: #f5f5f5;
+  /*--fc-list-event-hover-bg-color: #f5f5f5;*/
 }
 .fc-theme-standard .fc-list {
     border: 1px solid #ddd;
@@ -1407,8 +1417,8 @@ A VERTICAL event
     background-color: #table_header_backgroundColor#;
     background-color: var(--fc-neutral-bg-color, #table_header_backgroundColor#);
     color: #table_header_fontColor#;
-    font-family: #table_header_fontFamily#;
-    font-size: #table_header_fontSize##table_header_fontSize_unitType#;
+    font-family: '#table_header_fontFamily#';
+    font-size: #table_header_fontSize#;
   }
 .fc-direction-ltr .fc-list-day-text,
 .fc-direction-rtl .fc-list-day-side-text {
@@ -1423,10 +1433,11 @@ A VERTICAL event
 .fc-direction-rtl .fc-list-table .fc-list-event-graphic { padding-left: 0 }
 .fc .fc-list-event.fc-event-forced-url {
     cursor: pointer; /* whole row will seem clickable */
+    background-color: #table_backgroundColor#;
   }
 .fc .fc-list-event:hover td {
-    background-color: #f5f5f5;
-    background-color: var(--fc-list-event-hover-bg-color, #f5f5f5);
+    background-color: #table_backgroundColor#;
+    background-color: var(--fc-list-event-hover-bg-color, #table_backgroundColor#);
   }
 .fc {
 
@@ -1476,6 +1487,10 @@ A VERTICAL event
 .fc .fc-col-header {
     background-color: #table_header_backgroundColor#;
     color: #table_header_fontColor#;
-    font-size: #table_header_fontSize##table_header_fontSize_unitType#;
-    font-style: #table_header_fontFamily#;
+    font-size: #table_header_fontSize#;
+    font-family: '#table_header_fontFamily#';
+}
+
+.fc-event {
+    background-color: #table_backgroundColor#;
 }

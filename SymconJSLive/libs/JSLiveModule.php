@@ -261,19 +261,26 @@ class JSLiveModule extends IPSModule
             //$this->SendDebug("RecursiveUpdateForm", $key, 0 );
 
             //items Recusive for Items
-            if(array_key_exists("items", $item))$arr[$key]["items"] = $this->RecursiveUpdateForm($arr[$key]["items"]);
-            if(array_key_exists("options", $item))$arr[$key]["options"] = $this->RecursiveUpdateForm($arr[$key]["options"]);
-            if(array_key_exists("columns", $item)) $arr[$key]["columns"] = $this->RecursiveUpdateForm($arr[$key]["columns"]);
+            if (array_key_exists("items", $item)) $arr[$key]["items"] = $this->RecursiveUpdateForm($arr[$key]["items"]);
+            if (array_key_exists("options", $item)) $arr[$key]["options"] = $this->RecursiveUpdateForm($arr[$key]["options"]);
+            if (array_key_exists("columns", $item)) $arr[$key]["columns"] = $this->RecursiveUpdateForm($arr[$key]["columns"]);
 
             //list options
-            if(array_key_exists("edit", $item) && is_array($item["edit"]) && array_key_exists("columns", $item["edit"])) $arr[$key]["edit"]["columns"] = $this->RecursiveUpdateForm($arr[$key]["edit"]["columns"]);
-            if(array_key_exists("edit", $item) && is_array($item["edit"]) && array_key_exists("options", $item["edit"])) $arr[$key]["edit"]["options"] = $this->RecursiveUpdateForm($arr[$key]["edit"]["options"]);
+            if (array_key_exists("edit", $item) && is_array($item["edit"]) && array_key_exists("columns", $item["edit"])) $arr[$key]["edit"]["columns"] = $this->RecursiveUpdateForm($arr[$key]["edit"]["columns"]);
+            if (array_key_exists("edit", $item) && is_array($item["edit"]) && array_key_exists("options", $item["edit"])) $arr[$key]["edit"]["options"] = $this->RecursiveUpdateForm($arr[$key]["edit"]["options"]);
 
             //ignore items without viewlevel element
-            if(!array_key_exists("viewlevel", $item)) continue;
+            if (!array_key_exists("viewlevel", $item)) continue;
 
-            if($arr[$key]["viewlevel"] > $this->ReadPropertyInteger("ViewLevel")){
-                if(array_key_exists("viewdisable", $item) && $arr[$key]["viewdisable"] == 1){
+            //viewLevelExactly set value
+            $viewLevelExactly = false;
+            if (array_key_exists("viewlevelexactly", $item)) $viewLevelExactly = $arr[$key]["viewlevelexactly"];
+
+            if ($viewLevelExactly == true && $arr[$key]["viewlevel"] != $this->ReadPropertyInteger("ViewLevel")) {
+                //löschen wenn viewlevel nicht genau das level ist!!!
+                unset($arr[$key]);
+            }elseif($arr[$key]["viewlevel"] > $this->ReadPropertyInteger("ViewLevel")){
+                if(array_key_exists("viewdisable", $item) && $arr[$key]["viewdisable"] == true){
                     //diable wenn viewdisable == 1
                     $arr[$key]["enabled"] = false;
                 }else{
