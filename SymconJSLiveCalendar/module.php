@@ -35,15 +35,19 @@ class SymconJSLiveCalendar extends JSLiveModule{
 
         //Header
         $this->RegisterPropertyBoolean("header_display", True);
-        $this->RegisterPropertyString("header_Toolbar", "[]");
+        $this->RegisterPropertyString("header_Toolbar_start", "[{\"Type\":\"title\",\"connectPrevious\":false}]");
+        $this->RegisterPropertyString("header_Toolbar_center", "[{\"Type\":\"timeGridDay\",\"connectPrevious\":false},{\"Type\":\"timeGridWeek\",\"connectPrevious\":true},{\"Type\":\"dayGridMonth\",\"connectPrevious\":true}]");
+        $this->RegisterPropertyString("header_Toolbar_end", "[{\"Type\":\"prev\",\"connectPrevious\":false},{\"Type\":\"next\",\"connectPrevious\":true}]");
         $this->RegisterPropertyInteger("header_backgroundColor", -1);
         $this->RegisterPropertyFloat("header_backgroundColor_Alpha", 1.0);
         $this->RegisterPropertyFloat("header_margin", 1.5);
         $this->RegisterPropertyString("header_margin_unitType", "em");
 
         //footer
-        $this->RegisterPropertyBoolean("footer_display", True);
-        $this->RegisterPropertyString("footer_Toolbar", "[]");
+        $this->RegisterPropertyBoolean("footer_display", False);
+        $this->RegisterPropertyString("footer_Toolbar_start", "[]");
+        $this->RegisterPropertyString("footer_Toolbar_center", "[]");
+        $this->RegisterPropertyString("footer_Toolbar_end", "[]");
         $this->RegisterPropertyInteger("footer_backgroundColor", -1);
         $this->RegisterPropertyFloat("footer_backgroundColor_Alpha", 1.0);
         $this->RegisterPropertyFloat("footer_margin", 1.5);
@@ -265,6 +269,47 @@ class SymconJSLiveCalendar extends JSLiveModule{
 
         return $css_String;
     }
+    private function GenerateToolbarString($listElement){
+        $r_str = "";
+        $data = json_decode($this->ReadPropertyString($listElement), true);
+        $first = true;
+
+        foreach($data as $item){
+            $connectPrevious = true;
+            if(array_key_exists("connectPrevious", $item)) $connectPrevious = $item["connectPrevious"];
+
+            if($first){
+                $r_str = $item["Type"];
+            }elseif(!$connectPrevious){
+                $r_str = $r_str . " " . $item["Type"];
+            }else{
+                $r_str = $r_str . "," . $item["Type"];
+            }
+
+            $first = false;
+        }
+
+        return $r_str;
+    }
+    private function GenerateToolbarArray(){
+        $arr_ToolbarName = array("header", "footer");
+        $arr_ToolbarItems = array("start", "center", "end");
+        $output = array();
+
+        foreach($arr_ToolbarName as $Name){
+            if($this->ReadPropertyBoolean($Name."_display") == false){
+                $output[$Name] = false;
+                continue;
+            }
+
+            foreach($arr_ToolbarItems as $item){
+                $listName = $Name."_Toolbar_".$item;
+                $output[$Name][$item] = $this->GenerateToolbarString($listName);
+            }
+        }
+
+        return $output;
+    }
 
     private function GetDataEvents(){
         $output = array();
@@ -325,10 +370,20 @@ class SymconJSLiveCalendar extends JSLiveModule{
             }
         }
 
+        //header and footer
+        $toolbarData = $this->GenerateToolbarArray();
+        $output["header"] = $toolbarData["header"];
+        $output["footer"] = $toolbarData["footer"];
+
         //remove Dataset
         unset($output["dataEvents"]);
-        unset($output["header_Toolbar"]);
-        unset($output["footer_Toolbar"]);
+        unset($output["header_Toolbar_start"]);
+        unset($output["header_Toolbar_center"]);
+        unset($output["header_Toolbar_end"]);
+
+        unset($output["footer_Toolbar_start"]);
+        unset($output["footer_Toolbar_center"]);
+        unset($output["footer_Toolbar_end"]);
 
         return $output;
     }

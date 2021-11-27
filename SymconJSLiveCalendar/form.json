@@ -17,7 +17,7 @@
                         { "caption": "dayGridWeek", "value": "dayGridWeek" }
                     ]
                 },
-                { "type": "Label", "caption": "", "width": "1260px" },
+                { "type": "Label", "caption": "", "width": "80%" },
                 { "type": "Select", "name": "ViewLevel", "caption": "View Level", "width": "100px",
                     "options": [
                         { "caption": "Basic", "value": 0 },
@@ -126,6 +126,7 @@
                 { "type": "CheckBox", "name": "header_display", "caption": "Display"},
                 {
                     "type": "RowLayout",
+                    "viewlevel": 1,
                     "items": [
                         { "type": "SelectColor", "name": "header_backgroundColor", "caption": "Color" },
                         { "type": "HorizontalSlider", "name": "header_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05}
@@ -145,65 +146,167 @@
                     ]
                 },
                 {
-                    "type": "List",
-                    "name": "header_Toolbar",
-                    "caption": "Header Toolbar",
-                    "rowCount": 5,
-                    "changeOrder": true,
-                    "add": true,
-                    "delete": true,
-                    "edit": true,
-                    "columns": [
+                    "type": "ExpansionPanel",
+                    "viewlevel": 1,
+                    "caption": "Start",
+                    "items": [
                         {
-                            "caption": "Position",
-                            "name": "Position",
-                            "width": "150px",
-                            "add": "start",
-                            "edit": {
-                                "type": "Select",
-                                "options": [
-                                    { "caption": "start", "value": "start"},
-                                    { "caption": "center", "value": "center"},
-                                    { "caption": "end", "value": "end"}
-                                ]
-                            }
-                        },
+                            "type": "List",
+                            "name": "header_Toolbar_start",
+                            "caption": "Header Toolbar Start",
+                            "rowCount": 5,
+                            "changeOrder": true,
+                            "add": true,
+                            "delete": true,
+                            "edit": true,
+                            "columns": [
+                                {
+                                    "caption": "Type",
+                                    "name": "Type",
+                                    "width": "300px",
+                                    "add": "title",
+                                    "edit": {
+                                        "type": "Select",
+                                        "options": [
+                                            { "caption": "title", "value": "title"},
+                                            { "caption": "prev", "value": "prev"},
+                                            { "caption": "next", "value": "next"},
+                                            { "caption": "prevYear", "value": "prevYear"},
+                                            { "caption": "nextYear", "value": "nextYear"},
+                                            { "caption": "today", "value": "today"},
+                                            { "caption": "dayGridMonth", "value": "dayGridMonth" },
+                                            { "caption": "timeGridDay", "value": "timeGridDay" },
+                                            { "caption": "timeGridWeek", "value": "timeGridWeek" },
+                                            { "caption": "listDay", "value": "listDay" },
+                                            { "caption": "listWeek", "value": "listWeek" },
+                                            { "caption": "listMonth", "value": "listMonth" },
+                                            { "caption": "listYear", "value": "listYear" },
+                                            { "caption": "dayGridDay", "value": "dayGridDay" },
+                                            { "caption": "dayGridWeek", "value": "dayGridWeek" }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "caption": "connect to previous element",
+                                    "viewlevel": 2,
+                                    "name": "connectPrevious",
+                                    "width": "auto",
+                                    "add": false,
+                                    "edit": {
+                                        "type": "CheckBox"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ExpansionPanel",
+                    "viewlevel": 1,
+                    "caption": "Center",
+                    "items": [
                         {
-                            "caption": "Type",
-                            "name": "Type",
-                            "width": "300px",
-                            "add": "title",
-                            "edit": {
-                                "type": "Select",
-                                "options": [
-                                    { "caption": "title", "value": "title"},
-                                    { "caption": "prev", "value": "prev"},
-                                    { "caption": "next", "value": "next"},
-                                    { "caption": "prevYear", "value": "prevYear"},
-                                    { "caption": "nextYear", "value": "nextYear"},
-                                    { "caption": "today", "value": "today"},
-                                    { "caption": "dayGridMonth", "value": "dayGridMonth" },
-                                    { "caption": "timeGridDay", "value": "timeGridDay" },
-                                    { "caption": "timeGridWeek", "value": "timeGridWeek" },
-                                    { "caption": "listDay", "value": "listDay" },
-                                    { "caption": "listWeek", "value": "listWeek" },
-                                    { "caption": "listMonth", "value": "listMonth" },
-                                    { "caption": "listYear", "value": "listYear" },
-                                    { "caption": "dayGridDay", "value": "dayGridDay" },
-                                    { "caption": "dayGridWeek", "value": "dayGridWeek" }
-                                ]
-                            }
-                        },
+                            "type": "List",
+                            "name": "header_Toolbar_center",
+                            "caption": "Header Toolbar Center",
+                            "rowCount": 5,
+                            "changeOrder": true,
+                            "add": true,
+                            "delete": true,
+                            "edit": true,
+                            "columns": [
+                                {
+                                    "caption": "Type",
+                                    "name": "Type",
+                                    "width": "300px",
+                                    "add": "title",
+                                    "edit": {
+                                        "type": "Select",
+                                        "options": [
+                                            { "caption": "title", "value": "title"},
+                                            { "caption": "prev", "value": "prev"},
+                                            { "caption": "next", "value": "next"},
+                                            { "caption": "prevYear", "value": "prevYear"},
+                                            { "caption": "nextYear", "value": "nextYear"},
+                                            { "caption": "today", "value": "today"},
+                                            { "caption": "dayGridMonth", "value": "dayGridMonth" },
+                                            { "caption": "timeGridDay", "value": "timeGridDay" },
+                                            { "caption": "timeGridWeek", "value": "timeGridWeek" },
+                                            { "caption": "listDay", "value": "listDay" },
+                                            { "caption": "listWeek", "value": "listWeek" },
+                                            { "caption": "listMonth", "value": "listMonth" },
+                                            { "caption": "listYear", "value": "listYear" },
+                                            { "caption": "dayGridDay", "value": "dayGridDay" },
+                                            { "caption": "dayGridWeek", "value": "dayGridWeek" }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "caption": "connect to previous element",
+                                    "viewlevel": 2,
+                                    "name": "connectPrevious",
+                                    "width": "auto",
+                                    "add": false,
+                                    "edit": {
+                                        "type": "CheckBox"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ExpansionPanel",
+                    "viewlevel": 1,
+                    "caption": "End",
+                    "items": [
                         {
-                            "caption": "Group-ID",
-                            "name": "groupID",
-                            "width": "auto",
-                            "add": 0,
-                            "edit": {
-                                "type": "NumberSpinner",
-                                "minimum": 0,
-                                "stepSize": 1
-                            }
+                            "type": "List",
+                            "name": "header_Toolbar_end",
+                            "caption": "Header Toolbar End",
+                            "rowCount": 5,
+                            "changeOrder": true,
+                            "add": true,
+                            "delete": true,
+                            "edit": true,
+                            "columns": [
+                                {
+                                    "caption": "Type",
+                                    "name": "Type",
+                                    "width": "300px",
+                                    "add": "title",
+                                    "edit": {
+                                        "type": "Select",
+                                        "options": [
+                                            { "caption": "title", "value": "title"},
+                                            { "caption": "prev", "value": "prev"},
+                                            { "caption": "next", "value": "next"},
+                                            { "caption": "prevYear", "value": "prevYear"},
+                                            { "caption": "nextYear", "value": "nextYear"},
+                                            { "caption": "today", "value": "today"},
+                                            { "caption": "dayGridMonth", "value": "dayGridMonth" },
+                                            { "caption": "timeGridDay", "value": "timeGridDay" },
+                                            { "caption": "timeGridWeek", "value": "timeGridWeek" },
+                                            { "caption": "listDay", "value": "listDay" },
+                                            { "caption": "listWeek", "value": "listWeek" },
+                                            { "caption": "listMonth", "value": "listMonth" },
+                                            { "caption": "listYear", "value": "listYear" },
+                                            { "caption": "dayGridDay", "value": "dayGridDay" },
+                                            { "caption": "dayGridWeek", "value": "dayGridWeek" }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "caption": "connect to previous element",
+                                    "viewlevel": 2,
+                                    "name": "connectPrevious",
+                                    "width": "auto",
+                                    "add": false,
+                                    "edit": {
+                                        "type": "CheckBox"
+                                    }
+                                }
+                            ]
                         }
                     ]
                 }
@@ -216,6 +319,7 @@
                 { "type": "CheckBox", "name": "footer_display", "caption": "Display"},
                 {
                     "type": "RowLayout",
+                    "viewlevel": 1,
                     "items": [
                         { "type": "SelectColor", "name": "footer_backgroundColor", "caption": "Color" },
                         { "type": "HorizontalSlider", "name": "footer_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05}
@@ -235,65 +339,167 @@
                     ]
                 },
                 {
-                    "type": "List",
-                    "name": "footer_Toolbar",
-                    "caption": "Footer Toolbar",
-                    "rowCount": 5,
-                    "changeOrder": true,
-                    "add": true,
-                    "delete": true,
-                    "edit": true,
-                    "columns": [
+                    "type": "ExpansionPanel",
+                    "viewlevel": 1,
+                    "caption": "Start",
+                    "items": [
                         {
-                            "caption": "Position",
-                            "name": "Position",
-                            "width": "150px",
-                            "add": "start",
-                            "edit": {
-                                "type": "Select",
-                                "options": [
-                                    { "caption": "start", "value": "start"},
-                                    { "caption": "center", "value": "center"},
-                                    { "caption": "end", "value": "end"}
-                                ]
-                            }
-                        },
+                            "type": "List",
+                            "name": "footer_Toolbar_start",
+                            "caption": "Footer Toolbar Start",
+                            "rowCount": 5,
+                            "changeOrder": true,
+                            "add": true,
+                            "delete": true,
+                            "edit": true,
+                            "columns": [
+                                {
+                                    "caption": "Type",
+                                    "name": "Type",
+                                    "width": "300px",
+                                    "add": "title",
+                                    "edit": {
+                                        "type": "Select",
+                                        "options": [
+                                            { "caption": "title", "value": "title"},
+                                            { "caption": "prev", "value": "prev"},
+                                            { "caption": "next", "value": "next"},
+                                            { "caption": "prevYear", "value": "prevYear"},
+                                            { "caption": "nextYear", "value": "nextYear"},
+                                            { "caption": "today", "value": "today"},
+                                            { "caption": "dayGridMonth", "value": "dayGridMonth" },
+                                            { "caption": "timeGridDay", "value": "timeGridDay" },
+                                            { "caption": "timeGridWeek", "value": "timeGridWeek" },
+                                            { "caption": "listDay", "value": "listDay" },
+                                            { "caption": "listWeek", "value": "listWeek" },
+                                            { "caption": "listMonth", "value": "listMonth" },
+                                            { "caption": "listYear", "value": "listYear" },
+                                            { "caption": "dayGridDay", "value": "dayGridDay" },
+                                            { "caption": "dayGridWeek", "value": "dayGridWeek" }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "caption": "connect to previous element",
+                                    "viewlevel": 2,
+                                    "name": "connectPrevious",
+                                    "width": "auto",
+                                    "add": false,
+                                    "edit": {
+                                        "type": "CheckBox"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ExpansionPanel",
+                    "viewlevel": 1,
+                    "caption": "Center",
+                    "items": [
                         {
-                            "caption": "Type",
-                            "name": "Type",
-                            "width": "300px",
-                            "add": "title",
-                            "edit": {
-                                "type": "Select",
-                                "options": [
-                                    { "caption": "title", "value": "title"},
-                                    { "caption": "prev", "value": "prev"},
-                                    { "caption": "next", "value": "next"},
-                                    { "caption": "prevYear", "value": "prevYear"},
-                                    { "caption": "nextYear", "value": "nextYear"},
-                                    { "caption": "today", "value": "today"},
-                                    { "caption": "dayGridMonth", "value": "dayGridMonth" },
-                                    { "caption": "timeGridDay", "value": "timeGridDay" },
-                                    { "caption": "timeGridWeek", "value": "timeGridWeek" },
-                                    { "caption": "listDay", "value": "listDay" },
-                                    { "caption": "listWeek", "value": "listWeek" },
-                                    { "caption": "listMonth", "value": "listMonth" },
-                                    { "caption": "listYear", "value": "listYear" },
-                                    { "caption": "dayGridDay", "value": "dayGridDay" },
-                                    { "caption": "dayGridWeek", "value": "dayGridWeek" }
-                                ]
-                            }
-                        },
+                            "type": "List",
+                            "name": "footer_Toolbar_center",
+                            "caption": "Footer Toolbar Center",
+                            "rowCount": 5,
+                            "changeOrder": true,
+                            "add": true,
+                            "delete": true,
+                            "edit": true,
+                            "columns": [
+                                {
+                                    "caption": "Type",
+                                    "name": "Type",
+                                    "width": "300px",
+                                    "add": "title",
+                                    "edit": {
+                                        "type": "Select",
+                                        "options": [
+                                            { "caption": "title", "value": "title"},
+                                            { "caption": "prev", "value": "prev"},
+                                            { "caption": "next", "value": "next"},
+                                            { "caption": "prevYear", "value": "prevYear"},
+                                            { "caption": "nextYear", "value": "nextYear"},
+                                            { "caption": "today", "value": "today"},
+                                            { "caption": "dayGridMonth", "value": "dayGridMonth" },
+                                            { "caption": "timeGridDay", "value": "timeGridDay" },
+                                            { "caption": "timeGridWeek", "value": "timeGridWeek" },
+                                            { "caption": "listDay", "value": "listDay" },
+                                            { "caption": "listWeek", "value": "listWeek" },
+                                            { "caption": "listMonth", "value": "listMonth" },
+                                            { "caption": "listYear", "value": "listYear" },
+                                            { "caption": "dayGridDay", "value": "dayGridDay" },
+                                            { "caption": "dayGridWeek", "value": "dayGridWeek" }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "caption": "connect to previous element",
+                                    "viewlevel": 2,
+                                    "name": "connectPrevious",
+                                    "width": "auto",
+                                    "add": false,
+                                    "edit": {
+                                        "type": "CheckBox"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ExpansionPanel",
+                    "viewlevel": 1,
+                    "caption": "End",
+                    "items": [
                         {
-                            "caption": "Group-ID",
-                            "name": "groupID",
-                            "width": "auto",
-                            "add": 0,
-                            "edit": {
-                                "type": "NumberSpinner",
-                                "minimum": 0,
-                                "stepSize": 1
-                            }
+                            "type": "List",
+                            "name": "footer_Toolbar_end",
+                            "caption": "Footer Toolbar End",
+                            "rowCount": 5,
+                            "changeOrder": true,
+                            "add": true,
+                            "delete": true,
+                            "edit": true,
+                            "columns": [
+                                {
+                                    "caption": "Type",
+                                    "name": "Type",
+                                    "width": "300px",
+                                    "add": "title",
+                                    "edit": {
+                                        "type": "Select",
+                                        "options": [
+                                            { "caption": "title", "value": "title"},
+                                            { "caption": "prev", "value": "prev"},
+                                            { "caption": "next", "value": "next"},
+                                            { "caption": "prevYear", "value": "prevYear"},
+                                            { "caption": "nextYear", "value": "nextYear"},
+                                            { "caption": "today", "value": "today"},
+                                            { "caption": "dayGridMonth", "value": "dayGridMonth" },
+                                            { "caption": "timeGridDay", "value": "timeGridDay" },
+                                            { "caption": "timeGridWeek", "value": "timeGridWeek" },
+                                            { "caption": "listDay", "value": "listDay" },
+                                            { "caption": "listWeek", "value": "listWeek" },
+                                            { "caption": "listMonth", "value": "listMonth" },
+                                            { "caption": "listYear", "value": "listYear" },
+                                            { "caption": "dayGridDay", "value": "dayGridDay" },
+                                            { "caption": "dayGridWeek", "value": "dayGridWeek" }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "caption": "connect to previous element",
+                                    "viewlevel": 2,
+                                    "name": "connectPrevious",
+                                    "width": "auto",
+                                    "add": false,
+                                    "edit": {
+                                        "type": "CheckBox"
+                                    }
+                                }
+                            ]
                         }
                     ]
                 }

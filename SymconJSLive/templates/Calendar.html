@@ -38,15 +38,8 @@
                         meridiem:
                             'short'
                     },
-                    headerToolbar: { // Ansicht Kopfzeile
-                        left: 'title',
-                        //'title',
-                        center: 'timeGridDay,timeGridWeek,dayGridMonth',
-                        //'timeGridDay,timeGridWeek,dayGridMonth', // Ansicht und Auswahl des Kalenders
-                        right: 'prev,next today'
-                        //'prev,next today'
-
-                    },
+                    headerToolbar: configuration.header,
+                    footerToolbar: configuration.footer,
                     locale: 'de'
                 });
                 calendar.render();
