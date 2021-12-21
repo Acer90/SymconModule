@@ -102,6 +102,7 @@ class SymconJSLiveCalendar extends JSLiveModule{
 
         $this->RegisterPropertyString("initialView", "dayGridMonth");
         $this->RegisterPropertyString("dataEvents", "[]");
+        $this->RegisterPropertyString("customViews", "[]");
 
     }
     public function ApplyChanges() {
@@ -132,6 +133,7 @@ class SymconJSLiveCalendar extends JSLiveModule{
         $colkey = array_search("moduleInstance", array_column($colData, 'name'));
 
         $options_arr = array();
+        $options_arr[] = array("value" => "", "caption" => "");
         foreach ($ical_instances as $instanceID){
             $options_arr[] = array("value" => $instanceID, "caption" => $instanceID. " => " . IPS_GetObject($instanceID)["ObjectName"]);
         }
@@ -139,7 +141,109 @@ class SymconJSLiveCalendar extends JSLiveModule{
         $formData["elements"][$key]["columns"][$colkey]["add"] = $options_arr[0]["value"];
         $formData["elements"][$key]["columns"][$colkey]["edit"]["options"] = $options_arr;
 
+        //update Toolbar and initalview with customeview
+        $viewsoptions = array();
+        $key = 0;
+        foreach ($formData["elements"] as $keyNr => $element) {
+            if (array_key_exists("name", $element) && $element["name"] === "customView") {
+                $key = $keyNr;
+                break;
+            }
+        }
+        $views = json_decode($this->ReadPropertyString("customViews"), true);
+        $ignoreViews = array("dayGridMonth", "timeGridDay", "timeGridWeek", "listDay", "listWeek", "listMonth", "listYear", "dayGridDay", "dayGridWeek" );
+
+        foreach ($views as $row => $view) {
+            $formData["elements"][$key]["items"][0]["values"][$row] = $view;
+
+            if(empty($view["name"])){
+                $formData["elements"][$key]["items"][0]["values"][$row]["rowColor"] = "#ff0000";
+            }else{
+                if(in_array($view["name"], $ignoreViews)) continue;
+                $iName = "view_".preg_replace('/[^A-Za-z0-9._]/', '', $view["name"]);
+                $viewsoptions[] = array("caption" => $view["name"], "value" => $iName);
+            }
+        }
+
+        if(count($viewsoptions) > 0){
+            //alle element finden und updaten
+            $pathList =$this->GET_PathList($formData["elements"]);
+            //print_r($pathList);
+
+            //initialview
+            $key = array_search('initialView', array_column($pathList, 'name'));
+            $path = $pathList[$key]["path"];
+            $path[] = "options";
+
+            //print_r($path);
+            $data = $this->GET_By_KEYPATH($formData["elements"], $path);
+            $data = array_merge($data, $viewsoptions);
+
+            $this->SET_By_KEYPATH($path, $formData["elements"], $data);
+
+            //toolbars
+            $array_toolbars = array("header_Toolbar_start", "header_Toolbar_center", "header_Toolbar_end", "footer_Toolbar_start", "footer_Toolbar_center", "footer_Toolbar_end");
+
+            foreach($array_toolbars as $lookup){
+                $key = array_search($lookup, array_column($pathList, 'name'));
+                $path = $pathList[$key]["path"];
+                $path[] = "columns";
+                $path[] = 0;
+                $path[] = "edit";
+                $path[] = "options";
+
+                //print_r($path);
+
+
+                $data = $this->GET_By_KEYPATH($formData["elements"], $path);
+                $data = array_merge($data, $viewsoptions);
+
+                $this->SET_By_KEYPATH($path, $formData["elements"], $data);
+            }
+        }
+
         return json_encode($formData);
+    }
+    private function GET_PathList($arr, $paths = array(), $curPath = array())
+    {
+        if (array_key_exists("name", $arr))
+        {
+            $paths[] = array("path" => $curPath, "name" => $arr["name"]);
+        }
+        else
+        {
+            foreach ($arr as $key => $subarr)
+            {
+                $newPath = $curPath;
+                $newPath[] = $key;
+
+                //echo $key. "\r\n";
+
+                if (is_array($subarr))
+                {
+                    $paths = $this->GET_PathList($subarr, $paths, $newPath);
+                }
+            }
+        }
+        return $paths;
+    }
+    private function SET_By_KEYPATH($path, &$array=array(), $value=null)
+    {
+        $temp =& $array;
+
+        foreach ($path as $key) {
+            $temp =& $temp[$key];
+        }
+        $temp = $value;
+    }
+    private function GET_By_KEYPATH($array, $path){
+        $temp =& $array;
+
+        foreach($path as $key) {
+            //print_r($temp[$key]);
+            $temp =& $temp[$key];
+        }
+        return $temp;
     }
 
     public function ReceiveData($JSONString) {
@@ -160,6 +264,8 @@ class SymconJSLiveCalendar extends JSLiveModule{
                 return $this->GetCSS();
             case "setData":
                 return $this->SetData($buffer['queryData']);
+            case "getICS":
+                return $this->GetICS($buffer['md5']);
             default:
                if($buffer['cmd'] != "UpdateCache")
                     $this->SendDebug("ReceiveData", "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
@@ -242,6 +348,23 @@ class SymconJSLiveCalendar extends JSLiveModule{
         }else{
             return json_encode(array("Contend" => $this->GenerateCSS(), "lastModify" => time(), "EnableCache" => $EnableCache, "InstanceID" => $this->InstanceID));
         }
+    }
+    private function GetICS($md5){
+        $data = json_decode($this->ReadPropertyString("dataEvents"), true);
+        $fileData = "";
+
+        foreach($data as $item){
+            if(!empty($item["moduleInstance"])) continue;
+            if(empty($item["ical"])) continue;
+            if(md5($item["ical"]) !== $md5) continue;
+
+            $fileData = base64_decode($item["ical"]);
+            break;
+        }
+
+        if(empty($fileData)) $fileData = "File Not Found!";
+
+        return $fileData;
     }
     private function GenerateCSS(){
         $viewLevel = $this->ReadPropertyInteger("ViewLevel");
@@ -367,7 +490,26 @@ class SymconJSLiveCalendar extends JSLiveModule{
 
         return $output;
     }
+    private function GenerateCustomViews(){
+        $output = array();
+        $data = json_decode($this->ReadPropertyString("customViews"), true);
+        $specialViews = array("dayGridMonth", "timeGridDay", "timeGridWeek", "listDay", "listWeek", "listMonth", "listYear", "dayGridDay", "dayGridWeek" );
 
+        foreach($data as $item){
+            if(empty($item["name"])) continue;
+            $iName = "view_".preg_replace('/[^A-Za-z0-9._]/', '', $item["name"]);
+            if(in_array($item["name"], $specialViews)) $iName = $item["name"];
+
+            $s_output = array();
+            if(!empty($item["type"])) $s_output["type"] = $item["type"];
+            $s_output["duration"][$item["durationType"]] = $item["duration"];
+            $s_output["buttonText"] = $item["name"];
+
+            $output[$iName] = $s_output;
+        }
+
+        return $output;
+    }
     private function GetDataEvents(){
         $output = array();
         $data = json_decode($this->ReadPropertyString("dataEvents"), true);
@@ -375,7 +517,7 @@ class SymconJSLiveCalendar extends JSLiveModule{
         foreach($data as $item){
             $s_output = array();
             $s_output["Name"] = $item["Name"];
-            $s_output["Type"] = $item["Type"];
+            $s_output["Type"] = "";
 
             if($item["Color"] >= 0) {
                 $rgbdata = $this->HexToRGB($item["Color"]);
@@ -387,9 +529,22 @@ class SymconJSLiveCalendar extends JSLiveModule{
                 $s_output["textColor"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
             }
 
-            $s_output["extraParams"] = array("Instance" => $this->InstanceID, "id" => $item["moduleInstance"]);
-
-            $output[] = $s_output;
+            if(!empty($item["moduleInstance"])){
+                $s_output["extraParams"] = array("Instance" => $this->InstanceID, "id" => $item["moduleInstance"]);
+                $s_output["Type"] = "module";
+                $output[] = $s_output;
+            }elseif(!empty($item["ical"])){
+                //downloadfile verfügbar machen
+                $s_output["md5"] = md5($item["ical"]);
+                $s_output["format"] = "ical";
+                $s_output["Type"] = "file";
+                $output[] = $s_output;
+            }elseif(!empty($item["icalLink"])){
+                $s_output["url"] = $item["icalLink"];
+                $s_output["format"] = "ical";
+                $s_output["Type"] = "link";
+                $output[] = $s_output;
+            }
         }
 
         return $output;
@@ -402,6 +557,8 @@ class SymconJSLiveCalendar extends JSLiveModule{
         //DATAEVENTS
         $htmlData = str_replace("{DATAEVENTS}",  $this->json_encode_advanced($this->GetDataEvents()), $htmlData);
 
+        //CustomeViews
+        $htmlData = str_replace("{VIEWS}",  $this->json_encode_advanced($this->GenerateCustomViews()), $htmlData);
         //Load Fonts
         $htmlData = str_replace("{FONTS}", $this->LoadFonts(), $htmlData);
 
@@ -435,7 +592,6 @@ class SymconJSLiveCalendar extends JSLiveModule{
         //gen titleformat
         $output["titleFormat"] = $this->GenerateTitleFormat();
 
-
         //remove Dataset
         unset($output["dataEvents"]);
         unset($output["header_Toolbar_start"]);
@@ -445,6 +601,8 @@ class SymconJSLiveCalendar extends JSLiveModule{
         unset($output["footer_Toolbar_start"]);
         unset($output["footer_Toolbar_center"]);
         unset($output["footer_Toolbar_end"]);
+
+        unset($output["customViews"]);
 
         return $output;
     }

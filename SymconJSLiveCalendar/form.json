@@ -80,8 +80,7 @@
                             "options": [
                                 { "caption": "", "value": "" },
                                 { "caption": "numeric", "value": "numeric" },
-                                { "caption": "short", "value": "short" },
-                                { "caption": "long", "value": "long" }
+                                { "caption": "2-digit", "value": "2-digit" }
                             ]
                         },
                         { "type": "Select", "name": "title_formatMonth", "caption": "Month", "width": "100px", "viewlevel": 1,
@@ -803,31 +802,16 @@
                 {
                     "caption": "Name",
                     "name": "Name",
-                    "width": "150px",
+                    "width": "auto",
                     "add": "",
                     "edit": {
                         "type": "ValidationTextBox"
                     }
                 },
                 {
-                    "caption": "Type",
-                    "name": "Type",
-                    "width": "100px",
-                    "add": "module",
-                    "edit": {
-                        "type": "Select",
-                        "options": [
-                            {
-                                "caption": "ICAL Modul",
-                                "value": "module"
-                            }
-                        ]
-                    }
-                },
-                {
                     "caption": "ICal Modul Instance",
                     "name": "moduleInstance",
-                    "width": "auto",
+                    "width": "150px",
                     "add": 0,
                     "edit": {
                         "type": "Select",
@@ -837,6 +821,25 @@
                                 "value": 0
                             }
                         ]
+                    }
+                },
+                {
+                    "caption": "ICAL",
+                    "name": "ical",
+                    "width": "150px",
+                    "add": "",
+                    "edit": {
+                        "type": "SelectFile",
+                        "extensions": ".ics"
+                    }
+                },
+                {
+                    "caption": "ICAL Link",
+                    "name": "icalLink",
+                    "width": "150px",
+                    "add": "",
+                    "edit": {
+                        "type": "ValidationTextBox"
                     }
                 },
                 {
@@ -869,6 +872,73 @@
                     "edit": {
                         "type": "SelectColor"
                     }
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Custom View",
+            "name": "customView",
+            "viewlevel": 2,
+            "items": [
+                { "type": "Label", "caption": "To override Default Views use:\n\rdayGridMonth, timeGridDay, timeGridWeek, listDay, listWeek, listMonth, listYear, dayGridDay, dayGridWeek"},
+                {
+                    "type": "List",
+                    "name": "customViews",
+                    "rowCount": 5,
+                    "add": true,
+                    "delete": true,
+                    "edit": true,
+                    "columns": [
+                        {
+                            "caption": "Name",
+                            "name": "name",
+                            "width": "auto",
+                            "add": "",
+                            "edit": {
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Type",
+                            "name": "type",
+                            "width": "150px",
+                            "add": "",
+                            "edit": {
+                                "type": "Select",
+                                "options": [
+                                    { "caption": "", "value": "" },
+                                    { "caption": "dayGrid", "value": "dayGrid" },
+                                    { "caption": "timeGrid", "value": "timeGrid" }
+                                ]
+                            }
+                        },
+                        {
+                            "caption": "Duration",
+                            "name": "duration",
+                            "width": "100px",
+                            "add": 1,
+                            "edit": {
+                                "minimum": 1,
+                                "digit": 0,
+                                "type": "NumberSpinner"
+                            }
+                        },
+                        {
+                            "caption": "Duration Type",
+                            "name": "durationType",
+                            "width": "150px",
+                            "add": "days",
+                            "edit": {
+                                "type": "Select",
+                                "options": [
+                                    { "caption": "days", "value": "days" },
+                                    { "caption": "weeks", "value": "weeks" },
+                                    { "caption": "months", "value": "months" }
+                                ]
+                            }
+                        }
+                    ]
                 }
             ]
         },
