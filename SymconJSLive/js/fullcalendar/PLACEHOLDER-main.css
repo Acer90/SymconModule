@@ -503,7 +503,6 @@ a.fc-event:hover {
   }
 .fc-event:hover, /* MOUSE */
 .fc-event-selected { /* TOUCH */
-
 }
 .fc-event:hover .fc-event-resizer, .fc-event-selected .fc-event-resizer {
     display: block;
@@ -1493,4 +1492,7 @@ A VERTICAL event
 
 .fc-event {
     background-color: #table_backgroundColor#;
+    font-size: #table_fontSize#;
+    font-family: '#table_fontFamily#';
+    color: #table_fontColor#;
 }
