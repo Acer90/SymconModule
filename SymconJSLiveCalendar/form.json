@@ -972,6 +972,17 @@
                             }
                         },
                         {
+                            "caption": "Scroll Time (TimeGrid only)",
+                            "name": "scrollTime",
+                            "width": "auto",
+                            "add": "06:00:00",
+                            "visible": false,
+                            "edit": {
+                                "validate": "(?:[012]\\d|2[0123]):(?:[012345]\\d):(?:[012345]\\d)",
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
                             "caption": "Show Weekends (TimeGrid only)",
                             "name": "weekends",
                             "width": "auto",

@@ -510,6 +510,7 @@ class SymconJSLiveCalendar extends JSLiveModule{
                 $s_output["slotDuration"] = $item["slotDuration"];
                 $s_output["slotMinTime"] = $item["slotMinTime"];
                 $s_output["slotMaxTime"] = $item["slotMaxTime"];
+                $s_output["scrollTime"] = $item["scrollTime"];
                 $s_output["weekends"] = $item["weekends"];
             }
 
