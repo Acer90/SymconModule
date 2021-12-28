@@ -505,6 +505,14 @@ class SymconJSLiveCalendar extends JSLiveModule{
             $s_output["duration"][$item["durationType"]] = $item["duration"];
             $s_output["buttonText"] = $item["name"];
 
+            //timegrid optional
+            if($item["type"] == "timeGrid"){
+                $s_output["slotDuration"] = $item["slotDuration"];
+                $s_output["slotMinTime"] = $item["slotMinTime"];
+                $s_output["slotMaxTime"] = $item["slotMaxTime"];
+                $s_output["weekends"] = $item["weekends"];
+            }
+
             $output[$iName] = $s_output;
         }
 

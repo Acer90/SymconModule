@@ -937,6 +937,49 @@
                                     { "caption": "months", "value": "months" }
                                 ]
                             }
+                        },
+                        {
+                            "caption": "Slot Duration (TimeGrid only)",
+                            "name": "slotDuration",
+                            "width": "auto",
+                            "add": "00:30:00",
+                            "visible": false,
+                            "edit": {
+                                "validate": "(?:[012]\\d|2[0123]):(?:[012345]\\d):(?:[012345]\\d)",
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Start Time(TimeGrid only)",
+                            "name": "slotMinTime",
+                            "width": "auto",
+                            "add": "00:00:00",
+                            "visible": false,
+                            "edit": {
+                                "validate": "(?:[012]\\d|2[0123]):(?:[012345]\\d):(?:[012345]\\d)",
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "End Time (TimeGrid only)",
+                            "name": "slotMaxTime",
+                            "width": "auto",
+                            "add": "24:00:00",
+                            "visible": false,
+                            "edit": {
+                                "validate": "(?:[012]\\d|2[0123]):(?:[012345]\\d):(?:[012345]\\d)",
+                                "type": "ValidationTextBox"
+                            }
+                        },
+                        {
+                            "caption": "Show Weekends (TimeGrid only)",
+                            "name": "weekends",
+                            "width": "auto",
+                            "add": true,
+                            "visible": false,
+                            "edit": {
+                                "type": "CheckBox"
+                            }
                         }
                     ]
                 }
