@@ -8,10 +8,9 @@
     {FONTS}  <!-- Need for Custom font Family !-->
     <script src="/hook/JSLive/js/jquery.min.js"></script>
     <script src="/hook/JSLive/js/util.js"></script>
-    <script src='https://cdn.jsdelivr.net/npm/ical.js@1.4.0/build/ical.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/icalendar2fullcalendar@1.0.1/ical2fullcalendar.min.js'></script>
+    <script src='https://unpkg.com/ical.js@1.4.0/build/ical.js'></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js'></script>
-    <script src='/hook/JSLive/js/fullcalendar/locales/de.js'></script>
+    <!-- <script src='/hook/JSLive/js/fullcalendar/locales/de.js'></script>-->
     <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/icalendar@5.10.1/main.global.min.js'></script>
 </head>
 <body>
@@ -58,11 +57,14 @@
 
                 }else if(config_dataEvents[index]["Type"] === "file"){
                     //location['protocol'] + "//" + location['host'] +
-                    config_dataEvents[index]["url"] = "/hook/JSLive/getICS?md5="+config_dataEvents[index]["md5"];
+                    config_dataEvents[index]["url"] = "/hook/JSLive/getICS?Instance="+configuration.InstanceID+"&pw="+config_global.Password+"&md5="+config_dataEvents[index]["md5"];
+                }else if(config_dataEvents[index]["Type"] === "link"){
+                    config_dataEvents[index]["url"] = "/hook/JSLive/getICS?Instance="+configuration.InstanceID+"&pw="+config_global.Password+"&md5="+config_dataEvents[index]["md5"];
                 }
 
                 config_dataEvents[index]["failure"] = function () {
                     $('#script-warning').show();
+                    alert('there was an error while fetching events!');
                 }
             });
 

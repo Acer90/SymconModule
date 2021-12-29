@@ -74,6 +74,8 @@ class SymconJSLive extends WebHookModule {
 
             header("HTTP/1.1 200 X");
             header('Access-Control-Allow-Origin: *');
+            header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+            header('Access-Control-Allow-Headers: Content-Type');
             //http_response_code(200);
             $path_parts = pathinfo($path);
             $mimeType = $this->GetMimeType($path_parts["extension"]);
@@ -158,7 +160,7 @@ class SymconJSLive extends WebHookModule {
 
             if (!is_array($contend) || count($contend) == 0){
                 $this->SendDebug("WebHook", "NO INSTANCE FOUND!", 0);
-                $this->SendDebug("WebHook", print_r($contend, true), 0);
+                $this->SendDebug("WebHook", "Contend => " . print_r($contend, true), 0);
                 header("Content-Type: text/html");
                 return "NO INSTANCE FOUND!"; //wenn instance nicht gefunden
             }

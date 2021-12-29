@@ -265,7 +265,7 @@ class SymconJSLiveCalendar extends JSLiveModule{
             case "setData":
                 return $this->SetData($buffer['queryData']);
             case "getICS":
-                return $this->GetICS($buffer['md5']);
+                return $this->GetICS($buffer['queryData']['md5']);
             default:
                if($buffer['cmd'] != "UpdateCache")
                     $this->SendDebug("ReceiveData", "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
@@ -355,11 +355,17 @@ class SymconJSLiveCalendar extends JSLiveModule{
 
         foreach($data as $item){
             if(!empty($item["moduleInstance"])) continue;
-            if(empty($item["ical"])) continue;
-            if(md5($item["ical"]) !== $md5) continue;
+            if(!empty($item["ical"]) && md5($item["ical"]) === $md5){
+                $this->SendDebug("GetICS", "Loading File => " . $item["Name"], 0);
 
-            $fileData = base64_decode($item["ical"]);
-            break;
+                $fileData = base64_decode($item["ical"]);
+                break;
+            }elseif(!empty($item["icalLink"]) && md5($item["icalLink"]) === $md5){
+                $this->SendDebug("GetICS", "Loading Link => " . $item["icalLink"], 0);
+
+                $fileData = file_get_contents($item["icalLink"]);
+                break;
+            }
         }
 
         if(empty($fileData)) $fileData = "File Not Found!";
@@ -545,12 +551,13 @@ class SymconJSLiveCalendar extends JSLiveModule{
             }elseif(!empty($item["ical"])){
                 //downloadfile verfügbar machen
                 $s_output["md5"] = md5($item["ical"]);
-                $s_output["format"] = "ical";
+                $s_output["format"] = "ics";
                 $s_output["Type"] = "file";
                 $output[] = $s_output;
             }elseif(!empty($item["icalLink"])){
                 $s_output["url"] = $item["icalLink"];
-                $s_output["format"] = "ical";
+                $s_output["md5"] = md5($item["icalLink"]);
+                $s_output["format"] = "ics";
                 $s_output["Type"] = "link";
                 $output[] = $s_output;
             }
