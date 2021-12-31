@@ -814,6 +814,7 @@
                 {
                     "type": "ExpansionPanel",
                     "caption": "Weekend",
+                    "viewlevel": 1,
                     "items": [
                         {
                             "type": "ExpansionPanel",
