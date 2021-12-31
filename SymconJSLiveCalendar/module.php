@@ -74,10 +74,14 @@ class SymconJSLiveCalendar extends JSLiveModule{
 
         $this->RegisterPropertyInteger("table_backgroundColor", -1);
         $this->RegisterPropertyFloat("table_backgroundColor_Alpha", 0.0);
-        $this->RegisterPropertyFloat("table_fontSize", 1.0);
-        $this->RegisterPropertyString("table_fontSize_unitType", "em");
-        $this->RegisterPropertyInteger("table_fontColor", 0);
-        $this->RegisterPropertyString("table_fontFamily", "");
+        $this->RegisterPropertyFloat("table_body_day_fontSize", 1.0);
+        $this->RegisterPropertyString("table_body_day_fontSize_unitType", "em");
+        $this->RegisterPropertyInteger("table_body_day_fontColor", 0);
+        $this->RegisterPropertyString("table_body_day_fontFamily", "");
+        $this->RegisterPropertyFloat("table_body_dayOther_fontSize", 1.0);
+        $this->RegisterPropertyString("table_body_dayOther_fontSize_unitType", "em");
+        $this->RegisterPropertyInteger("table_body_dayOther_fontColor", 0);
+        $this->RegisterPropertyString("table_body_dayOther_fontFamily", "");
 
         $this->RegisterPropertyInteger("table_borderColor", -1);
         $this->RegisterPropertyFloat("table_borderColor_Alpha", 1.0);
@@ -91,6 +95,30 @@ class SymconJSLiveCalendar extends JSLiveModule{
         $this->RegisterPropertyInteger("table_header_fontColor", 0);
         $this->RegisterPropertyString("table_header_fontFamily", "");
 
+        $this->RegisterPropertyBoolean("table_weekend_header_override", False);
+        $this->RegisterPropertyInteger("table_weekend_header_backgroundColor", -1);
+        $this->RegisterPropertyFloat("table_weekend_header_backgroundColor_Alpha", 0.0);
+        $this->RegisterPropertyFloat("table_weekend_header_fontSize", 1.0);
+        $this->RegisterPropertyString("table_weekend_header_fontSize_unitType", "em");
+        $this->RegisterPropertyInteger("table_weekend_header_fontColor", 0);
+        $this->RegisterPropertyString("table_weekend_header_fontFamily", "");
+
+        $this->RegisterPropertyBoolean("table_weekend_saturday_override", False);
+        $this->RegisterPropertyInteger("table_weekend_saturday_backgroundColor", -1);
+        $this->RegisterPropertyFloat("table_weekend_saturday_backgroundColor_Alpha", 0.0);
+        $this->RegisterPropertyFloat("table_weekend_saturday_fontSize", 1.0);
+        $this->RegisterPropertyString("table_weekend_saturday_fontSize_unitType", "em");
+        $this->RegisterPropertyInteger("table_weekend_saturday_fontColor", 0);
+        $this->RegisterPropertyString("table_weekend_saturday_fontFamily", "");
+
+        $this->RegisterPropertyBoolean("table_weekend_sunday_override", False);
+        $this->RegisterPropertyInteger("table_weekend_sunday_backgroundColor", -1);
+        $this->RegisterPropertyFloat("table_weekend_sunday_backgroundColor_Alpha", 0.0);
+        $this->RegisterPropertyFloat("table_weekend_sunday_fontSize", 1.0);
+        $this->RegisterPropertyString("table_weekend_sunday_fontSize_unitType", "em");
+        $this->RegisterPropertyInteger("table_weekend_sunday_fontColor", 0);
+        $this->RegisterPropertyString("table_weekend_sunday_fontFamily", "");
+
         $this->RegisterPropertyBoolean("table_weekNumbers_display", False);
         $this->RegisterPropertyString("table_weekNumberFormat", "numeric");
         $this->RegisterPropertyInteger("table_weekNumber_backgroundColor", -1);
@@ -99,6 +127,10 @@ class SymconJSLiveCalendar extends JSLiveModule{
         $this->RegisterPropertyString("table_weekNumber_fontSize_unitType", "em");
         $this->RegisterPropertyInteger("table_weekNumber_fontColor", 0);
         $this->RegisterPropertyString("table_weekNumber_fontFamily", "");
+
+        $this->RegisterPropertyFloat("table_events_fontSize", 0.85);
+        $this->RegisterPropertyString("table_events_fontSize_unitType", "em");
+        $this->RegisterPropertyString("table_events_fontFamily", "");
 
         $this->RegisterPropertyString("initialView", "dayGridMonth");
         $this->RegisterPropertyString("dataEvents", "[]");
@@ -117,7 +149,7 @@ class SymconJSLiveCalendar extends JSLiveModule{
 
     public function GetConfigurationForm() {
         $ical_instances = IPS_GetInstanceListByModuleID("{5127CDDC-2859-4223-A870-4D26AC83622C}");
-        if(count($ical_instances) === 0) return '{ "actions": [ { "type": "Label", "label": "'.$this->Translate("No ModulInstances iCal Calendar Reader found!").'" } ] }';
+        //if(count($ical_instances) === 0) return '{ "actions": [ { "type": "Label", "label": "'.$this->Translate("No ModulInstances iCal Calendar Reader found!").'" } ] }';
 
         //update Items for InstanceSelectList!
         $formData = $this->LoadConfigurationForm();
@@ -129,17 +161,20 @@ class SymconJSLiveCalendar extends JSLiveModule{
             }
         }
 
-        $colData = $formData["elements"][$key]["columns"];
-        $colkey = array_search("moduleInstance", array_column($colData, 'name'));
+        //ICal Module laden und anbieten
+        if(count($ical_instances) > 0) {
+            $colData = $formData["elements"][$key]["columns"];
+            $colkey = array_search("moduleInstance", array_column($colData, 'name'));
 
-        $options_arr = array();
-        $options_arr[] = array("value" => "", "caption" => "");
-        foreach ($ical_instances as $instanceID){
-            $options_arr[] = array("value" => $instanceID, "caption" => $instanceID. " => " . IPS_GetObject($instanceID)["ObjectName"]);
+            $options_arr = array();
+            $options_arr[] = array("value" => "", "caption" => "");
+            foreach ($ical_instances as $instanceID) {
+                $options_arr[] = array("value" => $instanceID, "caption" => $instanceID . " => " . IPS_GetObject($instanceID)["ObjectName"]);
+            }
+
+            $formData["elements"][$key]["columns"][$colkey]["add"] = $options_arr[0]["value"];
+            $formData["elements"][$key]["columns"][$colkey]["edit"]["options"] = $options_arr;
         }
-
-        $formData["elements"][$key]["columns"][$colkey]["add"] = $options_arr[0]["value"];
-        $formData["elements"][$key]["columns"][$colkey]["edit"]["options"] = $options_arr;
 
         //update Toolbar and initalview with customeview
         $viewsoptions = array();
@@ -384,6 +419,34 @@ class SymconJSLiveCalendar extends JSLiveModule{
 
             $config = json_decode(IPS_GetConfiguration($this->InstanceID), true);
 
+            //override function
+            if($config["table_weekend_header_override"] == false){
+                $config["table_weekend_header_backgroundColor"] = $config["table_header_backgroundColor"];
+                $config["table_weekend_header_backgroundColor_Alpha"] = $config["table_header_backgroundColor_Alpha"];
+                $config["table_weekend_header_fontSize"] = $config["table_header_fontSize"];
+                $config["table_weekend_header_fontSize_unitType"] = $config["table_header_fontSize_unitType"];
+                $config["table_weekend_header_fontColor"] = $config["table_header_fontColor"];
+                $config["table_weekend_header_fontFamily"] = $config["table_header_fontFamily"];
+            }
+
+            if($config["table_weekend_saturday_override"] == false){
+                $config["table_weekend_saturday_backgroundColor"] = $config["table_backgroundColor"];
+                $config["table_weekend_saturday_backgroundColor_Alpha"] = $config["table_backgroundColor_Alpha"];
+                $config["table_weekend_saturday_fontSize"] = $config["table_body_day_fontSize"];
+                $config["table_weekend_saturday_fontSize_unitType"] = $config["table_body_day_fontSize_unitType"];
+                $config["table_weekend_saturday_fontColor"] = $config["table_body_day_fontColor"];
+                $config["table_weekend_saturday_fontFamily"] = $config["table_body_day_fontFamily"];
+            }
+
+            if($config["table_weekend_sunday_override"] == false){
+                $config["table_weekend_sunday_backgroundColor"] = $config["table_backgroundColor"];
+                $config["table_weekend_sunday_backgroundColor_Alpha"] = $config["table_backgroundColor_Alpha"];
+                $config["table_weekend_sunday_fontSize"] = $config["table_body_day_fontSize"];
+                $config["table_weekend_sunday_fontSize_unitType"] = $config["table_body_day_fontSize_unitType"];
+                $config["table_weekend_sunday_fontColor"] = $config["table_body_day_fontColor"];
+                $config["table_weekend_sunday_fontFamily"] = $config["table_body_day_fontFamily"];
+            }
+
             if (is_array($matches) && count($matches) > 0) {
                 foreach ($matches[0] as $var) {
                     $obj = str_replace("#", "", $var);
@@ -583,6 +646,34 @@ class SymconJSLiveCalendar extends JSLiveModule{
     private function GetConfigurationData(){
         $output = json_decode(IPS_GetConfiguration($this->InstanceID), true);
         $output["InstanceID"] = $this->InstanceID;
+
+        //override function
+        if($output["table_weekend_header_override"] == false){
+            $output["table_weekend_header_backgroundColor"] = $output["table_header_backgroundColor"];
+            $output["table_weekend_header_backgroundColor_Alpha"] = $output["table_header_backgroundColor_Alpha"];
+            $output["table_weekend_header_fontSize"] = $output["table_header_fontSize"];
+            $output["table_weekend_header_fontSize_unitType"] = $output["table_header_fontSize_unitType"];
+            $output["table_weekend_header_fontColor"] = $output["table_header_fontColor"];
+            $output["table_weekend_header_fontFamily"] = $output["table_header_fontFamily"];
+        }
+
+        if($output["table_weekend_saturday_override"] == false){
+            $output["table_weekend_saturday_backgroundColor"] = $output["table_backgroundColor"];
+            $output["table_weekend_saturday_backgroundColor_Alpha"] = $output["table_backgroundColor_Alpha"];
+            $output["table_weekend_saturday_fontSize"] = $output["table_body_day_fontSize"];
+            $output["table_weekend_saturday_fontSize_unitType"] = $output["table_body_day_fontSize_unitType"];
+            $output["table_weekend_saturday_fontColor"] = $output["table_body_day_fontColor"];
+            $output["table_weekend_saturday_fontFamily"] = $output["table_body_day_fontFamily"];
+        }
+
+        if($output["table_weekend_sunday_override"] == false){
+            $output["table_weekend_sunday_backgroundColor"] = $output["table_backgroundColor"];
+            $output["table_weekend_sunday_backgroundColor_Alpha"] = $output["table_backgroundColor_Alpha"];
+            $output["table_weekend_sunday_fontSize"] = $output["table_body_day_fontSize"];
+            $output["table_weekend_sunday_fontSize_unitType"] = $output["table_body_day_fontSize_unitType"];
+            $output["table_weekend_sunday_fontColor"] = $output["table_body_day_fontColor"];
+            $output["table_weekend_sunday_fontFamily"] = $output["table_body_day_fontFamily"];
+        }
 
         //alle colorvariablen umwandeln!
         foreach($output as $key => $val){

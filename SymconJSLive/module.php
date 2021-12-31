@@ -159,8 +159,8 @@ class SymconJSLive extends WebHookModule {
             ]));
 
             if (!is_array($contend) || count($contend) == 0){
-                $this->SendDebug("WebHook", "NO INSTANCE FOUND!", 0);
-                $this->SendDebug("WebHook", "Contend => " . print_r($contend, true), 0);
+                $this->SendDebug("WebHook-".$Type, "NO INSTANCE FOUND!", 0);
+                $this->SendDebug("WebHook-".$Type, "Contend => " . print_r($contend, true), 0);
                 header("Content-Type: text/html");
                 return "NO INSTANCE FOUND!"; //wenn instance nicht gefunden
             }
@@ -183,6 +183,9 @@ class SymconJSLive extends WebHookModule {
 
             $lastmodified = gmdate("D, d M Y H:i:s", time())." GMT";
             $useCache = false;
+
+            $this->SendDebug("WebHook-".$Type, "adaa",0);
+
             if(strtolower($Type) == "getcontend"){
                 $arr_data = array();
 
@@ -195,7 +198,7 @@ class SymconJSLive extends WebHookModule {
                 }
 
                 if(count($arr_data) == 0){
-                    $this->SendDebug("WebHook", "Instance Not in List!", 0);
+                    $this->SendDebug("WebHook-".$Type, "Instance Not in List!", 0);
                     echo "Instance Not in List!";
                     return;
                 }
@@ -235,19 +238,18 @@ class SymconJSLive extends WebHookModule {
                     }
                 }
 
-
-
                 if(count($arr_data) == 0){
-                    $this->SendDebug("WebHook", "Instance Not in List!", 0);
+                    $this->SendDebug("WebHook-".$Type, "Instance Not in List! (getCSS)", 0);
                     echo "Instance Not in List!";
                     return;
                 }
 
+                $this->SendDebug("TEST", $arr_data["lastModify"],0);
+
                 $contend = $arr_data["Contend"];
                 $lastmodified = $arr_data["lastModify"];
                 header('Content-type: text/css');
-                $useCache = true;
-
+                $useCache = false; //cache ist aktuell verbuggt bei css
             }else{
                 $contend = $contend[0];
             }
@@ -273,7 +275,7 @@ class SymconJSLive extends WebHookModule {
                 header("Pragma: no-cache");
             }
 
-            if($this->ReadPropertyBoolean("Debug")) $this->SendDebug("WebHook", $contend, 0);
+            if($this->ReadPropertyBoolean("Debug")) $this->SendDebug("WebHook-".$Type, $contend, 0);
 
             if($this->ReadPropertyBoolean("enableCompression") && strstr($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')) {
                 $compressed = gzencode($contend);

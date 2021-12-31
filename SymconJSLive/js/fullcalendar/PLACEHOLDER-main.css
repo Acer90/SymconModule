@@ -700,28 +700,21 @@ A HORIZONTAL event
 .fc-daygrid-day-frame,
 .fc-daygrid-day-events,
 .fc-daygrid-event-harness { /* for event top/bottom margins */
-    background-color: #table_backgroundColor#;
 }
 .fc-daygrid-day-frame:before, .fc-daygrid-day-events:before, .fc-daygrid-event-harness:before {
     content: "";
     clear: both;
     display: table;
-    background-color: #table_backgroundColor#;
 }
 .fc-daygrid-day-frame:after, .fc-daygrid-day-events:after, .fc-daygrid-event-harness:after {
     content: "";
     clear: both;
     display: table;
-    background-color: #table_backgroundColor#;
 }
 .fc .fc-daygrid-body { /* a <div> that wraps the table */
     position: relative;
     z-index: 1; /* container inner z-index's because <tr>s can't do it */
   }
-.fc .fc-daygrid-day.fc-day-today {
-      background-color: #table_today_backgroundColor#;
-      background-color: var(--fc-today-bg-color, #table_today_backgroundColor#);
-    }
 .fc .fc-daygrid-day-frame {
     position: relative;
     min-height: 100%; /* seems to work better than `height` because sets height after rows/cells naturally do it */
@@ -1144,10 +1137,7 @@ A VERTICAL event
   bottom: 0;
   left: 0;
   }
-.fc .fc-timegrid-col.fc-day-today {
-      background-color: #table_today_backgroundColor#;
-      background-color: var(--fc-today-bg-color, #table_today_backgroundColor#);
-    }
+
 .fc .fc-timegrid-col-frame {
     min-height: 100%; /* liquid-hack is below */
     position: relative;
@@ -1491,8 +1481,56 @@ A VERTICAL event
 }
 
 .fc-event {
+    font-size: #table_events_fontSize#;
+    font-family: #table_events_fontFamily#;
+}
+
+.fc-daygrid-day {
     background-color: #table_backgroundColor#;
-    font-size: #table_fontSize#;
-    font-family: '#table_fontFamily#';
-    color: #table_fontColor#;
+}
+
+.fc-daygrid-day-number {
+    color: #table_body_day_fontColor#;
+    font-size: #table_body_day_fontSize#;
+    font-family: #table_body_day_fontFamily#;
+}
+
+.fc-col-header-cell.fc-day-sat, .fc-col-header-cell.fc-day-sun {
+    background: #table_weekend_header_backgroundColor#;
+    color: #table_weekend_header_fontColor#;
+    font-size: #table_weekend_header_fontSize#;
+    font-family: #table_weekend_header_fontFamily#;
+}
+
+.fc-daygrid-day.fc-day-sat {
+    background: #table_weekend_saturday_backgroundColor#;
+}
+.fc-daygrid-day.fc-day-sat .fc-daygrid-day-top{
+    color: #table_weekend_saturday_fontColor#;
+    font-size: #table_weekend_saturday_fontSize#;
+    font-family: #table_weekend_saturday_fontFamily#;
+}
+
+.fc-daygrid-day.fc-day-sun {
+    background: #table_weekend_sunday_backgroundColor#;
+}
+.fc-daygrid-day.fc-day-sun .fc-daygrid-day-top {
+    color: #table_weekend_sunday_fontColor#;
+    font-size: #table_weekend_sunday_fontSize#;
+    font-family: #table_weekend_sunday_fontFamily#;
+}
+
+.fc .fc-timegrid-col.fc-day-today {
+    background-color: #table_today_backgroundColor#;
+    background-color: var(--fc-today-bg-color, #table_today_backgroundColor#);
+}
+.fc .fc-daygrid-day.fc-day-today {
+    background-color: #table_today_backgroundColor#;
+    background-color: var(--fc-today-bg-color, #table_today_backgroundColor#);
+}
+
+.fc-day-other .fc-daygrid-day-number {
+    color: #table_body_dayOther_fontColor#;
+    font-size: #table_body_dayOther_fontSize#;
+    font-family: #table_body_dayOther_fontFamily#;
 }
