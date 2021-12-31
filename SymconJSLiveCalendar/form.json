@@ -150,7 +150,7 @@
                 {
                     "type": "RowLayout",
                     "items": [
-                        { "type": "Label", "caption": "Background", "width": "100px" },
+                        { "type": "Label", "caption": "Background:", "width": "100px" },
                         { "type": "SelectColor", "name": "buttons_backgroundColor", "caption": "Color" },
                         { "type": "HorizontalSlider", "name": "buttons_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05, "viewlevel": 1},
                         { "type": "SelectColor", "name": "buttons_backgroundColorHover", "caption": "Hover/Active" },
@@ -160,7 +160,7 @@
                 {
                     "type": "RowLayout",
                     "items": [
-                        { "type": "Label", "caption": "Border", "width": "100px" },
+                        { "type": "Label", "caption": "Border:", "width": "100px" },
                         { "type": "SelectColor", "name": "buttons_borderColor", "caption": "Color" },
                         { "type": "HorizontalSlider", "name": "buttons_borderColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05, "viewlevel": 1},
                         { "type": "NumberSpinner", "name": "buttons_borderWidth", "caption": "Width", "width": "100px", "minimum": 0, "digits": 2, "viewlevel": 1,  "viewlevelexactly": true},
@@ -813,7 +813,7 @@
                 },
                 {
                     "type": "ExpansionPanel",
-                    "caption": "Weekend ",
+                    "caption": "Weekend",
                     "items": [
                         {
                             "type": "ExpansionPanel",
