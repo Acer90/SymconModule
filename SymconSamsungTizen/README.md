@@ -35,19 +35,18 @@ Dieses Modul dient zur Steuerung von Samsung Tizen Fernsehern(ab 2016)
 
 ## 4. Hinweise zur Verwendung
 
-    Es werden nur Fernseher mit einer Websocket-Verbindung von Samsung unterstützt (Alle Fernseher ab 2016)
-
+Es werden nur Fernseher mit einer Websocket-Verbindung von Samsung unterstützt (Alle Fernseher ab 2016)
 ## 5. Einrichten 
     
-    1. Modul über den Store (Samsung Tizen) installieren
-    2. Im Modul müssen die folgenden Parameter definiert werden
-        - IP-Adresse
-            Hier ist die IP-Adresse des Fernsehers anzugeben
-        - SSL verwenden
-            Bei neueren Fernsehern muss diese Einstellung immer Aktiv sein.
-        - Soll der Fernseher einschaltbar sein, so sind die Optionen unter Wake On Lan ebenfalls zu konfigurieren
-            -> Broadcast Adresse: https://www.heise.de/netze/tools/netzwerkrechner/
-            -> MAC Adresse des Fernsehers
+1. Modul über den Store (Samsung Tizen) installieren
+2. Im Modul müssen die folgenden Parameter definiert werden
+    - IP-Adresse
+        Hier ist die IP-Adresse des Fernsehers anzugeben
+    - SSL verwenden
+        Bei neueren Fernsehern muss diese Einstellung immer Aktiv sein.
+    - Soll der Fernseher einschaltbar sein, so sind die Optionen unter Wake On Lan ebenfalls zu konfigurieren
+        -> Broadcast Adresse: https://www.heise.de/netze/tools/netzwerkrechner/
+        -> MAC Adresse des Fernsehers
 
 ## 6. PHP-Befehlsreferenz
 
@@ -105,14 +104,15 @@ Eigenschaften des 'Device' für Get/SetProperty-Befehle:
  (Kein Datenaustausch möglich)
 
 ## 9. Anhang
-
+- [Forum](https://community.symcon.de/t/hilfe-bei-websocket-client-fuer-samsung-tizen-fernseher-gesucht/44532)
 ## 10. Lizenz
 
   IPS-Modul:  
   [GNU GENERAL PUBLIC LICENSE](http://www.gnu.org/licenses/)  
 
 ## 11. Danksagung
-    Großen Dank geht an:
-        - NallChan für die unterstützung und Implementierung der SSL und Token verbindung
-        - Kais für die unterstützung bei der neuerstellung des WakeOnLan skripts
+
+Großen Dank geht an:
+- NallChan für die unterstützung und Implementierung der SSL und Token verbindung
+- Kais für die unterstützung bei der neuerstellung des WakeOnLan skripts
     
