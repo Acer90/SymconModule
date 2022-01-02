@@ -22,7 +22,9 @@
 
       "Connection Success!": "Verbunden",
       "Connection Lost!": "Verbindung verloren",
-      "Internal Error!": "Interner Fehler"
+      "Internal Error!": "Interner Fehler",
+
+      "Broadcast Address": "Broadcast Adresse"
     }
   }
 }

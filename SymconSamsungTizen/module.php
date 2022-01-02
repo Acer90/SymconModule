@@ -1,8 +1,5 @@
 <?php
 
-// Klassendefinition
-require_once('wol.php');
-
 class SamsungTizen extends IPSModule
 {
     // Buffer sind immer String. Kovertierungen durch integer, float oder bool können Probleme verursachen.
@@ -55,14 +52,9 @@ class SamsungTizen extends IPSModule
 
         $this->RegisterPropertyString("IPAddress", "192.168.178.1");
         $this->RegisterPropertyString("MACAddress", "aa:bb:cc:00:11:22");
+        $this->RegisterPropertyString('BroadcastAddress', '');
         $this->RegisterPropertyInteger("Interval", 10);
         $this->RegisterPropertyInteger("Sleep", 1000);
-
-        $this->RegisterPropertyInteger("CIDR", 24);
-        $this->RegisterPropertyInteger("WoLPort", 9);
-        $this->RegisterPropertyString("WoLPath", "");
-        $this->RegisterPropertyString("WolParameter", "");
-
         $this->RegisterPropertyBoolean("UseSSL", true);
 
         $this->RegisterVariableString('VariableToken', 'Token', "", 0);
@@ -151,21 +143,45 @@ class SamsungTizen extends IPSModule
         return $ParentId;
     }
 
+    /**
+     * Diese Funktion Dient zum Starten des Fernsehers über WoL
+     *
+     * function from Kais more info at https://github.com/Schnittcher/IPS-DeviceMonitor/blob/master/libs/helper.php
+     * Thx at Kais to allow me to use this Code for this Module
+     *
+     * @return void
+     **/
     public function WakeUp()
     {
         $this->SendDebug(__FUNCTION__, '', 0);
-        $ip = $this->ReadPropertyString("IPAddress");
-        $cidr = $this->ReadPropertyInteger("CIDR");
-        $port = $this->ReadPropertyInteger("WoLPort");
-        $w_path = $this->ReadPropertyString("WoLPath");
-        $w_parameters = $this->ReadPropertyString("WolParameter");
 
-        if (!empty($w_path)) {
-            IPS_Execute($w_path, $w_parameters, false, false);
+        if ($this->ReadPropertyString('BroadcastAddress') != '' && $this->ReadPropertyString('MACAddress') != '') {
+            $addr = $this->ReadPropertyString('BroadcastAddress');
+            $addr_byte = explode(':', $this->ReadPropertyString('MACAddress'));
+            $hw_addr = '';
+            for ($a = 0; $a < 6; $a++) {
+                $hw_addr .= chr(hexdec($addr_byte[$a]));
+            }
+            $msg = chr(255) . chr(255) . chr(255) . chr(255) . chr(255) . chr(255);
+            for ($a = 1; $a <= 16; $a++) {
+                $msg .= $hw_addr;
+            }
+            // send it to the broadcast address using UDP
+            $s = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
+            if ($s == false) {
+                $this->SendDebug('Error creating socket!', 'Error code is ' . socket_last_error($s) . ' - ' . socket_strerror(socket_last_error($s)), 0);
+            } else {
+                // setting a broadcast option to socket:
+                $opt_ret = @socket_set_option($s, 1, 6, true); //geht torzdem, obwohl ein fehler ausgeben wird
+                if ($opt_ret < 0) {
+                    $this->SendDebug('setsockopt() failed, error:', strerror($opt_ret), 0);
+                }
+                $result = socket_sendto($s, $msg, strlen($msg), 0, $addr, 2050);
+                socket_close($s);
+                $this->SendDebug('Result', 'Magic Packet sent (' . $result . ') to ' . $addr . ', MAC=' . $this->ReadPropertyString('MACAddress'), 0);
+            }
         } else {
-            $macAddressHexadecimal = strtoupper($this->ReadPropertyString("MACAddress"));
-            wakeOnLan($macAddressHexadecimal, $ip, $cidr, $port, $output);
-            $this->SendDebug("WOL", json_encode($output), 0);
+            $this->SendDebug(__FUNCTION__, 'Broadcast or Mac Address is missing', 0);
         }
     }
 
@@ -242,18 +258,17 @@ class SamsungTizen extends IPSModule
         $this->SendDebug(__FUNCTION__, '', 0);
 
         $ipAdress = $this->ReadPropertyString("IPAddress");
-        if (Sys_Ping($ipAdress, 5000)) {
-//            if ($this->GetValue("VariableOnline") == false) {
-            //$this->SetValue("VariableOnline", true);
+        if (Sys_Ping($ipAdress, 1000)) {
+            if ($this->GetValue("VariableOnline") == false) $this->SetValue("VariableOnline", true);
             $this->SetTimerInterval("CheckOnline", 0);
             $this->UpdateConfigurationForParent();
             //          }
-        }/* else {
+        }else {
           if ($this->GetValue("VariableOnline")) {
-          $this->SetValue("VariableOnline", false);
-          $this->SetStatus(104);
+              $this->SetValue("VariableOnline", false);
+              $this->SetStatus(104);
           }
-          } */
+        }
     }
 
     public function TogglePower()
@@ -317,20 +332,20 @@ class SamsungTizen extends IPSModule
                         }
                         break;
                     default: // Fehlerzustände
-                        /* $this->SendDebug("Connection", "Samsung Tizen connection lost", 0);
-                          $this->SetValue("VariableOnline", false);
-                          $this->SetStatus(104);
-                          if ($this->ReadPropertyBoolean("Active")) {
-                          $this->SetTimerInterval("CheckOnline", $this->ReadPropertyInteger("Interval") * 1000);
-                          } else {
-                          $this->SetTimerInterval("CheckOnline", 0);
-                          } */
-                        /*$this->SendDebug("Force close Websocket", $SenderID, 0);
+                        $this->SendDebug("Connection", "Samsung Tizen connection lost", 0);
+                        $this->SetValue("VariableOnline", false);
+                        $this->SetStatus(104);
+                        if ($this->ReadPropertyBoolean("Active")) {
+                        $this->SetTimerInterval("CheckOnline", $this->ReadPropertyInteger("Interval") * 1000);
+                        } else {
+                        $this->SetTimerInterval("CheckOnline", 0);
+                        }
+                        $this->SendDebug("Force close Websocket", $SenderID, 0);
                         // losgelöst vom aktuellen context, damit wir keinen DeathLock haben.
                         // Hierdurch wird wieder MessageSink mit case 104 (inaktiv) getriggert.
-                        $Script = 'IPS_SetProperty(' . $SenderID . ', "Open", false);' . PHP_EOL;
+                        $Script = 'IPS_SetProperty(' . $SenderID . ', "Active", false);' . PHP_EOL;
                         $Script .= 'IPS_ApplyChanges(' . $SenderID . ');';
-                        IPS_RunScriptText($Script);*/
+                        IPS_RunScriptText($Script);
                         break;
                 }
                 break;

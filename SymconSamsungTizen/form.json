@@ -4,23 +4,28 @@
         { "type": "CheckBox", "name": "Active", "caption": "Active" },
         { "type": "Label", "label": "TV Settings" },
         { "type": "ValidationTextBox", "name": "IPAddress", "caption": "Host" },
-        { "type": "ValidationTextBox", "name": "MACAddress", "caption": "MAC Address (XX:XX:XX:XX:XX:XX)" },
         { "type": "CheckBox", "name": "UseSSL", "caption": "use SSL" },
         { "type": "Label", "label": "Time to wait between single Keys" },
         { "type": "IntervalBox", "name": "Sleep", "caption": "ms" },
         { "type": "Label", "label": "Check Service online every" },
         { "type": "IntervalBox", "name": "Interval", "caption": "Sec" },
-        { "type": "Label", "label": "WoL Settings" },
-        { "type": "Label", "label": "Classless Inter-Domain Routing (MASK: 255.255.255.0 ==> 24 (3 Byte * 8 Bit))" },
-        { "type": "NumberSpinner", "name": "CIDR", "caption": "CIDR" },
-        { "type": "NumberSpinner", "name": "WoLPort", "caption": "WoL Port" },
-        { "type": "Label", "label": "WoL alternative software" },
-        { "type": "ValidationTextBox", "name": "WoLPath", "caption": "Path" },
-        { "type": "ValidationTextBox", "name": "WolParameter", "caption": "Start-Parameter" }
+        {
+            "type": "ExpansionPanel",
+            "caption": "Wake On Lan",
+            "items": [
+                { "type": "ValidationTextBox",
+                    "name": "BroadcastAddress",
+                    "caption": "Broadcast Address"
+                },
+                { "type": "ValidationTextBox",
+                    "name": "MACAddress",
+                    "caption": "MAC Address (XX:XX:XX:XX:XX:XX)"
+                }
+            ]
+        }
     ],
     "actions":
     [
-
         { "type": "Button", "label": "Reset Key!", "onClick": "SamsungTizen_ResetKey($id);" },
         { "type": "Button", "label": "Wake Up!", "onClick": "echo SamsungTizen_WakeUp($id);" },
         { "type": "Button", "label": "Power Off", "onClick": "SamsungTizen_SendKeys($id, 'KEY_POWER');" },
