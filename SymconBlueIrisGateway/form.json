@@ -6,12 +6,12 @@
         { "type": "NumberSpinner", "name": "Timeout", "caption": "Timeout"},
         { "type": "IntervalBox", "name": "Interval", "caption": "Sekunden" },
         { "type": "ValidationTextBox", "name": "Username", "caption": "Username" },
-        { "type": "PasswordTextBox", "name": "Password", "caption": "Password"}
+        { "type": "PasswordTextBox", "name": "Password", "caption": "Password"},
+        { "type": "CheckBox", "name": "Debug", "caption": "Debug"}
     ],
     "actions":
     [
-        { "type": "Button", "label": "Sync Data", "onClick": "BlueIris_SyncData($id, false);" },
-        { "type": "Button", "label": "Get Variables/Cams", "onClick": "BlueIris_SyncData($id, true);" }
+        { "type": "Button", "label": "Sync Data", "onClick": "BlueIrisGateway_SyncData($id);" }
 
     ],
     "status":

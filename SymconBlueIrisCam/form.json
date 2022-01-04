@@ -1,10 +1,13 @@
 {
     "elements":
     [
-        { "type": "ValidationTextBox", "name": "ShortName", "caption": "Short Name" }
+        { "type": "ValidationTextBox", "name": "ShortName", "caption": "Short Name" },
+        { "type": "CheckBox", "name": "PTZ", "caption": "Use PTZ"},
+        { "type": "CheckBox", "name": "Debug", "caption": "Debug"}
     ],
     "actions":
     [
+        { "type": "Button", "label": "Create Media File", "onClick": "BlueIrisCam_CreateMediaFile($id);" }
     ],
     "status":
     [

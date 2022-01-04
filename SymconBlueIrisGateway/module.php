@@ -1,19 +1,6 @@
 <?php
     // Klassendefinition
-    class BlueIris extends IPSModule {
-        protected function SetBuffer($Name, $Daten)
-        {
-            parent::SetBuffer($Name, serialize($Daten));
-        }
-
-        protected function GetBuffer($Name)
-        {
-            return unserialize(parent::GetBuffer($Name));
-        }
-
-        public function __construct($InstanceID) {
-            parent::__construct($InstanceID);
-        }
+    class BlueIrisGateway extends IPSModule {
 
         public function Create() {
             parent::Create();
@@ -26,20 +13,82 @@
             $this->RegisterPropertyString("Username", "admin");
             $this->RegisterPropertyString("Password", "");
 
+            $this->RegisterPropertyBoolean("Debug", false);
+
             $this->SetBuffer("Session", "");
 
             //event erstellen
-            $this->RegisterTimer("SyncData", $this->ReadPropertyInteger("Interval"), 'BlueIris_SyncData($_IPS[\'TARGET\'], false);');
+            $this->RegisterTimer("SyncData", $this->ReadPropertyInteger("Interval"), 'BlueIrisGateway_SyncData($_IPS[\'TARGET\']);');
         }
 
         public function ApplyChanges() {
             // Diese Zeile nicht löschen
             parent::ApplyChanges();
             $this->SetBuffer("Session", "");
-            //$this->RequireParent("{1A75660D-48AE-4B89-B351-957CAEBEF22D}");
 
             $this->SetStatus(102);
             $this->SetTimerInterval("SyncData", $this->ReadPropertyInteger("Interval")*1000);
+        }
+
+        public function ForwardData($JSONString) {
+            $rData = json_decode($JSONString, true);
+            $buffer = json_decode($rData["Buffer"], true);
+
+            switch($buffer['cmd']) {
+                case "GetLink":
+                    return $this->GetLink();
+                case "CamConfig":
+                    return $this->CamConfig($buffer['cam'], $buffer['data']);
+                default:
+                    $this->SendDebug(__FUNCTION__, "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
+                    break;
+            }
+        }
+
+        public function SendJSONData (string $cmd, string $json_string){
+            $IPAddress = $this->ReadPropertyString("IPAddress");
+            $Port = $this->ReadPropertyInteger("Port");
+            $Timeout = $this->ReadPropertyInteger("Timeout");
+
+            $session = $this->Login();
+            if($session == "ERROR"){
+                //wrong login stop function
+                $this->SendDebug(__FUNCTION__, "Wrong Login!", 0);
+                return;
+            }
+
+
+            $jData = json_decode($json_string, true);
+            $sData = array("cmd" => $cmd, "session" => $session);
+            $sData = array_merge($sData, $jData);
+            $json_string = json_encode($sData);
+            $this->SendDebug(__FUNCTION__, $json_string, 0);
+
+            $url = 'http://'.$IPAddress.":".$Port."/json";
+
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $json_string);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);
+            curl_setopt($ch, CURLOPT_COOKIE, 'PHPSESSID='.$session);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                    'Content-Type: application/json',
+                    'Content-Length: ' . strlen($json_string))
+            );
+            $result = curl_exec($ch);
+
+            $this->SendDebug(__FUNCTION__, $result, 0);
+
+            if(curl_errno($ch))
+            {
+                if($ch == curl_errno($ch)) $this->SetStatus(204); else $this->SendDebug(__FUNCTION__, 'Curl error: ' . curl_error($ch), 0);
+                return "{}";
+            }
+
+            curl_close($ch);
+
+            return  $result;
         }
 
         public function Login()
@@ -48,7 +97,6 @@
             $sid = $this->GetBuffer("Session");
 
             while (true) {
-                $id = $this->InstanceID;
                 $IPAddress = $this->ReadPropertyString("IPAddress");
                 $Port = $this->ReadPropertyInteger("Port");
                 $Timeout = $this->ReadPropertyInteger("Timeout");
@@ -134,8 +182,6 @@
                 }
             }
         }
-
-
         public function Logout(string $session = null){
             if(is_null($session)){
                 $this->SetStatus(203);
@@ -183,11 +229,155 @@
             };
         }
 
-        public function AlertList(string $session = null, string $camera = null, int $startdate = null, bool $reset = null){
+        public function CamList(string $session = null){
             if(is_null($session)){
                 $this->SetStatus(203);
                 return "ERROR";
-            } 
+            }
+
+            $id = $this->InstanceID;
+            $IPAddress = $this->ReadPropertyString("IPAddress");
+            $Port = $this->ReadPropertyInteger("Port");
+            $Timeout = $this->ReadPropertyInteger("Timeout");
+            $Username = $this->ReadPropertyString("Username");
+            $Password = $this->ReadPropertyString("Password");
+
+            $url = 'http://'.$IPAddress.":".$Port."/json";
+
+            $data = array("cmd" => "camlist", "session" => $session);
+            $data_string = json_encode($data);
+
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);
+            curl_setopt($ch, CURLOPT_COOKIE, 'PHPSESSID='.$session);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                    'Content-Type: application/json',
+                    'Content-Length: ' . strlen($data_string))
+            );
+            $result = curl_exec($ch);
+
+            if(curl_errno($ch))
+            {
+                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
+                return [];
+            }
+
+            curl_close($ch);
+
+            $output = json_decode($result, true);
+            if($output["result"] == "success"){
+                return $output["data"];
+            }else{
+                $this->SendDebug(__FUNCTION__, $result, 0);
+                return [];
+            };
+        }
+        public function SysConfig(string $session = null){
+            if(is_null($session)){
+                $this->SetStatus(203);
+                return "ERROR";
+            }
+
+            $id = $this->InstanceID;
+            $IPAddress = $this->ReadPropertyString("IPAddress");
+            $Port = $this->ReadPropertyInteger("Port");
+            $Timeout = $this->ReadPropertyInteger("Timeout");
+            $Username = $this->ReadPropertyString("Username");
+            $Password = $this->ReadPropertyString("Password");
+
+            $url = 'http://'.$IPAddress.":".$Port."/json";
+
+            $data = array("cmd" => "sysconfig", "session" => $session);
+            $data_string = json_encode($data);
+
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                    'Content-Type: application/json',
+                    'Content-Length: ' . strlen($data_string))
+            );
+            $result = curl_exec($ch);
+
+            if(curl_errno($ch))
+            {
+                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
+                return "ERROR";
+            }
+
+            curl_close($ch);
+
+            $output = json_decode($result, true);
+            if($output["result"] == "success"){
+                return $output["data"];
+            }else{
+                $this->SendDebug(__FUNCTION__, $result, 0);
+                return [];
+            };
+        }
+        public function Log(string $session = null){
+            if(is_null($session)){
+                $this->SetStatus(203);
+                return "ERROR";
+            }
+
+            $id = $this->InstanceID;
+            $IPAddress = $this->ReadPropertyString("IPAddress");
+            $Port = $this->ReadPropertyInteger("Port");
+            $Timeout = $this->ReadPropertyInteger("Timeout");
+            $Username = $this->ReadPropertyString("Username");
+            $Password = $this->ReadPropertyString("Password");
+
+            $url = 'http://'.$IPAddress.":".$Port."/json";
+
+            $data = array("cmd" => "log", "session" => $session);
+            $data_string = json_encode($data);
+
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                    'Content-Type: application/json',
+                    'Content-Length: ' . strlen($data_string))
+            );
+            $result = curl_exec($ch);
+
+            if(curl_errno($ch))
+            {
+                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
+                return "ERROR";
+            }
+
+            curl_close($ch);
+
+            $output = json_decode($result, true);
+            if($output["result"] == "success"){
+                return $output["data"];
+            }else{
+                $this->SendDebug(__FUNCTION__, $result, 0);
+                return [];
+            };
+        }
+
+        private function CamConfig(string $camera, array $data){
+            $result = $this->SendJSONData("camconfig", json_encode($data));
+            $this->SendDebug(__FUNCTION__, $result, 0);
+            $output = json_decode($result, true);
+            if($output["result"] == "success"){
+                return json_encode($output["data"]);
+            }else{
+                $this->SendDebug(__FUNCTION__, $result, 0);
+                return "{}";
+            }
+        }
+        private function AlertList(string $camera, array $data){
             if(is_null($camera)) $camera = "index";
             if(is_null($startdate)) $startdate = 0;
             if(is_null($reset)) $reset = false;
@@ -232,116 +422,7 @@
                 return [];
             };
         }
-
-        public function CamConfig(string $session = null, string $camera = null, bool $reset = null, bool $enable = null, int $pause = null, bool $motion = null, bool $schedule = null, bool $ptzcycle = null, bool $ptzevents = null, int $alerts = null, int $record = null){
-            if(is_null($session)){
-                $this->SetStatus(203);
-                return "ERROR";
-            } 
-            if(is_null($camera)){
-                $this->SetStatus(203);
-                return "ERROR";
-            }
-            
-            
-            $id = $this->InstanceID;
-            $IPAddress = $this->ReadPropertyString("IPAddress");
-            $Port = $this->ReadPropertyInteger("Port");
-            $Timeout = $this->ReadPropertyInteger("Timeout");
-            $Username = $this->ReadPropertyString("Username");
-            $Password = $this->ReadPropertyString("Password");
-
-            $url = 'http://'.$IPAddress.":".$Port."/json";
-
-            $data = array("cmd" => "camconfig", "session" => $session, "camera" => $camera); // , "" => $    
-            if(!is_null($reset)) $data["reset"] = $reset;
-            if(!is_null($enable)) $data["enable"] = $enable; 
-            if(!is_null($pause)) $data["pause"] = $pause; 
-            if(!is_null($motion)) $data["motion"] = $motion; 
-            if(!is_null($schedule)) $data["schedule"] = $schedule; 
-            if(!is_null($ptzcycle)) $data["ptzcycle"] = $ptzcycle;   
-            if(!is_null($ptzevents)) $data["ptzevents"] = $ptzevents;  
-            if(!is_null($alerts)) $data["alerts"] = $alerts;  
-            if(!is_null($record)) $data["record"] = $record;                                                    
-            $data_string = json_encode($data);                                                                                   
-                                                                                                                                
-            $ch = curl_init($url);                                                                      
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);
-            curl_setopt($ch, CURLOPT_COOKIE, 'PHPSESSID='.$session);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
-                'Content-Type: application/json',                                                                                
-                'Content-Length: ' . strlen($data_string))                                                                       
-            );     
-            $result = curl_exec($ch);
-
-            if(curl_errno($ch))
-            {
-                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
-                return "ERROR";
-            }
-
-            curl_close($ch);
-
-            $output = json_decode($result, true);
-            if($output["result"] == "success"){ 
-                return $output["data"];
-            }else{
-                $this->SendDebug(__FUNCTION__, $result, 0);
-                return [];
-            };
-        }
-
-        public function CamList(string $session = null){
-            if(is_null($session)){
-                $this->SetStatus(203);
-                return "ERROR";
-            } 
-
-            $id = $this->InstanceID;
-            $IPAddress = $this->ReadPropertyString("IPAddress");
-            $Port = $this->ReadPropertyInteger("Port");
-            $Timeout = $this->ReadPropertyInteger("Timeout");
-            $Username = $this->ReadPropertyString("Username");
-            $Password = $this->ReadPropertyString("Password");
-
-            $url = 'http://'.$IPAddress.":".$Port."/json";
-
-            $data = array("cmd" => "camlist", "session" => $session);                                                                 
-            $data_string = json_encode($data);                                                                                   
-                                                                                                                                
-            $ch = curl_init($url);                                                                      
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);
-            curl_setopt($ch, CURLOPT_COOKIE, 'PHPSESSID='.$session);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
-                'Content-Type: application/json',                                                                                
-                'Content-Length: ' . strlen($data_string))                                                                       
-            );     
-            $result = curl_exec($ch);
-
-            if(curl_errno($ch))
-            {
-                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
-                return "ERROR";
-            }
-
-            curl_close($ch);
-
-            $output = json_decode($result, true);
-            if($output["result"] == "success"){ 
-                return $output["data"];
-            }else{
-                $this->SendDebug(__FUNCTION__, $result, 0);
-                return [];
-            };
-        }
-
-        public function ClipList(String $session = null, String $camera = null, Int $startdate = null, Int $enddate = null, Bool $tiles = null){
+        private function ClipList(String $session = null, String $camera = null, Int $startdate = null, Int $enddate = null, Bool $tiles = null){
             if(is_null($session)){
                 $this->SetStatus(203);
                 return "ERROR";
@@ -391,54 +472,7 @@
                 return [];
             };
         }
-
-        public function Log(string $session = null){
-            if(is_null($session)){
-                $this->SetStatus(203);
-                return "ERROR";
-            } 
-
-            $id = $this->InstanceID;
-            $IPAddress = $this->ReadPropertyString("IPAddress");
-            $Port = $this->ReadPropertyInteger("Port");
-            $Timeout = $this->ReadPropertyInteger("Timeout");
-            $Username = $this->ReadPropertyString("Username");
-            $Password = $this->ReadPropertyString("Password");
-
-            $url = 'http://'.$IPAddress.":".$Port."/json";
-
-            $data = array("cmd" => "log", "session" => $session);                                                                 
-            $data_string = json_encode($data);                                                                                   
-                                                                                                                                
-            $ch = curl_init($url);                                                                      
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);                                                                     
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
-                'Content-Type: application/json',                                                                                
-                'Content-Length: ' . strlen($data_string))                                                                       
-            );     
-            $result = curl_exec($ch);
-
-            if(curl_errno($ch))
-            {
-                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
-                return "ERROR";
-            }
-
-            curl_close($ch);
-
-            $output = json_decode($result, true);
-            if($output["result"] == "success"){ 
-                return $output["data"];
-            }else{
-                $this->SendDebug(__FUNCTION__, $result, 0);
-                return [];
-            };
-        }
-
-        public function PTZ(string $session = null,  string $camera = null, string $button = null, string $updown = null){
+        private function PTZ(string $session = null,  string $camera = null, string $button = null, string $updown = null){
             if(is_null($session)){
                 $this->SetStatus(203);
                 return "ERROR";
@@ -492,8 +526,7 @@
                 return [];
             };
         }
-
-        public function Status(string $session = null, string $signal = null, string $profil = null, string $dio = null, string $play = null){
+        private function Status(string $session = null, string $signal = null, string $profil = null, string $dio = null, string $play = null){
             if(is_null($session)){
                 $this->SetStatus(203);
                 return "ERROR";
@@ -543,54 +576,7 @@
                 return [];
             };
         }
-
-        public function SysConfig(string $session = null){
-            if(is_null($session)){
-                $this->SetStatus(203);
-                return "ERROR";
-            } 
-
-            $id = $this->InstanceID;
-            $IPAddress = $this->ReadPropertyString("IPAddress");
-            $Port = $this->ReadPropertyInteger("Port");
-            $Timeout = $this->ReadPropertyInteger("Timeout");
-            $Username = $this->ReadPropertyString("Username");
-            $Password = $this->ReadPropertyString("Password");
-
-            $url = 'http://'.$IPAddress.":".$Port."/json";
-
-            $data = array("cmd" => "sysconfig", "session" => $session);                                                                 
-            $data_string = json_encode($data);                                                                                   
-                                                                                                                                
-            $ch = curl_init($url);                                                                      
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);                                                                     
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
-                'Content-Type: application/json',                                                                                
-                'Content-Length: ' . strlen($data_string))                                                                       
-            );     
-            $result = curl_exec($ch);
-
-            if(curl_errno($ch))
-            {
-                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
-                return "ERROR";
-            }
-
-            curl_close($ch);
-
-            $output = json_decode($result, true);
-            if($output["result"] == "success"){ 
-                return $output["data"];
-            }else{
-                $this->SendDebug(__FUNCTION__, $result, 0);
-                return [];
-            };
-        }
-
-        public function Trigger(string $session = null, string $camera = null){
+        private function Trigger(string $session = null, string $camera = null){
             if(is_null($session)){
                 $this->SetStatus(203);
                 return "ERROR";
@@ -640,218 +626,91 @@
             };
         }
 
-        public function SyncData(bool $createVar = null){
-            $id = $this->InstanceID;
-            $IPAddress = $this->ReadPropertyString("IPAddress");
-            $Port = $this->ReadPropertyInteger("Port");
-            $Username = $this->ReadPropertyString("Username");
-            $Password = $this->ReadPropertyString("Password");
-            $sid = BlueIris_Login($id);
-            if($sid == "ERROR") exit;
-
-            if(is_null($createVar)) $createVar = false;
-
-            $ChildrenIDs = IPS_GetChildrenIDs($id);
-
-            //Create Checklist
-            $clist = array();
-            foreach ($ChildrenIDs as $val) {
-                $obj = IPS_GetObject($val);
-
-                if(IPS_InstanceExists($val) && $obj["ObjectType"] == 1){
-                    $obj_conf_str = IPS_GetConfiguration($val);
-                    $obj_conf = json_decode($obj_conf_str, true);
-
-                    if(array_key_exists("ShortName", $obj_conf)){
-                        $clist[$val] = IPS_GetProperty($val, "ShortName");
-                    }
-                }
+        public function SyncData(){
+            $sid = $this->Login();
+            if($sid == "ERROR"){
+                //wrong login stop function
+                $this->SendDebug(__FUNCTION__, "Wrong Login!", 0);
+                return;
             }
-            //print_r($clist);
             
-            $data = BlueIris_CamList($id, $sid);
-            if($data == "ERROR") exit;
-            foreach ($data as $val) {
-                if(!array_key_exists("optionValue" ,$val) || strpos($val["optionValue"], 'index') !== false) continue;
-                $key = array_search($val["optionValue"], $clist);
-                if(in_array($val["optionValue"] , $clist)){
-                    //$this->SendDataToChildren(json_encode(Array("DataID" => "{5308D185-A3D2-42D0-B6CE-E9D3080CE184}", "CreateVar" => $createVar, "Buffer" => $data)));
-                
-                    if($createVar){
-                        if(@IPS_GetVariableIDByName("isOnline", $key) === False){
-                            $VarID = IPS_CreateVariable(0);
-                            IPS_SetName($VarID, "isOnline"); // Variable benennen
-                            IPS_SetParent($VarID, $key);
-                            IPS_SetVariableCustomProfile($VarID, "~Switch");
-                        }
+            $result = $this->CamList($sid);
+            $payloadConfigurator = array();
+            if($this->ReadPropertyBoolean("Debug")) $this->SendDebug(__FUNCTION__, json_encode($result), 0);
 
-                        if(@IPS_GetVariableIDByName("isRecording", $key) === False){
-                            $VarID = IPS_CreateVariable(0);
-                            IPS_SetName($VarID, "isRecording"); // Variable benennen
-                            IPS_SetParent($VarID, $key);
-                            IPS_SetVariableCustomProfile($VarID, "~Switch");
-                        }
+            foreach ($result as $val) {
+                $itemPayload = array();
+                $itemPayload["name"] = $val["optionDisplay"];
+                $itemPayload["shortName"] = $val["optionValue"];
+                if(array_key_exists("ptz", $val)) $itemPayload["ptz"] = $val["ptz"]; else $itemPayload["ptz"] = false;
 
-                        if(@IPS_GetVariableIDByName("isPaused", $key) === False){
-                            $VarID = IPS_CreateVariable(0);
-                            IPS_SetName($VarID, "isPaused"); // Variable benennen
-                            IPS_SetParent($VarID, $key);
-                            IPS_SetVariableCustomProfile($VarID, "~Switch");
-                        }
+                $payloadConfigurator[] = $itemPayload;
 
-                        if(@IPS_GetVariableIDByName("isNoSignal", $key) === False){
-                            $VarID = IPS_CreateVariable(0);
-                            IPS_SetName($VarID, "isNoSignal"); // Variable benennen
-                            IPS_SetParent($VarID, $key);
-                            IPS_SetVariableCustomProfile($VarID, "~Switch");
-                        }
-
-                        if(@IPS_GetVariableIDByName("isMotion", $key) === False){
-                            $VarID = IPS_CreateVariable(0);
-                            IPS_SetName($VarID, "isMotion"); // Variable benennen
-                            IPS_SetParent($VarID, $key);
-                            IPS_SetVariableCustomProfile($VarID, "~Switch");
-                        }
-
-                        if(@IPS_GetVariableIDByName("isTriggered", $key) === False){
-                            $VarID = IPS_CreateVariable(0);
-                            IPS_SetName($VarID, "isTriggered"); // Variable benennen
-                            IPS_SetParent($VarID, $key);
-                            IPS_SetVariableCustomProfile($VarID, "~Switch");
-                        }
-
-                        if(@IPS_GetVariableIDByName("isAlerting", $key) === False){
-                            $VarID = IPS_CreateVariable(0);
-                            IPS_SetName($VarID, "isAlerting"); // Variable benennen
-                            IPS_SetParent($VarID, $key);
-                            IPS_SetVariableCustomProfile($VarID, "~Switch");
-                        }
-
-                        if(@IPS_GetMediaIDByName("Stream", $key) === False){
-                            if(!empty($Username) && !empty($Password))
-                                $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg?user=".$Username."&pw=".$Password; // Image-Datei
-                            else     
-                                $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg";
-                            $MediaID = IPS_CreateMedia(3);                  // Image im MedienPool anlegen
-                            IPS_SetMediaFile($MediaID, $ImageFile, true);   // Image im MedienPool mit Image-Datei verbinden
-                            IPS_SetName($MediaID, "Stream"); // Medienobjekt benennen
-                            IPS_SetParent($MediaID, $key);
-                        }
-
-                        if(@IPS_GetVariableIDByName("FPS", $key) === False){
-                            $VarID = IPS_CreateVariable(2);
-                            IPS_SetName($VarID, "FPS"); // Variable benennen
-                            IPS_SetParent($VarID, $key);
-                        }
-                    }
-
-                    $VarID = @IPS_GetVariableIDByName("isOnline", $key);
-                    if($VarID !== False){
-                        if(!empty($val["isOnline"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
-                    }
-
-                    $VarID = @IPS_GetVariableIDByName("isPaused", $key);
-                    if($VarID !== False){
-                        if(!empty($val["isPaused"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
-                    }
-
-                    $VarID = @IPS_GetVariableIDByName("isNoSignal", $key);
-                    if($VarID !== False){
-                        if(!empty($val["isNoSignal"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
-                    }
-
-                    $VarID = @IPS_GetVariableIDByName("isAlerting", $key);
-                    if($VarID !== False){
-                        if(!empty($val["isAlerting"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
-                    }
-
-                    $VarID = @IPS_GetVariableIDByName("isMotion", $key);
-                    if($VarID !== False){
-                        if(!empty($val["isMotion"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
-                    }
-
-                    $VarID = @IPS_GetVariableIDByName("isTriggered", $key);
-                    if($VarID !== False){
-                        if(!empty($val["isTriggered"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
-                    }
-
-                    $VarID = @IPS_GetVariableIDByName("isRecording", $key);
-                    if($VarID !== False){
-                        if(!empty($val["isRecording"])) SetValueBoolean($VarID, True); else SetValueBoolean($VarID, False);
-                    }
-
-                    $VarID = @IPS_GetVariableIDByName("FPS", $key);
-                    if($VarID !== False){
-                        if(!empty($val["FPS"])) SetValue($VarID,$val["FPS"]); else SetValue($VarID, 0);
-                    }
-
-                    $MediaID = @IPS_GetMediaIDByName("Stream", $key);
-                    if($MediaID !== False){
-                        if(!empty($Username) && !empty($Password))
-                            $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg?user=".$Username."&pw=".$Password; // Image-Datei
-                        else     
-                            $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg";
-                        if(IPS_GetMedia($MediaID)["MediaFile"] != $ImageFile) {
-                            
-                            IPS_SetMediaFile($MediaID, $ImageFile, true);
-                        }
-                    }
-                }else{
-                    if($createVar){
-                        $InsID = IPS_CreateInstance("{5308D185-A3D2-42D0-B6CE-E9D3080CE184}");
-                        IPS_SetName($InsID, $val["optionDisplay"]); // Instanz benennen
-                        IPS_SetParent($InsID, $id); 
-
-                        IPS_SetProperty($InsID, "ShortName", $val["optionValue"]); // Ändere Eigenschaft "HomeCode"
-                        IPS_ApplyChanges($InsID);
-
-                        $VarID = IPS_CreateVariable(0);
-                        IPS_SetName($VarID, "isOnline"); // Variable benennen
-                        IPS_SetParent($VarID, $InsID);
-                        IPS_SetVariableCustomProfile($VarID, "~Switch");
-
-                        $VarID = IPS_CreateVariable(0);
-                        IPS_SetName($VarID, "isPaused"); // Variable benennen
-                        IPS_SetParent($VarID, $InsID);
-                        IPS_SetVariableCustomProfile($VarID, "~Switch");
-
-                        $VarID = IPS_CreateVariable(0);
-                        IPS_SetName($VarID, "isNoSignal"); // Variable benennen
-                        IPS_SetParent($VarID, $InsID);
-                        IPS_SetVariableCustomProfile($VarID, "~Switch");
-
-                        $VarID = IPS_CreateVariable(0);
-                        IPS_SetName($VarID, "isAlerting"); // Variable benennen
-                        IPS_SetParent($VarID, $InsID);
-                        IPS_SetVariableCustomProfile($VarID, "~Switch");
-
-                        $VarID = IPS_CreateVariable(0);
-                        IPS_SetName($VarID, "isMotion"); // Variable benennen
-                        IPS_SetParent($VarID, $InsID);
-                        IPS_SetVariableCustomProfile($VarID, "~Switch");
-
-                        $VarID = IPS_CreateVariable(0);
-                        IPS_SetName($VarID, "isTriggered"); // Variable benennen
-                        IPS_SetParent($VarID, $InsID);
-                        IPS_SetVariableCustomProfile($VarID, "~Switch");
-
-                        $VarID = IPS_CreateVariable(0);
-                        IPS_SetName($VarID, "isRecording"); // Variable benennen
-                        IPS_SetParent($VarID, $InsID);
-                        IPS_SetVariableCustomProfile($VarID, "~Switch");
-
-                        $ImageFile = 'http://'.$IPAddress.":".$Port."/mjpg/". $val["optionValue"]. "/video.mjpg";     // Image-Datei
-                        $MediaID = IPS_CreateMedia(3);                  // Image im MedienPool anlegen
-                        IPS_SetMediaFile($MediaID, $ImageFile, true);   // Image im MedienPool mit Image-Datei verbinden
-                        IPS_SetName($MediaID, "Stream"); // Medienobjekt benennen
-                        IPS_SetParent($MediaID, $InsID);
-
-                        $VarID = IPS_CreateVariable(2);
-                        IPS_SetName($VarID, "FPS"); // Variable benennen
-                        IPS_SetParent($VarID, $InsID);
-                    }
-                }
+                //daten zu den CamInstanzen senden
+                $sendData = array("sname" => $val["optionValue"], "cmd" => "CamList", "payload" => $val);
+                $this->SendDataToChildren(json_encode([
+                    'DataID' => "{99FD6BAA-68AA-D576-8209-4E8E7A33E3E7}",
+                    'Buffer' => utf8_encode(json_encode($sendData))
+                ]));
             }
 
+            //Send data to configurator
+            $sendData = array("cmd" => "CamList", "payload" => $payloadConfigurator);
+            $this->SendDataToChildren(json_encode([
+                'DataID' => "{80FC55A5-8B0F-0642-DB3B-2CA825E3A2A3}",
+                'Buffer' => utf8_encode(json_encode($sendData))
+            ]));
+        }
+        private function GetLink(){
+            $output = array();
+            $output["link"] = 'http://'.$this->ReadPropertyString("IPAddress").":".$this->ReadPropertyInteger("Port");
+            $output["user"] = $this->ReadPropertyString("Username");
+            $output["pw"] = $this->ReadPropertyString("Password");
+
+            return json_encode($output);
+        }
+
+        /**
+         * Ergänzt SendDebug um Möglichkeit Objekte und Array auszugeben.
+         * ProgrammCode bei NallChan
+         *
+         * @param string                                           $Message Nachricht für Data.
+         * @param mixed $Data    Daten für die Ausgabe.
+         *
+         * @return int $Format Ausgabeformat für Strings.
+         */
+        protected function SendDebug($Message, $Data, $Format)
+        {
+            if (is_array($Data)) {
+                if (count($Data) > 25) {
+                    $this->SendDebug($Message, array_slice($Data, 0, 20), 0);
+                    $this->SendDebug($Message . ':CUT', '-------------CUT-----------------', 0);
+                    $this->SendDebug($Message, array_slice($Data, -5, null, true), 0);
+                } else {
+                    foreach ($Data as $Key => $DebugData) {
+                        $this->SendDebug($Message . ':' . $Key, $DebugData, 0);
+                    }
+                }
+            } elseif (is_object($Data)) {
+                foreach ($Data as $Key => $DebugData) {
+                    $this->SendDebug($Message . '->' . $Key, $DebugData, 0);
+                }
+            } elseif (is_bool($Data)) {
+                parent::SendDebug($Message, ($Data ? 'TRUE' : 'FALSE'), 0);
+            } else {
+                if (IPS_GetKernelRunlevel() == KR_READY) {
+                    parent::SendDebug($Message, (string) $Data, $Format);
+                } else {
+                    $this->LogMessage($Message . ':' . (string) $Data, KL_DEBUG);
+                }
+            }
+        }
+        protected function SetBuffer($Name, $Daten)
+        {
+            parent::SetBuffer($Name, serialize($Daten));
+        }
+        protected function GetBuffer($Name)
+        {
+            return unserialize(parent::GetBuffer($Name));
         }
     }
