@@ -1,0 +1,469 @@
+
+<!-- saved from url=(0059)https://www.houselogix.com/docs/blue-iris/BlueIris/json.htm -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="Content-Language" content="en-us">
+<meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+
+<title>JSON interface</title>
+</head>
+
+<body bgcolor="#425963">
+
+<div align="center">
+  <center>
+  <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%" id="AutoNumber1">
+    <tbody><tr>
+      <td align="left">
+      </td>
+    </tr>
+    <tr>
+      <td width="168%" height="91" align="left">
+      <p>
+      <b><font face="Calibri" size="5" color="#FFFFFF">JSON interface</font></b></p><p align="left">
+		<font face="Calibri" color="#FFFFFF" size="4">
+      The JSON (JavaScript Object Notation) interface exists to provide methods 
+		for remote administration of your Blue Iris system.&nbsp; It will be the 
+		gateway used by new client apps including those 
+		for iOS (iPhone and iPad) and Android mobile devices.&nbsp; It will also 
+		be used by the next generation of web pages used to access Blue Iris via 
+		browser in order to provide more secure authentication.</font></p>
+		<p align="left">
+		<font face="Calibri" size="4"><font color="#FFFFFF">For a description of JSON, see
+		</font>
+		<a href="http://www.json.org/"><font color="#FFFFFF">http://www.json.org/</font></a><font color="#FFFFFF">.&nbsp; 
+		It's simply a block of text which is sent by HTTP-POST to the Blue Iris web 
+		server page /json.&nbsp; Blue Iris will respond with a JSON formatted 
+		response (content-type application/json).</font></font></p>
+		<p align="left">
+		<font face="Calibri" size="4" color="#FFFFFF">Each JSON object sent to Blue Iris should have a "cmd" 
+		value, for example, "cmd":"login".&nbsp; Additional values will depend 
+		upon the type of command sent.&nbsp; Here's an example command and 
+		response in full JSON format:</font></p>
+		<blockquote>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">{"cmd":"login"}</font></p>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+			{"result":"fail","session":"182c8a04f7d4ab042ff8e4a2"}</font></p>
+		</blockquote>
+		<p align="left">
+		<font face="Calibri" size="4" color="#FFFFFF">Following are the available commands:</font></p>
+		<font face="Calibri" size="4" color="#FFFFFF">
+		<p align="left"><b>alertlist</b></p>
+		<blockquote>
+			<p align="left">Get a 
+			list of alert images from the Alerts folder</p>
+			<p align="left"><i>
+			camera</i>: 
+			a camera's short name or a group name; "index" will return alerts 
+			from all cameras</p>
+			<p align="left"><i>
+			startdate</i>: 
+			expressed as the integer number of seconds since January 1, 1970</p>
+			<p align="left"><i>reset</i>: if true, will erase all alerts from 
+			the alerts folder.</p>
+			<p align="left">The 
+			returned <i>data</i> value is an array of 
+			JSON objects each describing a 
+			camera or a camera group.&nbsp; For each of these objects, the 
+			following values are defined:</p>
+			<blockquote>
+				<p align="left"><i>
+				camera</i>: the 
+				camera or group name</p>
+				<p align="left">
+				<i>jpeg</i>: the JPEG image filename as found in the Alerts 
+				folder</p>
+				<p align="left"><i>
+				path</i>: 
+				the part of the absolute file path that follows the New clips 
+				folder path; if there are no subfolders, this is simply \ and 
+				the filename.</p>
+				<p align="left">
+				<i>offset</i>: the number of kilobytes (for BVR files) or 
+				milliseconds (for other formats) into the file at which the 
+				alert occurred</p>
+				<p align="left"><i>
+				flags</i>: 
+				the following flags are defined:</p>
+				<blockquote>
+					<p align="left">
+					1: the offset 
+					is in time (milliseconds)</p>
+					<p align="left">
+					2: the alert 
+					was triggered by the motion detector</p>
+					<p align="left">
+					4: the camera 
+					was in a no-signal state at the time of the alert</p>
+					<p align="left">
+					8: the alert 
+					was triggered by an audio event</p>
+					<p align="left">
+					16: the alert 
+					was triggered by an external source such as DIO, JSON 
+					command, or manual trigger</p>
+				</blockquote>
+				<p align="left">
+				<i>date</i>: file creation date, expressed as the integer number 
+				of seconds since January 1, 1970</p>
+				<p align="left"><i>
+				color</i>: 
+				24-bit RGB value (red least significant) representing the 
+				camera's display color</p>
+			</blockquote>
+		</blockquote>
+		<p align="left"><b>camconfig</b></p>
+		</font><font face="Consolas" size="2">
+		</font><blockquote><font face="Consolas" size="2">
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">Get (and optionally set) the 
+			state of many camera properties:</font></p>
+			</font><blockquote><font face="Consolas" size="2">
+				<p align="left">
+				<font face="Calibri" size="4" color="#FFFFFF"><i>
+				reset:true </i>reset the camera</font></p></font>
+				<font face="Calibri" size="4" color="#FFFFFF">
+				</font><p align="left"><font face="Calibri" size="4" color="#FFFFFF"><i>enable</i></font><font face="Consolas" size="2"><font face="Calibri" size="4" color="#FFFFFF"><i>:true 
+				or false </i>enable or disable the camera</font></font></p><font face="Consolas" size="2">
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				<i>
+				pause:n </i>sends a pause command, and returns a value in 
+				seconds</font></p></font>
+				<font face="Calibri" size="4" color="#FFFFFF">
+				<blockquote>
+					<p align="left">-1: pause indefinitely</p>
+					<p align="left">0: un-pause</p>
+					<p align="left">1..3: add 30 seconds, 1 minute, 1 hour to 
+					the pause time</p>
+				</blockquote>
+				</font><p align="left"><font face="Calibri" size="4" color="#FFFFFF"><i>motion:true 
+				or false </i>enable or disable the motion detector</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">schedule</font></i><font face="Calibri" size="4" color="#FFFFFF"><i>:true 
+				or false </i>enable or disable the camera's custom schedule</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">ptzcycle</font></i><font face="Calibri" size="4" color="#FFFFFF"><i>:true 
+				or false </i>enable or disable the preset-cycle feature</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">ptzevents</font></i><font face="Calibri" size="4" color="#FFFFFF"><i>:true 
+				or false </i>enable or disable the PTZ event schedule</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">alerts</font></i><font face="Calibri" size="4" color="#FFFFFF"><i>:n </i>
+				sets the corresponding alert function</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">record</font></i><font face="Calibri" size="4" color="#FFFFFF"><i>:n </i>
+				sets the corresponding record function</font></p>
+			</blockquote>
+		</blockquote>
+		<p align="left"><b><font face="Calibri" size="4" color="#FFFFFF">camlist</font></b></p>
+		<blockquote>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+			Returns a list of cameras on the system ordered by group.&nbsp; 
+			Cameras not belonging to any group are shown beneath the "all 
+			cameras" group.&nbsp; Disabled cameras are placed at the end of the 
+			list.</font></p>
+			<blockquote>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				<i>reset</i>: send a value of true for this argument to reset 
+				the statistics for the cameras.</font></p>
+			</blockquote>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF"><i>data</i> is an array of 
+			objects (note the [] surrounding a JSON array), each describing a 
+			camera or a camera group.&nbsp; For each of these objects, the 
+			following values are defined:</font></p>
+			<blockquote>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF"><i>optionsDisplay</i>: the 
+				camera or group name</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF"><i>optionsValue</i>: the 
+				camera or group short name, used for other requests and commands 
+				requiring a camera short name</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">FPS</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+				the current number of frames/second delivered from the camera</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">color</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+				24-bit RGB value (red least significant) representing the 
+				camera's display color</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				<i>clipsCreated</i>: the number of clips created since the 
+				camera stats were last reset</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">isAlerting</font></i><font face="Calibri" size="4" color="#FFFFFF">: true or false; 
+				currently sending an alert</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">isEnabled:</font></i><font face="Calibri" size="4" color="#FFFFFF">
+				true or false</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">isOnline</font></i><font face="Calibri" size="4" color="#FFFFFF">
+				true or false</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">isMotion</font></i><font face="Calibri" size="4" color="#FFFFFF">: true or false</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">isNoSignal</font></i><font face="Calibri" size="4" color="#FFFFFF">: true or false</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">isPaused</font></i><font face="Calibri" size="4" color="#FFFFFF">: true or false</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">isTriggered</font></i><font face="Calibri" size="4" color="#FFFFFF">: true or false</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				<i>isRecording</i>: true or false</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">isYellow</font></i><font face="Calibri" size="4" color="#FFFFFF">: true or false; 
+				the yellow caution icon</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				<i>profile</i>: the camera's currently active profile, or as 
+				overridden by the global schedule or the UI profile buttons.</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">ptz</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+				is PTZ supported, true or false</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">audio</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+				is audio supported, true or false</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">width</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+				width of the standard video frame</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">height</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+				height of the standard video frame</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">nTriggers</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+				number of trigger events since last reset</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">nNoSignal</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+				number of no signal events since last reset</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">nClips</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+				number of no recording events since last reset</font></p>
+			</blockquote>
+		</blockquote>
+		<p align="left"><b><font face="Calibri" size="4" color="#FFFFFF">
+		cliplist</font></b></p>
+		<blockquote>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">Get a 
+			list of clips from the New folder</font></p>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF"><i>
+			camera</i>: a camera's short name or a group name; "index" will 
+			return clips from all cameras</font></p>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF"><i>
+			startdate</i>: expressed as the integer number of seconds since 
+			January 1, 1970</font></p>
+			<p align="left"><i><font face="Calibri" size="4" color="#FFFFFF">
+			enddate</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+			expressed as the integer number of seconds since January 1, 1970</font></p>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF"><i>
+			tiles</i>: true or false; true to send only 1 entry per day in order 
+			to mark tiles on the calendar</font></p>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">The 
+			returned <i>data</i> value is an array of JSON objects each 
+			describing a camera or a camera group.&nbsp; For each of these objects, 
+			the following values are defined:</font></p>
+			<blockquote>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">camera</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+				the camera or group name</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">path</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+				the part of the absolute file path that follows the New clips 
+				folder path; if there are no subfolders, this is simply \ and 
+				the filename.</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				<i>date</i>: file creation date, expressed as the integer number 
+				of seconds since January 1, 1970</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">color</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+				24-bit RGB value (red least significant) representing the 
+				camera's display color</font></p>
+			</blockquote>
+		</blockquote>
+		<p align="left"><b><font face="Calibri" size="4" color="#FFFFFF">log</font></b></p>
+		<blockquote>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">Get a 
+			list of the status log entries, an array of objects:</font></p>
+			<p align="left"><i><font face="Calibri" size="4" color="#FFFFFF">
+			date</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+			expressed as the integer number of seconds since January 1, 1970</font></p>
+			<p align="left"><i><font face="Calibri" size="4" color="#FFFFFF">
+			level</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+			severity, 0=info, 1=warn, 2=error</font></p>
+			<p align="left"><i><font face="Calibri" size="4" color="#FFFFFF">obj</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+			object name</font></p>
+			<p align="left"><i><font face="Calibri" size="4" color="#FFFFFF">msg</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+			the text of the log entry</font></p>
+		</blockquote>
+		<p align="left"><b><font face="Calibri" size="4" color="#FFFFFF">login</font></b></p>
+		<blockquote>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">Blue Iris will respond with a 
+			"result" value of "fail' and a "session" value.&nbsp; Respond with 
+			this session value combined with a userid and password and MD5 hash 
+			encoded as follows:</font></p>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF"><i>response</i> = MD5( "userid:session:password" 
+			)</font></p>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">{"cmd":"login","session":"182c8a04f7d4ab042ff8e4a2","response":"<i>response</i>"}</font></p>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">There are additional login 
+			values supported in order to identify a mobile device:</font></p>
+			<blockquote>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				<i>uuid</i>: a unique 
+				identifier</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				<i>token</i>: a code used to 
+				send push notifications</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				<i>devicename</i>: a 
+				description of the device</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				<i>devicetype</i>: for 
+				example, "iOS"</font></p>
+			</blockquote>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">if a correct response is 
+			received, Blue Iris will respond:</font></p>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">{"result":"success","data":{"system 
+			name":"<i>your system name</i>"}}</font></p>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">For 
+			all other commands, you must 
+		supply a valid "session" value as supplied by the <b>login</b> command.</font></p>
+		</blockquote>
+		<p align="left"><b><font face="Calibri" size="4" color="#FFFFFF">logout</font></b></p>
+		<blockquote>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">If you were successfully 
+			logged-in, you will receive</font></p>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">{"result":"success"}</font></p>
+		</blockquote>
+		<p align="left"><b><font face="Calibri" size="4" color="#FFFFFF">ptz</font></b></p>
+		<blockquote>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+			Operate a camera's PTZ functionality</font></p>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF"><i>
+			camera</i>: 
+			a camera's short name</font></p>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF"><i>
+			button</i>: 
+			this value determines the PTZ operation performed:</font></p>
+			<blockquote>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">0: 
+				Pan left</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">1: 
+				Pan right</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">2: 
+				Tilt up</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">3: 
+				Tilt down</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">4: 
+				Center or home (if supported by camera)</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">5: 
+				Zoom in</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">6: 
+				Zoom out</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				8..10: Power mode, 50, 60, or outdoor</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				11..26: Brightness 0-15</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				27..33: Contrast 0-6</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				34..35: IR on, off</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				101..120: Go to preset position 1..20</font></p>
+			</blockquote>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF"><i>
+			updown</i>: 
+			send a value of 1 to indicate that a complementary "stop" event will 
+			follow; send 0 otherwise and the camera will be moved for a preset 
+			duration</font></p>
+		</blockquote>
+		<p align="left"><b><font face="Calibri" size="4" color="#FFFFFF">status</font></b></p>
+		<blockquote>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">Get (and optionally set) the 
+			state of the traffic signal icon, active global profile as well as 
+			the schedule's hold/run state:</font></p>
+			<blockquote>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">signal</font></i><font face="Calibri" size="4" color="#FFFFFF">: a single digit 0 for red, 1 for green, 2 for yellow.</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">profile</font></i><font face="Calibri" size="4" color="#FFFFFF">: a single digit 0-7 for the profile number to set; or -1 to change 
+				the hold/run state.&nbsp; This functions the same it does on the 
+				local UI, so sending a profile change a second time will set the 
+				schedule to it's "hold" state.</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				<i>dio</i>: the state of a DIO output.&nbsp; An array of 0's and 
+				1's is returned, or you may set a particular value by sending an 
+				object with:</font></p>
+				<blockquote>
+					<p align="left">
+					<font face="Calibri" size="4" color="#FFFFFF"><i>output</i>: 
+					an output number 0-7</font></p>
+					<p align="left">
+					<font face="Calibri" size="4" color="#FFFFFF"><i>force</i>: 
+					true or false</font></p>
+					<p align="left">
+					<font face="Calibri" size="4" color="#FFFFFF"><i>msec</i>: 
+					the number of milliseconds to hold the output enabled if <i>
+					force</i> is not specified.</font></p>
+				</blockquote>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				<i>play</i>: play a sound file from the application Sounds 
+				folder.</font></p>
+			</blockquote>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">The 
+			follow values are also returned:</font></p>
+			<blockquote>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">lock</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+				the state of the schedule run/hold button: 0 for run, 2 for 
+				temp, 1 for hold</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">clips</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+				a text value describing the number of clips in the New and 
+				Stored folders along with disc usage statistics</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">warnings</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+				the number of new warnings since the <b>log</b> command was last 
+				used</font></p>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">alerts</font></i><font face="Calibri" size="4" color="#FFFFFF">: 
+				the number of new alerts since the <b>alerts</b> command was 
+				last used</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				<i>cpu</i>: the server's CPU usage overall (not just Blue Iris) 
+				expressed as a percentage.</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				<i>mem</i>: a string representation of the Blue Iris process 
+				memory usage</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				<i>uptime</i>: a string representation of the time in 
+				days:hours:minutes:seconds that Blue Iris has been running</font></p>
+			</blockquote>
+		</blockquote>
+		<p align="left"><b><font face="Calibri" size="4" color="#FFFFFF">
+		sysconfig</font></b></p>
+		<blockquote>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">Get 
+			and set system configuration settings.&nbsp; Admin access required.</font></p>
+			<blockquote>
+				<p align="left"><i>
+				<font face="Calibri" size="4" color="#FFFFFF">archive</font></i><font face="Calibri" size="4" color="#FFFFFF"> (output 
+				and optionally input): 
+				enable web archival</font></p>
+				<p align="left"><font face="Calibri" size="4" color="#FFFFFF">
+				<i>schedule </i>(output 
+				and optionally input): enable the global schedule</font></p>
+			</blockquote>
+		</blockquote>
+		<p align="left"><b><font face="Calibri" size="4" color="#FFFFFF">trigger</font></b></p>
+		<blockquote>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF">Trigger the motion sensor on a 
+			specific camera.&nbsp; Admin access required.&nbsp; Additional required values:</font></p>
+			<p align="left"><font face="Calibri" size="4" color="#FFFFFF"><i>camera</i>: a valid and 
+			enabled camera short name.</font></p>
+		</blockquote>
+      </td>
+    </tr>
+    <tr>
+      <td width="168%" height="91" align="left">
+      &nbsp;</td>
+    </tr>
+    </tbody></table>
+  </center>
+</div>
+
+
+
+</body></html>
