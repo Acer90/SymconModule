@@ -19,7 +19,35 @@
 
         public function GetConfigurationForm() {
             $output = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
-            $output['elements'][0]['values'] = json_decode($this->GetBuffer('Cams'), true);
+
+            $values = array();
+            $item = array();
+            $item["id"] = 1;
+            $arr = IPS_GetInstanceListByModuleID('{CDFC7E83-C425-E923-9B6F-ECB22F3DFCC9}');
+            //print_r($InstanceIDs);
+            if(is_array($arr) && count($arr) > 0){
+                $item["instanceID"] = $arr[0];
+            }
+            $item["name"] = "BlueIris System";
+            $item["shortName"] = "";
+            $item["ptz"] = "";
+            $item["create"]["moduleID"] = "{CDFC7E83-C425-E923-9B6F-ECB22F3DFCC9}";
+            $item["create"]["configuration"]["GetLog"] = false; //hier muss etwas definiert werden, sonnst kommt es bei symcon zu einen Bug!
+
+            $values[] = $item;
+
+            $item = array();
+            $item["id"] = 2;
+            $item["name"] = $this->Translate("Cameras");
+            $item["shortName"] = "";
+            $item["ptz"] = "";
+
+            $values[] = $item;
+
+            $cams = json_decode($this->GetBuffer('Cams'), true);;
+            $values  = array_merge($values, $cams);
+
+            $output['elements'][0]['values'] = $values;
             return json_encode($output);
         }
 
@@ -43,6 +71,7 @@
                         $s_Data["create"]["moduleID"] = "{5308D185-A3D2-42D0-B6CE-E9D3080CE184}";
                         $s_Data["create"]["configuration"]["ShortName"] = $item["shortName"];
                         $s_Data["create"]["configuration"]["PTZ"] = $item["ptz"];
+                        $s_Data["parent"] = 2;
 
                         $camsData[] = $s_Data;
                     }

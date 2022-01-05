@@ -38,7 +38,20 @@
                 case "GetLink":
                     return $this->GetLink();
                 case "CamConfig":
-                    return $this->CamConfig($buffer['cam'], $buffer['data']);
+                    return $this->CamConfig($buffer['data']);
+                case "AlertList":
+                    return $this->AlertList($buffer['data']);
+                case "ClipList":
+                    return $this->ClipList($buffer['data']);
+                case "PTZ":
+                    return $this->PTZ($buffer['data']);
+                case "Trigger":
+                    return $this->Trigger($buffer['data']);
+                case "Status":
+                    $sid = $this->Login();
+                    return $this->Status($sid, $buffer['data']);
+                case "Log":
+                    return $this->Log();
                 default:
                     $this->SendDebug(__FUNCTION__, "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
                     break;
@@ -60,7 +73,9 @@
 
             $jData = json_decode($json_string, true);
             $sData = array("cmd" => $cmd, "session" => $session);
-            $sData = array_merge($sData, $jData);
+
+            if(is_array($jData) && count($jData) > 0) $sData = array_merge($sData, $jData);
+
             $json_string = json_encode($sData);
             $this->SendDebug(__FUNCTION__, $json_string, 0);
 
@@ -275,98 +290,46 @@
                 return [];
             };
         }
-        public function SysConfig(string $session = null){
-            if(is_null($session)){
-                $this->SetStatus(203);
-                return "ERROR";
-            }
+        public function Status(string $session = null, array $data = null){
+            if(is_null($session)) return "{}";
+            if(!is_null($data)) $data = array();
 
-            $id = $this->InstanceID;
-            $IPAddress = $this->ReadPropertyString("IPAddress");
-            $Port = $this->ReadPropertyInteger("Port");
-            $Timeout = $this->ReadPropertyInteger("Timeout");
-            $Username = $this->ReadPropertyString("Username");
-            $Password = $this->ReadPropertyString("Password");
-
-            $url = 'http://'.$IPAddress.":".$Port."/json";
-
-            $data = array("cmd" => "sysconfig", "session" => $session);
-            $data_string = json_encode($data);
-
-            $ch = curl_init($url);
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                    'Content-Type: application/json',
-                    'Content-Length: ' . strlen($data_string))
-            );
-            $result = curl_exec($ch);
-
-            if(curl_errno($ch))
-            {
-                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
-                return "ERROR";
-            }
-
-            curl_close($ch);
-
+            $result = $this->SendJSONData("status", json_encode($data));
+            $this->SendDebug(__FUNCTION__, $result, 0);
             $output = json_decode($result, true);
             if($output["result"] == "success"){
-                return $output["data"];
+                return json_encode($output["data"]);
             }else{
                 $this->SendDebug(__FUNCTION__, $result, 0);
-                return [];
-            };
+                return "{}";
+            }
         }
-        public function Log(string $session = null){
-            if(is_null($session)){
-                $this->SetStatus(203);
-                return "ERROR";
-            }
+        public function SysConfig(array $data = null){
+            if(!is_null($data)) $data = array();
 
-            $id = $this->InstanceID;
-            $IPAddress = $this->ReadPropertyString("IPAddress");
-            $Port = $this->ReadPropertyInteger("Port");
-            $Timeout = $this->ReadPropertyInteger("Timeout");
-            $Username = $this->ReadPropertyString("Username");
-            $Password = $this->ReadPropertyString("Password");
-
-            $url = 'http://'.$IPAddress.":".$Port."/json";
-
-            $data = array("cmd" => "log", "session" => $session);
-            $data_string = json_encode($data);
-
-            $ch = curl_init($url);
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                    'Content-Type: application/json',
-                    'Content-Length: ' . strlen($data_string))
-            );
-            $result = curl_exec($ch);
-
-            if(curl_errno($ch))
-            {
-                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
-                return "ERROR";
-            }
-
-            curl_close($ch);
-
+            $result = $this->SendJSONData("sysconfig", json_encode($data));
+            $this->SendDebug(__FUNCTION__, $result, 0);
             $output = json_decode($result, true);
             if($output["result"] == "success"){
-                return $output["data"];
+                return json_encode($output["data"]);
             }else{
                 $this->SendDebug(__FUNCTION__, $result, 0);
-                return [];
-            };
+                return "{}";
+            }
+        }
+        public function Log(){
+            $result = $this->SendJSONData("log", "{}");
+            $this->SendDebug(__FUNCTION__, $result, 0);
+            $output = json_decode($result, true);
+            if($output["result"] == "success"){
+                return json_encode($output["data"]);
+            }else{
+                $this->SendDebug(__FUNCTION__, $result, 0);
+                return "{}";
+            }
         }
 
-        private function CamConfig(string $camera, array $data){
+        private function CamConfig(array $data){
             $result = $this->SendJSONData("camconfig", json_encode($data));
             $this->SendDebug(__FUNCTION__, $result, 0);
             $output = json_decode($result, true);
@@ -377,253 +340,49 @@
                 return "{}";
             }
         }
-        private function AlertList(string $camera, array $data){
-            if(is_null($camera)) $camera = "index";
-            if(is_null($startdate)) $startdate = 0;
-            if(is_null($reset)) $reset = false;
-            
-            $id = $this->InstanceID;
-            $IPAddress = $this->ReadPropertyString("IPAddress");
-            $Port = $this->ReadPropertyInteger("Port");
-            $Timeout = $this->ReadPropertyInteger("Timeout");
-            $Username = $this->ReadPropertyString("Username");
-            $Password = $this->ReadPropertyString("Password");
-
-            $url = 'http://'.$IPAddress.":".$Port."/json";
-
-            $data = array("cmd" => "alertlist", "session" => $session, "camera" => $camera , "startdate" => $startdate , "reset" => $reset); // , "" => $                                                          
-            $data_string = json_encode($data);                                                                                   
-                                                                                                                                
-            $ch = curl_init($url);                                                                      
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);
-            curl_setopt($ch, CURLOPT_COOKIE, 'PHPSESSID='.$session);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
-                'Content-Type: application/json',                                                                                
-                'Content-Length: ' . strlen($data_string))                                                                       
-            );     
-            $result = curl_exec($ch);
-
-            if(curl_errno($ch))
-            {
-                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
-                return "ERROR";
-            }
-
-            curl_close($ch);
-
+        private function AlertList(array $data){
+            $result = $this->SendJSONData("alertlist", json_encode($data));
+            $this->SendDebug(__FUNCTION__, $result, 0);
             $output = json_decode($result, true);
-            if($output["result"] == "success"){ 
-                return $output["data"];
+            if($output["result"] == "success"){
+                return json_encode($output["data"]);
             }else{
                 $this->SendDebug(__FUNCTION__, $result, 0);
-                return [];
-            };
+                return "{}";
+            }
         }
-        private function ClipList(String $session = null, String $camera = null, Int $startdate = null, Int $enddate = null, Bool $tiles = null){
-            if(is_null($session)){
-                $this->SetStatus(203);
-                return "ERROR";
-            } 
-            if(is_null($camera)) $camera = "index";
-            if(is_null($startdate)) $startdate = 0;
-            if(is_null($enddate)) $enddate = time();
-            if(is_null($tiles)) $tiles = false;
-
-            $id = $this->InstanceID;
-            $IPAddress = $this->ReadPropertyString("IPAddress");
-            $Port = $this->ReadPropertyInteger("Port");
-            $Timeout = $this->ReadPropertyInteger("Timeout");
-            $Username = $this->ReadPropertyString("Username");
-            $Password = $this->ReadPropertyString("Password");
-
-            $url = 'http://'.$IPAddress.":".$Port."/json";
-
-            $data = array("cmd" => "cliplist", "session" => $session , "camera" => $camera, "startdate" => $startdate, "enddate" => $enddate, "tiles" =>$tiles);                                                                 
-            $data_string = json_encode($data);                                                                                   
-                                                                                                                                
-            $ch = curl_init($url);                                                                      
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);                                                                     
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
-                'Content-Type: application/json',                                                                                
-                'Content-Length: ' . strlen($data_string))                                                                       
-            );     
-            $result = curl_exec($ch);
-
-            if(curl_errno($ch))
-            {
-                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
-                return "ERROR";
-            }
-
-            curl_close($ch);
-
+        private function ClipList(array $data){
+            $result = $this->SendJSONData("cliplist", json_encode($data));
+            $this->SendDebug(__FUNCTION__, $result, 0);
             $output = json_decode($result, true);
-            //$this->SendDebug("Debug:", $result, 0);
-            if($output["result"] == "success" and array_key_exists("data", $output)){
-                return $output["data"];
+            if($output["result"] == "success"){
+                return json_encode($output["data"]);
             }else{
                 $this->SendDebug(__FUNCTION__, $result, 0);
-                return [];
-            };
+                return "{}";
+            }
         }
-        private function PTZ(string $session = null,  string $camera = null, string $button = null, string $updown = null){
-            if(is_null($session)){
-                $this->SetStatus(203);
-                return "ERROR";
-            } 
-            if(is_null($camera)){
-                $this->SetStatus(203);
-                return "ERROR";
-            } 
-            if(is_null($button)){
-                $this->SetStatus(203);
-                return "ERROR";
-            } 
-            if(is_null($updown)) $updown = 0;
-
-            $id = $this->InstanceID;
-            $IPAddress = $this->ReadPropertyString("IPAddress");
-            $Port = $this->ReadPropertyInteger("Port");
-            $Timeout = $this->ReadPropertyInteger("Timeout");
-            $Username = $this->ReadPropertyString("Username");
-            $Password = $this->ReadPropertyString("Password");
-
-            $url = 'http://'.$IPAddress.":".$Port."/json";
-
-            $data = array("cmd" => "ptz", "session" => $session, "camera" => $camera, "button" => $button,"" => $updown);                                                                 
-            $data_string = json_encode($data);                                                                                   
-                                                                                                                                
-            $ch = curl_init($url);                                                                      
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);                                                                     
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
-                'Content-Type: application/json',                                                                                
-                'Content-Length: ' . strlen($data_string))                                                                       
-            );     
-            $result = curl_exec($ch);
-
-            if(curl_errno($ch))
-            {
-                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
-                return "ERROR";
-            }
-
-            curl_close($ch);
-
+        private function PTZ(array $data){
+            $result = $this->SendJSONData("ptz", json_encode($data));
+            $this->SendDebug(__FUNCTION__, $result, 0);
             $output = json_decode($result, true);
-            if($output["result"] == "success"){ 
-                return $output;
+            if($output["result"] == "success"){
+                return $output["result"];
             }else{
                 $this->SendDebug(__FUNCTION__, $result, 0);
-                return [];
-            };
+                return "{}";
+            }
         }
-        private function Status(string $session = null, string $signal = null, string $profil = null, string $dio = null, string $play = null){
-            if(is_null($session)){
-                $this->SetStatus(203);
-                return "ERROR";
-            } 
-
-            $id = $this->InstanceID;
-            $IPAddress = $this->ReadPropertyString("IPAddress");
-            $Port = $this->ReadPropertyInteger("Port");
-            $Timeout = $this->ReadPropertyInteger("Timeout");
-            $Username = $this->ReadPropertyString("Username");
-            $Password = $this->ReadPropertyString("Password");
-
-            $url = 'http://'.$IPAddress.":".$Port."/json";
-
-            $data = array("cmd" => "status", "session" => $session); 
-            if(!is_null($signal)) $data["signal"] = $signal;
-            if(!is_null($profil)) $data["profile"] = $profil;
-            if(!is_null($dio)) $data["dio"] = $dio;
-            if(!is_null($play)) $data["play"] = $play;
-
-            $data_string = json_encode($data);                                                                                   
-                                                                                                                                
-            $ch = curl_init($url);                                                                      
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);                                                                     
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
-                'Content-Type: application/json',                                                                                
-                'Content-Length: ' . strlen($data_string))                                                                       
-            );     
-            $result = curl_exec($ch);
-
-            if(curl_errno($ch))
-            {
-                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
-                return "ERROR";
-            }
-
-            curl_close($ch);
-
+        private function Trigger(array $data){
+            $result = $this->SendJSONData("trigger", json_encode($data));
+            $this->SendDebug(__FUNCTION__, $result, 0);
             $output = json_decode($result, true);
-            if($output["result"] == "success"){ 
-                return $output["data"];
+            if($output["result"] == "success"){
+                return $output["result"];
             }else{
                 $this->SendDebug(__FUNCTION__, $result, 0);
-                return [];
-            };
-        }
-        private function Trigger(string $session = null, string $camera = null){
-            if(is_null($session)){
-                $this->SetStatus(203);
-                return "ERROR";
+                return "{}";
             }
-            if(is_null($camera)){
-                $this->SetStatus(203);
-                return "ERROR";
-            }
-
-            $id = $this->InstanceID;
-            $IPAddress = $this->ReadPropertyString("IPAddress");
-            $Port = $this->ReadPropertyInteger("Port");
-            $Timeout = $this->ReadPropertyInteger("Timeout");
-            $Username = $this->ReadPropertyString("Username");
-            $Password = $this->ReadPropertyString("Password");
-
-            $url = 'http://'.$IPAddress.":".$Port."/json";
-
-            $data = array("cmd" => "trigger", "session" => $session, "camera" => $camera);                                                                 
-            $data_string = json_encode($data);                                                                                   
-                                                                                                                                
-            $ch = curl_init($url);                                                                      
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-            curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$Timeout);                                                                     
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                                          
-                'Content-Type: application/json',                                                                                
-                'Content-Length: ' . strlen($data_string))                                                                       
-            );     
-            $result = curl_exec($ch);
-
-            if(curl_errno($ch))
-            {
-                if($ch == curl_errno($ch)) $this->SetStatus(204); else echo 'Curl error: ' . curl_error($ch);
-                return "ERROR";
-            }
-
-            curl_close($ch);
-
-            $output = json_decode($result, true);
-            if($output["result"] == "success"){ 
-                return $output;
-            }else{
-                $this->SendDebug(__FUNCTION__, $result, 0);
-                return [];
-            };
         }
 
         public function SyncData(){
@@ -660,6 +419,16 @@
                 'DataID' => "{80FC55A5-8B0F-0642-DB3B-2CA825E3A2A3}",
                 'Buffer' => utf8_encode(json_encode($sendData))
             ]));
+
+
+            //sync date SystemModul
+            $result = json_decode($this->Status($sid), true);
+            $sendData = array("cmd" => "Status", "payload" => $result);
+            $this->SendDataToChildren(json_encode([
+                'DataID' => "{8AD9F950-FFB3-1BE8-5B4C-1C603EB9887E}",
+                'Buffer' => utf8_encode(json_encode($sendData))
+            ]));
+
         }
         private function GetLink(){
             $output = array();

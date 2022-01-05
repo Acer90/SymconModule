@@ -3,19 +3,15 @@
     [
         { "type": "ValidationTextBox", "name": "ShortName", "caption": "Short Name" },
         { "type": "CheckBox", "name": "PTZ", "caption": "Use PTZ"},
+        { "type": "CheckBox", "name": "showFPS", "caption": "show FPS"},
         { "type": "CheckBox", "name": "Debug", "caption": "Debug"}
     ],
     "actions":
     [
-        { "type": "Button", "label": "Create Media File", "onClick": "BlueIrisCam_CreateMediaFile($id);" }
+        { "type": "Button", "label": "Create Stream Media File", "onClick": "BlueIrisCam_CreateMediaFile($id);" }
     ],
     "status":
     [
-        { "code": 102, "icon": "active", "caption": "Connection Success!" },
-        { "code": 201, "icon": "error", "caption": "Error Invalid parameter" },
-        { "code": 202, "icon": "error", "caption": "Variable does not exist!" },
-        { "code": 203, "icon": "error", "caption": "Internal Error!" },
-        { "code": 204, "icon": "error", "caption": "Timeout!" },
-        { "code": 205, "icon": "error", "caption": "Wrong Login!" }
+        { "code": 102, "icon": "active", "caption": "Status OK" }
     ]
 }

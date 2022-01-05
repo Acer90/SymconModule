@@ -1,0 +1,15 @@
+{
+    "elements":
+    [
+        { "type": "CheckBox", "name": "GetClips", "caption": "Get Clips"},
+        { "type": "CheckBox", "name": "GetAlerts", "caption": "Get Alerts"},
+        { "type": "CheckBox", "name": "GetLog", "caption": "Get Log"},
+        { "type": "IntervalBox", "name": "Interval", "caption": "Sec." }
+    ],
+    "actions":
+    [],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Status OK!" }
+    ]
+}
