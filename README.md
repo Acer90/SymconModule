@@ -18,8 +18,14 @@ Diese Library wurde von Acer90 erstellt, sie enthält mehrere Module für IP-Sym
 
 ## 1. Funktionsumfang
 
-- __SymconBlueIris__ ([Dokumentation](SymconBlueIris))  
+- __SymconBlueIrisCam__ ([Dokumentation](SymconBlueIrisCam))  
     Liest Informationen aus der BlueIris Kamera Software aus.
+- __SymconBlueIrisConfigurator__ ([Dokumentation](SymconBlueIrisConfigurator))  
+    Ermöglicht es Kamera-Instancen einfach in Symcon zu erstellen
+- __SymconBlueIrisGateway__ ([Dokumentation](SymconBlueIrisGateway))  
+    Dient als Gateway zwischen den Child-Instancen und BlueIris
+- __SymconBlueIrisSystem__ ([Dokumentation](SymconBlueIrisSystem))  
+    Liest Informationen des BlueIris Servers aus.
 - __SymconSamsungTizen__ ([Dokumentation](SymconSamsungTizen))  
     Zum Steuern eines Samsung Fernsehers mit Tizen Betriebsystem.
 - __SymconSmnp__ ([Dokumentation](SymconSmnp))  

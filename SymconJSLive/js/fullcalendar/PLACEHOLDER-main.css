@@ -1327,8 +1327,8 @@ A VERTICAL event
   /*--fc-list-event-hover-bg-color: #f5f5f5;*/
 }
 .fc-theme-standard .fc-list {
-    border: 1px solid #ddd;
-    border: 1px solid var(--fc-border-color, #ddd);
+    border: #table_outer_borderWidth# solid #table_outer_borderColor#;
+    border: #table_outer_borderWidth# solid var(--fc-border-color, #table_outer_borderColor#);
   }
 .fc {
 
@@ -1483,6 +1483,8 @@ A VERTICAL event
 .fc-event {
     font-size: #table_events_fontSize#;
     font-family: #table_events_fontFamily#;
+    color: #table_fontColor#;
+    background-color: #table_backgroundColor#;
 }
 
 .fc-daygrid-day {

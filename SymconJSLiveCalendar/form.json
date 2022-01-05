@@ -703,6 +703,13 @@
                         {
                             "type": "RowLayout",
                             "items": [
+                                { "type": "Label", "caption": "Font:", "width": "100px" },
+                                { "type": "SelectColor", "name": "table_fontColor", "caption": "Color" }
+                            ]
+                        },
+                        {
+                            "type": "RowLayout",
+                            "items": [
                                 { "type": "Label", "caption": "Day:", "width": "100px" },
                                 { "type": "NumberSpinner", "name": "table_body_day_fontSize", "caption": "Size", "width": "70px", "minimum": 0, "digits": 2},
                                 { "type": "Select", "name": "table_body_day_fontSize_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": true,
@@ -789,15 +796,26 @@
                         {
                             "type": "RowLayout",
                             "items": [
-                                { "type": "Label", "caption": "Border:", "width": "100px" },
-                                { "type": "SelectColor", "name": "table_borderColor", "caption": "Color" },
-                                { "type": "HorizontalSlider", "name": "table_borderColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05}
+                                { "type": "Label", "caption": "Outer:", "width": "100px" },
+                                { "type": "SelectColor", "name": "table_outer_borderColor", "caption": "Color" },
+                                { "type": "HorizontalSlider", "name": "table_outer_borderColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05},
+                                { "type": "Label", "caption": "Width:", "width": "100px" },
+                                { "type": "NumberSpinner", "name": "table_outer_borderWidth", "caption": "Width", "width": "70px", "minimum": 0, "digits": 2},
+                                { "type": "Select", "name": "table_outer_borderWidth_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": true,
+                                    "options": [
+                                        { "caption": "%", "value": "%" },
+                                        { "caption": "em", "value": "em" },
+                                        { "caption": "px", "value": "px" }
+                                    ]
+                                }
                             ]
                         },
                         {
                             "type": "RowLayout",
-                            "viewlevel": 1,
                             "items": [
+                                { "type": "Label", "caption": "Inner:", "width": "100px" },
+                                { "type": "SelectColor", "name": "table_borderColor", "caption": "Color" },
+                                { "type": "HorizontalSlider", "name": "table_borderColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05},
                                 { "type": "Label", "caption": "Width:", "width": "100px" },
                                 { "type": "NumberSpinner", "name": "table_borderWidth", "caption": "Width", "width": "70px", "minimum": 0, "digits": 2},
                                 { "type": "Select", "name": "table_borderWidth_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": true,

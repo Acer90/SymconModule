@@ -167,7 +167,10 @@
 		"Load from other Modul": "Einstellungen von einen anderen Modul laden",
 		"Load": "Laden",
 		"Load from File": "Einstellungen aus einer Konfigurationsdatei laden",
-		"Export": "Export Konfigurationsdatei"
+		"Export": "Export Konfigurationsdatei",
+		"Outer:": "Äußerer:",
+		"Inner:": "Innerer:",
+		"Font:": "Schrift:"
 	}
   }
 }
