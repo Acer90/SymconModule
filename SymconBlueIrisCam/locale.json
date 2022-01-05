@@ -2,7 +2,7 @@
   "translations": {
     "de": {
 	  	"Use PTZ": "Verwendet PTZ",
-		"show FPS": "FPS anzeigen",
+		"Show FPS": "FPS anzeigen",
 		"Short Name": "Kürzel",
 		"Create Stream Media File": "Stream-Medien Datei erstellen",
 		"Alert": "Alarm",

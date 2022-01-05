@@ -63,8 +63,14 @@
 
             //$this->EnableAction("Profile"); //Aktuelle ohne Funktion deshalb deaktiviert!!!
 
+            if($this->ReadPropertyBoolean("GetClips") || $this->ReadPropertyBoolean("GetAlerts") || $this->ReadPropertyBoolean("GetLog")){
+                $this->SetTimerInterval("SyncData", $this->ReadPropertyInteger("Interval")*1000);
+            }else{
+                //timer daktivieren wenn alle 3 Schaltflächen False sind!
+                $this->SetTimerInterval("SyncData", 0);
+            }
+
             $this->SetStatus(102);
-            $this->SetTimerInterval("SyncData", $this->ReadPropertyInteger("Interval")*1000);
         }
 
         public function RequestAction($Ident, $Value) {
@@ -151,9 +157,13 @@
                 'Buffer' => utf8_encode(json_encode($sendData))
             ]));
         }
-        public function SysConfig(string $jsonString = null){
-            if(!is_null($jsonString)) $data = array(); else $data = json_decode($jsonString,true);
-            $sendData = array("cmd" => "Log", "data" => $data);
+        public function SysConfig(bool $archive = null, bool $schedule = null){
+            $data = array();
+            $data["camera"] = "index";
+            if(is_null($archive)) $data["archive"] = $archive;
+            if(is_null($schedule)) $data["schedule"] = $schedule;
+
+            $sendData = array("cmd" => "SysConfig", "data" => $data);
             return $this->SendDataToParent(json_encode([
                 'DataID' => "{8AB1599B-63C9-6E0E-864E-98A562E1CBC9}",
                 'Buffer' => utf8_encode(json_encode($sendData))

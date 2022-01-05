@@ -52,6 +52,8 @@
                     return $this->Status($sid, $buffer['data']);
                 case "Log":
                     return $this->Log();
+                case "SysConfig":
+                    return $this->SysConfig();
                 default:
                     $this->SendDebug(__FUNCTION__, "ACTION " . $buffer['cmd'] . " FOR THIS MODULE NOT DEFINED!", 0);
                     break;
@@ -290,7 +292,7 @@
                 return [];
             };
         }
-        public function Status(string $session = null, array $data = null){
+        private function Status(string $session = null, array $data = null){
             if(is_null($session)) return "{}";
             if(!is_null($data)) $data = array();
 
@@ -304,7 +306,7 @@
                 return "{}";
             }
         }
-        public function SysConfig(array $data = null){
+        private function SysConfig(array $data = null){
             if(!is_null($data)) $data = array();
 
             $result = $this->SendJSONData("sysconfig", json_encode($data));
@@ -317,7 +319,7 @@
                 return "{}";
             }
         }
-        public function Log(){
+        private function Log(){
             $result = $this->SendJSONData("log", "{}");
             $this->SendDebug(__FUNCTION__, $result, 0);
             $output = json_decode($result, true);

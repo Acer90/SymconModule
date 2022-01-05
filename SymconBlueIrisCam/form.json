@@ -3,7 +3,7 @@
     [
         { "type": "ValidationTextBox", "name": "ShortName", "caption": "Short Name" },
         { "type": "CheckBox", "name": "PTZ", "caption": "Use PTZ"},
-        { "type": "CheckBox", "name": "showFPS", "caption": "show FPS"},
+        { "type": "CheckBox", "name": "showFPS", "caption": "Show FPS"},
         { "type": "CheckBox", "name": "Debug", "caption": "Debug"}
     ],
     "actions":
