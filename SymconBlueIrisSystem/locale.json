@@ -1,0 +1,20 @@
+{
+  "translations": {
+    "de": {
+      "Get Clips": "IP-Adresse",
+      "Get Alerts": "Port",
+      "Get Log": "Timeout",
+      "Sec.": "Sek.",
+      "Profile": "Profil",
+      "Inactive": "Inaktiv",
+      "Memory": "Verwendeter Arbeitsspeicher",
+      "Uptime": "Laufzeit",
+      "Schedule": "Zeitplan",
+      "Clips": "Clips",
+      "Alerts": "Alarme",
+      "Log": "Log",
+      "Status OK!": "Status OK!"
+    }
+  }
+}
+

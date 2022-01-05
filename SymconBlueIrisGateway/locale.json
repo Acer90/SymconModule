@@ -1,0 +1,19 @@
+{
+  "translations": {
+    "de": {
+	  	"IP-Address": "IP-Adresse",
+		"Port": "Port",
+		"Timeout": "Timeout",
+        "Sec.": "Sek.",
+        "Username": "Benutzername",
+        "Password": "Passwort",
+        "Sync Data": "Daten Synchronisieren",
+        "Connection Success!": "Verbindung erfolgreich",
+        "Error Invalid parameter": "Falsche Parameter gesetzt",
+        "Internal Error!": "Interner Fehler! Bitte den über das Forum kontaktieren.",
+        "Timeout!": "Timeout!",
+        "Wrong Login!": "Login Falsch!"
+    }
+  }
+}
+

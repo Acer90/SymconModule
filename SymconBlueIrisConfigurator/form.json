@@ -38,6 +38,6 @@
     ],
     "status":
     [
-        { "code": 102, "icon": "active", "caption": "Status OK" }
+        { "code": 102, "icon": "active", "caption": "Status OK!" }
     ]
 }
