@@ -265,7 +265,7 @@
 
             $rData = json_decode($rData, true);
 
-            $MediaID = @IPS_GetMediaIDByName("Stream", $this->InstanceID);
+            $MediaID = IPS_GetObjectIDByIdent("Stream", $this->InstanceID);
             if($MediaID === False){
                 if(!empty($rData["user"]) && !empty($rData["pw"]))
                     $ImageFile = $rData["link"]."/mjpg/". $this->ReadPropertyString("ShortName"). "/video.mjpg?user=".$rData["user"]."&pw=".$rData["pw"]; // Image-Datei
@@ -276,6 +276,7 @@
                 IPS_SetMediaFile($MediaID, $ImageFile, true);   // Image im MedienPool mit Image-Datei verbinden
                 IPS_SetName($MediaID, "Stream"); // Medienobjekt benennen
                 IPS_SetParent($MediaID, $this->InstanceID);
+                IPS_SetIdent($MediaID, "Stream");
             }
         }
     }
