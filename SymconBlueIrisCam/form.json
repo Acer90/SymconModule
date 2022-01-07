@@ -8,7 +8,7 @@
     ],
     "actions":
     [
-        { "type": "Button", "label": "Create Stream Media File", "onClick": " echo BlueIrisCam_CreateMediaFile($id);" }
+        { "type": "Button", "label": "Create Stream Media File", "onClick": "SymconBlueIrisCam_CreateMediaFile($id);" }
     ],
     "status":
     [
