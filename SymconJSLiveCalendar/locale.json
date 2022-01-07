@@ -170,7 +170,9 @@
 		"Export": "Export Konfigurationsdatei",
 		"Outer:": "Äußerer:",
 		"Inner:": "Innerer:",
-		"Font:": "Schrift:"
+		"weeks": "Wochen",
+		"days": "Tage",
+		"months": "Monate"
 	}
   }
 }
