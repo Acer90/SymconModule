@@ -19,6 +19,7 @@
 
         public function GetConfigurationForm() {
             $output = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
+            $this->UpdateCams();
 
             $values = array();
             $item = array();
@@ -49,6 +50,25 @@
 
             $output['elements'][0]['values'] = $values;
             return json_encode($output);
+        }
+
+        private function UpdateCams(){
+            $camsData = json_decode($this->GetBuffer('Cams'), true);
+
+            for($i = 0; $i < count($camsData); $i++){
+                $sname = $camsData[$i]["shortName"];
+
+                if(empty($sname)) continue;
+
+                $newInstanceID = $this->GetDeviceInstanceID($sname);
+
+                if($camsData[$i]["instanceID"] != $newInstanceID){
+                    $camsData[$i]["instanceID"] = $newInstanceID;
+                    $this->SendDebug(__FUNCTION__, 'InstanceID for ShortName ' . $sname . ' updated => ' . $newInstanceID, 0);
+                }
+            }
+
+            $this->SetBuffer('Cams', json_encode($camsData));
         }
 
         public function ReceiveData($JSONString)
@@ -88,6 +108,7 @@
             $InstanceIDs = IPS_GetInstanceListByModuleID('{5308D185-A3D2-42D0-B6CE-E9D3080CE184}');
             foreach ($InstanceIDs as $id) {
                 if (IPS_GetProperty($id, 'ShortName') == $shortName) {
+                    $this->SendDebug(__FUNCTION__, 'Modul with ShortName ' . $shortName . ' found => ' . $id, 0);
                     return $id;
                 }
             }

@@ -265,7 +265,7 @@
 
             $rData = json_decode($rData, true);
 
-            $MediaID = IPS_GetObjectIDByIdent("Stream", $this->InstanceID);
+            $MediaID = @IPS_GetObjectIDByIdent("Stream", $this->InstanceID);
             if($MediaID === False){
                 if(!empty($rData["user"]) && !empty($rData["pw"]))
                     $ImageFile = $rData["link"]."/mjpg/". $this->ReadPropertyString("ShortName"). "/video.mjpg?user=".$rData["user"]."&pw=".$rData["pw"]; // Image-Datei
