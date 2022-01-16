@@ -5,7 +5,7 @@
             "type":"Configurator",
             "name":"camList",
             "caption":"Cameras",
-            "rowCount": 35,
+            "rowCount": 20,
             "delete":true,
             "sort":{
                 "column":"name",
