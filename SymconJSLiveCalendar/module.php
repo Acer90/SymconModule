@@ -147,8 +147,6 @@ class SymconJSLiveCalendar extends JSLiveModule{
         parent::ApplyChanges();
 
         $this->SetBuffer("OutputCSS", "");
-
-        $this->RegisterVariableString("Content", $this->Translate("Content"), "", 0);
         
     }
 
