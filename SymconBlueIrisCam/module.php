@@ -15,7 +15,6 @@
             $this->RegisterPropertyBoolean("PTZ", false);
             $this->RegisterPropertyBoolean("showFPS", false);
         }
-
         public function ApplyChanges()
         {
             //Never delete this line!
@@ -134,7 +133,6 @@
                     throw new Exception("Invalid Ident");
             }
         }
-
         public function ReceiveData($JSONString)
         {
             $rData = json_decode($JSONString, true);
@@ -164,7 +162,6 @@
                 if(array_key_exists("FPS", $config)) $this->SetValue("FPS", $config["FPS"]);
             }
         }
-
         private function UpdateCamConfig(){
             $enable = $this->GetValue("isEnabled");
             if($this->GetValue("isPaused")){
@@ -202,13 +199,13 @@
         }
 
         public function AlertList(int $startdate = null, bool $reset = null){
-            $camera = $this->ReadPropertyString("ShortName");
-
             $data = array();
-            $data["camera"] = $camera;
-            if(is_null($camera)) $camera = "index";
+            $data["camera"] = $this->ReadPropertyString("ShortName");
             if(is_null($startdate)) $startdate = 0;
             if(is_null($reset)) $reset = false;
+
+            $data["startdate"] = $startdate;
+            $data["reset"] = $reset;
 
             $sendData = array("cmd" => "AlertList", "data" => $data);
             return $this->SendDataToParent(json_encode([
@@ -217,13 +214,15 @@
             ]));
         }
         public function ClipList(int $startdate = null, int $enddate = null, bool $tiles = null){
-            $camera = $this->ReadPropertyString("ShortName");
-
             $data = array();
-            $data["camera"] = $camera;
+            $data["camera"] = $this->ReadPropertyString("ShortName");
             if(is_null($startdate)) $startdate = 0;
             if(is_null($enddate)) $enddate = time();
             if(is_null($tiles)) $tiles = false;
+
+            $data["startdate"] = $startdate;
+            $data["enddate"] = $enddate;
+            $data["tiles"] = $tiles;
 
             $sendData = array("cmd" => "ClipList","data" => $data);
             return $this->SendDataToParent(json_encode([
@@ -232,10 +231,8 @@
             ]));
         }
         public function PTZ(int $button = 4, int $updown = null){
-            $camera = $this->ReadPropertyString("ShortName");
-
             $data = array();
-            $data["camera"] = $camera;
+            $data["camera"] = $this->ReadPropertyString("ShortName");
             $data["button"] = $button;
             if(is_null($updown)) $updown = 0;
 
@@ -246,10 +243,8 @@
             ]));
         }
         public function Trigger(){
-            $camera = $this->ReadPropertyString("ShortName");
-
             $data = array();
-            $data["camera"] = $camera;
+            $data["camera"] = $this->ReadPropertyString("ShortName");
 
             $sendData = array("cmd" => "Trigger", "data" => $data);
             return $this->SendDataToParent(json_encode([

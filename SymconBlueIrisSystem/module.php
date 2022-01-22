@@ -107,15 +107,14 @@
             }
         }
 
-
         public function AlertList(int $startdate = null, bool $reset = null){
-            $camera = "index";
-
             $data = array();
             $data["camera"] = "index";
-            if(is_null($camera)) $camera = "index";
             if(is_null($startdate)) $startdate = 0;
             if(is_null($reset)) $reset = false;
+
+            $data["startdate"] = $startdate;
+            $data["reset"] = $reset;
 
             $sendData = array("cmd" => "AlertList", "data" => $data);
             return $this->SendDataToParent(json_encode([
@@ -129,6 +128,10 @@
             if(is_null($startdate)) $startdate = 0;
             if(is_null($enddate)) $enddate = time();
             if(is_null($tiles)) $tiles = false;
+
+            $data["startdate"] = $startdate;
+            $data["enddate"] = $enddate;
+            $data["tiles"] = $tiles;
 
             $sendData = array("cmd" => "ClipList","data" => $data);
             return $this->SendDataToParent(json_encode([
