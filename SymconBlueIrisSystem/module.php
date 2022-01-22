@@ -109,7 +109,7 @@
 
 
         public function AlertList(int $startdate = null, bool $reset = null){
-            $camera = $this->ReadPropertyString("ShortName");
+            $camera = "index";
 
             $data = array();
             $data["camera"] = "index";
