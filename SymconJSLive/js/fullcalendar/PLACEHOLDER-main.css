@@ -1529,7 +1529,6 @@ A VERTICAL event
 .fc .fc-timegrid-col {
     background-color: #table_backgroundColor#;
     background-color: var(--fc-today-bg-color, #table_backgroundColor#);
-
 }
 
 .fc .fc-timegrid-col.fc-day-sat {

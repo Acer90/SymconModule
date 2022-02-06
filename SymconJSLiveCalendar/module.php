@@ -83,7 +83,10 @@ class SymconJSLiveCalendar extends JSLiveModule{
         $this->RegisterPropertyInteger("table_body_dayOther_fontColor", 0);
         $this->RegisterPropertyString("table_body_dayOther_fontFamily", "");
 
-        $this->RegisterPropertyInteger("table_fontColor", 1);
+        $this->RegisterPropertyInteger("table_fontColor", 0);
+        $this->RegisterPropertyFloat("table_fontSize", 1.0);
+        $this->RegisterPropertyString("table_fontSize_unitType", "em");
+        $this->RegisterPropertyString("table_fontFamily", "");
         $this->RegisterPropertyInteger("table_borderColor", -1);
         $this->RegisterPropertyFloat("table_borderColor_Alpha", 1.0);
         $this->RegisterPropertyFloat("table_borderWidth", 1.0);
