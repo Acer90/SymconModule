@@ -1076,11 +1076,9 @@ A VERTICAL event
 .fc .fc-timegrid-slot { /* a <td> */
     height: 1.5em;
     border-bottom: 0; /* each cell owns its top border */
-    background-color: #table_backgroundColor#;
   }
 .fc .fc-timegrid-slot:empty:before {
       content: '\00a0'; /* make sure there's at least an empty space to create height for height syncing */
-        background-color: #table_backgroundColor#;
     }
 .fc .fc-timegrid-slot-minor {
     border-top-style: dotted;
@@ -1473,6 +1471,12 @@ A VERTICAL event
   }
 
 
+.fc .fc-timegrid {
+    color: #table_fontColor#;
+    font-size: #table_fontSize#;
+    font-family: '#table_fontFamily#';
+}
+
 .fc .fc-col-header {
     background-color: #table_header_backgroundColor#;
     color: #table_header_fontColor#;
@@ -1520,6 +1524,21 @@ A VERTICAL event
     color: #table_weekend_sunday_fontColor#;
     font-size: #table_weekend_sunday_fontSize#;
     font-family: #table_weekend_sunday_fontFamily#;
+}
+
+.fc .fc-timegrid-col {
+    background-color: #table_backgroundColor#;
+    background-color: var(--fc-today-bg-color, #table_backgroundColor#);
+
+}
+
+.fc .fc-timegrid-col.fc-day-sat {
+    background-color: #table_weekend_saturday_backgroundColor#;
+    background-color: var(--fc-today-bg-color, #table_weekend_saturday_backgroundColor#);
+}
+.fc .fc-timegrid-col.fc-day-sun {
+    background-color: #table_weekend_sunday_backgroundColor#;
+    background-color: var(--fc-today-bg-color, #table_weekend_sunday_backgroundColor#);
 }
 
 .fc .fc-timegrid-col.fc-day-today {
