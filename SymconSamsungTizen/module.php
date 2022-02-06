@@ -28,23 +28,23 @@ class SamsungTizen extends IPSModule
 
         if (!IPS_VariableProfileExists("SamsungTizen.Sources")){
             IPS_CreateVariableProfile("SamsungTizen.Sources", 1);
-            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 0, "INPUT 1", "", -1);
-            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 1, "INPUT 2", "", -1);
-            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 2, "INPUT 3", "", -1);
-            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 3, "INPUT 4", "", -1);
-            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 4, "INPUT 5", "", -1);
-            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 5, "VIDEO 1", "", -1);
-            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 6, "VIDEO 2", "", -1);
-            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 7, "VIDEO 3", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 0, "INPUT1", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 1, "INPUT2", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 2, "INPUT3", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 3, "INPUT4", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 4, "INPUT5", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 5, "VIDEO1", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 6, "VIDEO2", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 7, "VIDEO3", "", -1);
             IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 8, "HDMI1", "", -1);
             IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 9, "HDMI2", "", -1);
             IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 10, "HDMI3", "", -1);
             IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 11, "HDMI4", "", -1);
             IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 12, "HDMI5", "", -1);
-            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 13, "INPUT 6", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 13, "INPUT6", "", -1);
             IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 14, "TV", "", -1);
-            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 15, "INPUT 7", "", -1);
-            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 16, "INPUT 8", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 15, "INPUT7", "", -1);
+            IPS_SetVariableProfileAssociation("SamsungTizen.Sources", 16, "INPUT8", "", -1);
         }
 
         // Modul-Eigenschaftserstellung

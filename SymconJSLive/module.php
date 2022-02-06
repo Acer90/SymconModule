@@ -116,6 +116,7 @@ class SymconJSLive extends WebHookModule {
             if(empty($Type)) $Type = "getContend";
 
             $queryData = array();
+
             foreach (explode("&", $_SERVER['QUERY_STRING']) as $item) {
                 $pos2 = strpos($item, '=');
                 if ($pos2 !== false) {
@@ -131,15 +132,19 @@ class SymconJSLive extends WebHookModule {
             }
 
             //password prüfen!
-            if(!empty($this->ReadPropertyString("Password"))){
+            $passwordIsSet = $this->ReadPropertyString("Password");
+            if(!empty($passwordIsSet )){
+                $passwordIsSet = urlencode($passwordIsSet);
                 $password = "";
                 if (key_exists("pw", $queryData)) {
                     $password = $queryData["pw"];
                 }
                 //Keinpassword bei CSS Abfrage!
-                if($this->ReadPropertyString("Password") != $password && strtolower($Type) != "getcss"){
+
+                if($passwordIsSet != $password && strtolower($Type) != "getcss"){
                     $this->SendDebug("WebHook", "WRONG PASSWORD!", 0);
                     echo "";
+                    $this->SendDebug("WebHook", "Password send => " . $password . " (". $passwordIsSet . ")", 0);
                     return;
                 }
             }
@@ -169,7 +174,8 @@ class SymconJSLive extends WebHookModule {
                 header("Content-type: image/svg+xml");
                 //header("Content-Type: text/html");
             }elseif (strtolower($Type) == "exportconfiguration") {
-                header('Content-disposition: attachment; filename=' . $queryData["instance"] . '-' . IPS_GetInstance($queryData["instance"])["ModuleInfo"]["ModuleName"] . '.json');
+                $date = new DateTime();
+                header('Content-disposition: attachment; filename=' . $queryData["instance"] . '_' . IPS_GetObject($queryData["instance"])["ObjectName"]. '_' .IPS_GetInstance($queryData["instance"])["ModuleInfo"]["ModuleName"] . "_" .$date->format('H-i-s_d-m-Y').'.json');
                 header('Content-type: application/json');
             }elseif (strtolower($Type) == "loadfile"){
                 //Here Do Nothing
@@ -317,7 +323,7 @@ class SymconJSLive extends WebHookModule {
                 if(empty($pw)){
                     return $link . "/hook/JSLive?Instance=".$intId;
                 }else{
-                    return $link . "/hook/JSLive?Instance=".$intId."&pw=".$pw;
+                    return $link . "/hook/JSLive?Instance=".$intId."&pw=".urlencode($pw);
                 }
             case "GetLocalLink":
                 $intId = $jsonData["InstanceID"];
@@ -328,13 +334,13 @@ class SymconJSLive extends WebHookModule {
                     if(empty($pw)){
                         return $link . "/hook/JSLive?Instance=".$intId;
                     }else{
-                        return $link . "/hook/JSLive?Instance=".$intId."&pw=".$pw;
+                        return $link . "/hook/JSLive?Instance=".$intId."&pw=".urlencode($pw);
                     }
                 }else{
                     if(empty($pw)){
                         return "/hook/JSLive?Instance=".$intId;
                     }else{
-                        return "/hook/JSLive?Instance=".$intId."&pw=".$pw;
+                        return "/hook/JSLive?Instance=".$intId."&pw=".urlencode($pw);
                     }
                 }
             case "GetConfigurationLink":
@@ -350,7 +356,7 @@ class SymconJSLive extends WebHookModule {
                 if(empty($pw)){
                     return $link . "/hook/JSLive/exportConfiguration?Instance=".$intId;
                 }else{
-                    return $link . "/hook/JSLive/exportConfiguration?Instance=".$intId."&pw=".$pw;
+                    return $link . "/hook/JSLive/exportConfiguration?Instance=".$intId."&pw=".urlencode($pw);
                 }
         }
     }
@@ -377,7 +383,7 @@ class SymconJSLive extends WebHookModule {
         $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
         $pass = array(); //remember to declare $pass as an array
         $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
-        for ($i = 0; $i < 8; $i++) {
+        for ($i = 0; $i < 12; $i++) {
             $n = rand(0, $alphaLength);
             $pass[] = $alphabet[$n];
         }
@@ -452,8 +458,8 @@ class SymconJSLive extends WebHookModule {
         if(count($connectID) == 0){} return "";
         return CC_GetUrl($connectID);
     }
-    public function SetRandomPassword(bool $start = false){
-        if(!$start || !empty($this->ReadPropertyString("Password"))) return;
+    public function SetRandomPassword(bool $start = false, bool $override = false){
+        if(!$override && (!$start || !empty($this->ReadPropertyString("Password")))) return;
 
         $confData = json_decode(IPS_GetConfiguration($this->InstanceID), true);
 
@@ -462,6 +468,8 @@ class SymconJSLive extends WebHookModule {
 
         IPS_SetConfiguration($this->InstanceID, json_encode($confData));
         IPS_ApplyChanges($this->InstanceID);
+
+        if($override) echo "New Password set: " . $confData["Password"];
     }
 }
 
