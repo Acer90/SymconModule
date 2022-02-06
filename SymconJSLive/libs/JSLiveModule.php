@@ -289,11 +289,18 @@ class JSLiveModule extends IPSModule
 
                 }
             }else{
-                if($this->ReadPropertyBoolean("Debug") && array_key_exists("caption", $item) && $arr[$key]["viewlevel"] > 0){
+                if(array_key_exists("caption", $item) && $arr[$key]["viewlevel"] > 0){ //$this->ReadPropertyBoolean("Debug") &&
                     switch($arr[$key]["viewlevel"]){
-                        case 0: $arr[$key]["caption"] = $arr[$key]["caption"] . " (Basic)";
-                        case 1: $arr[$key]["caption"] = $arr[$key]["caption"] . " (Advance)";
-                        case 2: $arr[$key]["caption"] = $arr[$key]["caption"] . " (Expert)";
+                        //case 0: $arr[$key]["caption"] = $this->translate($arr[$key]["caption"]) . " (Basic)";
+                        case 1:
+                            $arr[$key]["caption"] = $this->translate($arr[$key]["caption"]) . " (".$this->translate("Advance").")";
+                            break;
+                        case 2:
+                            $arr[$key]["caption"] = $this->translate($arr[$key]["caption"]) . " (".$this->translate("Expert").")";
+                            break;
+                        default:
+                            //do nothing
+                            break;
                     }
                 }
             }

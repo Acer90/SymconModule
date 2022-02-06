@@ -175,7 +175,7 @@ class SymconJSLive extends WebHookModule {
                 //header("Content-Type: text/html");
             }elseif (strtolower($Type) == "exportconfiguration") {
                 $date = new DateTime();
-                header('Content-disposition: attachment; filename=' .  IPS_GetInstance($queryData["instance"])["ModuleInfo"]["ModuleName"] . "_" . IPS_GetObject($queryData["instance"])["ObjectName"]. '_' . $queryData["instance"] . '_' .$date->format('H-i-s_d-m-Y').'.json');
+                header('Content-disposition: attachment; filename=' .  IPS_GetInstance($queryData["instance"])["ModuleInfo"]["ModuleName"] . "_" . IPS_GetObject($queryData["instance"])["ObjectName"]. '_ID' . $queryData["instance"] . '_' .$date->format('Y-m-d_H-i-s').'.json');
                 header('Content-type: application/json');
             }elseif (strtolower($Type) == "loadfile"){
                 //Here Do Nothing
