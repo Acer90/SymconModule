@@ -406,6 +406,11 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
                 $singelOutput["datalabels"] = $datalabels;
             }
 
+            //Ausschmit einstellungen
+            if(isset($item["cutout"]) && $item["cutout"] >= 0){
+                $singelOutput["cutout"] = $item["cutout"] . "%";
+            }
+
             $output["datasets"][] = $singelOutput;
         }
 

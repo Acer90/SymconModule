@@ -535,6 +535,19 @@
                     "edit": {
                         "type": "CheckBox"
                     }
+                },
+                {
+                    "caption": "cutout",
+                    "name": "cutout",
+                    "add": -1,
+                    "visible": false,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 0,
+                        "minimum": -1,
+                        "maximum": 100,
+                        "suffix": "%"
+                    }
                 }
             ]
         },
