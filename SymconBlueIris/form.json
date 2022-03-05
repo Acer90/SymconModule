@@ -1,0 +1,26 @@
+{
+    "elements":
+    [
+        { "type": "ValidationTextBox", "name": "IPAddress", "caption": "Host" },
+        { "type": "NumberSpinner", "name": "Port", "caption": "Port" },
+        { "type": "NumberSpinner", "name": "Timeout", "caption": "Timeout"},
+        { "type": "IntervalBox", "name": "Interval", "caption": "Sekunden" },
+        { "type": "ValidationTextBox", "name": "Username", "caption": "Username" },
+        { "type": "PasswordTextBox", "name": "Password", "caption": "Password"}
+    ],
+    "actions":
+    [
+        { "type": "Button", "label": "Sync Data", "onClick": "BlueIris_SyncData($id, false);" },
+        { "type": "Button", "label": "Get Variables/Cams", "onClick": "BlueIris_SyncData($id, true);" }
+
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Connection Success!" },
+        { "code": 201, "icon": "error", "caption": "Error Invalid parameter" },
+        { "code": 202, "icon": "error", "caption": "Variable does not exist!" },
+        { "code": 203, "icon": "error", "caption": "Internal Error!" },
+        { "code": 204, "icon": "error", "caption": "Timeout!" },
+        { "code": 205, "icon": "error", "caption": "Wrong Login!" }
+    ]
+}

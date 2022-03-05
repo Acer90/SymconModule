@@ -1,0 +1,32 @@
+{
+    "elements":
+    [
+        { "type": "Label", "label": "TV" },
+        { "type": "ValidationTextBox", "name": "IPAddress", "caption": "Host" },
+        { "type": "ValidationTextBox", "name": "MACAddress", "caption": "Mac Adress" },
+        { "type": "IntervalBox", "name": "Interval", "caption": "Sekunden" },
+        { "type": "Label", "label": "Server" },
+        { "type": "ValidationTextBox", "name": "SIPAddress", "caption": "Host" },
+        { "type": "NumberSpinner", "name": "SPort", "caption": "Port"},
+        { "type": "NumberSpinner", "name": "Timeout", "caption": "Timeout"}
+    ],
+    "actions":
+    [
+        { "type": "Button", "label": "WakeUp", "onClick": "SamsungTizen_WakeUp($id);" },
+        { "type": "Button", "label": "PowerOff", "onClick": "SamsungTizen_SendKey($id, 'KEY_POWER', false);" }
+        
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Connection Success!" },
+        { "code": 201, "icon": "error", "caption": "Error Invalid parameter" },
+        { "code": 202, "icon": "error", "caption": "Variable does not exist!" },
+        { "code": 203, "icon": "error", "caption": "Internal Error!" },
+        { "code": 204, "icon": "error", "caption": "Timeout!" },
+        { "code": 205, "icon": "error", "caption": "Wrong Login!" },
+        { "code": 206, "icon": "error", "caption": "Can`t create Socket" },
+        { "code": 207, "icon": "error", "caption": "Server Offline" },
+        { "code": 208, "icon": "error", "caption": "Can`t send Data!" },
+        { "code": 209, "icon": "error", "caption": "Can`t recive Data!" }
+    ]
+}

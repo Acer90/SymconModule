@@ -1,0 +1,14 @@
+{
+    "id": "{7E62F9B0-5474-426F-B91B-E25F4B25A824}",
+    "name": "BlueIris",
+    "type": 3,
+	"vendor": "",
+	"aliases": 
+	[
+		"BlueIris"
+	],
+    "parentRequirements": [],
+    "childRequirements": ["{5308D185-A3D2-42D0-B6CE-E9D3080CE184}"],
+    "implemented": [],
+    "prefix": "BlueIris"
+}
