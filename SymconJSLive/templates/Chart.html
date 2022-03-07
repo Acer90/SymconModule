@@ -213,9 +213,6 @@
         results = [];
         results = getMatchingKeys(config_dataset, required);
 
-        //Convert boolean to int
-        if(typeof value == "boolean") value = value ? 1 : 0;
-
         //console.log('Result:', results);
         //nur Updaten wenn ID in Chart exestiert
         if(results.length > 0){
@@ -223,16 +220,33 @@
             //updaten des Aktuellen Charts
             results.forEach(function(part, index) {
                 //nur daten ohne Offset hier updaten
-                offset = myChart.data.datasets[part].offset;
-                if(offset == 0) {
-                    precision = Math.pow(10, configuration.data_precision);
 
-                    val = Math.floor(value * precision) /  precision;
-                    highRes = myChart.data.datasets[part].highRes;
-                    itemDate = UpdateDate(dt_val * 1000, highRes);
+                //check if BoolAxes
+                isBool = false;
+                yAxisID = myChart.data.datasets[part].yAxisID;
+                if(yAxisID in config_axes && "labels" in config_axes[yAxisID]){
+                    boolData = config_axes[yAxisID].labels;
+                    if(value === 1){
+                        val = boolData[0];
+                    }else{
+                        val = boolData[1];
+                    }
+                    isBool = true;
+                }
+
+
+                offset = myChart.data.datasets[part].offset;
+                if(offset === 0) {
+                    if(!isBool){
+                        precision = Math.pow(10, configuration.data_precision);
+
+                        val = Math.floor(value * precision) /  precision;
+                        highRes = myChart.data.datasets[part].highRes;
+                        itemDate = UpdateDate(dt_val * 1000, highRes);
+                    }
 
                     counter = myChart.data.datasets[part].counter;
-                    if(counter){
+                    if(counter && !isBool){
 
                         val = val - myChart.data.datasets[part].lastValue;
                         val = Math.floor(val * precision) / precision;
@@ -271,10 +285,6 @@
                             }
                             myChart.data.datasets[part].data.push(dataPoint);
                         }
-
-
-
-
                     } else {
                         //check Timestamp vorhanden
                         required = {x: itemDate.getTime()};
@@ -284,7 +294,7 @@
 
                         if (results.length > 0) {
                             //ja alten updaten
-                            if(counter) {
+                            if(counter && !isBool) {
                                 old = myChart.data.datasets[part].data[results[0]].y;
                                 myChart.data.datasets[part].data[results[0]].y = old + val;
                             }else{
@@ -292,7 +302,8 @@
                                 if (typeof myChart.data.datasets[part].data[results[0]].c != "undefined") {
                                     oldval = myChart.data.datasets[part].data[results[0]].y;
                                     c = myChart.data.datasets[part].data[results[0]].c;
-                                    val = Math.round(((oldval * c) + val) / (c + 1) * 100) / 100;
+
+                                    if(!isBool) val = Math.round(((oldval * c) + val) / (c + 1) * 100) / 100;
                                     c++;
                                 }
 
@@ -347,12 +358,13 @@
                 console.log("Configuration: ", JSON.stringify(data));
 
                 //then load XAxes
-                $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&loadXAxes=1", function (data) {
+                $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&loadAxes=1", function (data) {
                     //console.log("update Offset: ", data);
+                    Object.assign(config_axes, data.AXES);
+                    config_axes = data.AXES;
                     config_xaxes = data.XAXES;
-                    config_axes = {x: config_xaxes};
-                    console.log("XAXES: ", JSON.stringify(data));
-
+                    console.log("AXES: ", JSON.stringify(data.AXES));
+                    console.log("XAXES: ", JSON.stringify(data.XAXES));
 
                     //pullmod at Minute
                     if (config_global.DataMode !== 0 && configuration.data_pullModeinMinute && configuration.Period === 7 && !pullMode) {
@@ -369,8 +381,13 @@
                     configuration.Var_List.forEach(function (Variable, index) {
                         $.getJSON("/hook/JSLive/getUpdate?Instance={INSTANCE}&pw={PASSWORD}&id=" + index, function (data) {
                             //console.log("update Offset: ", data);
+                            if(data.DATASETS.length == 0){
+                                console.log("Async Dataset " + Variable + " not Defined/Set!");
+                                return;
+                            }
+
                             config_dataset.push(data.DATASETS[0]);
-                            Object.assign(config_axes, data.AXES);
+                            //Object.assign(config_axes, data.AXES);
 
                             console.log("Async Dataset " + Variable + " loaded");
                             console.log("Dataset: ", JSON.stringify(data));
@@ -390,14 +407,13 @@
                                     UpdateConfiguration();
                                 }else{
                                     myChart.data.datasets = config_dataset;
-                                    myChart.options.scales = config_axes;
                                     myChart.update();
                                 }
 
                             }else{
                                 if(typeof myChart !== "undefined") {
                                     myChart.data.datasets = config_dataset;
-                                    myChart.options.scales = config_axes;
+                                    //myChart.options.scales = config_axes;
 
                                     console.log("Update Chart!");
                                     myChart.update();

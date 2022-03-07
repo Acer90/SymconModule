@@ -371,20 +371,172 @@
         },
         {
             "type": "List",
-            "name": "Datasets",
-            "caption": "Datasets",
+            "name": "Axes",
+            "caption": "Axes",
             "rowCount": 5,
             "add": true,
             "delete": true,
             "edit": true,
-            "sort": {
-                "column": "Order",
-                "direction": "ascending"
-            },
+            "changeOrder": true,
             "columns": [
                 {
-                    "caption": "Order",
-                    "name": "Order",
+                    "caption": "Ident",
+                    "name": "Ident",
+                    "width": "200px",
+                    "add": "",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                },
+                {
+                    "caption": "Title",
+                    "name": "Title",
+                    "width": "auto",
+                    "add": "",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                },
+                {
+                    "caption": "Min.",
+                    "name": "Min",
+                    "width": "100px",
+                    "add": ""
+                },
+                {
+                    "caption": "Max.",
+                    "name": "Max",
+                    "width": "100px",
+                    "add": ""
+                },
+                {
+                    "caption": "Steps Size",
+                    "name": "Steps",
+                    "width": "100px",
+                    "add": ""
+                },
+                {
+                    "caption": "Bool",
+                    "name": "Bool",
+                    "width": "50px",
+                    "add": false,
+                    "edit": {
+                        "type": "CheckBox"
+                    }
+                },
+                {
+                    "caption": "Override Bool Text",
+                    "name": "OverrideBoolText",
+                    "width": "50px",
+                    "add": false,
+                    "visible": false,
+                    "edit": {
+                        "type": "CheckBox"
+                    }
+                },
+                {
+                    "caption": "Bool True",
+                    "name": "BoolTrue",
+                    "width": "100px",
+                    "visible": false,
+                    "add": "True",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                },
+                {
+                    "caption": "Bool False",
+                    "name": "BoolFalse",
+                    "width": "100px",
+                    "visible": false,
+                    "add": "False",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                },
+                {
+                    "caption": "Side",
+                    "name": "Side",
+                    "width": "100px",
+                    "add": "left",
+                    "edit": {
+                        "type": "Select",
+                        "options": [
+                            {
+                                "caption": "Left",
+                                "value": "left"
+                            },
+                            {
+                                "caption": "Right",
+                                "value": "right"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "caption": "Profile",
+                    "name": "Profile",
+                    "width": "150px",
+                    "add": "",
+                    "edit": {
+                        "type": "SelectProfile"
+                    }
+                },
+                {
+                    "caption": "Override Minimum/Maximum",
+                    "name": "OverrideMinMax",
+                    "width": "50px",
+                    "add": false,
+                    "visible": false,
+                    "edit": {
+                        "type": "CheckBox"
+                    }
+                },
+                {
+                    "caption": "Minimum",
+                    "name": "Minimum",
+                    "width": "50px",
+                    "visible": false,
+                    "add": 0,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 2
+                    }
+                },
+                {
+                    "caption": "Maximum",
+                    "name": "Maximum",
+                    "width": "50px",
+                    "visible": false,
+                    "add": 0,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 2
+                    }
+                },
+                {
+                    "caption": "Override StepSize",
+                    "name": "OverrideStepSize",
+                    "width": "50px",
+                    "add": 0,
+                    "visible": false,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 2
+                    }
+                },
+                {
+                    "caption": "Dyn. Scale",
+                    "name": "DynScale",
+                    "width": "150px",
+                    "add": false,
+                    "edit": {
+                        "type": "CheckBox"
+                    }
+                },
+                {
+                    "caption": "Stack ID",
+                    "name": "AxesStackGroup",
                     "width": "150px",
                     "add": 0,
                     "edit": {
@@ -394,9 +546,58 @@
                     }
                 },
                 {
+                    "caption": "Stack Weight",
+                    "name": "AxesStackWeight",
+                    "width": "50px",
+                    "visible": false,
+                    "add": 1,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 0,
+                        "minimum": 1
+                    }
+                },
+                {
+                    "caption": "Stack Offset",
+                    "name": "AxesStackOffset",
+                    "width": "100px",
+                    "visible": false,
+                    "add": false,
+                    "edit": {
+                        "type": "CheckBox"
+                    }
+                },
+                {
+                    "caption": "Override Begin At Zero",
+                    "name": "beginAtZero",
+                    "width": "50px",
+                    "visible": false,
+                    "add": -1,
+                    "edit": {
+                        "type": "Select",
+                        "options": [
+                            { "caption": "-Use Default-", "value": -1 },
+                            { "caption": "True", "value": 1 },
+                            { "caption": "False", "value": 0 }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "List",
+            "name": "Datasets",
+            "caption": "Datasets",
+            "rowCount": 8,
+            "add": true,
+            "delete": true,
+            "edit": true,
+            "changeOrder": true,
+            "columns": [
+                {
                     "caption": "Type",
                     "name": "Type",
-                    "width": "100px",
+                    "width": "80px",
                     "add": "line",
                     "edit": {
                         "type": "Select",
@@ -415,47 +616,35 @@
                 {
                     "caption": "Variable",
                     "name": "Variable",
-                    "width": "100px",
+                    "width": "auto",
+                    "requiredLogging": 1,
                     "add": 0,
                     "edit": {
                         "type": "SelectVariable"
                     }
                 },
                 {
-                    "caption": "Title",
-                    "name": "Title",
-                    "width": "auto",
-                    "add": "",
-                    "edit": {
-                        "type": "ValidationTextBox"
-                    }
-                },
-                {
-                    "caption": "Profile",
-                    "name": "Profile",
+                    "caption": "Axe",
+                    "name": "Axes",
                     "width": "150px",
                     "add": "",
-                    "edit": {
-                        "type": "SelectProfile"
-                    }
-                },
-                {
-                    "caption": "Side",
-                    "name": "Side",
-                    "width": "50px",
-                    "add": "left",
                     "edit": {
                         "type": "Select",
                         "options": [
                             {
-                                "caption": "Left",
-                                "value": "left"
-                            },
-                            {
-                                "caption": "Right",
-                                "value": "right"
+                                "caption": "--Disable Dataset--",
+                                "value": ""
                             }
                         ]
+                    }
+                },
+                {
+                    "caption": "Title",
+                    "name": "Title",
+                    "width": "300px",
+                    "add": "",
+                    "edit": {
+                        "type": "ValidationTextBox"
                     }
                 },
                 {
@@ -591,57 +780,12 @@
                 {
                     "caption": "Stack Group",
                     "name": "StackGroup",
-                    "width": "50px",
+                    "width": "100px",
                     "add": 0,
                     "edit": {
                         "type": "NumberSpinner",
                         "digits": 0,
                         "minimum": 0
-                    }
-                },
-                {
-                    "caption": "Axes Stack",
-                    "name": "AxesStack",
-                    "width": "50px",
-                    "add": false,
-                    "edit": {
-                        "type": "CheckBox"
-                    }
-                },
-                {
-                    "caption": "Axes Stack Weight",
-                    "name": "AxesStackWeight",
-                    "width": "50px",
-                    "visible": false,
-                    "add": 1,
-                    "edit": {
-                        "type": "NumberSpinner",
-                        "digits": 0,
-                        "minimum": 1
-                    }
-                },
-                {
-                    "caption": "Dyn. Scale",
-                    "name": "DynScale",
-                    "width": "50px",
-                    "add": false,
-                    "edit": {
-                        "type": "CheckBox"
-                    }
-                },
-                {
-                    "caption": "Override Begin At Zero",
-                    "name": "beginAtZero",
-                    "width": "50px",
-                    "visible": false,
-                    "add": -1,
-                    "edit": {
-                        "type": "Select",
-                        "options": [
-                            { "caption": "-Use Default-", "value": -1 },
-                            { "caption": "True", "value": 1 },
-                            { "caption": "False", "value": 0 }
-                        ]
                     }
                 },
                 {
@@ -683,7 +827,7 @@
                 {
                     "caption": "Datalabels",
                     "name": "datalabels_enable",
-                    "width": "50px",
+                    "width": "100px",
                     "add": false,
                     "edit": {
                         "type": "CheckBox"

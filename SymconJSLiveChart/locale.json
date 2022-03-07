@@ -78,6 +78,15 @@
       "Border Color": "Randfarbe",
       "Border Color Alpha": "Randfarbe Transparenz",
 
+      "Override Minimum/Maximum": "Überschreibe Maximum/Minimum",
+      "Stack Weight": "Staffel Höhe (Verhältnis)",
+      "Stack ID": "Stapel ID",
+      "Stack Offset": "Stapel-Offset",
+      "Override Bool Text": "Überschreibe Bool Text",
+      "Override StepSize": "Überschreibe Schrittgröße",
+      "Axe": "Achse",
+      "Steps Size": "Schrittgröße",
+
       "Override Point Style":  "Überschreibe Punkt-Stil",
       "Override Point Size": "Überschreibe Punkt-Größe",
       "Override Begin At Zero": "Überschreibe: von Null beginnen",
