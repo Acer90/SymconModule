@@ -101,7 +101,8 @@
                             clip: true,
                             clamp: false,
                             formatter: function(value, context) {
-                                var str = value["y"];
+                                precision = Math.pow(10, configuration.data_precision);
+                                var str  = Math.floor(value["y"] * precision) /  precision;
                                 if(str === 0 || str === null || str === "") return "";
 
                                 if(context.dataset.datalabels.showPrefix){

@@ -216,7 +216,7 @@ class SymconJSLiveChart extends JSLiveModule{
 
                 $caption = $item["Title"];
                 if(empty($caption)) $caption = $item["Ident"];
-                $options_arr[] = array("value" => $item["Ident"], "caption" => $item["Title"]);
+                $options_arr[] = array("value" => $item["Ident"], "caption" => $caption);
             }
 
             $formData["elements"][$key]["columns"][$colkey]["add"] = $options_arr[0]["value"];
@@ -626,6 +626,10 @@ class SymconJSLiveChart extends JSLiveModule{
             $singelOutput = array();
             $singelOutput["Variable"] = $item["Variable"];
 
+            //$singelOutput["categoryPercentage"] = number_format(1.0, 2, '.', '');
+            //$singelOutput["barPercentage"] = number_format(1.0, 2, '.', '');
+
+
             if(empty($item["Title"])){
                 //Load Variablen Name wenn label leer ist
                 $singelOutput["label"] = IPS_GetObject($item["Variable"])["ObjectName"];
@@ -1002,43 +1006,46 @@ class SymconJSLiveChart extends JSLiveModule{
                 //Dekade
                 $output["type"] = "time";
                 $output["time"]["unit"] = "year";
-                $output["time"]["stepSize"] = 1;
+                //$output["time"]["stepSize"] = 1;
                 break;
             case 1:
                 //Jahr
                 $output["type"] = "time";
                 $output["time"]["unit"] = "month";
-                $output["time"]["stepSize"] = 2;
+                //$output["time"]["stepSize"] = 2;
                 break;
             case 2:
                 //Quartal
                 $output["type"] = "time";
                 $output["time"]["unit"] = "month";
                 $output["time"]["stepSize"] = 1;
+                $output["ticks"]["maxTicksLimit"] = 3;
                 break;
             case 3:
                 //Monat
                 $output["type"] = "time";
                 $output["time"]["unit"] = "day";
-                $output["time"]["stepSize"] = 3;
+                //$output["time"]["stepSize"] = 3;
+                $output["ticks"]["maxTicksLimit"] = 20;
                 break;
             case 4:
                 //Woche
                 $output["type"] = "time";
                 $output["time"]["unit"] = "day";
-                $output["time"]["stepSize"] = 3;
+                //$output["time"]["stepSize"] = 1;
                 break;
             case 5:
                 //Tag
                 $output["type"] = "time";
                 $output["time"]["unit"] = "hour";
-                $output["time"]["stepSize"] = 3;
+                //$output["time"]["stepSize"] = 3;
                 break;
             case 6:
                 //Stunde
                 if($relativ) $output["type"] = "realtime"; else $output["type"] = "time";
                 $output["time"]["unit"] = "minute";
                 $output["time"]["stepSize"] = 5;
+                //$output["ticks"]["maxTicksLimit"] = 13;
 
                 if($relativ) {
                     $output["realtime"]["duration"] = 3600000;
@@ -1070,9 +1077,9 @@ class SymconJSLiveChart extends JSLiveModule{
 
         if($output["type"] != "realtime"){
             $starData = $this->GetCorrectStartDate();
-            $this->SendDebug("GetArchivData", "Start_Date: ". $starData["start"]. " | End_Date: ".$starData["end"], 0);
-            //$output["min"] = ($starData["start"] * 1000);
-            //$output["max"] = (($starData["end"] + 1) * 1000);
+            $this->SendDebug(__FUNCTION__, "Start_Date: ".  date('d.M.Y H:i:s',$starData["start"]). " | End_Date: ".date('d.M.Y H:i:s',$starData["end"]), 0);
+            $output["suggestedMin"] = ($starData["start"] * 1000);
+            $output["suggestedMax"] = (($starData["end"]) * 1000);
         }
 
         //$output["realtime"]["pause"] = false;
@@ -1097,6 +1104,8 @@ class SymconJSLiveChart extends JSLiveModule{
             $rgbdata = $this->HexToRGB($this->ReadPropertyInteger("axes_fontColor"));
             $output["ticks"]["color"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
         }
+
+        $output["ticks"]["maxRotation"] = 0;
 
         /*
         if($this->ReadPropertyBoolean("axes_swap")){
@@ -1388,8 +1397,8 @@ class SymconJSLiveChart extends JSLiveModule{
                     $date_start->setDate($start_year, 1, 1);
                     $date_start->setTime(0, 0, 0);
 
-                    $date_end->setDate(($start_year+9), 12, 31);
-                    $date_end->setTime(23, 59, 59);
+                    $date_end->setDate(($start_year+9), 1, 1);
+                    $date_end->setTime(0, 0, 0);
 
                     $Aggregationsstufe = 4;
                     break;
@@ -1398,8 +1407,8 @@ class SymconJSLiveChart extends JSLiveModule{
                     $date_start->setDate($date_end->format('Y'), 1, 1);
                     $date_start->setTime(0, 0, 0);
 
-                    $date_end->setDate($date_start->format('Y'), 13, 0);
-                    $date_end->setTime(23, 59, 59);
+                    $date_end->setDate($date_start->format('Y'), 12, 1);
+                    $date_end->setTime(0, 0, 0);
 
                     $Aggregationsstufe = 3;
                     break;
@@ -1410,8 +1419,8 @@ class SymconJSLiveChart extends JSLiveModule{
                     $date_start->setDate($date_end->format('Y'), ($start_month+1), 1);
                     $date_start->setTime(0, 0, 0);
 
-                    $date_end->setDate($date_start->format('Y'), ($date_start->format('m') + 3), 0);
-                    $date_end->setTime(23, 59, 59);
+                    $date_end->setDate($date_start->format('Y'), ($date_start->format('m') + 2), 1);
+                    $date_end->setTime(0, 0, 0);
 
                     $Aggregationsstufe = 3;
                     break;
@@ -1420,8 +1429,8 @@ class SymconJSLiveChart extends JSLiveModule{
                     $date_start->setDate($date_end->format('Y'), $date_start->format('m'), 1);
                     $date_start->setTime(0, 0, 0);
 
-                    $date_end->setDate($date_start->format('Y'), $date_start->format('m')+1,0);
-                    $date_end->setTime(23, 59, 59);
+                    $date_end->setDate($date_start->format('Y'), $date_start->format('m')+1,1);
+                    $date_end->setTime(0, 0, 0);
 
                     $Aggregationsstufe = 1;
                     break;
@@ -1434,7 +1443,7 @@ class SymconJSLiveChart extends JSLiveModule{
                     $date_start->setTime(0, 0, 0);
 
                     $date_end->setDate($date_start->format('Y'), $date_start->format('m'), ($date_start->format('d')+6));
-                    $date_end->setTime(23, 59, 59);
+                    $date_end->setTime(0, 0, 0);
 
                     $Aggregationsstufe = 1;
                     break;
@@ -1443,8 +1452,8 @@ class SymconJSLiveChart extends JSLiveModule{
                     $date_start->setDate($date_end->format('Y'), $date_start->format('m'), $date_start->format('d'));
                     $date_start->setTime(0, 0, 0);
 
-                    $date_end->setDate($date_start->format('Y'), $date_start->format('m'), $date_start->format('d'));
-                    $date_end->setTime(23, 59, 59);
+                    $date_end->setDate($date_start->format('Y'), $date_start->format('m'), $date_start->format('d')+1);
+                    $date_end->setTime(0, 0, 0);
 
                     $Aggregationsstufe = 0;
                     break;
@@ -1454,7 +1463,7 @@ class SymconJSLiveChart extends JSLiveModule{
                     $date_start->setTime($date_start->format('H'), 0, 0);
 
                     $date_end->setDate($date_start->format('Y'), $date_start->format('m'), $date_start->format('d'));
-                    $date_end->setTime($date_start->format('H'), 59, 59);
+                    $date_end->setTime($date_start->format('H')+1, 0, 0);
 
                     $Aggregationsstufe = 6;
                     break;
@@ -1464,7 +1473,7 @@ class SymconJSLiveChart extends JSLiveModule{
                     $date_start->setTime($date_start->format('H'), $date_start->format('i'), 0);
 
                     $date_end->setDate($date_start->format('Y'), $date_start->format('m'), $date_start->format('d'));
-                    $date_end->setTime($date_start->format('H'), $date_start->format('i'), 59);
+                    $date_end->setTime($date_start->format('H'), $date_start->format('i')+1, 0);
 
                     $Aggregationsstufe = 6;
                     break;
