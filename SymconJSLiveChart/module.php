@@ -589,7 +589,7 @@ class SymconJSLiveChart extends JSLiveModule{
             return $output;
         }
 
-        if($index >= 0){
+        if(count($datasets) > 0 && $index >= 0){
             if($index > count($datasets)){
                 $this->SendDebug("GenerateDataSet", "INDEX OVERFLOW!", 0);
                 return $output;
