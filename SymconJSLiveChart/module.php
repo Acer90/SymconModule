@@ -227,6 +227,10 @@ class SymconJSLiveChart extends JSLiveModule{
         foreach ($datasets as $row => $item) {
             $formData["elements"][$key]["values"][$row] = $item;
 
+            if(!array_key_exists("Axes", $item)) {
+                continue;
+            }
+
             $axesKey = array_search($item["Axes"], array_column($axes, 'Ident'));
             if(empty($item["Axes"]) || $item["Variable"] == 0 || $axesKey === false){
                 $formData["elements"][$key]["values"][$row]["rowColor"] = "#ff0000";
