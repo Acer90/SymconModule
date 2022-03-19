@@ -314,6 +314,7 @@
                         { "caption": "top", "value": "top" }
                     ]
                 },
+                { "type": "NumberSpinner", "name": "datalabels_offset,", "caption": "Offset",  "suffix": "px", "minimum": 0, "stepSize": 1},
                 {
                     "type": "RowLayout",
                     "items": [

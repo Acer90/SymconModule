@@ -30,6 +30,7 @@ class SymconJSLiveChart extends JSLiveModule{
 
         //Axes
         $this->RegisterPropertyBoolean("axes_display", true);
+        $this->RegisterPropertyBoolean("axes_swap", false);
         $this->RegisterPropertyBoolean("axes_showLabel", true);
         $this->RegisterPropertyBoolean("axes_drawBorder", true);
         $this->RegisterPropertyBoolean("axes_drawTicks", true);
@@ -87,6 +88,7 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->RegisterPropertyString("datalabels_fontFamily", "");
         $this->RegisterPropertyInteger("datalabels_borderWidth", 1);
         $this->RegisterPropertyInteger("datalabels_borderRadius", 2);
+        $this->RegisterPropertyInteger("datalabels_offset", 4);
 
         //dataset a. Axes
         $this->RegisterPropertyString("Axes", "[]");
@@ -220,12 +222,13 @@ class SymconJSLiveChart extends JSLiveModule{
             $formData["elements"][$key]["columns"][$colkey]["add"] = $options_arr[0]["value"];
             $formData["elements"][$key]["columns"][$colkey]["edit"]["options"] = $options_arr;
         }
-        $axes = json_decode($this->ReadPropertyString("Datasets"), true);
+        $datasets = json_decode($this->ReadPropertyString("Datasets"), true);
 
-        foreach ($axes as $row => $item) {
+        foreach ($datasets as $row => $item) {
             $formData["elements"][$key]["values"][$row] = $item;
 
-            if(empty($item["Axes"]) || $item["Variable"] == 0){
+            $axesKey = array_search($item["Axes"], array_column($axes, 'Ident'));
+            if(empty($item["Axes"]) || $item["Variable"] == 0 || $axesKey === false){
                 $formData["elements"][$key]["values"][$row]["rowColor"] = "#ff0000";
             }
         }
@@ -679,6 +682,12 @@ class SymconJSLiveChart extends JSLiveModule{
                 continue;
             }
 
+            $axesKey = array_search($item["Axes"], array_column($axes, 'Ident'));
+            if($axesKey === false){
+                //Datensatz überspringen!!!! Axes existiert nicht
+                continue;
+            }
+
             //stackerd Charts
             if($item["StackGroup"] > 0){
                 $singelOutput["stack"] = $item["Axes"]."-" .$item["StackGroup"];
@@ -714,6 +723,7 @@ class SymconJSLiveChart extends JSLiveModule{
             if($item["datalabels_enable"]){
                 $datalabels = array();
                 $datalabels["display"] = true;
+                $datalabels["datalabels_offset"] = $this->ReadPropertyInteger("datalabels_offset");
 
                 if($item["datalabels_BackgroundColor"] >= 0){
                     $datalabels["useBackgroundColor"] = false;
@@ -759,33 +769,31 @@ class SymconJSLiveChart extends JSLiveModule{
 
             //boolaxes verwalten!
             $boolData = array();
-            $axesKey = array_search($item["Axes"], array_column($axes, 'Ident'));
-            if($axesKey >= 0){
-                //axe found check if bool enabled and get true and false values
-                if($axes[$axesKey]["Bool"]){
-                    $singelOutput["stepped"] = true;
-                    $str_on = "ON";
-                    $str_off = "OFF";
+            //axe found check if bool enabled and get true and false values
+            if($axes[$axesKey]["Bool"]){
+                $singelOutput["stepped"] = true;
+                $str_on = "ON";
+                $str_off = "OFF";
 
-                    if($axes[$axesKey]["OverrideBoolText"]){
-                        $str_on = $axes[$axesKey]["BoolTrue"];
-                        $str_off = $axes[$axesKey]["BoolFalse"];
-                    }else{
-                        $profilData = IPS_GetVariableProfile($axes[$axesKey]["Profile"]);
-                        foreach ($profilData["Associations"] as $p_item) {
-                            if ($p_item["Value"]) {
-                                $str_on = $p_item["Name"];
-                            } else {
-                                $str_off = $p_item["Name"];
-                            }
+                if($axes[$axesKey]["OverrideBoolText"]){
+                    $str_on = $axes[$axesKey]["BoolTrue"];
+                    $str_off = $axes[$axesKey]["BoolFalse"];
+                }else{
+                    $profilData = IPS_GetVariableProfile($axes[$axesKey]["Profile"]);
+                    foreach ($profilData["Associations"] as $p_item) {
+                        if ($p_item["Value"]) {
+                            $str_on = $p_item["Name"];
+                        } else {
+                            $str_off = $p_item["Name"];
                         }
                     }
-
-                    //dürfen nicht gleich heißen!
-                    if($str_on == $str_off) $str_off = $str_off." ";
-                    $boolData = array($str_on, $str_off);
                 }
+
+                //dürfen nicht gleich heißen!
+                if($str_on == $str_off) $str_off = $str_off." ";
+                $boolData = array($str_on, $str_off);
             }
+
 
             //datenabrufen
             if($getData){
@@ -827,9 +835,10 @@ class SymconJSLiveChart extends JSLiveModule{
             $axisoutput["Prefix"] = "";
             $axisoutput["Suffix"] = "";
 
+
             //vor Stacked Charts!
             $axisoutput["stacked"] = true;
-            $axisoutput["offset"] = $item["AxesStackOffset"];;
+            $axisoutput["offset"] = $item["AxesStackOffset"];
 
             //stackerd Axes
             if($item["AxesStackGroup"] > 0){
@@ -964,6 +973,13 @@ class SymconJSLiveChart extends JSLiveModule{
                 $axisoutput["title"]["font"]["size"] = $this->ReadPropertyInteger("axes_labelfontSize");
                 $axisoutput["title"]["font"]["family"] = $this->ReadPropertyString("axes_fontFamily");
             }
+
+            if($this->ReadPropertyBoolean("axes_swap")){
+                $axisoutput["axis"] = "x";
+            }else{
+                $axisoutput["axis"] = "y";
+            }
+
             $output[$item["Ident"]] = $axisoutput;
         }
 
@@ -1010,7 +1026,7 @@ class SymconJSLiveChart extends JSLiveModule{
                 //Woche
                 $output["type"] = "time";
                 $output["time"]["unit"] = "day";
-                $output["time"]["stepSize"] = 1;
+                $output["time"]["stepSize"] = 3;
                 break;
             case 5:
                 //Tag
@@ -1055,8 +1071,8 @@ class SymconJSLiveChart extends JSLiveModule{
         if($output["type"] != "realtime"){
             $starData = $this->GetCorrectStartDate();
             $this->SendDebug("GetArchivData", "Start_Date: ". $starData["start"]. " | End_Date: ".$starData["end"], 0);
-            $output["min"] = ($starData["start"] * 1000);
-            $output["max"] = (($starData["end"] + 1) * 1000);
+            //$output["min"] = ($starData["start"] * 1000);
+            //$output["max"] = (($starData["end"] + 1) * 1000);
         }
 
         //$output["realtime"]["pause"] = false;
@@ -1082,6 +1098,12 @@ class SymconJSLiveChart extends JSLiveModule{
             $output["ticks"]["color"] = "rgba(" . $rgbdata["R"] . ", " . $rgbdata["G"] . ", " . $rgbdata["B"] . ")";
         }
 
+        /*
+        if($this->ReadPropertyBoolean("axes_swap")){
+            $output["axis"] = "y";
+        }else{
+            $output["axis"] = "x";
+        }*/
 
         return $output;
     }
