@@ -148,6 +148,22 @@
                         { "type": "SelectColor", "name": "needle_colorNeedleEnd", "caption": "Color" },
                         { "type": "HorizontalSlider", "name": "needle_colorNeedleEnd_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
                     ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Shadow Up:", "width": "100px"},
+                        { "type": "SelectColor", "name": "needle_colorShadowUp", "caption": "Color" },
+                        { "type": "HorizontalSlider", "name": "needle_colorShadowUp_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.025 }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Shadow Down:", "width": "100px"},
+                        { "type": "SelectColor", "name": "needle_colorShadowDown", "caption": "Color" },
+                        { "type": "HorizontalSlider", "name": "needle_colorShadowDown_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                    ]
                 }
             ]
         },

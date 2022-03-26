@@ -54,6 +54,10 @@ class SymconJSLiveGauge extends JSLiveModule{
         $this->RegisterPropertyFloat("needle_colorNeedle_Alpha", 1);
         $this->RegisterPropertyInteger("needle_colorNeedleEnd", 0);
         $this->RegisterPropertyFloat("needle_colorNeedleEnd_Alpha", 1);
+        $this->RegisterPropertyInteger("needle_colorShadowUp", 0);
+        $this->RegisterPropertyFloat("needle_colorShadowUp_Alpha", 0.05);
+        $this->RegisterPropertyInteger("needle_colorShadowDown", 0);
+        $this->RegisterPropertyFloat("needle_colorShadowDown_Alpha", 0.5);
 
         //Valuebox
         $this->RegisterPropertyBoolean("valuebox_display", false);
