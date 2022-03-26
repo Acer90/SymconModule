@@ -84,13 +84,20 @@
                 needleCircleSize: 15,
                 needleCircleOuter: false,
 
-                needleType: "line",
-                needleStart: 75,
-                needleEnd: 99,
-                needleWidth: 3,
+                //needleType: "line",
+                //needleStart: 75,
+                //needleEnd: 99,
+                //needleWidth: 3,
+
+                //needle
+                needle: configuration.needle_display,//show needle
+                needleType: configuration.needle_Type, // arrow
+                needleStart:configuration.needle_start, //in %
+                needleEnd: configuration.needle_end,//in %
+                needleWidth: configuration.needle_width, //in Px
+                needleSide: configuration.linear_needleSide, //“right”, “both” => nur bei linear
 
                 borders: true,
-                borderinnerWidth: 0,
                 borderMiddleWidth: 0,
                 borderinnerWidth: 10,
                 colorBorderOuter: "#ccc",
