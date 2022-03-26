@@ -79,15 +79,6 @@
                 colorNeedleEnd: configuration.needle_colorNeedleEnd,
                 valueBox: false,
                 valueTextShadow: false,
-                colorCircleInner: "#fff",
-                colorNeedleCircleOuter: "#ccc",
-                needleCircleSize: 15,
-                needleCircleOuter: false,
-
-                //needleType: "line",
-                //needleStart: 75,
-                //needleEnd: 99,
-                //needleWidth: 3,
 
                 //needle
                 needle: configuration.needle_display,//show needle
@@ -97,7 +88,12 @@
                 needleWidth: configuration.needle_width, //in Px
                 colorNeedleShadowUp: configuration.needle_colorShadowUp,
                 colorNeedleShadowDown: configuration.needle_colorShadowDown,
-
+                needleCircleSize: configuration.needle_CircleSize,
+                needleCircleOuter: configuration.needle_CircleOuter,
+                colorNeedleCircleOuter: configuration.needle_colorNeedleCircleOuter,
+                colorNeedleCircleOuterEnd: configuration.needle_colorNeedleCircleOuterEnd,
+                colorNeedleCircleInner: configuration.needle_colorNeedleCircleInner,
+                colorNeedleCircleInnerEnd: configuration.needle_colorNeedleCircleInnerEnd,
                 //needleSide: configuration.linear_needleSide, //“right”, “both” => nur bei linear
 
                 borders: true,
@@ -105,7 +101,6 @@
                 borderinnerWidth: 10,
                 colorBorderOuter: "#ccc",
                 colorBorderOuterEnd: "#ccc",
-                //colorNeedleShadowDown: "#222",
                 borderShadowWidth: 0,
 
                 animationTarget: "plate",
