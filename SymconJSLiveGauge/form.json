@@ -164,46 +164,6 @@
                         { "type": "SelectColor", "name": "needle_colorShadowDown", "caption": "Color" },
                         { "type": "HorizontalSlider", "name": "needle_colorShadowDown_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
                     ]
-                },
-                {
-                    "type": "ExpansionPanel",
-                    "caption": "Circle",
-                    "items": [
-                        { "type": "NumberSpinner", "name": "needle_CircleSize", "caption": "Size", "suffix": "%" },
-                        { "type": "CheckBox", "name": "needle_CircleOuter", "caption": "Show Outer"},
-                        {
-                            "type": "RowLayout",
-                            "items": [
-                                { "type": "Label", "caption": "Main:", "width": "100px"},
-                                { "type": "SelectColor", "name": "needle_colorNeedleCircleInner", "caption": "Color" },
-                                { "type": "HorizontalSlider", "name": "needle_colorNeedleCircleInner_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
-                            ]
-                        },
-                        {
-                            "type": "RowLayout",
-                            "items": [
-                                { "type": "Label", "caption": "End:", "width": "100px"},
-                                { "type": "SelectColor", "name": "needle_colorNeedleCircleInnerEnd", "caption": "Color" },
-                                { "type": "HorizontalSlider", "name": "needle_colorNeedleCircleInnerEnd_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
-                            ]
-                        },
-                        {
-                            "type": "RowLayout",
-                            "items": [
-                                { "type": "Label", "caption": "Out Main:", "width": "100px"},
-                                { "type": "SelectColor", "name": "needle_colorNeedleCircleOuter", "caption": "Color" },
-                                { "type": "HorizontalSlider", "name": "needle_colorNeedleCircleOuter_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
-                            ]
-                        },
-                        {
-                            "type": "RowLayout",
-                            "items": [
-                                { "type": "Label", "caption": "Out End:", "width": "100px"},
-                                { "type": "SelectColor", "name": "needle_colorNeedleCircleOuter", "caption": "Color" },
-                                { "type": "HorizontalSlider", "name": "needle_colorNeedleCircleOuter_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
-                            ]
-                        }
-                    ]
                 }
             ]
         },
@@ -417,7 +377,47 @@
             "caption": "Radial Gauge Settings",
             "items": [
                 { "type": "NumberSpinner", "name": "radial_startAngle", "caption": "Start Angle", "suffix": "°"},
-                { "type": "NumberSpinner", "name": "radial_ticksAngle", "caption": "Ticks Angle", "suffix": "°"}
+                { "type": "NumberSpinner", "name": "radial_ticksAngle", "caption": "Ticks Angle", "suffix": "°"},
+                {
+                    "type": "ExpansionPanel",
+                    "caption": "Circle",
+                    "items": [
+                        { "type": "NumberSpinner", "name": "needle_CircleSize", "caption": "Size", "suffix": "%" },
+                        { "type": "CheckBox", "name": "needle_CircleOuter", "caption": "Show Outer"},
+                        {
+                            "type": "RowLayout",
+                            "items": [
+                                { "type": "Label", "caption": "Main:", "width": "100px"},
+                                { "type": "SelectColor", "name": "needle_colorNeedleCircleInner", "caption": "Color" },
+                                { "type": "HorizontalSlider", "name": "needle_colorNeedleCircleInner_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                            ]
+                        },
+                        {
+                            "type": "RowLayout",
+                            "items": [
+                                { "type": "Label", "caption": "End:", "width": "100px"},
+                                { "type": "SelectColor", "name": "needle_colorNeedleCircleInnerEnd", "caption": "Color" },
+                                { "type": "HorizontalSlider", "name": "needle_colorNeedleCircleInnerEnd_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                            ]
+                        },
+                        {
+                            "type": "RowLayout",
+                            "items": [
+                                { "type": "Label", "caption": "Out Main:", "width": "100px"},
+                                { "type": "SelectColor", "name": "needle_colorNeedleCircleOuter", "caption": "Color" },
+                                { "type": "HorizontalSlider", "name": "needle_colorNeedleCircleOuter_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                            ]
+                        },
+                        {
+                            "type": "RowLayout",
+                            "items": [
+                                { "type": "Label", "caption": "Out End:", "width": "100px"},
+                                { "type": "SelectColor", "name": "needle_colorNeedleCircleOuter", "caption": "Color" },
+                                { "type": "HorizontalSlider", "name": "needle_colorNeedleCircleOuter_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                            ]
+                        }
+                    ]
+                }
             ]
         },
         {
