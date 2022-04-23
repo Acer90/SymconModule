@@ -90,7 +90,7 @@ class SymconJSLiveProgressbar extends JSLiveModule{
             case "getContend":
                 return $this->GetOutput();
             case "getData":
-                return $this->GetData($buffer['queryData']);
+                return json_encode($this->GetData());
             case "getSVG":
                 return $this->GetSVG();
             case "getFillImg":
@@ -124,16 +124,32 @@ class SymconJSLiveProgressbar extends JSLiveModule{
 
         return $scriptData;
     }
-    private function GetData(array $querydata){
+    private function GetData(){
         $output = array();
         $output["Variable"] = $this->ReadPropertyInteger("Variable");
+        $reverse = false;
+
+        $min = $this->ReadPropertyFloat("data_min");
+        $max = $this->ReadPropertyFloat("data_max");
+        if($min > $max) $reverse = true;
+
+
         if(IPS_VariableExists($output["Variable"])){
             $output["Value"] =  GetValue($this->ReadPropertyInteger("Variable"));
         }else{
             $this->SendDebug('SetData', "VARIABLE NOT EXIST!", 0);
             $output["Value"] = 0;
         }
-        return json_encode($output);
+
+        if(is_float($output["Value"])){
+            $precision = $this->ReadPropertyFloat("data_precision");
+            $current = $precision - floor($precision);
+            for ($decimals = 0; ceil($current); $decimals++) {
+                $current = ($output["Value"] * pow(10, $decimals + 1)) - floor($output["Value"] * pow(10, $decimals + 1));
+            }
+            $output["Value"] = round($output["Value"], $decimals);
+        }
+        return $output;
     }
     private function GetSVG(){
         $output = $this->ReadPropertyString("shape_svg");
@@ -155,21 +171,7 @@ class SymconJSLiveProgressbar extends JSLiveModule{
         $htmlData = str_replace("{CONFIG}", $this->json_encode_advanced($this->GetConfigurationData()), $htmlData);
 
         //Value
-        $Variable = $this->ReadPropertyInteger("Variable");
-        if(IPS_VariableExists($Variable)){
-            $value = GetValue($Variable);
-            if(is_float($value)){
-                $precision = $this->ReadPropertyFloat("data_precision");
-                $current = $precision - floor($precision);
-                for ($decimals = 0; ceil($current); $decimals++) {
-                    $current = ($value * pow(10, $decimals + 1)) - floor($value * pow(10, $decimals + 1));
-                }
-                $value = number_format($value, $decimals, '.', '');
-            }
-            $htmlData = str_replace("{VALUE}", $value, $htmlData);
-        }else {
-            $htmlData = str_replace("{VALUE}", 0, $htmlData);
-        }
+        $htmlData = str_replace("{VALUE}", number_format($this->GetData()["Value"], 3, '.', ''), $htmlData);
 
         $htmlData = str_replace("{FONTS}", $this->LoadFonts(), $htmlData);
 
@@ -230,6 +232,16 @@ class SymconJSLiveProgressbar extends JSLiveModule{
             }
         }
 
+        //reverse erkennen wenn max kleiner min
+        //dann min und max tauschen
+        if($output["data_min"] > $output["data_max"]) {
+            $min = $output["data_min"];
+            $output["data_min"] = $output["data_max"];
+            $output["data_max"] = $min;
+            $output["reverse"] = true;
+        }else{
+            $output["reverse"] = false;
+        }
 
         return $output;
     }

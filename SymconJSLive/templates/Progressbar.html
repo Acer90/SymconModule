@@ -109,6 +109,9 @@
         output["precision"] = configuration.data_precision;
         if(configuration.data_precisionCustom !== 0)  output["precision"] = configuration.data_precisionCustom;
 
+        if(configuration.reverse){
+            value = configuration.data_max - value;
+        }
         output["value"] = value;
         output["min"] = configuration.data_min;
         output["max"] = configuration.data_max;
@@ -193,7 +196,13 @@
     }
     function Update(id_val, val){
         if(id_val === configuration.Variable && value !== val){
-            value = val;
+
+            if(configuration.reverse){
+                value = configuration.data_max - val;
+            }else{
+                value = val;
+            }
+
             bar.set(value);
         }
     }

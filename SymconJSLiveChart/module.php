@@ -727,6 +727,15 @@ class SymconJSLiveChart extends JSLiveModule{
                 $singelOutput["pointRadius"] = $this->ReadPropertyInteger("point_radius");
             }
 
+            //tension und Interpolation
+            if(array_key_exists("MonotoneInterpolationMode", $item) && $item["MonotoneInterpolationMode"] === true) {
+                $singelOutput["cubicInterpolationMode"] = "monotone";
+            }
+
+            if(array_key_exists("Tension", $item) && $item["Tension"] != 0) {
+                $singelOutput["tension"] = $item["Tension"];
+            }
+
 
             //datalabels
             if($item["datalabels_enable"]){

@@ -1,0 +1,14 @@
+{
+    "id": "{920FA780-28E0-C329-63C4-D79F8EEEE502}",
+    "name": "WLEDSegment",
+    "type": 3,
+	"vendor": "",
+	"aliases": 
+	[
+		"WLED Segment"
+	],
+    "parentRequirements": ["{7B4E5B18-F847-8F8A-F148-3FB3F482E295}"],
+    "childRequirements": [],
+    "implemented": ["{D2353839-DA64-DF79-7CD5-4DD827DCE82A}"],
+    "prefix": "WLEDSegment"
+}

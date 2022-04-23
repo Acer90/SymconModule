@@ -790,6 +790,29 @@
                     }
                 },
                 {
+                    "caption": "Monotone Interpolation",
+                    "name": "MonotoneInterpolationMode",
+                    "width": "100px",
+                    "add": false,
+                    "visible": false,
+                    "edit": {
+                        "type": "CheckBox"
+                    }
+                },
+                {
+                    "caption": "Tension",
+                    "name": "Tension",
+                    "width": "100px",
+                    "add": 0.0,
+                    "visible": false,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 2,
+                        "minimum": -1,
+                        "maximum": 1
+                    }
+                },
+                {
                     "caption": "Override Point Size",
                     "name": "PointRadius",
                     "width": "50px",

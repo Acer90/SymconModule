@@ -1,0 +1,21 @@
+{
+    "elements":
+    [
+        { "type": "NumberSpinner", "name": "SegmentID", "caption": "SegmentID" },
+        { "type": "CheckBox", "name": "MoreColors", "caption": "More Colors" },
+        { "type": "CheckBox", "name": "ShowTemperature", "caption": "Show Temperature" },
+        { "type": "CheckBox", "name": "ShowEffects", "caption": "Show Effects" },
+        { "type": "CheckBox", "name": "ShowPalettes", "caption": "Show Palettes" }
+    ],
+    "actions":
+    [
+        { "type": "Button", "label": "Status abrufen", "onClick": "WLEDSegment_GetUpdate($id);" }
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Connection Success!" },
+        { "code": 104, "icon": "active", "caption": "Connection Lost!" },
+        { "code": 203, "icon": "error", "caption": "Internal Error!" }
+
+    ]
+}

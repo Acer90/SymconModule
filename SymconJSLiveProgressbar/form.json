@@ -12,8 +12,8 @@
             "type": "ExpansionPanel",
             "caption": "Data",
             "items": [
-                { "type": "NumberSpinner", "name": "data_min", "caption": "Minimum Value"},
-                { "type": "NumberSpinner", "name": "data_max", "caption": "Maximum Value"},
+                { "type": "NumberSpinner", "name": "data_min", "caption": "Minimum Value", "digits": 3},
+                { "type": "NumberSpinner", "name": "data_max", "caption": "Maximum Value", "digits": 3},
                 {
                     "type": "RowLayout",
                     "items": [

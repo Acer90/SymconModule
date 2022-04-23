@@ -1,0 +1,14 @@
+{
+    "id": "{F2FEBC51-7E07-3D45-6F71-3D0560DE6375}",
+    "name": "WLEDSplitter",
+    "type": 2,
+	"vendor": "",
+	"aliases": 
+	[
+		"WLED Splitter"
+	],
+    "parentRequirements": ["{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}"],
+    "childRequirements": ["{D2353839-DA64-DF79-7CD5-4DD827DCE82A}"],
+    "implemented": ["{018EF6B5-AB94-40C6-AA53-46943E824ACF}","{7B4E5B18-F847-8F8A-F148-3FB3F482E295}"],
+    "prefix": "WLEDSplitter"
+}

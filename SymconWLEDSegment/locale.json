@@ -1,0 +1,30 @@
+{
+  "translations": {
+    "de": {
+      "TV Settings": "TV-Einstellungen",
+      "Host": "IP-Adresse",
+      "MAC Address (XX:XX:XX:XX:XX:XX)": "Physische Adresse (MAC) Format = XX:XX:XX:XX:XX:XX",
+      "use SSL": "SSL verwenden",
+      "Time to wait between single Keys": "Zeit zwischen einzelnen Tasten",
+      "Check Service online every": "Zeitinterval zum überpüfen ob der Fernseher online ist",
+      "Sec": "Sek",
+      "WOL Settings": "\"Wake on LAN\" Einstellungen",
+      "Classless Inter-Domain Routing (MASK: 255.255.255.0 ==> 24 (3 Byte * 8 Bit))": "Subnetmaske als Präfix (Maske: 255.255.255.0 ==> 24 (3 Byte * 8 Bit))",
+      "WoL Port": "\"Wake on LAN\"-Port (Standart = 9)",
+      "WoL alternative software": "Alternative Software",
+      "Path": "Pfad",
+      "Start-Parameter": "Start-Parameter",
+
+      "Wake Up!": "Aufwecken",
+      "Power Off": "Auschalten",
+      "Toggle Power": "Schaltzustand wechseln",
+      "Send 1,2,3,Enter": "Senden 1,2,3,Enter",
+
+      "Connection Success!": "Verbunden",
+      "Connection Lost!": "Verbindung verloren",
+      "Internal Error!": "Interner Fehler",
+
+      "Broadcast Address": "Broadcast Adresse"
+    }
+  }
+}
