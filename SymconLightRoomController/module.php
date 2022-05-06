@@ -238,6 +238,7 @@ class LightRoomController extends IPSModule
         $key = array_search($ID, array_column($VarList, 'ID'));
         if($key !== FALSE){
             if(array_key_exists("Scene", $VarList[$key])) {
+
                 foreach ($VarList[$key]["Scene"] as $light) {
                     //Licht für licht schalten
 
@@ -245,6 +246,7 @@ class LightRoomController extends IPSModule
                     $lowLight = $this->GetLightDataLowestValue();
 
                     if($light["Light"] >= $lowLight){
+
                         $this->ControlLight($light["Instance"], $light["Zustand_val"], $light["Helligkeit_val"], $light["Temperatur_val"], $light["Farbe_val"]);
                         $lightsArr[$light["Instance"]] = true;
 
@@ -459,6 +461,42 @@ class LightRoomController extends IPSModule
                     $PayloadJSON = json_encode($PayloadSet, JSON_UNESCAPED_SLASHES);
                     Z2M_Command($instance, 'set', $PayloadJSON);
                 }
+                break;
+            case "{920FA780-28E0-C329-63C4-D79F8EEEE502}":
+                $Payload = array();
+                $segment = array();
+
+                $config = json_decode(IPS_GetConfiguration($instance), true);
+
+                $segment['id'] = $config["SegmentID"];
+
+                if($mode == 0){
+                    $segment['on'] = $zustand;
+                    $segment['col'][0] = array(0,0,0,255);
+                }
+                elseif($mode == 1) {
+                    $segment['on'] = $zustand;
+                    $segment['bri'] = round($helligkeit * 2.54);
+                    $segment['col'][0] = array(0,0,0,255);
+                }
+                elseif($mode == 2){
+                    $segment['on'] = $zustand;
+                    $segment['bri'] = round($helligkeit * 2.54);
+                    $segment['cct'] = $temperatur;
+                }
+                elseif($mode == 3){
+                    $segment['on'] = $zustand;
+                    $segment['bri'] = round($helligkeit * 2.54);
+
+                    $rgb = $this->HexToRGB($farbe);
+                    $segment['col'][0] = array($rgb['r'], $rgb['g'], $rgb['b']);
+                }
+
+                $Payload["seg"][] = $segment;
+
+                $this->SendDebug("ControlLight", "###TEST###". json_encode($Payload),0);
+
+                WLEDSegment_SendData($instance, json_encode($Payload));
                 break;
             default:
                 //Device not found!
