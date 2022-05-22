@@ -43,10 +43,14 @@
 
                 //alert("H:"+Get_WindowHeight()+"px|W:"+Get_WindowWidth()+"px");
 
+                h_val = Get_WindowHeight() - 20;
+                w_val = Get_WindowWidth() - 20;
+                if(h_val <= w_val) w_val = h_val-1;
+
                 gauge_config = {
                     renderTo: 'gauge',
-                    height: Get_WindowHeight() - 20,
-                    width: ((Get_WindowHeight() - 20) / 4),
+                    height: h_val,
+                    width: w_val,
 
                     value: data.Value,
                     minValue: configuration.min,
