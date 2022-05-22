@@ -64,6 +64,29 @@ class WLEDSplitter extends IPSModule
             IPS_SetVariableProfileValues("WLED.Temperature", 1900, 10091, 1);
         }
 
+        if(!IPS_VariableProfileExists("WLED.Transition")){
+            IPS_CreateVariableProfile("WLED.Transition", 2);
+            IPS_SetVariableProfileValues("WLED.Transition", 0.0, 25.5, 0.1);
+            IPS_SetVariableProfileDigits("WLED.Transition", 1);
+            IPS_SetVariableProfileText ("WLED.Transition", "", " Sek.");
+        }
+
+        if(!IPS_VariableProfileExists("WLED.NightlightDuration")){
+            IPS_CreateVariableProfile("WLED.NightlightDuration", 1);
+            IPS_SetVariableProfileValues("WLED.NightlightDuration", 1, 255, 1);
+            IPS_SetVariableProfileText ("WLED.NightlightDuration", "", " Min.");
+        }
+
+        if(!IPS_VariableProfileExists("WLED.NightlightMode")){
+            IPS_CreateVariableProfile("WLED.NightlightMode", 1);
+            IPS_SetVariableProfileValues("WLED.NightlightMode", 0, 3, 1);
+
+            IPS_SetVariableProfileAssociation("WLED.NightlightMode", 0, "instant", "", -1);
+            IPS_SetVariableProfileAssociation("WLED.NightlightMode", 1, "fade", "", -1);
+            IPS_SetVariableProfileAssociation("WLED.NightlightMode", 2, "color fade", "", -1);
+            IPS_SetVariableProfileAssociation("WLED.NightlightMode", 3, "sunrise", "", -1);
+        }
+
         $this->SetStatus(102);
     }
 
@@ -75,6 +98,11 @@ class WLEDSplitter extends IPSModule
     private function SendDataToSegment($jsonString)
     {
         $this->SendDataToChildren(json_encode(Array("DataID" => "{D2353839-DA64-DF79-7CD5-4DD827DCE82A}", "FrameTyp" => 1, "Fin" => true, "Buffer" => utf8_decode($jsonString))));
+        $this->SendDebug(__FUNCTION__, $jsonString, 0);
+    }
+    private function SendDataToMaster($jsonString)
+    {
+        $this->SendDataToChildren(json_encode(Array("DataID" => "{79D5ACD0-7EED-FBA6-22D7-04AEB1BBBE97}", "FrameTyp" => 1, "Fin" => true, "Buffer" => utf8_decode($jsonString))));
         $this->SendDebug(__FUNCTION__, $jsonString, 0);
     }
 
@@ -89,6 +117,8 @@ class WLEDSplitter extends IPSModule
         $j_data = json_decode($data->Buffer, true);
 
         if(!array_key_exists("state", $j_data)) return;
+        $this->SendDataToMaster(json_encode($j_data["state"]));
+
         if(!array_key_exists("seg", $j_data["state"])) return;
         if(!is_array($j_data["state"]["seg"])) return;
 

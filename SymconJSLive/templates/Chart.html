@@ -966,7 +966,10 @@
         if (Prefix !== "") {
             blocks.push(Prefix);
         }
-        blocks.push(context.parsed.y)
+
+        precision = Math.pow(10, configuration.data_precision);
+        var str  = Math.floor(context.parsed.y * precision) / precision;
+        blocks.push(str)
         if (Suffix !== "") {
             blocks.push(Suffix);
         }

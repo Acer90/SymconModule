@@ -8,7 +8,7 @@
 		"WLED Splitter"
 	],
     "parentRequirements": ["{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}"],
-    "childRequirements": ["{D2353839-DA64-DF79-7CD5-4DD827DCE82A}"],
+    "childRequirements": ["{D2353839-DA64-DF79-7CD5-4DD827DCE82A}", "{79D5ACD0-7EED-FBA6-22D7-04AEB1BBBE97}"],
     "implemented": ["{018EF6B5-AB94-40C6-AA53-46943E824ACF}","{7B4E5B18-F847-8F8A-F148-3FB3F482E295}"],
     "prefix": "WLEDSplitter"
 }

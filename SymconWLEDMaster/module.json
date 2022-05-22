@@ -1,0 +1,14 @@
+{
+    "id": "{66DFD3D3-006D-5FC6-4CF8-E0EF31E7A2F4}",
+    "name": "WLEDMaster",
+    "type": 3,
+	"vendor": "",
+	"aliases": 
+	[
+		"WLED Master"
+	],
+    "parentRequirements": ["{7B4E5B18-F847-8F8A-F148-3FB3F482E295}"],
+    "childRequirements": [],
+    "implemented": ["{79D5ACD0-7EED-FBA6-22D7-04AEB1BBBE97}"],
+    "prefix": "WLEDMaster"
+}
