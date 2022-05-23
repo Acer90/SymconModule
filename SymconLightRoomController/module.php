@@ -117,6 +117,18 @@ class LightRoomController extends IPSModule
                         $lightData[$SenderID] = $cur;
                         $this->SendDebug("MessageSink", "Lightsensor " . $SenderID . " new Value => " .$cur. " (".$Data[0].")", 0);
 
+
+                        $light_values = array();
+                        foreach ($lightSensorData as $SensorData) {
+                            $id = $SensorData["Variable"];
+                            $max = $SensorData["Max_val"];
+                            $c = (GetValue($id) / $max * 100) . "%";
+
+                            $light_values[] = array("Variable" => $id, "disable" => $SensorData["disable"], "Max_val" => $max, "Current" => $c);
+                        }
+
+
+                        $this->UpdateFormField ("VarList_LightSensors", "values", json_encode($light_values));
                         $this->SetBuffer("LightData", json_encode($lightData));
                         return;
                     }

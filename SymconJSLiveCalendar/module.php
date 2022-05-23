@@ -218,6 +218,7 @@ class SymconJSLiveCalendar extends JSLiveModule{
 
             //print_r($path);
             $data = $this->GET_By_KEYPATH($formData["elements"], $path);
+            //print_r($data);
             $data = array_merge($data, $viewsoptions);
 
             $this->SET_By_KEYPATH($path, $formData["elements"], $data);

@@ -192,6 +192,7 @@
                 { "type": "CheckBox", "name": "header_display", "caption": "Display"},
                 {
                     "type": "RowLayout",
+                    "requireItem": "header_display",
                     "items": [
                         { "type": "SelectColor", "name": "header_backgroundColor", "caption": "Color" },
                         { "type": "HorizontalSlider", "name": "header_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05, "viewlevel": 1}
@@ -200,6 +201,7 @@
                 {
                     "type": "RowLayout",
                     "viewlevel": 1,
+                    "requireItem": "header_display",
                     "items": [
                         { "type": "NumberSpinner", "name": "header_margin", "caption": "Button-Space", "width": "100px", "minimum": 0, "digits": 2},
                         { "type": "Select", "name": "header_margin_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": true,
@@ -214,6 +216,7 @@
                 {
                     "type": "ExpansionPanel",
                     "viewlevel": 1,
+                    "requireItem": "header_display",
                     "caption": "Start",
                     "items": [
                         {
@@ -269,6 +272,7 @@
                 {
                     "type": "ExpansionPanel",
                     "viewlevel": 1,
+                    "requireItem": "header_display",
                     "caption": "Center",
                     "items": [
                         {
@@ -324,6 +328,7 @@
                 {
                     "type": "ExpansionPanel",
                     "viewlevel": 1,
+                    "requireItem": "header_display",
                     "caption": "End",
                     "items": [
                         {
@@ -385,6 +390,7 @@
                 { "type": "CheckBox", "name": "footer_display", "caption": "Display"},
                 {
                     "type": "RowLayout",
+                    "requireItem": "footer_display",
                     "items": [
                         { "type": "SelectColor", "name": "footer_backgroundColor", "caption": "Color" },
                         { "type": "HorizontalSlider", "name": "footer_backgroundColor_Alpha", "caption": "Alpha", "maximum": 1, "minimum": 0, "stepSize": 0.05, "viewlevel": 1}
@@ -393,6 +399,7 @@
                 {
                     "type": "RowLayout",
                     "viewlevel": 1,
+                    "requireItem": "footer_display",
                     "items": [
                         { "type": "NumberSpinner", "name": "footer_margin", "caption": "Top-Space", "width": "100px", "minimum": 0, "digits": 2},
                         { "type": "Select", "name": "footer_margin_unitType", "caption": "Unit", "width": "50px", "viewlevel": 2, "viewdisable": true,
@@ -407,6 +414,7 @@
                 {
                     "type": "ExpansionPanel",
                     "viewlevel": 1,
+                    "requireItem": "footer_display",
                     "caption": "Start",
                     "items": [
                         {
@@ -462,6 +470,7 @@
                 {
                     "type": "ExpansionPanel",
                     "viewlevel": 1,
+                    "requireItem": "footer_display",
                     "caption": "Center",
                     "items": [
                         {
@@ -517,6 +526,7 @@
                 {
                     "type": "ExpansionPanel",
                     "viewlevel": 1,
+                    "requireItem": "footer_display",
                     "caption": "End",
                     "items": [
                         {
@@ -874,6 +884,7 @@
                                 { "type": "CheckBox", "name": "table_weekend_header_override", "caption": "Override"},
                                 {
                                     "type": "RowLayout",
+                                    "requireItem": "table_weekend_header_override",
                                     "items": [
                                         { "type": "Label", "caption": "Background:", "width": "100px" },
                                         { "type": "SelectColor", "name": "table_weekend_header_backgroundColor", "caption": "Color" },
@@ -882,6 +893,7 @@
                                 },
                                 {
                                     "type": "RowLayout",
+                                    "requireItem": "table_weekend_header_override",
                                     "items": [
                                         { "type": "Label", "caption": "Font:", "width": "100px" },
                                         { "type": "NumberSpinner", "name": "table_weekend_header_fontSize", "caption": "Size", "width": "70px", "minimum": 0, "digits": 2},
@@ -929,6 +941,7 @@
                                 { "type": "CheckBox", "name": "table_weekend_saturday_override", "caption": "Override"},
                                 {
                                     "type": "RowLayout",
+                                    "requireItem": "table_weekend_saturday_override",
                                     "items": [
                                         { "type": "Label", "caption": "Background:", "width": "100px" },
                                         { "type": "SelectColor", "name": "table_weekend_saturday_backgroundColor", "caption": "Color" },
@@ -937,6 +950,7 @@
                                 },
                                 {
                                     "type": "RowLayout",
+                                    "requireItem": "table_weekend_saturday_override",
                                     "items": [
                                         { "type": "Label", "caption": "Font:", "width": "100px" },
                                         { "type": "NumberSpinner", "name": "table_weekend_saturday_fontSize", "caption": "Size", "width": "70px", "minimum": 0, "digits": 2},
@@ -984,6 +998,7 @@
                                 { "type": "CheckBox", "name": "table_weekend_sunday_override", "caption": "Override"},
                                 {
                                     "type": "RowLayout",
+                                    "requireItem": "table_weekend_sunday_override",
                                     "items": [
                                         { "type": "Label", "caption": "Background:", "width": "100px" },
                                         { "type": "SelectColor", "name": "table_weekend_sunday_backgroundColor", "caption": "Color" },
@@ -992,6 +1007,7 @@
                                 },
                                 {
                                     "type": "RowLayout",
+                                    "requireItem": "table_weekend_sunday_override",
                                     "items": [
                                         { "type": "Label", "caption": "Font:", "width": "100px" },
                                         { "type": "NumberSpinner", "name": "table_weekend_sunday_fontSize", "caption": "Size", "width": "70px", "minimum": 0, "digits": 2},
@@ -1040,6 +1056,7 @@
                     "items": [
                         { "type": "CheckBox", "name": "table_weekNumbers_display", "caption": "Display"},
                         { "type": "Select", "name": "table_weekNumberFormat", "caption": "Family", "width": "150px", "viewlevel": 1,
+                            "requireItem": "table_weekNumbers_display",
                             "options": [
                                 { "caption": "short", "value": "short" },
                                 { "caption": "narrow", "value": "narrow" },
@@ -1048,6 +1065,7 @@
                         },
                         {
                             "type": "RowLayout",
+                            "requireItem": "table_weekNumbers_display",
                             "items": [
                                 { "type": "Label", "caption": "Background:", "width": "100px" },
                                 { "type": "SelectColor", "name": "table_weekNumber_backgroundColor", "caption": "Color" },
@@ -1056,6 +1074,7 @@
                         },
                         {
                             "type": "RowLayout",
+                            "requireItem": "table_weekNumbers_display",
                             "items": [
                                 { "type": "Label", "caption": "Font:", "width": "100px" },
                                 { "type": "NumberSpinner", "name": "table_weekNumber_fontSize", "caption": "Size", "width": "70px", "minimum": 0, "digits": 2},

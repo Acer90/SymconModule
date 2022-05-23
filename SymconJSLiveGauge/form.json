@@ -222,7 +222,7 @@
             "caption": "Progressbar",
             "items": [
                 { "type": "CheckBox", "name": "progressbar_display", "caption": "Display"},
-                { "type": "NumberSpinner", "name": "progressbar_barWidth", "caption": "Width", "suffix": "px" },
+                { "type": "NumberSpinner", "name": "progressbar_barWidth", "caption": "Width", "suffix": "%" },
                 { "type": "NumberSpinner", "name": "progressbar_barShadow", "caption": "Shadow", "suffix": "px" },
                 {
                     "type": "RowLayout",
