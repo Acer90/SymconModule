@@ -248,9 +248,9 @@ class JSLiveModule extends IPSModule
 
         //Remove Confoniguration for Basic => 0; Advance => 1; Expert => 2
         //$this->SendDebug("BEFOR", json_encode($formData), 0 );
-        $this->SetBuffer("ConfigurationFunctionItems", "{}");
 
-        $r_val = $this->RecursiveUpdateForm($formData["elements"], array());
+        $addFunctions = array();
+        $r_val = $this->RecursiveUpdateForm($formData["elements"], $addFunctions);
         $formData["elements"] = $r_val["arr"];
         $addFunctions = $r_val["func"];
 
@@ -264,9 +264,8 @@ class JSLiveModule extends IPSModule
 
         $listVisibility = array("elements" => $formData["elements"], "actions" => $formData["actions"]);
         $this->SetBuffer("ConfigurationBuffer", json_encode($listVisibility));
-        //$this->SendDebug("#DEBUG#", json_encode($listVisibility), 0);
 
-        //$this->SendDebug("AFTER", json_encode($formData), 0 );
+        $this->SendDebug("AFTER", json_encode($formData), 0 );
 
         return $formData;
     }
@@ -313,7 +312,6 @@ class JSLiveModule extends IPSModule
                     $arr[$key]["name"] = $this->getUniqueID();
                     //$this->SendDebug(__FUNCTION__, $item["type"],0);
                 }
-
 
                 $viewLevelExactly = false;
                 if (array_key_exists("viewlevelexactly", $item)) $viewLevelExactly = $arr[$key]["viewlevelexactly"];
@@ -370,9 +368,10 @@ class JSLiveModule extends IPSModule
 
             //add function to viewlevel
             if(array_key_exists("name", $item) && $item["name"] == "ViewLevel"){
-                $arr[$key]["onChange"] = IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleName"]."_ReloadConfigurationForm(\$id, 'ViewLevel', \$ViewLevel);";
+                //$arr[$key]["onChange"] = " ".IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleName"]."_ReloadConfigurationForm(\$id, 'ViewLevel', \$ViewLevel);";
                 //$this->SendDebug("TEST", IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleName"]."_ReloadConfigurationForm(\$id, 'ViewLevel', \$ViewLevel);", 0);
             }
+
         }
 
         return array("arr" => array_values($arr), "func" => $addFunctions);
