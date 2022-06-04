@@ -45,6 +45,20 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->RegisterPropertyInteger("axes_fontColor", 0);
         $this->RegisterPropertyString("axes_fontFamily", "");
 
+        //XAxes
+        $this->RegisterPropertyBoolean("xaxes_display", true);
+        $this->RegisterPropertyBoolean("xaxes_overrideDynamic", false);
+
+        $xaxesData[] = array("ID" => 0, "Name" => $this->Translate("decade"), "stepSize" => 1, "maxTicksLimit" => 0);
+        $xaxesData[] = array("ID" => 1, "Name" => $this->Translate("year"), "stepSize" => 3, "maxTicksLimit" => 4);
+        $xaxesData[] = array("ID" => 2, "Name" => $this->Translate("quarter"), "stepSize" => 1, "maxTicksLimit" => 3);
+        $xaxesData[] = array("ID" => 3, "Name" => $this->Translate("month"), "stepSize" => 3, "maxTicksLimit" => 0);
+        $xaxesData[] = array("ID" => 4, "Name" => $this->Translate("week"), "stepSize" => 1, "maxTicksLimit" => 7);
+        $xaxesData[] = array("ID" => 5, "Name" => $this->Translate("day"), "stepSize" => 2, "maxTicksLimit" => 12);
+        $xaxesData[] = array("ID" => 6, "Name" => $this->Translate("hour"), "stepSize" => 5, "maxTicksLimit" => 12);
+        $xaxesData[] = array("ID" => 7, "Name" => $this->Translate("minute"), "stepSize" => 10, "maxTicksLimit" => 6);
+        $this->RegisterPropertyString("xaxes_override_list", json_encode($xaxesData));
+
         //Points
         $this->RegisterPropertyInteger("point_radius", 0);
         $this->RegisterPropertyInteger("point_hoverRadius", 15);
@@ -131,8 +145,9 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->EnableAction("StartDate");
         $this->EnableAction("Relativ");
 
-        
 
+        $this->SetBuffer("AxesBuffer", $this->ReadPropertyString("Axes"));
+        $this->SetBuffer("DatasetsBuffer", $this->ReadPropertyString("Datasets"));
         $this->SetStatus(102);
 
         //setdafult if Variabel Periode not define
@@ -202,7 +217,6 @@ class SymconJSLiveChart extends JSLiveModule{
         }
 
         $axes = json_decode($this->ReadPropertyString("Axes"),true);
-        //ICal Module laden und anbieten
         if (is_array($axes) && count($axes) > 0) {
             $colData = $formData["elements"][$key]["columns"];
             $colkey = array_search("Axes", array_column($colData, 'name'));
@@ -238,7 +252,6 @@ class SymconJSLiveChart extends JSLiveModule{
             }
         }
 
-
         //update Axes (min, max, stepsize, an check Ident)
         foreach ($formData["elements"] as $keyNr => $element) {
             if (array_key_exists("name", $element) && $element["name"] === "Axes") {
@@ -246,7 +259,6 @@ class SymconJSLiveChart extends JSLiveModule{
                 break;
             }
         }
-        $axes = json_decode($this->ReadPropertyString("Axes"), true);
 
         foreach ($axes as $row => $item) {
             if (IPS_VariableProfileExists($item["Profile"])) {
@@ -289,7 +301,209 @@ class SymconJSLiveChart extends JSLiveModule{
             }
         }
 
+        $pathList = $this->GET_PathList($formData["elements"]);
+
+        //xaxes_override
+        $key = array_search('xaxes_override_list', array_column($pathList, 'name'));
+        $path = $pathList[$key]["path"];
+        $data = $this->GET_By_KEYPATH($formData["elements"], $path);
+
+        $xaxes_override = json_decode($this->ReadPropertyString("xaxes_override_list"), true);
+        foreach ($xaxes_override as $row => $item) {
+            switch ($row){
+                case 0:
+                    $item["Name"] = $this->Translate("decade");
+                    break;
+                case 1:
+                    $item["Name"] = $this->Translate("year");
+                    break;
+                case 2:
+                    $item["Name"] = $this->Translate("quarter");
+                    break;
+                case 3:
+                    $item["Name"] = $this->Translate("month");
+                    break;
+                case 4:
+                    $item["Name"] = $this->Translate("week");
+                    break;
+                case 5:
+                    $item["Name"] = $this->Translate("day");
+                    break;
+                case 6:
+                    $item["Name"] = $this->Translate("hour");
+                    break;
+                case 7:
+                    $item["Name"] = $this->Translate("minute");
+                    break;
+            }
+            $data["values"][] = $item;
+        }
+        $this->SET_By_KEYPATH($path, $formData["elements"], $data);
+
         return json_encode($formData);
+    }
+
+    /**
+     * @param $arr $item that was add/change/remove
+     * @param $type 0 = add, 1 = edit, 2 = remove
+     * @return void
+     */
+    public function ReloadFormAxes($arr, $type){
+        if(is_null($arr)) return;
+        $formData = json_decode($this->GetBuffer("ConfigurationBuffer"), true);
+        $axes = json_decode($this->GetBuffer("AxesBuffer"), true);
+
+        $key = 0;
+        foreach ($formData["elements"] as $keyNr => $element) {
+            if (array_key_exists("name", $element) && $element["name"] === "Axes") {
+                $key = $keyNr;
+                break;
+            }
+        }
+
+        switch($type){
+            case 0: //add
+                $axes[] = $arr;
+                break;
+            case 1: //change
+                $id = array_search($arr["Ident"], array_column($axes, 'Ident'));
+                if($id !== false){
+                    $axes[$id] = $arr;
+                }
+                break;
+            case 2: //remove
+                $id = array_search($arr["Ident"], array_column($axes, 'Ident'));
+                if($id !== false){
+                    unset($axes[$id]);
+                }
+                break;
+        }
+
+        if($type < 2){ //nur bei add und change
+            foreach ($axes as $row => $item) {
+                if (IPS_VariableProfileExists($item["Profile"])) {
+                    $profilData = IPS_GetVariableProfile($item["Profile"]);
+                }else {
+                    $profilData = array();
+                    $profilData["MinValue"] = 0;
+                    $profilData["MaxValue"] = 0;
+                    $profilData["StepSize"] = 0;
+                }
+
+                if ($item["DynScale"]) {
+                    $axes[$row]["Min"] = "Dyn.";
+                    $axes[$row]["Max"] = "Dyn.";
+                }elseif($item["OverrideMinMax"]) {
+                    $axes[$row]["min"] = $item["Minimum"];
+                    $axes[$row]["max"] = $item["Maximum"];
+                }elseif (($profilData["MaxValue"] != 0 || $profilData["MinValue"] != 0)) {
+                    $axes[$row]["Min"] = $profilData["MinValue"];
+                    $axes[$row]["Max"] = $profilData["MaxValue"];
+                }else{
+                    $axes[$row]["Min"] = "Not Set!";
+                    $axes[$row]["Max"] = "Not Set!";
+                }
+
+                if ($item["OverrideStepSize"] != 0) {
+                    $axes[$row]["Steps"] = $item["OverrideStepSize"];
+                }elseif($profilData["StepSize"] != 0){
+                    $axes[$row]["Steps"] = $profilData["StepSize"];
+                }else {
+                    $axes[$row]["Steps"] = "Not Set!";;
+                }
+
+                if(empty($item["Ident"])){
+                    $axes[$row]["rowColor"] = "#ff0000";
+                }
+            }
+        }
+
+
+        $this->UpdateFormField("Axes", "values", json_encode($axes));
+
+        $this->SetBuffer("ConfigurationBuffer", json_encode($formData));
+        $this->SetBuffer("AxesBuffer", json_encode($axes));
+
+        $this->ReloadFormDatasets(array(), 3);
+    }
+
+    /**
+     * @param $arr
+     * @param $type 0 = add / 1 = change / 2 = remove / 3 = update
+     * @return void
+     */
+    public function ReloadFormDatasets($arr, $type){
+        if(is_null($arr)) return;
+        $formData = json_decode($this->GetBuffer("ConfigurationBuffer"), true);
+        $axes = json_decode($this->GetBuffer("AxesBuffer"), true);
+        $datasets = json_decode($this->GetBuffer("DatasetsBuffer"), true);
+
+        $key = 0;
+        foreach ($formData["elements"] as $keyNr => $element) {
+            if (array_key_exists("name", $element) && $element["name"] === "Datasets") {
+                $key = $keyNr;
+                break;
+            }
+        }
+
+        //In dem bereich liegt das Problem
+        $id = ""; //<= hier breuchte ich den Index des auslösenden Datensatzes
+        switch($type){
+            case 0: //add
+                $datasets[] = $arr;
+                break;
+            case 1: //change
+                $datasets[$id] = $arr;
+                break;
+            case 2: //remove
+                unset($datasets[$id]);
+                break;
+            case 3: //update
+                //do nothing here
+                break;
+        }
+        //ende Problemes
+
+        //columns
+        if (is_array($axes) && count($axes) > 0) {
+            $colData = $formData["elements"][$key]["columns"];
+            $colkey = array_search("Axes", array_column($colData, 'name'));
+
+            $options_arr = array();
+            $options_arr[] = array("value" => "", "caption" => "--Disable Dataset--");
+
+            foreach ($axes as $item) {
+                if(empty($item["Ident"])){
+                    continue;
+                }
+
+                $caption = $item["Title"];
+                if(empty($caption)) $caption = $item["Ident"];
+                $options_arr[] = array("value" => $item["Ident"], "caption" => $caption);
+            }
+
+            $formData["elements"][$key]["columns"][$colkey]["add"] = $options_arr[0]["value"];
+            $formData["elements"][$key]["columns"][$colkey]["edit"]["options"] = $options_arr;
+        }
+
+        //values
+        foreach ($datasets as $row => $item) {
+            $datasets[$row]["Dash"] = json_encode($datasets[$row]["Dash"]);
+            if(!array_key_exists("Axes", $item)) {
+                $datasets[$row]["rowColor"] = "#ff0000";
+                continue;
+            }
+
+            $axesKey = array_search($item["Axes"], array_column($axes, 'Ident'));
+            if(empty($item["Axes"]) || $item["Variable"] == 0 || $axesKey === false){
+                $datasets[$row]["rowColor"] = "#ff0000";
+            }
+        }
+
+        $this->UpdateFormField("Datasets", "columns", json_encode($formData["elements"][$key]["columns"]));
+        $this->UpdateFormField("Datasets", "values", json_encode($datasets));
+        $this->SetBuffer("ConfigurationBuffer", json_encode($formData));
+        $this->SetBuffer("DatasetsBuffer", json_encode($datasets));
     }
 
     public function ReceiveData($JSONString) {
@@ -1005,13 +1219,13 @@ class SymconJSLiveChart extends JSLiveModule{
         return $output;
     }
     private function GenerateXAxesData(){
+        $xaxes_override = json_decode($this->ReadPropertyString("xaxes_override_list"), true);
         $output = array();
         $output["time"]["tooltipFormat"] = "DD.MM.YYYY HH:mm:ss";
         //$output["stacked"] = true;
 
         $output["ticks"]["font"]["size"] = $this->ReadPropertyInteger("axes_tickfontSize");
         $output["ticks"]["font"]["family"] = $this->ReadPropertyString("axes_fontFamily");
-
 
         $period = $this->GetValue("Period");
         $relativ = $this->GetValue("Relativ");
@@ -1020,6 +1234,7 @@ class SymconJSLiveChart extends JSLiveModule{
                 //Dekade
                 $output["type"] = "time";
                 $output["time"]["unit"] = "year";
+
                 //$output["time"]["stepSize"] = 1;
                 break;
             case 1:
@@ -1040,7 +1255,7 @@ class SymconJSLiveChart extends JSLiveModule{
                 $output["type"] = "time";
                 $output["time"]["unit"] = "day";
                 //$output["time"]["stepSize"] = 3;
-                $output["ticks"]["maxTicksLimit"] = 20;
+                //$output["ticks"]["maxTicksLimit"] = 20;
                 break;
             case 4:
                 //Woche
@@ -1058,12 +1273,12 @@ class SymconJSLiveChart extends JSLiveModule{
                 //Stunde
                 if($relativ) $output["type"] = "realtime"; else $output["type"] = "time";
                 $output["time"]["unit"] = "minute";
-                $output["time"]["stepSize"] = 5;
+                //$output["time"]["stepSize"] = 5;
                 //$output["ticks"]["maxTicksLimit"] = 13;
 
                 if($relativ) {
                     $output["realtime"]["duration"] = 3600000;
-                    $output["realtime"]["delay"] = 0;
+                    //$output["realtime"]["delay"] = 0;
                     //$output["realtime"]["ttl"] = $output["realtime"]["duration"]*2;
                 }
                 break;
@@ -1071,7 +1286,7 @@ class SymconJSLiveChart extends JSLiveModule{
                 //Minute
                 if($relativ) $output["type"] = "realtime"; else $output["type"] = "time";
                 $output["time"]["unit"] = "second";
-                $output["time"]["stepSize"] = 10;
+                //$output["time"]["stepSize"] = 10;
 
                 if($relativ){
                     $output["realtime"]["duration"] = 60000;
@@ -1080,6 +1295,15 @@ class SymconJSLiveChart extends JSLiveModule{
                 }
                 break;
 
+        }
+
+        if($this->ReadPropertyBoolean("xaxes_overrideDynamic")){
+            if($xaxes_override[$period]["stepSize"] > 0){
+                $output["time"]["stepSize"] = $xaxes_override[$period]["stepSize"];
+            }
+            if($xaxes_override[$period]["maxTicksLimit"] > 0){
+                $output["time"]["maxTicksLimit"] = $xaxes_override[$period]["maxTicksLimit"];
+            }
         }
 
         $output["time"]["displayFormats"]["year"] = "YYYY";
@@ -1108,7 +1332,7 @@ class SymconJSLiveChart extends JSLiveModule{
             $output["grid"]["tickWidth"] = $this->ReadPropertyInteger("axes_lineWidth");
         }
 
-        $output["display"] = $this->ReadPropertyBoolean("axes_display");
+        $output["display"] = $this->ReadPropertyBoolean("xaxes_display");
 
         $output["grid"]["drawBorder"] = $this->ReadPropertyBoolean("axes_drawBorder");
         $output["grid"]["drawOnChartArea"] = $this->ReadPropertyBoolean("axes_drawOnChartArea");
@@ -1120,13 +1344,6 @@ class SymconJSLiveChart extends JSLiveModule{
         }
 
         $output["ticks"]["maxRotation"] = 0;
-
-        /*
-        if($this->ReadPropertyBoolean("axes_swap")){
-            $output["axis"] = "y";
-        }else{
-            $output["axis"] = "x";
-        }*/
 
         return $output;
     }
@@ -1294,6 +1511,7 @@ class SymconJSLiveChart extends JSLiveModule{
         //remove Dataset
         unset($output["Datasets"]);
         unset($output["Axes"]);
+        unset($output["xaxes_override_list"]);
 
         return $output;
     }

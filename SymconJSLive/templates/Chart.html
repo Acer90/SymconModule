@@ -7,11 +7,11 @@
     {FONTS} <!-- Need for Custom font Family !-->
 </head>
 <script src="/hook/JSLive/js/jquery.min.js" ></script>
-<script src="/hook/JSLive/js/chartjs/3.6.0/chart.min.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/chartjs/chart.min.js" charset="utf-8"></script>
 <script src="/hook/JSLive/js/moment/2.27.0/Moment.js" charset="utf-8"></script>
-<script src="/hook/JSLive/js/chartjs/3.6.0/plugins/chartjs-adapter-moment.js" charset="utf-8"></script>
-<script src="/hook/JSLive/js/chartjs/3.6.0/plugins/chartjs-plugin-streaming.min.js" charset="utf-8"></script>
-<script src="/hook/JSLive/js/chartjs/3.6.0/plugins/chartjs-plugin-datalabels.min.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/chartjs/plugins/chartjs-adapter-moment.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/chartjs/plugins/chartjs-plugin-streaming.min.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/chartjs/plugins/chartjs-plugin-datalabels.min.js" charset="utf-8"></script>
 <script src="/hook/JSLive/js/util.js"></script>
 
 <body>
@@ -207,66 +207,80 @@
     }
 
     function UpdateChart(id_val, dt_val, value){
-        //wenn nicht Now dann kein Update durchführen!
-        if(!configuration.Now || isReloading) return;
+        try{
+            //wenn nicht Now dann kein Update durchführen!
+            if(!configuration.Now || isReloading) return;
 
-        isUpdated = false;
+            isUpdated = false;
 
-        required = {Variable: id_val};
-        results = [];
-        results = getMatchingKeys(config_dataset, required);
+            required = {Variable: id_val};
+            results = [];
+            results = getMatchingKeys(config_dataset, required);
 
-        //console.log('Result:', results);
-        //nur Updaten wenn ID in Chart exestiert
-        if(results.length > 0){
-            period = configuration["Period"];
-            //updaten des Aktuellen Charts
-            results.forEach(function(part, index) {
-                //nur daten ohne Offset hier updaten
+            //console.log('Result:', results);
+            //nur Updaten wenn ID in Chart exestiert
+            if(results.length > 0){
+                period = configuration["Period"];
+                //updaten des Aktuellen Charts
+                results.forEach(function(part, index) {
+                    //nur daten ohne Offset hier updaten
 
-                //check if BoolAxes
-                isBool = false;
-                yAxisID = myChart.data.datasets[part].yAxisID;
-                if(yAxisID in config_axes && "labels" in config_axes[yAxisID]){
-                    boolData = config_axes[yAxisID].labels;
-                    if(value === 1){
-                        val = boolData[0];
-                    }else{
-                        val = boolData[1];
-                    }
-                    isBool = true;
-                }
-
-
-                offset = myChart.data.datasets[part].offset;
-                if(offset === 0) {
-                    if(!isBool){
-                        precision = Math.pow(10, configuration.data_precision);
-
-                        val = Math.floor(value * precision) /  precision;
-                        highRes = myChart.data.datasets[part].highRes;
-                        itemDate = UpdateDate(dt_val * 1000, highRes);
+                    //check if BoolAxes
+                    isBool = false;
+                    yAxisID = myChart.data.datasets[part].yAxisID;
+                    if(yAxisID in config_axes && "labels" in config_axes[yAxisID]){
+                        boolData = config_axes[yAxisID].labels;
+                        if(value === 1){
+                            val = boolData[0];
+                        }else{
+                            val = boolData[1];
+                        }
+                        isBool = true;
                     }
 
-                    counter = myChart.data.datasets[part].counter;
-                    if(counter && !isBool){
 
-                        val = val - myChart.data.datasets[part].lastValue;
-                        val = Math.floor(val * precision) / precision;
-                        if(val < 0) val = val * -1.0;
+                    offset = myChart.data.datasets[part].offset;
+                    if(offset === 0) {
+                        if(!isBool){
+                            precision = Math.pow(10, configuration.data_precision);
 
-                        myChart.data.datasets[part].lastValue = Math.floor(value * 100000) / 100000;
-                    }
+                            val = Math.floor(value * precision) /  precision;
+                            highRes = myChart.data.datasets[part].highRes;
+                            itemDate = UpdateDate(dt_val * 1000, highRes);
+                        }
 
-                    if (highRes <= period) {
-                        //highres Update
+                        counter = myChart.data.datasets[part].counter;
+                        if(counter && !isBool){
 
-                        var last_index = (myChart.data.datasets[part].data.length - 1);
+                            val = val - myChart.data.datasets[part].lastValue;
+                            val = Math.floor(val * precision) / precision;
+                            if(val < 0) val = val * -1.0;
 
-                        if(last_index >= 0){
-                            var last_datencount = myChart.data.datasets[part].data[last_index].c
+                            myChart.data.datasets[part].lastValue = Math.floor(value * 100000) / 100000;
+                        }
 
-                            if(isNaN(last_datencount) || last_datencount >= configuration.data_highResSteps){
+                        if (highRes <= period) {
+                            //highres Update
+
+                            var last_index = (myChart.data.datasets[part].data.length - 1);
+
+                            if(last_index >= 0){
+                                var last_datencount = myChart.data.datasets[part].data[last_index].c
+
+                                if(isNaN(last_datencount) || last_datencount >= configuration.data_highResSteps){
+                                    //neuen Datensatz anlegen
+                                    dataPoint = {
+                                        x: itemDate.getTime(),
+                                        y: val,
+                                        c: 1
+                                    }
+                                    myChart.data.datasets[part].data.push(dataPoint);
+                                }else{
+                                    //alten datensatz ändern und c um 1 erhöhen
+                                    myChart.data.datasets[part].data[last_index].y = val;
+                                    myChart.data.datasets[part].data[last_index].c = last_datencount + 1;
+                                }
+                            }else{
                                 //neuen Datensatz anlegen
                                 dataPoint = {
                                     x: itemDate.getTime(),
@@ -274,61 +288,51 @@
                                     c: 1
                                 }
                                 myChart.data.datasets[part].data.push(dataPoint);
-                            }else{
-                                //alten datensatz ändern und c um 1 erhöhen
-                                myChart.data.datasets[part].data[last_index].y = val;
-                                myChart.data.datasets[part].data[last_index].c = last_datencount + 1;
-                            }
-                        }else{
-                            //neuen Datensatz anlegen
-                            dataPoint = {
-                                x: itemDate.getTime(),
-                                y: val,
-                                c: 1
-                            }
-                            myChart.data.datasets[part].data.push(dataPoint);
-                        }
-                    } else {
-                        //check Timestamp vorhanden
-                        required = {x: itemDate.getTime()};
-                        results = [];
-                        results = getMatchingKeys(myChart.data.datasets[part].data, required);
-                        //console.log('Result:', results);
-
-                        if (results.length > 0) {
-                            //ja alten updaten
-                            if(counter && !isBool) {
-                                old = myChart.data.datasets[part].data[results[0]].y;
-                                myChart.data.datasets[part].data[results[0]].y = old + val;
-                            }else{
-                                c = 1;
-                                if (typeof myChart.data.datasets[part].data[results[0]].c != "undefined") {
-                                    oldval = myChart.data.datasets[part].data[results[0]].y;
-                                    c = myChart.data.datasets[part].data[results[0]].c;
-
-                                    if(!isBool) val = Math.round(((oldval * c) + val) / (c + 1) * 100) / 100;
-                                    c++;
-                                }
-
-                                myChart.data.datasets[part].data[results[0]].y = val;
-                                myChart.data.datasets[part].data[results[0]].c = c;
                             }
                         } else {
-                            dataPoint = {
-                                x: itemDate.getTime(),
-                                y: val,
-                                c: 1
+                            //check Timestamp vorhanden
+                            required = {x: itemDate.getTime()};
+                            results = [];
+                            results = getMatchingKeys(myChart.data.datasets[part].data, required);
+                            //console.log('Result:', results);
+
+                            if (results.length > 0) {
+                                //ja alten updaten
+                                if(counter && !isBool) {
+                                    old = myChart.data.datasets[part].data[results[0]].y;
+                                    myChart.data.datasets[part].data[results[0]].y = old + val;
+                                }else{
+                                    c = 1;
+                                    if (typeof myChart.data.datasets[part].data[results[0]].c != "undefined") {
+                                        oldval = myChart.data.datasets[part].data[results[0]].y;
+                                        c = myChart.data.datasets[part].data[results[0]].c;
+
+                                        if(!isBool) val = Math.round(((oldval * c) + val) / (c + 1) * 100) / 100;
+                                        c++;
+                                    }
+
+                                    myChart.data.datasets[part].data[results[0]].y = val;
+                                    myChart.data.datasets[part].data[results[0]].c = c;
+                                }
+                            } else {
+                                dataPoint = {
+                                    x: itemDate.getTime(),
+                                    y: val,
+                                    c: 1
+                                }
+                                myChart.data.datasets[part].data.push(dataPoint);
                             }
-                            myChart.data.datasets[part].data.push(dataPoint);
+
                         }
-
                     }
-                }
-            });
+                });
 
-            myChart.update({
-                preservation: true
-            });
+                myChart.update({
+                    preservation: true
+                });
+            }
+        } catch (error) {
+            console.error(error);
         }
     }
     function ReloadChart(id_val, dt_val, val = null, fullReload = false){
@@ -389,7 +393,8 @@
                                 return;
                             }
 
-                            config_dataset.push(data.DATASETS[0]);
+                            //config_dataset.push(data.DATASETS[0]);
+                            config_dataset[index] = data.DATASETS[0];
                             //Object.assign(config_axes, data.AXES);
 
                             console.log("Async Dataset " + Variable + " loaded");
