@@ -1006,7 +1006,7 @@
                 {
                     "type": "RowLayout",
                     "items": [
-                        { "type": "CheckBox", "name": "CreateOutput", "caption": "Create IPSView HTMLBox"},
+                        { "type": "CheckBox", "name": "CreateIPSView", "caption": "Create IPSView HTMLBox"},
                         { "type": "Label", "caption": "Works only if the Option IPSView in Gateway is enabled!"}
                     ]
                 },
