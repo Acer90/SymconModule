@@ -1,0 +1,51 @@
+{
+  "translations": {
+    "de": {
+      "Style": "Stil",
+      "Border Width": "Randbreite",
+      "Border Color": "Randfarbe",
+      "Handle Radius": "Markerradius",
+
+      "Wheel": "Steuerrad",
+      "Lightness": "Helligkeit",
+      "Angle": "Winkel",
+      "Direction": "Richtung",
+      "Anticlockwise": "Gegen den Uhrzeigersinn",
+      "Clockwise": "Im Uhrzeigersinn ",
+
+      "Layout": "Layout",
+      "Side by side": "Nebeneinander",
+      "One below the other": "Übereinander",
+
+      "Order": "Reihenfolge",
+      "Type": "Typ",
+      "Size": "Größe",
+      "Shape": "Form",
+
+      "Datasets": "Datensätze",
+      "Variable": "Variable",
+      "Mode": "Modus",
+      "Color": "Farbe",
+
+
+      "Expert": "Experte",
+      "Debug": "Debug",
+      "Enable Cache": "Verwende Cache",
+      "Create HTMLBox": "Erstelle HTMLBox",
+      "Template Script": "Vorlagen Skript",
+      "Viewport Enable": "Aktiviere Viewport",
+      "IFrame Height": "IFrame Höhe",
+
+	  "Get Link": "Öffne Link",
+      "Configuration": "Konfiguration",
+      "Load from other Modul": "Einstellungen von einen anderen Modul laden",
+      "Load": "Laden",
+      "Load from File": "Einstellungen aus einer Konfigurationsdatei laden",
+      "File": "Datei",
+      "Export": "Export Konfigurationsdatei",
+
+	  "Status OK!": "Status Ok!"
+    }
+  }
+}
+

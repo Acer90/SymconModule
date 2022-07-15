@@ -1,0 +1,14 @@
+{
+    "id": "{E138AFDC-D1E0-B462-A5E5-AF24F57D4686}",
+    "name": "BlueIrisGateway",
+    "type": 1,
+	"vendor": "",
+	"aliases": 
+	[
+		"BlueIris Gateway"
+	],
+    "parentRequirements": [],
+    "childRequirements": ["{99FD6BAA-68AA-D576-8209-4E8E7A33E3E7}", "{80FC55A5-8B0F-0642-DB3B-2CA825E3A2A3}", "{8AD9F950-FFB3-1BE8-5B4C-1C603EB9887E}"],
+    "implemented": ["{95E9AD15-F5B0-01C6-4FF2-9093B9BD4E36}", "{7024A8F5-E706-33B4-4BBE-19A510C35E65}", "{8AB1599B-63C9-6E0E-864E-98A562E1CBC9}"],
+    "prefix": "BlueIrisGateway"
+}

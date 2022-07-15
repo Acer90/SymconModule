@@ -1,0 +1,626 @@
+{
+    "elements":
+    [
+        { "type": "Select", "name": "type", "caption": "Type",
+            "options": [
+                { "caption": "Pie", "value": "pie" },
+                { "caption": "Doughnut", "value": "doughnut" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Title",
+            "items": [
+                { "type": "CheckBox", "name": "title_display", "caption": "Display"},
+                { "type": "ValidationTextBox", "name": "title_text", "caption": "Text" },
+                { "type": "Select", "name": "title_position", "caption": "Position",
+                    "options": [
+                        { "caption": "top", "value": "top" },
+                        { "caption": "left", "value": "left" },
+                        { "caption": "bottom", "value": "bottom" },
+                        { "caption": "right", "value": "right" }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Font:", "width": "100px" },
+                        { "type": "NumberSpinner", "name": "title_fontSize", "caption": "Size" , "width": "100px", "suffix": "px", "minimum": 0, "stepSize": 1},
+                        { "type": "SelectColor", "name": "title_fontColor", "caption": "Color" , "width": "150px"},
+                        { "type": "Select", "name": "title_fontFamily", "caption": "Family", "width": "150px",
+                            "options": [
+                                { "caption": "-Default-", "value": "" },
+                                { "caption": "Amatic SC", "value": "Amatic SC" },
+                                { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                                { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                                { "caption": "Codystar", "value": "Codystar" },
+                                { "caption": "Comfortaa", "value": "Comfortaa" },
+                                { "caption": "Cookie", "value": "Cookie" },
+                                { "caption": "Dancing Script", "value": "Dancing Script" },
+                                { "caption": "Gurajada", "value": "Gurajada" },
+                                { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                                { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                                { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                                { "caption": "Medula One", "value": "Medula One" },
+                                { "caption": "Open Sans", "value": "Open Sans" },
+                                { "caption": "Orbitron", "value": "Orbitron" },
+                                { "caption": "Roboto", "value": "Roboto" },
+                                { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                                { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                                { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                                { "caption": "Space Mono", "value": "Space Mono" },
+                                { "caption": "Syne Mono", "value": "Syne Mono" }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Legend",
+            "items": [
+                { "type": "CheckBox", "name": "legend_display", "caption": "Display"},
+                { "type": "Select", "name": "legend_position", "caption": "Position",
+                    "options": [
+                        { "caption": "top", "value": "top" },
+                        { "caption": "left", "value": "left" },
+                        { "caption": "bottom", "value": "bottom" },
+                        { "caption": "right", "value": "right" }
+                    ]
+                },
+                { "type": "Select", "name": "legend_align", "caption": "Align",
+                    "options": [
+                        { "caption": "start", "value": "start" },
+                        { "caption": "center", "value": "center" },
+                        { "caption": "end", "value": "end" }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Font:", "width": "100px" },
+                        { "type": "NumberSpinner", "name": "legend_fontSize", "caption": "Size", "width": "100px", "suffix": "px", "minimum": 0, "stepSize": 1 },
+                        { "type": "SelectColor", "name": "legend_fontColor", "caption": "Color", "width": "150px"},
+                        { "type": "Select", "name": "legend_fontFamily", "caption": "Family", "width": "150px",
+                            "options": [
+                                { "caption": "-Default-", "value": "" },
+                                { "caption": "Amatic SC", "value": "Amatic SC" },
+                                { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                                { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                                { "caption": "Codystar", "value": "Codystar" },
+                                { "caption": "Comfortaa", "value": "Comfortaa" },
+                                { "caption": "Cookie", "value": "Cookie" },
+                                { "caption": "Dancing Script", "value": "Dancing Script" },
+                                { "caption": "Gurajada", "value": "Gurajada" },
+                                { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                                { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                                { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                                { "caption": "Medula One", "value": "Medula One" },
+                                { "caption": "Open Sans", "value": "Open Sans" },
+                                { "caption": "Orbitron", "value": "Orbitron" },
+                                { "caption": "Roboto", "value": "Roboto" },
+                                { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                                { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                                { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                                { "caption": "Space Mono", "value": "Space Mono" },
+                                { "caption": "Syne Mono", "value": "Syne Mono" }
+                            ]
+                        }
+                    ]
+                },
+                { "type": "NumberSpinner", "name": "legend_boxWidth", "caption": "Box Width" }
+
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Tooltips",
+            "items": [
+                { "type": "CheckBox", "name": "tooltips_enabled", "caption": "Enabled"},
+                { "type": "Select", "name": "tooltips_position", "caption": "Position",
+                    "options": [
+                        { "caption": "average", "value": "average" },
+                        { "caption": "nearest", "value": "nearest" }
+                    ]
+                },
+                { "type": "Select", "name": "tooltips_mode", "caption": "Mode",
+                    "options": [
+                        { "caption": "index", "value": "index" },
+                        { "caption": "dataset", "value": "dataset" },
+                        { "caption": "point", "value": "point" }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Font:", "width": "100px" },
+                        { "type": "NumberSpinner", "name": "tooltips_fontSize", "caption": "Size", "width": "100px", "suffix": "px", "minimum": 0, "stepSize": 1 },
+                        { "type": "SelectColor", "name": "tooltips_fontColor", "caption": "Color", "width": "150px"},
+                        { "type": "Select", "name": "tooltips_fontFamily", "caption": "Family", "width": "150px",
+                            "options": [
+                                { "caption": "-Default-", "value": "" },
+                                { "caption": "Amatic SC", "value": "Amatic SC" },
+                                { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                                { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                                { "caption": "Codystar", "value": "Codystar" },
+                                { "caption": "Comfortaa", "value": "Comfortaa" },
+                                { "caption": "Cookie", "value": "Cookie" },
+                                { "caption": "Dancing Script", "value": "Dancing Script" },
+                                { "caption": "Gurajada", "value": "Gurajada" },
+                                { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                                { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                                { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                                { "caption": "Medula One", "value": "Medula One" },
+                                { "caption": "Open Sans", "value": "Open Sans" },
+                                { "caption": "Orbitron", "value": "Orbitron" },
+                                { "caption": "Roboto", "value": "Roboto" },
+                                { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                                { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                                { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                                { "caption": "Space Mono", "value": "Space Mono" },
+                                { "caption": "Syne Mono", "value": "Syne Mono" }
+                            ]
+                        }
+                    ]
+                },
+                { "type": "SelectColor", "name": "tooltips_backgroundColor", "caption": "Background Color" },
+                { "type": "NumberSpinner", "name": "tooltips_cornerRadius", "caption": "Corner Radius" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Rotation",
+            "items": [
+                { "type": "Label", "caption": "Works only with doughnut!" },
+                { "type": "NumberSpinner", "name": "rotation_start", "caption": "Start", "suffix": "°", "minimum": 0, "maximum": 360},
+                { "type": "NumberSpinner", "name": "rotation_length", "caption": "Length", "suffix": "°", "minimum": 0, "maximum": 360}
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Animation",
+            "items": [
+                { "type": "NumberSpinner", "name": "animation_duration", "caption": "Duration", "suffix": "ms", "minimum": 0},
+                {
+                    "type": "Select",
+                    "name": "animation_easing",
+                    "caption": "easing",
+                    "options": [
+                        { "caption": "linear", "value": "linear"},
+                        { "caption": "easeInQuad", "value": "easeInQuad"},
+                        { "caption": "easeOutQuad", "value": "easeOutQuad"},
+                        { "caption": "easeInOutQuad", "value": "easeInOutQuad"},
+                        { "caption": "easeInCubic", "value": "easeInCubic"},
+                        { "caption": "easeOutCubic", "value": "easeOutCubic"},
+                        { "caption": "easeInOutCubic", "value": "easeInOutCubic"},
+                        { "caption": "easeInQuart", "value": "easeInQuart"},
+                        { "caption": "easeOutQuart", "value": "easeOutQuart"},
+                        { "caption": "easeInOutQuart", "value": "easeInOutQuart"},
+                        { "caption": "easeInQuint", "value": "easeInQuint"},
+                        { "caption": "easeOutQuint", "value": "easeOutQuint"},
+                        { "caption": "easeInOutQuint", "value": "easeInOutQuint"},
+                        { "caption": "easeInSine", "value": "easeInSine"},
+                        { "caption": "easeOutSine", "value": "easeOutSine"},
+                        { "caption": "easeInOutSine", "value": "easeInOutSine"},
+                        { "caption": "easeInExpo", "value": "easeInExpo"},
+                        { "caption": "easeOutExpo", "value": "easeOutExpo"},
+                        { "caption": "easeInOutExpo", "value": "easeInOutExpo"},
+                        { "caption": "easeInCirc", "value": "easeInCirc"},
+                        { "caption": "easeOutCirc", "value": "easeOutCirc"},
+                        { "caption": "easeInOutCirc", "value": "easeInOutCirc"},
+                        { "caption": "easeInElastic", "value": "easeInElastic"},
+                        { "caption": "easeOutElastic", "value": "easeOutElastic"},
+                        { "caption": "easeInOutElastic", "value": "easeInOutElastic"},
+                        { "caption": "easeInBack", "value": "easeInBack"},
+                        { "caption": "easeOutBack", "value": "easeOutBack"},
+                        { "caption": "easeInOutBack", "value": "easeInOutBack"},
+                        { "caption": "easeInBounce", "value": "easeInBounce"},
+                        { "caption": "easeOutBounce", "value": "easeOutBounce"},
+                        { "caption": "easeInOutBounce", "value": "easeInOutBounce"}
+                    ]
+                },
+                { "type": "Label", "caption": "More Infos on: https://easings.net/" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "DataLabels",
+            "items": [
+                { "type": "Select", "name": "datalabels_anchoring", "caption": "Anchoring",
+                    "options": [
+                        { "caption": "start", "value": "start" },
+                        { "caption": "center", "value": "center" },
+                        { "caption": "end", "value": "end" }
+                    ]
+                },
+                { "type": "Select", "name": "datalabels_align", "caption": "Align",
+                    "options": [
+                        { "caption": "start", "value": "start" },
+                        { "caption": "center", "value": "center" },
+                        { "caption": "end", "value": "end" },
+                        { "caption": "right", "value": "right" },
+                        { "caption": "bottom", "value": "bottom" },
+                        { "caption": "left", "value": "left" },
+                        { "caption": "top", "value": "top" }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Font:", "width": "100px" },
+                        { "type": "NumberSpinner", "name": "datalabels_fontSize", "caption": "Size", "suffix": "px", "minimum": 0, "stepSize": 1, "width": "100px" },
+                        { "type": "SelectColor", "name": "datalabels_fontColor", "caption": "Color", "width": "150px" },
+                        { "type": "Select", "name": "datalabels_fontFamily", "caption": "Family", "width": "150px",
+                            "options": [
+                                { "caption": "-Default-", "value": "" },
+                                { "caption": "Amatic SC", "value": "Amatic SC" },
+                                { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                                { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                                { "caption": "Codystar", "value": "Codystar" },
+                                { "caption": "Comfortaa", "value": "Comfortaa" },
+                                { "caption": "Cookie", "value": "Cookie" },
+                                { "caption": "Dancing Script", "value": "Dancing Script" },
+                                { "caption": "Gurajada", "value": "Gurajada" },
+                                { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                                { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                                { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                                { "caption": "Medula One", "value": "Medula One" },
+                                { "caption": "Open Sans", "value": "Open Sans" },
+                                { "caption": "Orbitron", "value": "Orbitron" },
+                                { "caption": "Roboto", "value": "Roboto" },
+                                { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                                { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                                { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                                { "caption": "Space Mono", "value": "Space Mono" },
+                                { "caption": "Syne Mono", "value": "Syne Mono" }
+                            ]
+                        }
+                    ]
+                },
+                { "type": "NumberSpinner", "name": "datalabels_borderWidth", "caption": "Border Width" },
+                { "type": "NumberSpinner", "name": "datalabels_borderRadius", "caption": "Border Radius" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Data",
+            "items": [
+                { "type": "Select", "name": "data_precision", "caption": "Precision",
+                    "options": [
+                        { "caption": "1", "value": 0 },
+                        { "caption": "0.1", "value": 1 },
+                        { "caption": "0.01", "value": 2 },
+                        { "caption": "0.001", "value": 3 }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "List",
+            "name": "Datasets",
+            "caption": "Datasets",
+            "rowCount": 5,
+            "add": true,
+            "delete": true,
+            "sort": {
+                "column": "Order",
+                "direction": "ascending"
+            },
+            "columns": [
+                {
+                    "caption": "Order",
+                    "name": "Order",
+                    "width": "150px",
+                    "add": 0,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 0,
+                        "minimum": 0
+                    }
+                },
+                {
+                    "caption": "Title",
+                    "name": "Title",
+                    "width": "auto",
+                    "add": "",
+                    "edit": {
+                        "type": "ValidationTextBox"
+                    }
+                },
+                {
+                    "caption": "Profile",
+                    "name": "Profile",
+                    "width": "200px",
+                    "add": "",
+                    "edit": {
+                        "type": "SelectProfile"
+                    }
+                },
+                {
+                    "name": "Variables",
+                    "caption": "Variables",
+                    "width": "150ox",
+                    "add": "",
+                    "delete": true,
+                    "edit": {
+                        "type": "List",
+                        "rowCount": 10,
+                        "add": true,
+                        "delete": true,
+                        "sort": {
+                            "column": "Order",
+                            "direction": "ascending"
+                        },
+                        "columns": [
+                            {
+                                "caption": "Order",
+                                "name": "Order",
+                                "width": "150px",
+                                "add": 0,
+                                "edit": {
+                                    "type": "NumberSpinner",
+                                    "digits": 0,
+                                    "minimum": 0
+                                }
+                            },
+                            {
+                                "caption": "Label",
+                                "name": "Label",
+                                "width": "auto",
+                                "add": "",
+                                "edit": {
+                                    "type": "ValidationTextBox"
+                                }
+                            },
+                            {
+                                "caption": "Variable",
+                                "name": "Variable",
+                                "width": "155px",
+                                "add": 0,
+                                "edit": {
+                                    "type": "SelectVariable"
+                                }
+                            },
+                            {
+                                "caption": "Background Color",
+                                "name": "BackgroundColor",
+                                "width": "130px",
+                                "add": 0,
+                                "edit": {
+                                    "type": "SelectColor"
+                                }
+                            },
+                            {
+                                "caption": "Background Color Alpha",
+                                "name": "BackgroundColor_Alpha",
+                                "width": "180px",
+                                "add": 0.5,
+                                "edit": {
+                                    "type": "HorizontalSlider",
+                                    "stepSize": 0.05,
+                                    "maximum": 1,
+                                    "minimum": 0
+                                }
+                            },
+                            {
+                                "caption": "Border Color",
+                                "name": "BorderColor",
+                                "width": "120px",
+                                "add": 0,
+                                "edit": {
+                                    "type": "SelectColor"
+                                }
+                            },
+                            {
+                                "caption": "BorderColor Alpha",
+                                "name": "BorderColor_Alpha",
+                                "width": "150px",
+                                "add": 1.0,
+                                "edit": {
+                                    "type": "HorizontalSlider",
+                                    "stepSize": 0.05,
+                                    "maximum": 1,
+                                    "minimum": 0
+                                }
+                            },{
+                                "caption": "Border Width",
+                                "name": "BorderWidth",
+                                "width": "120px",
+                                "add": 2,
+                                "edit": {
+                                    "type": "NumberSpinner",
+                                    "digits": 0,
+                                    "minimum": 0
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "caption": "Datalabels",
+                    "name": "datalabels_enable",
+                    "width": "150px",
+                    "add": true,
+                    "edit": {
+                        "type": "CheckBox"
+                    }
+                },
+                {
+                    "caption": "Datalabels Override Anchoring",
+                    "name": "datalabels_anchoring",
+                    "width": "130px",
+                    "add": "",
+                    "visible": false,
+                    "edit": {
+                        "type": "Select",
+                        "options": [
+                            { "caption": "use Global-Setting", "value": "" },
+                            { "caption": "start", "value": "start" },
+                            { "caption": "center", "value": "center" },
+                            { "caption": "end", "value": "end" }
+                        ]
+                    }
+                },
+                {
+                    "caption": "Datalabels Override BackgroundColor",
+                    "name": "datalabels_BackgroundColor",
+                    "width": "130px",
+                    "add": -1,
+                    "visible": false,
+                    "edit": {
+                        "type": "SelectColor"
+                    }
+                },
+                {
+                    "caption": "Datalabels Override BackgroundColor Alpha",
+                    "name": "datalabels_BackgroundColor_Alpha",
+                    "width": "50px",
+                    "visible": false,
+                    "add": 0.5,
+                    "edit": {
+                        "type": "HorizontalSlider",
+                        "stepSize": 0.05,
+                        "maximum": 1,
+                        "minimum": 0
+                    }
+                },
+                {
+                    "caption": "Datalabels Override BorderColor",
+                    "name": "datalabels_BorderColor",
+                    "width": "120px",
+                    "add": -1,
+                    "visible": false,
+                    "edit": {
+                        "type": "SelectColor"
+                    }
+                },
+                {
+                    "caption": "Datalabels Override BorderColor Alpha",
+                    "name": "datalabels_BorderColor_Alpha",
+                    "width": "50px",
+                    "visible": false,
+                    "add": 1.0,
+                    "edit": {
+                        "type": "HorizontalSlider",
+                        "stepSize": 0.05,
+                        "maximum": 1,
+                        "minimum": 0
+                    }
+                },
+                {
+                    "caption": "Datalabels Override FontColor",
+                    "name": "datalabels_FontColor",
+                    "width": "120px",
+                    "add": -1,
+                    "visible": false,
+                    "edit": {
+                        "type": "SelectColor"
+                    }
+                },
+                {
+                    "caption": "Datalabels show Prefix",
+                    "name": "datalabels_showPrefix",
+                    "add": true,
+                    "visible": false,
+                    "edit": {
+                        "type": "CheckBox"
+                    }
+                },
+                {
+                    "caption": "Datalabels show Suffix",
+                    "name": "datalabels_showSuffix",
+                    "add": true,
+                    "visible": false,
+                    "edit": {
+                        "type": "CheckBox"
+                    }
+                },
+                {
+                    "caption": "cutout",
+                    "name": "cutout",
+                    "add": -1,
+                    "visible": false,
+                    "edit": {
+                        "type": "NumberSpinner",
+                        "digits": 0,
+                        "minimum": -1,
+                        "maximum": 100,
+                        "suffix": "%"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Expert",
+            "items": [
+                { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
+                { "type": "CheckBox", "name": "EnableCache", "caption": "Enable Cache"},
+                { "type": "CheckBox", "name": "CreateOutput", "caption": "Create HTMLBox"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "CheckBox", "name": "CreateOutput", "caption": "Create IPSView HTMLBox"},
+                        { "type": "Label", "caption": "Works only if the Option IPSView in Gateway is enabled!"}
+                    ]
+                },
+                { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script"},
+                { "type": "CheckBox", "name": "EnableViewport", "caption": "Viewport Enable"},
+                { "type": "NumberSpinner", "name": "IFrameHeight", "caption": "IFrame Height", "suffix": "px", "minimum": 0 },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Override Size"},
+                        { "type": "NumberSpinner", "name": "overrideWidth", "caption": "Width", "suffix": "px", "minimum": 0 },
+                        { "type": "NumberSpinner", "name": "overrideHeight", "caption": "Height", "suffix": "px", "minimum": 0 }
+                    ]
+                },
+                { "type": "NumberSpinner", "name": "Ratio", "caption": "Custom Ratio", "minimum": 0, "digits": 1}
+            ]
+        },
+        { "type": "Select", "name": "ViewLevel", "caption": "View Level",
+            "options": [
+                { "caption": "Basic", "value": 0 },
+                { "caption": "Advance", "value": 1 },
+                { "caption": "Expert", "value": 2 }
+            ]
+        }
+    ],
+    "actions":
+    [
+        {
+            "type": "RowLayout",
+            "items": [
+                { "type": "Button", "label": "Get Link", "onClick": " echo SymconJSLiveDoughnutPie_GetLink($id);" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Configuration",
+            "items": [
+                { "type": "Label", "caption": "Load from other Modul"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {"type": "SelectObject", "name": "ObjectID", "caption": "Modul"},
+                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveDoughnutPie_LoadOtherConfiguration($id, $ObjectID);"}
+                    ]
+                },
+                { "type": "Label", "caption": "Load from File"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {"type": "SelectFile", "name": "Config_fileData", "caption": "File"},
+                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveDoughnutPie_LoadConfigurationFile($id, $Config_fileData, true);"}
+                    ]
+                },
+                { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveDoughnutPie_GetConfigurationLink($id, true);" }
+            ]
+        }
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Status OK!" }
+    ]
+}

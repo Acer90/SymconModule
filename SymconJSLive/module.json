@@ -1,0 +1,11 @@
+{
+  "id": "{9FFF3FC0-FD51-C289-FA36-BC1C370946CF}",
+  "name": "SymconJSLive",
+  "type": 2,
+  "vendor": "Swen Babenschneider",
+  "aliases": ["JSLive"],
+  "parentRequirements": [],
+  "childRequirements": ["{79D59629-E9C5-44F1-0F34-0FBC5C88F307}"],
+  "implemented": ["{751AABD7-E31D-024C-5CC0-82AC15B84095}"],
+  "prefix": "SymconJSLive"
+}

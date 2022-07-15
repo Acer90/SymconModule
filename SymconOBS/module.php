@@ -1,4 +1,4 @@
-<?
+<?php
  // Klassendefinition
     class OBS extends IPSModule {
         public function __construct($InstanceID) {
@@ -256,4 +256,4 @@
             return "{\"URL\": \"".$WSAdress."\"}";
         }
     }
-?>
+

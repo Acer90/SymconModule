@@ -1,0 +1,192 @@
+{
+    "elements":
+    [
+        { "type": "Select", "name": "Template", "caption": "Template",
+            "options": [
+                { "caption": "Textfield 1", "value": "Textfield1" },
+                { "caption": "Textfield 2", "value": "Textfield2" },
+                { "caption": "Form Example", "value": "FormExample" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Colors",
+            "items": [
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "SelectColor", "name": "style_backgroundColor", "caption": "Background Color"
+                        },
+                        {
+                            "type": "HorizontalSlider", "name": "style_backgroundColor_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "SelectColor", "name": "style_highlightColor1", "caption": "Highlight Color 1"
+                        },
+                        {
+                            "type": "HorizontalSlider", "name": "style_highlightColor1_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "SelectColor", "name": "style_highlightColor2", "caption": "Highlight Color 2"
+                        },
+                        {
+                            "type": "HorizontalSlider", "name": "style_highlightColor2_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "SelectColor", "name": "style_highlightColor3", "caption": "Highlight Color 3"
+                        },
+                        {
+                            "type": "HorizontalSlider", "name": "style_highlightColor3_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "SelectColor", "name": "style_highlightColor4", "caption": "Highlight Color 4"
+                        },
+                        {
+                            "type": "HorizontalSlider", "name": "style_highlightColor4_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {
+                            "type": "SelectColor", "name": "style_highlightColor5", "caption": "Highlight Color 5"
+                        },
+                        {
+                            "type": "HorizontalSlider", "name": "style_highlightColor5_Alpha", "caption": "Color Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Fonts",
+            "items": [
+                { "type": "NumberSpinner", "name": "style_fontSize", "caption": "Font Size", "suffix": "px" },
+                { "type": "SelectColor", "name": "style_fontColor", "caption": "Font Color" },
+                { "type": "Select", "name": "style_fontFamily", "caption": "font Family",
+                    "options": [
+                        { "caption": "-Default-", "value": "" },
+                        { "caption": "Amatic SC", "value": "Amatic SC" },
+                        { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                        { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                        { "caption": "Codystar", "value": "Codystar" },
+                        { "caption": "Comfortaa", "value": "Comfortaa" },
+                        { "caption": "Cookie", "value": "Cookie" },
+                        { "caption": "Dancing Script", "value": "Dancing Script" },
+                        { "caption": "Gurajada", "value": "Gurajada" },
+                        { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                        { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                        { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                        { "caption": "Medula One", "value": "Medula One" },
+                        { "caption": "Open Sans", "value": "Open Sans" },
+                        { "caption": "Orbitron", "value": "Orbitron" },
+                        { "caption": "Roboto", "value": "Roboto" },
+                        { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                        { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                        { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                        { "caption": "Space Mono", "value": "Space Mono" },
+                        { "caption": "Syne Mono", "value": "Syne Mono" }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Border",
+            "items": [
+                { "type": "NumberSpinner", "name": "style_borderRadius", "caption": "Border Radius", "suffix": "px" },
+                { "type": "NumberSpinner", "name": "style_borderWidth", "caption": "Border Width", "suffix": "px" },
+                { "type": "SelectColor", "name": "style_borderColor", "caption": "Border Color" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Expert",
+            "items": [
+                { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
+                { "type": "CheckBox", "name": "EnableCache", "caption": "Enable Cache"},
+                { "type": "CheckBox", "name": "CreateOutput", "caption": "Create HTMLBox"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "CheckBox", "name": "CreateOutput", "caption": "Create IPSView HTMLBox"},
+                        { "type": "Label", "caption": "Works only if the Option IPSView in Gateway is enabled!"}
+                    ]
+                },
+                { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script"},
+                { "type": "CheckBox", "name": "EnableViewport", "caption": "Viewport Enable"},
+                { "type": "NumberSpinner", "name": "IFrameHeight", "caption": "IFrame Height", "suffix": "px", "minimum": 0 },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Override Size"},
+                        { "type": "NumberSpinner", "name": "overrideWidth", "caption": "Width", "suffix": "px", "minimum": 0 },
+                        { "type": "NumberSpinner", "name": "overrideHeight", "caption": "Height", "suffix": "px", "minimum": 0 }
+                    ]
+                },
+                { "type": "NumberSpinner", "name": "DataUpdateRate", "caption": "Data Update Rate", "minimum": 0, "suffix": "ms", "digits": 0 }
+            ]
+        },
+        { "type": "Select", "name": "ViewLevel", "caption": "View Level",
+            "options": [
+                { "caption": "Basic", "value": 0 },
+                { "caption": "Advance", "value": 1 },
+                { "caption": "Expert", "value": 2 }
+            ]
+        }
+    ],
+    "actions":
+    [
+        { "type": "Button", "label": "Get Link", "onClick": " echo SymconJSLiveAdvTextfield_GetLink($id);" },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Configuration",
+            "items": [
+                { "type": "Label", "caption": "Load from other Modul"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {"type": "SelectObject", "name": "ObjectID", "caption": "Modul"},
+                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveAdvTextfield_LoadOtherConfiguration($id, $ObjectID);"}
+                    ]
+                },
+                { "type": "Label", "caption": "Load from File"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {"type": "SelectFile", "name": "Config_fileData", "caption": "File"},
+                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveAdvTextfield_LoadConfigurationFile($id, $Config_fileData, true);"}
+                    ]
+                },
+                { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveAdvTextfield_GetConfigurationLink($id, true);" }
+            ]
+        }
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Status OK!" }
+    ]
+}

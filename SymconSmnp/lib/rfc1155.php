@@ -1229,4 +1229,4 @@ class rfc1155_Opaque extends rfc1155_OctetString
     parent::__construct($value);
   }
 }
-?>
+

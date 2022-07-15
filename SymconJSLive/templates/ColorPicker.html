@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {VIEWPORT} <!-- Dont Remove this line, it can be disabled at intstance! -->
+    <title>ColorPicker</title>
+</head>
+<script src="/hook/JSLive/js/jquery.min.js"></script>
+<script src="/hook/JSLive/js/util.js"></script>
+<!--<script src="/hook/JSLive/js/iro/5.5.0/iro.js"></script>-->
+
+<script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
+
+
+
+<body style="text-align: center;">
+<div id="picker"></div>
+
+<script>
+    let config_global = {GLOBAL};
+    let config_variabels = {VARIABELS};
+    let config_layout = {LAYOUT};
+    let configuration = {CONFIG};
+
+    let colorPicker = new iro.ColorPicker("#picker",  LoadPicker());
+
+    let last_update = Date.now();
+    let last_changes = [];
+    let updateId = [];
+    let updateVal = [];
+    let running = false;
+
+    function LoadPicker(){
+
+            var laydata = GenerateLayoutData();
+            var wdh = Get_WindowHeight() - 20;
+
+            if (wdh > Get_WindowWidth()) {
+                wdh = Get_WindowWidth() - 20;
+            }
+
+            if (configuration.manWidth > 0) {
+                wdh = configuration.manWidth;
+            }
+
+            //alert("Breite: " + wdh);
+
+            if (configuration.layout_Direction === "vertical") {
+                wdh = wdh - laydata.width_s;
+
+                if (laydata.counter_wheelbox > 0) {
+                    wdh = (wdh / laydata.counter_wheelbox) - (laydata.counter_wheelbox * 10);
+                }
+            }
+
+            config = {
+                layoutDirection: configuration.layout_Direction,
+                layout: laydata.output,
+                colors: GenerateColorData(),
+                width: wdh,
+                borderColor: configuration.style_borderColor,
+                borderWidth: configuration.style_borderWidth,
+                handleRadius: configuration.style_handleRadius
+                //handleSvg: '#handle',
+                //handleProps: {x: -8, y: -20}
+
+            };
+
+            //config = {};
+
+            return config;
+        try {
+        }catch (e){
+            alert("Colorpicker | ",e);
+        }
+    }
+
+    function GenerateLayoutData(){
+        var output = [];
+        var width_s = 0;
+        var counter_wheelbox = 0;
+
+        config_layout.forEach(function (part, index){
+            item = {};
+            options = {};
+
+            switch(part.Layout){
+                default:
+                case "Wheel":
+                    item["component"] = iro.ui.Wheel;
+                    options["wheelLightness"] = configuration.wheel_Lightness;
+                    options["wheelAngle"] = configuration.wheel_Angle;
+                    options["wheelDirection"] = configuration.wheel_Direction;
+                    counter_wheelbox++;
+                    break;
+                case "Box":
+                    item["component"] = iro.ui.Box;
+                    counter_wheelbox++;
+                    break;
+                case "Slider":
+                    item["component"] = iro.ui.Slider;
+                    if(part.sliderShape === "circle"){
+                        counter_wheelbox++;
+                    }else{
+                        width_s = width_s + part.sliderSize + 10;
+                    }
+
+
+                    options["sliderType"] = part.sliderType;
+                    options["sliderSize"] = part.sliderSize;
+                    options["sliderShape"] = part.sliderShape;
+                    break;
+            }
+            item["component"]
+
+            item["options"] = options;
+            output.push(item);
+        });
+
+        if(output.length === 0){
+            //add default!
+            //Wheel
+            item = {};
+            options = {};
+
+            item["component"] = iro.ui.Wheel;
+            output.push(item);
+            counter_wheelbox++;
+
+            //silder Value
+            item = {};
+            options = {};
+
+            item["component"] = iro.ui.Slider;
+            options["sliderType"] = "value";
+            options["sliderSize"] = 40;
+            item["options"] = options;
+            output.push(item);
+            width_s = width_s + 40 + 10;
+        }
+
+        return {"output": output, "width_s": width_s, "counter_wheelbox": counter_wheelbox};
+    }
+
+    function GenerateColorData(){
+        var output = [];
+
+        config_variabels.forEach(function (part, index){
+            if(part.Variable === 0){
+                console.log(Date.now() + " >> GenerateColorData | Überspinge Farbe => keine Variable gesetzt!");
+            }else{
+                switch(part.Mode) {
+                    case "color":
+                        output.push(hexToRgb(part.Value));
+                        break;
+                    case "kelvin":
+                        temp = part.Value;
+                        output.push(colorTemperatureToRGB(temp));
+                        break;
+                    case "mired":
+                        temp = part.Value;
+                        temp = MiredToKelvin(temp);
+                        output.push(colorTemperatureToRGB(temp));
+                        break;
+                    default:
+                        console.log(Date.now() + " >> GenerateColorData | Überspinge "+part.Variable+" falscher Modus => " + part.Mode);
+                        break
+                }
+            }
+        });
+
+        return output;
+    }
+
+    colorPicker.on('color:change', function(color) {
+        console.log(Date.now() + " >> ChangeColor (" + color.index + ") => " + color.rgb);
+
+        id = config_variabels[color.index].Variable;
+
+        switch(config_variabels[color.index].Mode) {
+            case "color":
+                val = hexToInt(color.rgb);
+                break;
+            case "kelvin":
+                val = color.kelvin;
+                break;
+            case "mired":
+                val = color.kelvin;
+                val = KelvinToMired(val);
+                break;
+            default:
+                console.log(Date.now() + " >> onChange | Überspinge "+part.Variable+" falscher Modus => " + part.Mode);
+                break
+        }
+
+        config_variabels[color.index].Value = val;
+
+
+        if(updateId.includes(id)){
+            //updaten
+            index = updateId.indexOf(id);
+            updateVal[index] = val;
+        }else{
+            //anlegen
+            updateId.push(id);
+            updateVal.push(val);
+        }
+
+        console.log(Date.now() + " >> ChangeColor => "+ JSON.stringify(updateVal));
+
+        if(!running) UpdateWorker();
+    });
+
+    async function UpdateWorker(){
+        running = true;
+        while (running){
+            await sleep(1);
+            try {
+                //console.log("UpdateWorker => "+ updateVal.length + " | " + updateId.length);
+                if((last_update + configuration.DataUpdateRate) <= Date.now() && updateVal.length > 0 && updateId.length > 0){
+                    last_update = Date.now();
+                    //console.log("UpdateWorker => "+ JSON.stringify(updateVal) + " | " + JSON.stringify(updateId));
+
+                    for (i = 0; i < updateVal.length; i++) {
+                        last_changes.push({var: updateId[i], val: updateVal[i], date: new Date()})
+
+                        console.log(Date.now() + " >> UpdateWorker | Update " + JSON.stringify(updateVal) + " | " + JSON.stringify(updateId));
+                        console.log(Date.now() + " >> UpdateWorker | URL: /hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&var=" +updateId[i]+ "&val="+updateVal[i]);
+                        var response = await fetch("/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&var=" +updateId[i]+ "&val="+updateVal[i]);
+                        console.log(Date.now() + " >> UpdateWorker Response => " + response.statusText + " (" + response.status + ")");
+                    }
+
+                    updateVal = [];
+                    updateId = [];
+
+                    console.log(Date.now() + " >> UpdateWorker => CLOSE");
+                    running = false;
+                }
+            }catch (e) {
+                console.log(Date.now() + " >> UpdateWorker => ", e);
+            }
+        }
+    }
+
+    function connect() {
+        let location = window.detectLocation();
+        var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
+        ws.onopen = function() {
+            // subscribe to some channels
+            //ws.send(JSON.stringify({
+            //.... some message the I must send when I connect ....
+            //}));
+        };
+
+        ws.onmessage = function(e) {
+            data = JSON.parse(e.data);
+            if(data.Message == 10506) {
+                //refresh webseite
+                setTimeout(function (){
+                    window.location.reload(false);
+                },1000);
+            } else if(data.Message == 10603) {
+                UpdateColorPicker(data.SenderID, data.Data[0]);
+            }
+        };
+
+        ws.onclose = function(e) {
+            console.log(Date.now() + ' >> Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+            setTimeout(function() {
+                connect();
+            }, 1000);
+        };
+
+        ws.onerror = function(err) {
+            console.error(Date.now() + ' >> Socket encountered error: ', err.message, 'Closing socket');
+            ws.close();
+        };
+    }
+
+    function UpdateColorPicker(id_val, val){
+        isUpdated = false;
+        now = Date.now();
+        if(running ) return;
+
+        //ignore color update form this Device
+        var itemFound = false;
+        var remDate = new Date();
+        remDate.setSeconds(remDate.getSeconds() - 15);
+        last_changes.forEach(function (itm, index) {
+            if(itemFound) return;
+
+            if(itm.date <= remDate){
+                last_changes.splice(index, 1);
+                return;
+            }
+
+            if(itm.var === id_val){
+                //lösche ältere einträge
+                if(itm.val === val){
+                    itemFound = true
+                    return;
+                }
+
+                //remove Item
+                last_changes.splice(index, 1);
+            }
+        });
+
+        if(itemFound) {
+            return;
+        }
+
+        required = {Variable: id_val};
+        results = [];
+        results = getMatchingKeys(config_variabels, required);
+        if(results.length > 0){
+            //änderung farbe
+            index = results[0];
+
+            if(config_variabels[index].Value !== val){
+                console.log(Date.now() + " >> UpdateColorPicker (Color)" + index + " => " + val + " (" + config_variabels[index].Value + ")");
+                config_variabels[index].Value = val;
+                isUpdated = true;
+            }
+        }
+
+        if(isUpdated){
+            colorPicker.setColors(GenerateColorData());
+        }
+    }
+
+    async function PullNewData(refreshRate){
+        refreshRate = refreshRate * 1000;
+        while (true){
+            try {
+                $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                    data.forEach(function (part, index) {
+                        UpdateColorPicker(part.Color.Variable, part.Color.Value);
+                        UpdateColorPicker(part.Temperature.Variable, part.Temperature.Value);
+                        UpdateColorPicker(part.Mode.Variable, part.Mode.Value);
+                    });
+                });
+
+                //Control Variables
+            }catch (e) {
+                console.log(Date.now() + " >> PullNewData => ", e);
+            }
+            await sleep(refreshRate);
+        }
+    }
+
+    window.onload = function() {
+        try {
+            if (config_global.LocalAddress == "" && config_global.LocalDataMode == 0) {
+                //pullup Mode local
+                refreshRate = config_global.LocalRefreshTime;
+                PullNewData(refreshRate);
+            } else if (config_global.RemoteAddress == "" && config_global.RemoteDataMode == 0) {
+                //pullup Mode remote
+                refreshRate = config_global.RefreshTime;
+                PullNewData(refreshRate);
+            } else {
+                connect();
+            }
+        }catch (e) {
+            alert("Colorpicker | ", e);
+        }
+    }
+</script>
+</body>
+</html>

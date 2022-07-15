@@ -1,4 +1,4 @@
-<?
+<?php
 // Klassendefinition
 class SymconAlarmClock extends IPSModule
 {

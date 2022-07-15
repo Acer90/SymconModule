@@ -1,0 +1,11 @@
+{
+  "id": "{B6ABE101-157B-3F68-CE81-25CBE5A8444B}",
+  "name": "SymconJSLiveDateTimePicker",
+  "type": 3,
+  "vendor": "Swen Babenschneider",
+  "aliases": ["JSLive-DateTimePicker"],
+  "parentRequirements": ["{751AABD7-E31D-024C-5CC0-82AC15B84095}"],
+  "childRequirements": [],
+  "implemented": ["{79D59629-E9C5-44F1-0F34-0FBC5C88F307}"],
+  "prefix": "SymconJSLiveDateTimePicker"
+}

@@ -1,4 +1,4 @@
-<?
+<?php
 // Klassendefinition
 class LightRoomController extends IPSModule
 {
@@ -117,6 +117,18 @@ class LightRoomController extends IPSModule
                         $lightData[$SenderID] = $cur;
                         $this->SendDebug("MessageSink", "Lightsensor " . $SenderID . " new Value => " .$cur. " (".$Data[0].")", 0);
 
+
+                        $light_values = array();
+                        foreach ($lightSensorData as $SensorData) {
+                            $id = $SensorData["Variable"];
+                            $max = $SensorData["Max_val"];
+                            $c = (GetValue($id) / $max * 100) . "%";
+
+                            $light_values[] = array("Variable" => $id, "disable" => $SensorData["disable"], "Max_val" => $max, "Current" => $c);
+                        }
+
+
+                        $this->UpdateFormField ("VarList_LightSensors", "values", json_encode($light_values));
                         $this->SetBuffer("LightData", json_encode($lightData));
                         return;
                     }
@@ -238,6 +250,7 @@ class LightRoomController extends IPSModule
         $key = array_search($ID, array_column($VarList, 'ID'));
         if($key !== FALSE){
             if(array_key_exists("Scene", $VarList[$key])) {
+
                 foreach ($VarList[$key]["Scene"] as $light) {
                     //Licht für licht schalten
 
@@ -245,6 +258,7 @@ class LightRoomController extends IPSModule
                     $lowLight = $this->GetLightDataLowestValue();
 
                     if($light["Light"] >= $lowLight){
+
                         $this->ControlLight($light["Instance"], $light["Zustand_val"], $light["Helligkeit_val"], $light["Temperatur_val"], $light["Farbe_val"]);
                         $lightsArr[$light["Instance"]] = true;
 
@@ -377,7 +391,6 @@ class LightRoomController extends IPSModule
             $this->SendDebug("ControlLight", "Waring! InstanceId 0 not allowed!",0);
             return;
         }
-
         $instance_info = IPS_GetInstance($instance);
 
         /*  Mode 0 = Zustand
@@ -421,6 +434,81 @@ class LightRoomController extends IPSModule
                     HM_WriteValueFloat($instance, "LEVEL", ($helligkeit / 100.0));
                     HM_WriteValueInteger($instance, 'COLOR', $farbe);
                 }
+                break;
+            case "{E5BB36C6-A70B-EB23-3716-9151A09AC8A2}":
+                //zigbee2mqtt
+                $PayloadSet = array();
+
+                $strZustand = 'off';
+                if($zustand) $strZustand = 'on';
+
+                if($mode == 0){
+                    $PayloadSet['state'] = $strZustand;
+                    $PayloadSet['transition'] = 1;
+                }
+                elseif($mode == 1) {
+                    $PayloadSet['state'] = $strZustand;
+                    $PayloadSet['brightness'] = round($helligkeit * 2.54);
+                    $PayloadSet['transition'] = 1;
+                }
+                elseif($mode == 2){
+                    $PayloadSet['state'] = $strZustand;
+                    $PayloadSet['brightness'] = round($helligkeit * 2.54);
+                    $PayloadSet['color_temp'] = $temperatur;
+                    $PayloadSet['transition'] = 1;
+                }
+                elseif($mode == 3){
+                    $PayloadSet['state'] = $strZustand;
+                    $PayloadSet['brightness'] = round($helligkeit * 2.54);
+                    $PayloadSet['transition'] = 1;
+
+                    $rgb = $this->HexToRGB($farbe);
+                    $PayloadSet['color']['r'] = $rgb['r'];
+                    $PayloadSet['color']['g'] = $rgb['g'];
+                    $PayloadSet['color']['b'] = $rgb['b'];
+                }
+
+                //Ausführen wenn array gefüllt ist
+                if(count($PayloadSet) > 0){
+                    $PayloadJSON = json_encode($PayloadSet, JSON_UNESCAPED_SLASHES);
+                    Z2M_Command($instance, 'set', $PayloadJSON);
+                }
+                break;
+            case "{920FA780-28E0-C329-63C4-D79F8EEEE502}":
+                $Payload = array();
+                $segment = array();
+
+                $config = json_decode(IPS_GetConfiguration($instance), true);
+
+                $segment['id'] = $config["SegmentID"];
+
+                if($mode == 0){
+                    $segment['on'] = $zustand;
+                    $segment['col'][0] = array(0,0,0,255);
+                }
+                elseif($mode == 1) {
+                    $segment['on'] = $zustand;
+                    $segment['bri'] = round($helligkeit * 2.54);
+                    $segment['col'][0] = array(0,0,0,255);
+                }
+                elseif($mode == 2){
+                    $segment['on'] = $zustand;
+                    $segment['bri'] = round($helligkeit * 2.54);
+                    $segment['cct'] = $temperatur;
+                }
+                elseif($mode == 3){
+                    $segment['on'] = $zustand;
+                    $segment['bri'] = round($helligkeit * 2.54);
+
+                    $rgb = $this->HexToRGB($farbe);
+                    $segment['col'][0] = array($rgb['r'], $rgb['g'], $rgb['b']);
+                }
+
+                $Payload["seg"][] = $segment;
+
+                $this->SendDebug("ControlLight", "###TEST###". json_encode($Payload),0);
+
+                WLEDSegment_SendData($instance, json_encode($Payload));
                 break;
             default:
                 //Device not found!
@@ -711,6 +799,15 @@ class LightRoomController extends IPSModule
 
         $this->UpdateSceneList();
         $this->GetCurrentScene();
+    }
+
+    protected function HexToRGB($value)
+    {
+        $RGB = [];
+        $RGB['r'] = (($value >> 16) & 0xFF);
+        $RGB['g'] = (($value >> 8) & 0xFF);
+        $RGB['b'] = ($value & 0xFF);
+        return $RGB;
     }
 
 

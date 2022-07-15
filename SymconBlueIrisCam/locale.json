@@ -1,0 +1,22 @@
+{
+  "translations": {
+    "de": {
+	  	"Use PTZ": "Verwendet PTZ",
+		"Show FPS": "FPS anzeigen",
+		"Short Name": "Kürzel",
+		"Create Stream Media File": "Stream-Medien Datei erstellen",
+		"Alert": "Alarm",
+		"Motion": "Bewegung erkannt",
+		"Triggered": "Ausgelöst",
+		"Recording": "Aufnahme",
+		"Enabled": "Eingeschaltet",
+		"Pause": "Pause",
+		"NoSignal": "Kein Signal",
+		"Preset": "Preset",
+		"PTZ-Move Left/Right": "PTZ-Bewegen Rechts/Links",
+		"PTZ-Move UP/Down": "PTZ-Bewegen Hoch/Runter",
+		"PTZ-Move Zoom": "PTZ-Bewegen Zoom"
+    }
+  }
+}
+

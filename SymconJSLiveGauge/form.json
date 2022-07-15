@@ -1,0 +1,538 @@
+{
+    "elements":
+    [
+        { "type": "SelectVariable", "name": "Variable", "caption": "Variable" },
+        { "type": "NumberSpinner", "name": "min", "caption": "Min" ,"digits": 3 },
+        { "type": "NumberSpinner", "name": "max", "caption": "Max" ,"digits": 3 },
+        { "type": "Select", "name": "precision", "caption": "Precision",
+            "options": [
+                { "caption": "1", "value": 0 },
+                { "caption": "0.1", "value": 1 },
+                { "caption": "0.01", "value": 2 },
+                { "caption": "0.001", "value": 3 }
+            ]
+        },
+        { "type": "Select", "name": "template", "caption": "Template",
+            "options": [
+                { "caption": "CanvasGauges-Radial", "value": "CanvasGauges-Radial" },
+                { "caption": "CanvasGauges-Linear", "value": "CanvasGauges-Linear" },
+                { "caption": "CanvasGauges-Linear(vertical)", "value": "CanvasGauges-Linear(vertical)"},
+                { "caption": "CanvasGauges-Compass", "value": "CanvasGauges-Compass"}
+
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Title",
+            "items": [
+                { "type": "CheckBox", "name": "title_display", "caption": "Display"},
+                { "type": "ValidationTextBox", "name": "title_text", "caption": "Text" },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Font", "width": "100px"},
+                        { "type": "NumberSpinner", "name": "title_fontSize", "caption": "Size" },
+                        { "type": "SelectColor", "name": "title_fontColor", "caption": "Color" },
+                        { "type": "Select", "name": "title_fontFamily", "caption": "Family",
+                            "options": [
+                                { "caption": "-Default-", "value": "" },
+                                { "caption": "Amatic SC", "value": "Amatic SC" },
+                                { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                                { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                                { "caption": "Codystar", "value": "Codystar" },
+                                { "caption": "Comfortaa", "value": "Comfortaa" },
+                                { "caption": "Cookie", "value": "Cookie" },
+                                { "caption": "Dancing Script", "value": "Dancing Script" },
+                                { "caption": "Gurajada", "value": "Gurajada" },
+                                { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                                { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                                { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                                { "caption": "Medula One", "value": "Medula One" },
+                                { "caption": "Open Sans", "value": "Open Sans" },
+                                { "caption": "Orbitron", "value": "Orbitron" },
+                                { "caption": "Roboto", "value": "Roboto" },
+                                { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                                { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                                { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                                { "caption": "Space Mono", "value": "Space Mono" },
+                                { "caption": "Syne Mono", "value": "Syne Mono" }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Plate",
+            "items": [
+                { "type": "CheckBox", "name": "plate_display", "caption": "Display"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Unit:", "width": "100px" },
+                        { "type": "ValidationTextBox", "name": "plate_unit", "caption": "Unit" },
+                        { "type": "NumberSpinner", "name": "plate_unit_fontSize", "caption": "Size" , "width": "100px", "suffix": "px", "minimum": 0, "stepSize": 1},
+                        { "type": "SelectColor", "name": "plate_unit_fontColor", "caption": "Color" , "width": "150px"},
+                        { "type": "Select", "name": "plate_unit_fontFamily", "caption": "Family", "width": "150px",
+                            "options": [
+                                { "caption": "-Default-", "value": "" },
+                                { "caption": "Amatic SC", "value": "Amatic SC" },
+                                { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                                { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                                { "caption": "Codystar", "value": "Codystar" },
+                                { "caption": "Comfortaa", "value": "Comfortaa" },
+                                { "caption": "Cookie", "value": "Cookie" },
+                                { "caption": "Dancing Script", "value": "Dancing Script" },
+                                { "caption": "Gurajada", "value": "Gurajada" },
+                                { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                                { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                                { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                                { "caption": "Medula One", "value": "Medula One" },
+                                { "caption": "Open Sans", "value": "Open Sans" },
+                                { "caption": "Orbitron", "value": "Orbitron" },
+                                { "caption": "Roboto", "value": "Roboto" },
+                                { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                                { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                                { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                                { "caption": "Space Mono", "value": "Space Mono" },
+                                { "caption": "Syne Mono", "value": "Syne Mono" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Main:", "width": "100px"},
+                        { "type": "SelectColor", "name": "plate_colorPlate", "caption": "Color" },
+                        { "type": "HorizontalSlider", "name": "plate_colorPlate_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "End:", "width": "100px"},
+                        { "type": "SelectColor", "name": "plate_colorPlateEnd", "caption": "Color" },
+                        { "type": "HorizontalSlider", "name": "plate_colorPlateEnd_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Needle",
+            "items": [
+                { "type": "CheckBox", "name": "needle_display", "caption": "Display"},
+                { "type": "Select", "name": "needle_Type", "caption": "Template",
+                    "options": [
+                        { "caption": "Arrow", "value": "arrow" },
+                        { "caption": "Line", "value": "line" }
+                    ]
+                },
+                { "type": "NumberSpinner", "name": "needle_start", "caption": "Start", "suffix": "%" },
+                { "type": "NumberSpinner", "name": "needle_end", "caption": "End", "suffix": "%" },
+                { "type": "NumberSpinner", "name": "needle_width", "caption": "Width", "suffix": "px" },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Main:", "width": "100px"},
+                        { "type": "SelectColor", "name": "needle_colorNeedle", "caption": "Color" },
+                        { "type": "HorizontalSlider", "name": "needle_colorNeedle_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "End:", "width": "100px"},
+                        { "type": "SelectColor", "name": "needle_colorNeedleEnd", "caption": "Color" },
+                        { "type": "HorizontalSlider", "name": "needle_colorNeedleEnd_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Shadow Up:", "width": "100px"},
+                        { "type": "SelectColor", "name": "needle_colorShadowUp", "caption": "Color" },
+                        { "type": "HorizontalSlider", "name": "needle_colorShadowUp_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.025 }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Shadow Down:", "width": "100px"},
+                        { "type": "SelectColor", "name": "needle_colorShadowDown", "caption": "Color" },
+                        { "type": "HorizontalSlider", "name": "needle_colorShadowDown_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Valuebox",
+            "items": [
+                { "type": "CheckBox", "name": "valuebox_display", "caption": "Display"},
+                { "type": "CheckBox", "name": "valuebox_separator", "caption": "Show separators"},
+
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Font", "width": "100px"},
+                        { "type": "NumberSpinner", "name": "valuebox_fontSize", "caption": "Size" },
+                        { "type": "SelectColor", "name": "valuebox_fontColor", "caption": "Color" },
+                        { "type": "Select", "name": "valuebox_fontFamily", "caption": "Family",
+                            "options": [
+                                { "caption": "-Default-", "value": "" },
+                                { "caption": "Amatic SC", "value": "Amatic SC" },
+                                { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                                { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                                { "caption": "Codystar", "value": "Codystar" },
+                                { "caption": "Comfortaa", "value": "Comfortaa" },
+                                { "caption": "Cookie", "value": "Cookie" },
+                                { "caption": "Dancing Script", "value": "Dancing Script" },
+                                { "caption": "Gurajada", "value": "Gurajada" },
+                                { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                                { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                                { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                                { "caption": "Medula One", "value": "Medula One" },
+                                { "caption": "Open Sans", "value": "Open Sans" },
+                                { "caption": "Orbitron", "value": "Orbitron" },
+                                { "caption": "Roboto", "value": "Roboto" },
+                                { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                                { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                                { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                                { "caption": "Space Mono", "value": "Space Mono" },
+                                { "caption": "Syne Mono", "value": "Syne Mono" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Background:", "width": "100px"},
+                        { "type": "SelectColor", "name": "valuebox_colorValueBoxBackground", "caption": "Color" },
+                        { "type": "HorizontalSlider", "name": "valuebox_colorValueBoxBackground_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Progressbar",
+            "items": [
+                { "type": "CheckBox", "name": "progressbar_display", "caption": "Display"},
+                { "type": "NumberSpinner", "name": "progressbar_barWidth", "caption": "Width", "suffix": "%" },
+                { "type": "NumberSpinner", "name": "progressbar_barShadow", "caption": "Shadow", "suffix": "px" },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Main:", "width": "100px"},
+                        { "type": "SelectColor", "name": "progressbar_colorBar", "caption": "Color" },
+                        { "type": "HorizontalSlider", "name": "progressbar_colorBar_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                    ]
+                },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Progress:", "width": "100px"},
+                        { "type": "SelectColor", "name": "progressbar_colorBarProgress", "caption": "Color" },
+                        { "type": "HorizontalSlider", "name": "progressbar_colorBarProgress_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Ticks",
+            "items": [
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Font", "width": "100px"},
+                        { "type": "Select", "name": "ticks_fontFamily", "caption": "Family",
+                            "options": [
+                                { "caption": "-Default-", "value": "" },
+                                { "caption": "Amatic SC", "value": "Amatic SC" },
+                                { "caption": "Architects Daughter", "value": "Architects Daughter" },
+                                { "caption": "Bungee Hairline", "value": "Bungee Hairline" },
+                                { "caption": "Codystar", "value": "Codystar" },
+                                { "caption": "Comfortaa", "value": "Comfortaa" },
+                                { "caption": "Cookie", "value": "Cookie" },
+                                { "caption": "Dancing Script", "value": "Dancing Script" },
+                                { "caption": "Gurajada", "value": "Gurajada" },
+                                { "caption": "Hammersmith One", "value": "Hammersmith One" },
+                                { "caption": "Julius Sans One", "value": "Julius Sans One" },
+                                { "caption": "Major Mono Display", "value": "Major Mono Display" },
+                                { "caption": "Medula One", "value": "Medula One" },
+                                { "caption": "Open Sans", "value": "Open Sans" },
+                                { "caption": "Orbitron", "value": "Orbitron" },
+                                { "caption": "Roboto", "value": "Roboto" },
+                                { "caption": "Roboto Condensed", "value": "Roboto Condensed" },
+                                { "caption": "Saira Extra Condensed", "value": "Saira Extra Condensed" },
+                                { "caption": "Share Tech Mono", "value": "Share Tech Mono" },
+                                { "caption": "Space Mono", "value": "Space Mono" },
+                                { "caption": "Syne Mono", "value": "Syne Mono" }
+                            ]
+                        },
+                        { "type": "NumberSpinner", "name": "ticks_fontSize", "caption": "Size" }
+                    ]
+                },
+                { "type": "CheckBox", "name": "ticks_strokeTicks", "caption": "Stroke Ticks"},
+                { "type": "NumberSpinner", "name": "ticks_highlightsWidth", "caption": "Highlights Width" },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "NumberSpinner", "name": "ticks_minorTicks", "caption": "Minor Ticks" },
+                        { "type": "CheckBox", "name": "ticks_exactTicks", "caption": "Exact Ticks"}
+                    ]
+                },
+                { "type": "SelectColor", "name": "ticks_colorMajorTick", "caption": "Color Major Tick" },
+                { "type": "SelectColor", "name": "ticks_colorMinorTicks", "caption": "Color Minor Ticks" },
+                { "type": "SelectColor", "name": "ticks_colorNumbers", "caption": "color Numbers" },
+                {
+                    "type": "List",
+                    "name": "Ticks",
+                    "caption": "Ticks",
+                    "rowCount": 5,
+                    "add": true,
+                    "delete": true,
+                    "sort": {
+                        "column": "Value",
+                        "direction": "ascending"
+                    },
+                    "columns": [
+                        {
+                            "caption": "Value",
+                            "name": "Value",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "NumberSpinner",
+                                "digits": 3
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "List",
+                    "name": "Highlights",
+                    "caption": "Highlights",
+                    "rowCount": 5,
+                    "add": true,
+                    "delete": true,
+                    "sort": {
+                        "column": "From",
+                        "direction": "ascending"
+                    },
+                    "columns": [
+                        {
+                            "caption": "From",
+                            "name": "From",
+                            "width": "150px",
+                            "add": 0,
+                            "edit": {
+                                "type": "NumberSpinner",
+                                "digits": 3
+                            }
+                        },
+                        {
+                            "caption": "To",
+                            "name": "To",
+                            "width": "auto",
+                            "add": 0,
+                            "edit": {
+                                "type": "NumberSpinner",
+                                "digits": 3
+                            }
+                        },
+                        {
+                            "caption": "HighlightColor",
+                            "name": "HighlightColor",
+                            "width": "130px",
+                            "add": -1,
+                            "edit": {
+                                "type": "SelectColor"
+                            }
+                        },
+                        {
+                            "caption": "HighlightColor Alpha",
+                            "name": "HighlightColor_Alpha",
+                            "width": "180px",
+                            "visible": false,
+                            "add": 1,
+                            "edit": {
+                                "type": "NumberSpinner",
+                                "digits": 2,
+                                "maximum": 1,
+                                "minimum": 0
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Radial Gauge Settings",
+            "items": [
+                { "type": "NumberSpinner", "name": "radial_startAngle", "caption": "Start Angle", "suffix": "°"},
+                { "type": "NumberSpinner", "name": "radial_ticksAngle", "caption": "Ticks Angle", "suffix": "°"},
+                {
+                    "type": "ExpansionPanel",
+                    "caption": "Circle",
+                    "items": [
+                        { "type": "NumberSpinner", "name": "needle_CircleSize", "caption": "Size", "suffix": "%" },
+                        { "type": "CheckBox", "name": "needle_CircleOuter", "caption": "Show Outer"},
+                        {
+                            "type": "RowLayout",
+                            "items": [
+                                { "type": "Label", "caption": "Main:", "width": "100px"},
+                                { "type": "SelectColor", "name": "needle_colorNeedleCircleInner", "caption": "Color" },
+                                { "type": "HorizontalSlider", "name": "needle_colorNeedleCircleInner_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                            ]
+                        },
+                        {
+                            "type": "RowLayout",
+                            "items": [
+                                { "type": "Label", "caption": "End:", "width": "100px"},
+                                { "type": "SelectColor", "name": "needle_colorNeedleCircleInnerEnd", "caption": "Color" },
+                                { "type": "HorizontalSlider", "name": "needle_colorNeedleCircleInnerEnd_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                            ]
+                        },
+                        {
+                            "type": "RowLayout",
+                            "items": [
+                                { "type": "Label", "caption": "Out Main:", "width": "100px"},
+                                { "type": "SelectColor", "name": "needle_colorNeedleCircleOuter", "caption": "Color" },
+                                { "type": "HorizontalSlider", "name": "needle_colorNeedleCircleOuter_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                            ]
+                        },
+                        {
+                            "type": "RowLayout",
+                            "items": [
+                                { "type": "Label", "caption": "Out End:", "width": "100px"},
+                                { "type": "SelectColor", "name": "needle_colorNeedleCircleOuter", "caption": "Color" },
+                                { "type": "HorizontalSlider", "name": "needle_colorNeedleCircleOuter_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Linear Gauge Settings",
+            "items": [
+                { "type": "Select", "name": "linear_tickSide", "caption": "Tick Side",
+                    "options": [
+                        { "caption": "Left", "value": "left" },
+                        { "caption": "Right", "value": "right" },
+                        { "caption": "Both", "value": "both" }
+                    ]
+                },
+                { "type": "Select", "name": "linear_numberSide", "caption": "Number Side",
+                    "options": [
+                        { "caption": "Left", "value": "left" },
+                        { "caption": "Right", "value": "right" },
+                        { "caption": "Both", "value": "both" }
+                    ]
+                },
+                { "type": "Select", "name": "linear_needleSide", "caption": "Needle Side",
+                    "options": [
+                        { "caption": "Left", "value": "left" },
+                        { "caption": "Right", "value": "right" },
+                        { "caption": "Both", "value": "both" }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Animation",
+            "items": [
+                { "type": "NumberSpinner", "name": "animation_duration", "caption": "Duration", "suffix": "ms", "minimum": 0 },
+                { "type": "Select", "name": "animation_rule", "caption": "Rule",
+                    "options": [
+                        { "caption": "Linear", "value": "linear" },
+                        { "caption": "Quad", "value": "quad" },
+                        { "caption": "Quint", "value": "quint" },
+                        { "caption": "Cycle", "value": "cycle" },
+                        { "caption": "Bounce", "value": "bounce" },
+                        { "caption": "Elastic", "value": "elastic" },
+                        { "caption": "Dequad", "value": "dequad" },
+                        { "caption": "Dequint", "value": "dequint" },
+                        { "caption": "Decycle", "value": "decycle" },
+                        { "caption": "Debounce", "value": "debounce" },
+                        { "caption": "Delastic", "value": "delastic" }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Expert",
+            "items": [
+                { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
+                { "type": "CheckBox", "name": "EnableCache", "caption": "Enable Cache"},
+                { "type": "CheckBox", "name": "CreateOutput", "caption": "Create HTMLBox"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "CheckBox", "name": "CreateOutput", "caption": "Create IPSView HTMLBox"},
+                        { "type": "Label", "caption": "Works only if the Option IPSView in Gateway is enabled!"}
+                    ]
+                },
+                { "type": "SelectScript", "name": "TemplateScriptID", "caption": "Template Script"},
+                { "type": "CheckBox", "name": "EnableViewport", "caption": "Viewport Enable"},
+                { "type": "NumberSpinner", "name": "IFrameHeight", "caption": "IFrame Height", "suffix": "px", "minimum": 0 },
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        { "type": "Label", "caption": "Override Size"},
+                        { "type": "NumberSpinner", "name": "overrideWidth", "caption": "Width", "suffix": "px", "minimum": 0 },
+                        { "type": "NumberSpinner", "name": "overrideHeight", "caption": "Height", "suffix": "px", "minimum": 0 }
+                    ]
+                }
+            ]
+        },
+        { "type": "Select", "name": "ViewLevel", "caption": "View Level",
+            "options": [
+                { "caption": "Basic", "value": 0 },
+                { "caption": "Advance", "value": 1 },
+                { "caption": "Expert", "value": 2 }
+            ]
+        }
+    ],
+    "actions":
+    [
+        { "type": "Button", "label": "Get Link", "onClick": " echo SymconJSLiveGauge_GetLink($id);" },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Configuration",
+            "items": [
+                { "type": "Label", "caption": "Load from other Modul"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {"type": "SelectObject", "name": "ObjectID", "caption": "Modul"},
+                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveGauge_LoadOtherConfiguration($id, $ObjectID);"}
+                    ]
+                },
+                { "type": "Label", "caption": "Load from File"},
+                {
+                    "type": "RowLayout",
+                    "items": [
+                        {"type": "SelectFile", "name": "Config_fileData", "caption": "File"},
+                        { "type": "Button", "label": "Load", "onClick": " echo SymconJSLiveGauge_LoadConfigurationFile($id, $Config_fileData, true);"}
+                    ]
+                },
+                { "type": "Button", "label": "Export", "onClick": " echo SymconJSLiveGauge_GetConfigurationLink($id, true);" }
+            ]
+        }
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Status OK!" }
+    ]
+}

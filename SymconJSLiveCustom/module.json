@@ -1,0 +1,11 @@
+{
+  "id": "{784C3E34-F175-98D1-6022-8ADDFAE45CE5}",
+  "name": "SymconJSLiveCustom",
+  "type": 3,
+  "vendor": "Swen Babenschneider",
+  "aliases": ["JSLive-Custom"],
+  "parentRequirements": ["{751AABD7-E31D-024C-5CC0-82AC15B84095}"],
+  "childRequirements": [],
+  "implemented": ["{79D59629-E9C5-44F1-0F34-0FBC5C88F307}"],
+  "prefix": "SymconJSLiveCustom"
+}

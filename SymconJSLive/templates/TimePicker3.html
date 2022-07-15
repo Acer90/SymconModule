@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {VIEWPORT} <!-- Dont Remove this line, it can be disabled at intstance! -->
+    <title>DateTimePicker</title>
+    <link rel="stylesheet" href="/hook/JSLive/js/css/TimePicker3.css">
+</head>
+{FONTS} <!-- Need for Custom font Family !-->
+
+<script src="/hook/JSLive/js/jquery.min.js"></script>
+<script src="/hook/JSLive/js/util.js"></script>
+
+<body style="text-align: center;">
+<input type="time" name="time" id="time" />
+
+<script>
+    var config_global = {GLOBAL};
+    var value = {VALUE};
+    var configuration = {CONFIG};
+
+    running = false;
+    last_update = Date.now();
+
+    function Load(){
+        try {
+            obj = document.querySelector("#time");
+            obj.value = unixTimeToString(value);
+            document.querySelector("#time").addEventListener("input", updateValue);
+            document.getElementById("time").style.fontFamily = configuration.style_fontFamily;
+
+
+            //Style
+            obj.style.backgroundColor = configuration.style_backgroundColor;
+            obj.style.borderWidth = configuration.style_borderWidth;
+            obj.style.borderColor = configuration.style_borderColor;
+            obj.style.borderRadius = configuration.style_borderRadius;
+
+            obj.style.color = configuration.style_fontColor;
+            obj.style.fontSize = configuration.style_fontSize + "px";
+        } catch (e) {
+            alert(e);
+        }
+    }
+
+    function updateValue(e) {
+        const reTime = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
+        const time = this.value;
+        i = stringToUnixTime(this.value);
+        if(i >= 0){
+            value = i;
+            if(!running) UpdateWorker();
+        }
+    }
+
+    async function UpdateWorker(){
+        running = true;
+        last_update = Date.now();
+        while (running){
+            await sleep(1);
+            try {
+                if((last_update + configuration.DataUpdateRate) <= Date.now()){
+                    last_update = Date.now();
+
+                    console.log(Date.now() + " >> UpdateWorker | Update " + configuration.Variable + " => " + value);
+                    var response = await fetch("/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&var=" +configuration.Variable+ "&val="+value);
+                    console.log(Date.now() + " >> UpdateWorker Response => " + response.statusText + " (" + response.status + ")");
+
+                    console.log(Date.now() + " >> UpdateWorker => CLOSE");
+                    running = false;
+                }
+            }catch (e) {
+                console.log(Date.now() + " >> UpdateWorker => ", e);
+            }
+        }
+    }
+    function connect() {
+       let location = window.detectLocation();
+        var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
+        ws.onopen = function() {
+            // subscribe to some channels
+            //ws.send(JSON.stringify({
+            //.... some message the I must send when I connect ....
+            //}));
+        };
+
+        ws.onmessage = function(e) {
+            data = JSON.parse(e.data);
+            if(data.Message == 10506) {
+                //refresh webseite
+                setTimeout(function (){
+                    window.location.reload(false);
+                },1000);
+            } else if(data.Message == 10603) {
+                Update(data.SenderID, data.Data[0]);
+            }
+        };
+
+        ws.onclose = function(e) {
+            console.log(Date.now() + ' >> Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+            setTimeout(function() {
+                connect();
+            }, 1000);
+        };
+
+        ws.onerror = function(err) {
+            console.error(Date.now() + ' >> Socket encountered error: ', err.message, 'Closing socket');
+            ws.close();
+        };
+    }
+
+    function Update(id_val, val){
+        isUpdated = false;
+        now = Date.now();
+        if(running ) return;
+
+        if(id_val === configuration.Variable && value !== val){
+            value = val;
+
+            obj = document.querySelector("#time");
+            obj.value = unixTimeToString(value);
+            UpdateIcon(obj.value);
+        }
+    }
+
+    async function PullNewData(refreshRate){
+        refreshRate = refreshRate * 1000;
+        while (true){
+            try {
+                $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
+                    Update(data.Variable, data.Value);
+                });
+
+                //Control Variables
+            }catch (e) {
+                console.log(Date.now() + " >> PullNewData => ", e);
+            }
+            await sleep(refreshRate);
+        }
+    }
+
+
+
+    function unixTimeToString(intVal){
+        dateObj = new Date(intVal * 1000);
+        return dateObj.toLocavarimeString();
+    }
+    function stringToUnixTime(str){
+        try{
+            const minute = Number(str.substring(3,5));
+            const hour = Number(str.substring(0,2));
+
+            return (hour * 3600) + (minute * 60);
+        }catch(e) {
+            console.log(Date.now() + " >> stringToUnixTime | " + e);
+            return -1;
+        }
+    }
+
+    window.onload = function() {
+        try {
+            Load();
+
+            if (config_global.LocalAddress == "" && config_global.LocalDataMode == 0) {
+                //pullup Mode local
+                refreshRate = config_global.LocalRefreshTime;
+                PullNewData(refreshRate);
+            } else if (config_global.RemoteAddress == "" && config_global.RemoteDataMode == 0) {
+                //pullup Mode remote
+                refreshRate = config_global.RefreshTime;
+                PullNewData(refreshRate);
+            } else {
+                connect();
+            }
+        }catch (e) {
+            alert(e);
+        }
+    }
+</script>
+</body>
+</html>

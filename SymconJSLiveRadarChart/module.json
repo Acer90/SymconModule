@@ -1,0 +1,11 @@
+{
+  "id": "{95C8F306-4E51-949E-E25B-FD5C1F173295}",
+  "name": "SymconJSLiveRadarChart",
+  "type": 3,
+  "vendor": "Swen Babenschneider",
+  "aliases": ["JSLive-Radar Chart"],
+  "parentRequirements": ["{751AABD7-E31D-024C-5CC0-82AC15B84095}"],
+  "childRequirements": [],
+  "implemented": ["{79D59629-E9C5-44F1-0F34-0FBC5C88F307}"],
+  "prefix": "SymconJSLiveRadarChart"
+}

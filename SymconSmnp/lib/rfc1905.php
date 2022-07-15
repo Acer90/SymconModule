@@ -578,4 +578,4 @@ class rfc1905_Report extends rfc1905_PDU
     $this->asnTagNumber = ASN_TAG_REPORT;
   }
 }
-?>
+

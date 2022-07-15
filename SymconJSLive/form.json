@@ -1,0 +1,51 @@
+{
+    "elements":
+    [
+        { "type": "Label", "caption": "Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and no special characters:"},
+        { "type": "PasswordTextBox", "name": "Password", "caption": "Passwort" , "validate": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$" },
+        { "type": "ValidationTextBox", "name": "Address", "caption": "Address"},
+        { "type": "Select", "name": "DataMode", "caption": "Data Mode",
+            "options": [
+                { "caption": "Pull", "value": 0 },
+                { "caption": "Websocket", "value": 1 }
+            ]
+        },
+        { "type": "NumberSpinner", "name": "RefreshTime", "caption": "Pull Refresh Time", "minimum": 0, "suffix": "sec." },
+        { "type": "CheckBox", "name": "CreateIPSView", "caption": "Enable IPSView Support"},
+        {
+            "type": "ExpansionPanel",
+            "caption": "Viewport Settings",
+            "items": [
+                { "type": "CheckBox", "name": "EnableViewport", "caption": "Enable"},
+                { "type": "ValidationTextBox", "name": "viewport_content", "caption": "Contend", "width": "100%" }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Expert",
+            "items": [
+                { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
+                { "type": "CheckBox", "name": "enableCache", "caption": "Enable Cache"},
+                { "type": "CheckBox", "name": "enableCompression", "caption": "Enable Compression"},
+                { "type": "CheckBox", "name": "Iframe_useFullLink", "caption": "Iframe use FullLink"}
+            ]
+        }
+    ],
+    "actions":
+    [
+        { "type": "Button", "label": "Load Connect Address", "onClick": " echo SymconJSLive_LoadConnectAddress($id, false);" },
+        { "type": "Button", "label": "Set Random Password", "onClick": " echo SymconJSLive_SetRandomPassword($id, false, true);" },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Load Custom Templates",
+            "items": [
+                { "type": "SelectCategory", "name": "TemplateCategoryID", "caption": "Template Category" },
+                { "type": "Button", "label": "Load Templates", "onClick": " echo SymconJSLive_UpdateTemplates($id, $TemplateCategoryID);" }
+            ]
+        }
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Status OK!" }
+    ]
+}

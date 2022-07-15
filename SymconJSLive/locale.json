@@ -1,0 +1,22 @@
+{
+  "translations": {
+    "de": {
+      "Password": "Passwort",
+      "Address": "Adresse",
+      "Data Mode": "Daten-Modus",
+      "Pull": "Interval",
+      "Websocket": "Websocket",
+      "Pull Refresh Time": "Interval Abfrage-Zeit",
+      "sec.": "sek.",
+      "Enable": "Aktivieren",
+      "Contend": "Content",
+      "Enable Cache": "Verwende Cache",
+      "Enable Compression": "Verwende Kompression",
+      "Iframe use FullLink": "IFrame benutzt den vollen Link als Quelle",
+      "Load Connect Address": "Connect Adresse laden",
+      "Load Custom Templates": "Benutzerdefiniert Vorlagen laden",
+      "Set Random Password": "zufälliges Password setzten!",
+      "Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and no special characters:": "Mindestens acht Zeichen, mindestens ein Großbuchstabe, ein Kleinbuchstabe, eine Zahl und kein Sonderzeichen:"
+    }
+  }
+}

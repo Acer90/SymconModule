@@ -76,7 +76,7 @@ Implementierung eines Snmp Clientes in IP-Symcon
   //oder als Bulk abruf
   $oid_array = ["1.3.6.1.2.1.1.5.0", "1.3.6.1.2.1.1.6.0"];
   print_r(IPSSNMP_ReadSNMP($intanceID, $oid_array)); //ausgabe als Array wobei der Key jeweils die OID ist.  
-?>
+
 ```
 
 ## 7. Parameter / Modul-Infos

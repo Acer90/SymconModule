@@ -57,13 +57,12 @@ Infos über die einzeln Variablen findest du im Handbuch des Wechselrichters
 
 <!-- language: php -->
  ```php
- <?php
   StecaSolarix_Load_LiveData(59067 /*[StecaSolarix]*/);
   //Aktualisiert alle Status-Variablen
   
   StecaSolarix_Load_LiveProperties(59067 /*[StecaSolarix]*/);
   //Aktualisiert alle Parameter-Variablen
-?>
+
 ```
 
 ## 7. Parameter / Modul-Infos

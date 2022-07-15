@@ -1,0 +1,95 @@
+{
+  "translations": {
+    "de": {
+      "Fill": "Füllen",
+      "Stroke": "Linie",
+
+      "Data": "Daten",
+      "Minimum Value": "min. Wert",
+      "Maximum Value": "max. Wert",
+      "Precision": "Präzision",
+      "Custom Precision": "Benutzerdefinierte Präzision",
+      "Animation": "Animation",
+      "Transition In": "Einblendedauer",
+      "Sec.": "Sek",
+
+      "Shape": "Form",
+      "Preset": "Vorlage",
+      "Custom Path": "Benutzerdefinierter Pfad",
+      "Load Custom Path from SVG File": "Pfad aus einer SVG-Datei laden",
+
+      "Dir": "Richtung",
+      "Line cap": "Linienende",
+      "Round": "Rund",
+      "Main:": "Haupt:",
+      "Trail:": "Schatten:",
+      "Dash:": "Gestrichelt:",
+      "Works only if \"Custom Path\" set!": "Funktioniert nur wenn ein \"Benutzerdefinierter Pfad\" gesetzt wurde!",
+
+      "Fill:": "Füllen:",
+      "left to right": "links nach rechts",
+      "right to left": "rechts nach links",
+      "bottom to top": "unten nach oben",
+      "top to bottom": "oben nach unten",
+      "Filetype": "Dateityp",
+      "Or": "oder",
+      "Background:": "Hintergrund:",
+      "Background Extrude": "Hintergrund Überhang",
+
+      "Override": "Überschreiben",
+      "Stroke:": "Linie:",
+
+      "Fonts": "Schrift",
+
+      "Display": "Anzeigen",
+      "Color": "Farbe",
+      "Alpha": "Transparenz/Alpha",
+      "Font": "Schrift",
+      "Size": "Größe",
+      "Family": "Art",
+      "Width": "Breite",
+      "Shadow": "Schatten",
+
+      "Left": "Links",
+      "Right": "Rechts",
+      "Both": "Beidseitig",
+      "Top": "Oben",
+      "Bottom": "Unten",
+      "Center": "Mittig",
+      "Start": "Anfang",
+      "End": "Ende",
+
+      "left": "links",
+      "right": "rechts",
+      "both": "beidseitig",
+      "top": "oben",
+      "bottom": "unten",
+      "center": "mittig",
+      "start": "anfang",
+      "end": "ende",
+
+      "Duration": "Dauer",
+      "Rule": "Regel",
+
+      "Font:": "Schrift:",
+      "Expert": "Experte",
+      "Debug": "Debug",
+      "Enable Cache": "Verwende Cache",
+      "Create HTMLBox": "Erstelle HTMLBox",
+      "Template Script": "Vorlagen Skript",
+      "Viewport Enable": "Aktiviere Viewport",
+      "IFrame Height": "IFrame Höhe",
+
+	  "Get Link": "Öffne Link",
+      "Configuration": "Konfiguration",
+      "Load from other Modul": "Einstellungen von einen anderen Modul laden",
+      "Load": "Laden",
+      "Load from File": "Einstellungen aus einer Konfigurationsdatei laden",
+      "File": "Datei",
+      "Export": "Export Konfigurationsdatei",
+
+	  "Status OK!": "Status Ok!"
+    }
+  }
+}
+

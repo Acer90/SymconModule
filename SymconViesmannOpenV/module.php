@@ -1,4 +1,4 @@
-<?
+<?php
 // Klassendefinition
 class ViesmannOpenV extends IPSModule {
 
@@ -633,7 +633,7 @@ class ViesmannOpenV extends IPSModule {
         return $this->ConvertDatetimeToBCD($date);
     }
 
-    public function ConvertDatetimeToBCD(Datetime $dtvalue){
+    private function ConvertDatetimeToBCD(DateTime $dtvalue){
 
         $year = $dtvalue->format('Y');
         $month = $dtvalue->format('m');

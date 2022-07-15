@@ -1,0 +1,19 @@
+{
+    "elements":
+    [
+        { "type": "CheckBox", "name": "ShowPresets", "caption": "Show Presets" },
+        { "type": "CheckBox", "name": "ShowPlaylist", "caption": "Show Playlist" },
+        { "type": "CheckBox", "name": "ShowNightlight", "caption": "Show Nightlight" }
+    ],
+    "actions":
+    [
+        { "type": "Button", "label": "Status abrufen", "onClick": "WLEDMaster_GetUpdate($id);" }
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Connection Success!" },
+        { "code": 104, "icon": "active", "caption": "Connection Lost!" },
+        { "code": 203, "icon": "error", "caption": "Internal Error!" }
+
+    ]
+}

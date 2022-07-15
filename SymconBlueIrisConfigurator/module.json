@@ -1,0 +1,14 @@
+{
+    "id": "{3B880DC9-B669-B9A1-A08B-AFE7CF6D9BD9}",
+    "name": "SymconBlueIrisConfigurator",
+    "type": 4,
+	"vendor": "",
+	"aliases": 
+	[
+		"BlueIris Configurator"
+	],
+    "parentRequirements": ["{7024A8F5-E706-33B4-4BBE-19A510C35E65}"],
+    "childRequirements": [],
+    "implemented": ["{80FC55A5-8B0F-0642-DB3B-2CA825E3A2A3}"],
+    "prefix": "SymconBlueIrisConfigurator"
+}

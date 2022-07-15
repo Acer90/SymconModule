@@ -1,0 +1,43 @@
+{
+    "elements":
+    [
+        {
+            "type":"Configurator",
+            "name":"camList",
+            "caption":"Cameras",
+            "rowCount": 20,
+            "delete":true,
+            "sort":{
+                "column":"name",
+                "direction":"ascending"
+            },
+            "columns":[
+                {
+                    "caption":"Name",
+                    "name":"name",
+                    "width":"auto"
+                },
+                {
+                    "caption":"Short Name",
+                    "name":"shortName",
+                    "width":"200px"
+                },
+                {
+                    "caption":"PTZ",
+                    "name":"ptz",
+                    "width":"100px"
+                }
+            ],
+            "values":[
+
+            ]
+        }
+    ],
+    "actions":
+    [
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Status OK!" }
+    ]
+}

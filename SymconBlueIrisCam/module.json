@@ -1,14 +1,14 @@
 {
     "id": "{5308D185-A3D2-42D0-B6CE-E9D3080CE184}",
-    "name": "BlueIrisCam",
+    "name": "SymconBlueIrisCam",
     "type": 3,
 	"vendor": "",
 	"aliases": 
 	[
-		"BlueIrisCam"
+		"BlueIris Camera"
 	],
-    "parentRequirements": ["{7E62F9B0-5474-426F-B91B-E25F4B25A824}"],
+    "parentRequirements": ["{95E9AD15-F5B0-01C6-4FF2-9093B9BD4E36}"],
     "childRequirements": [],
-    "implemented": [],
-    "prefix": "BlueIrisCam"
+    "implemented": ["{99FD6BAA-68AA-D576-8209-4E8E7A33E3E7}"],
+    "prefix": "SymconBlueIrisCam"
 }

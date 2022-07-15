@@ -60,4 +60,4 @@
     return pack('H*', $hash_function($opad . $digest));
   }
 
-?>
+

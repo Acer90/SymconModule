@@ -1,0 +1,25 @@
+{
+    "elements":
+    [
+        { "type": "ValidationTextBox", "name": "IPAddress", "caption": "IP-Address" },
+        { "type": "NumberSpinner", "name": "Port", "caption": "Port" },
+        { "type": "NumberSpinner", "name": "Timeout", "caption": "Timeout"},
+        { "type": "IntervalBox", "name": "Interval", "caption": "Sec." },
+        { "type": "ValidationTextBox", "name": "Username", "caption": "Username" },
+        { "type": "PasswordTextBox", "name": "Password", "caption": "Password"},
+        { "type": "CheckBox", "name": "Debug", "caption": "Debug"}
+    ],
+    "actions":
+    [
+        { "type": "Button", "label": "Sync Data", "onClick": "BlueIrisGateway_SyncData($id);" }
+
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Connection Success!" },
+        { "code": 201, "icon": "error", "caption": "Error Invalid parameter" },
+        { "code": 203, "icon": "error", "caption": "Internal Error!" },
+        { "code": 204, "icon": "error", "caption": "Timeout!" },
+        { "code": 205, "icon": "error", "caption": "Wrong Login!" }
+    ]
+}

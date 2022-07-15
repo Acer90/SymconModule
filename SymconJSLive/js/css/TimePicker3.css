@@ -1,0 +1,38 @@
+body, html {
+    --color: #945;
+    --size: 2rem;
+    --border: calc(var(--size) * 0.125);
+    --borderRadius: calc(var(--size) * 0.5);
+    --labelSize: calc(var(--size) * 0.75);
+    --margin: calc(var(--size) * 0.25);
+    --marginLeft: calc(var(--size) + calc(var(--size) * 0.5));
+    background: var(--bgColor);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    font-family: helvetica, arial, sans-serif;
+}
+
+label {
+    color: var(--color);
+    font-size: var(--labelSize);
+    font-weight: bold;
+}
+
+input {
+    border: var(--border) solid var(--color);
+    border-radius: var(--borderRadius);
+    color: #222;
+    font-size: var(--size);
+    padding: var(--margin) var(--margin) var(--margin) var(--margin);
+    transition: backgroundImage 0.25s;
+}
+
+/*input:focus {
+    outline: 2px dashed #945;
+    outline-offset: 3px;
+}*/

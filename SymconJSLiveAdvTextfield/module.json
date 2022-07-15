@@ -1,0 +1,11 @@
+{
+  "id": "{DBAF2DB0-0FCF-8396-9476-3C087457D012}",
+  "name": "SymconJSLiveAdvTextfield",
+  "type": 3,
+  "vendor": "Swen Babenschneider",
+  "aliases": ["JSLive-Advance Textfield"],
+  "parentRequirements": ["{751AABD7-E31D-024C-5CC0-82AC15B84095}"],
+  "childRequirements": [],
+  "implemented": ["{79D59629-E9C5-44F1-0F34-0FBC5C88F307}"],
+  "prefix": "SymconJSLiveAdvTextfield"
+}
