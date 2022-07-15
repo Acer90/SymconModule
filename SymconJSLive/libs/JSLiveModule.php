@@ -265,7 +265,7 @@ class JSLiveModule extends IPSModule
         $listVisibility = array("elements" => $formData["elements"], "actions" => $formData["actions"]);
         $this->SetBuffer("ConfigurationBuffer", json_encode($listVisibility));
 
-        $this->SendDebug("AFTER", json_encode($formData), 0 );
+        //this->SendDebug("AFTER", json_encode($formData), 0 );
 
         return $formData;
     }
@@ -718,10 +718,13 @@ class JSLiveModule extends IPSModule
                 $htmlStr .= '<iframe src="' . $link . '" width="100%" frameborder="0" scrolling="'.$scrolling.'" height="'.$height.'"></iframe>';
             }
 
+
+            //$htmlStr = file_get_contents(__DIR__ ."/../htmlbox/HtmlBox-Chart.html");
+            //$htmlStr = str_replace("{BOXID}", $this->InstanceID.$this->getUniqueID(), $htmlStr);
             $this->SetValue("Output", $htmlStr);
         }else{
             //remove old valeue
-            $oldID = IPS_GetObjectIDByIdent("Output", $this->InstanceID);
+            $oldID = @IPS_GetObjectIDByIdent("Output", $this->InstanceID);
 
             if($oldID !== false){
                 $this->UnregisterVariable("Output");
@@ -772,5 +775,43 @@ class JSLiveModule extends IPSModule
 
         //$this->SendDebug(__FUNCTION__, $str, 0);
         return $str;
+    }
+
+    protected function GET_PathList($arr, $paths = array(), $curPath = array())
+    {
+        if (array_key_exists("name", $arr)) {
+            $paths[] = array("path" => $curPath, "name" => $arr["name"]);
+        }
+        foreach ($arr as $key => $subarr)
+        {
+            $newPath = $curPath;
+            $newPath[] = $key;
+
+            //echo $key. "\r\n";
+
+            if (is_array($subarr))
+            {
+                $paths = $this->GET_PathList($subarr, $paths, $newPath);
+            }
+        }
+        return $paths;
+    }
+    protected function SET_By_KEYPATH($path, &$array=array(), $value=null)
+    {
+        $temp =& $array;
+
+        foreach ($path as $key) {
+            $temp =& $temp[$key];
+        }
+        $temp = $value;
+    }
+    protected function GET_By_KEYPATH($array, $path){
+        $temp =& $array;
+
+        foreach($path as $key) {
+            //print_r($temp[$key]);
+            $temp =& $temp[$key];
+        }
+        return $temp;
     }
 }
