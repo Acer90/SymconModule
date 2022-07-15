@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <!--{VIEWPORT}
+    <title>{TITLE_TEXT}</title> -->
+</head>
+<script src="/hook/JSLive/js/jquery.min.js" ></script>
+<script src="/hook/JSLive/js/util.js"></script>
+
+<script src="/hook/JSLive/js/chartjs/chart.min.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/moment/2.27.0/Moment.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/chartjs/plugins/chartjs-adapter-moment.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/chartjs/plugins/chartjs-plugin-streaming.min.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/chartjs/plugins/chartjs-plugin-datalabels.min.js" charset="utf-8"></script>
+
+<body>
+<div style="position: absolute; width: 300px; visibility: hidden;">
+    <p>
+        test<br>
+        jsdjds
+    </p>
+
+</div>
+<div id="loader-{BOXID}" style="width: 100%">
+    <div style="text-align: center; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%); width: 200px; height: 100px;">
+        <svg id="symcon_logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 199.16 31.53" fill="green">
+            <g>
+                <path class="cls-sym" d="M1.39,30.14V25.39A27.63,27.63,0,0,0,11,27q6.52,0,6.52-4.36,0-3.16-4-3.17H8.7Q0,19.44,0,11.51,0,2.8,12.39,2.79a29.15,29.15,0,0,1,9,1.39V8.94a25.64,25.64,0,0,0-9-1.59q-7.14,0-7.14,4.16c0,2.12,1.15,3.17,3.45,3.17h4.84q9.26,0,9.25,7.93,0,8.92-11.77,8.92A30.88,30.88,0,0,1,1.39,30.14Z"></path>
+                <path class="cls-sym" d="M29,3h5.65l8,13.66L50.08,3h5.45L45.11,21.42v9.91H39.85V21.42Z"></path>
+                <path class="cls-sym" d="M63.52,31.33V3H69L78.58,24.5,88,3h5.25V31.33H88.39V11.59L80.71,31.33H76.23L68.38,11.59V31.33Z"></path>
+                <path class="cls-sym" d="M124.66,30.14a23.26,23.26,0,0,1-8.32,1.39q-15.27,0-15.26-14.77,0-14,15.26-14a23.49,23.49,0,0,1,8.32,1.39V8.94a19.66,19.66,0,0,0-7.92-1.59q-10.21,0-10.21,9.41Q106.53,27,116.74,27a19.82,19.82,0,0,0,7.92-1.58Z"></path>
+                <path class="cls-sym" d="M173.09,31.33V3h5.25L194.1,23.25V3h5.06V31.33H193.9L178.15,10.64V31.33Z"></path>
+                <path class="cls-sym" d="M146,31.38h15.76V20.16L163.61,22l3.57-3.57L148.78,0h0l-18.4,18.41L134,22l1.81-1.82V31.38h5.07l0-16.27,8-8,8,8V26.33h-5.5V21H146Z"></path>
+            </g>
+        </svg>
+        <p id="loaderText-{BOXID}">loading xyz</p>
+    </div>
+</div>
+<div id="chart-container-{BOXID}" style="position: relative;">
+    <canvas id="myChart-{BOXID}"></canvas>
+</div>
+
+<script>
+   if (typeof load_Inctance !== 'function'){
+        var script = document.createElement('script');
+        script.onload = function () {
+            new load_Inctance(48111, "{BOXID}");
+        };
+        script.src = "/hook/JSLive/js/loader.js";
+        document.head.appendChild(script);
+   }else{
+       new load_Inctance(48111, "123456");
+   }
+</script>
+</body>
+</html>

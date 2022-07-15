@@ -506,7 +506,7 @@ class LightRoomController extends IPSModule
 
                 $Payload["seg"][] = $segment;
 
-                $this->SendDebug("ControlLight", "###TEST###". json_encode($Payload),0);
+                #$this->SendDebug("ControlLight", "###TEST###". json_encode($Payload),0);
 
                 WLEDSegment_SendData($instance, json_encode($Payload));
                 break;

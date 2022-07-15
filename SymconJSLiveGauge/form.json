@@ -412,8 +412,8 @@
                             "type": "RowLayout",
                             "items": [
                                 { "type": "Label", "caption": "Out End:", "width": "100px"},
-                                { "type": "SelectColor", "name": "needle_colorNeedleCircleOuter", "caption": "Color" },
-                                { "type": "HorizontalSlider", "name": "needle_colorNeedleCircleOuter_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
+                                { "type": "SelectColor", "name": "needle_colorNeedleCircleOuterEnd", "caption": "Color" },
+                                { "type": "HorizontalSlider", "name": "needle_colorNeedleCircleOuterEnd_Alpha", "caption": "Alpha", "minimum": 0, "maximum": 1, "stepSize": 0.05 }
                             ]
                         }
                     ]

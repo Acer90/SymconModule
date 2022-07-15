@@ -310,7 +310,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
 
             foreach($item["Variables"] as $varitem){
                 if(!IPS_VariableExists($varitem["Variable"])) {
-                    $this->SendDebug("GenerateDataSet", "VARIABLE " .$item["Variable"] . " NOT EXIST!", 0);
+                    $this->SendDebug("GenerateDataSet", "VARIABLE " .$varitem["Variable"] . " NOT EXIST!", 0);
                     continue;
                 }
 
@@ -414,45 +414,49 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
             $output["datasets"][] = $singelOutput;
         }
 
+        //print_r($output["datasets"]);
+
         //datasets auffüllen mit 0
         $start = 0;
         $c = 0;
         $end = 0;
         foreach($output["datasets"] as $key => $val){
-            for($n = count($val["variables"]); $n < $i; $n++){
-                if($c >= count($output["datasets"])){
-                    //Reslichen überspringen
-                    continue;
-                }
-
-                if($end <= $start){
-                    $start = count($output["datasets"][$c]["variables"]);
-                    $c++;
-
-                    if((count($output["datasets"])-1) >= $c){
-                        //$this->SendDebug("VAR", json_encode($output["datasets"][$c]["variables"]), 0);
-                        $end = count($output["datasets"][$c]["variables"]) - 1;
-                    }else{
-                        $end = $start;
+            if(array_key_exists("variables", $val)) {
+                for ($n = count($val["variables"]); $n < $i; $n++) {
+                    if ($c >= count($output["datasets"])) {
+                        //Reslichen überspringen
+                        continue;
                     }
-                }else{
-                    $start++;
+
+                    if ($end <= $start) {
+                        $start = count($output["datasets"][$c]["variables"]);
+                        $c++;
+
+                        if ((count($output["datasets"]) - 1) >= $c) {
+                            //$this->SendDebug("VAR", json_encode($output["datasets"][$c]["variables"]), 0);
+                            $end = count($output["datasets"][$c]["variables"]) - 1;
+                        } else {
+                            $end = $start;
+                        }
+                    } else {
+                        $start++;
+                    }
+                    if ($c >= count($output["datasets"])) {
+                        //Reslichen überspringen
+                        continue;
+                    }
+
+                    $output["datasets"][$key]["variables"][] = null;
+                    $output["datasets"][$key]["data"][] = null;
+
+                    //$this->SendDebug("Count", "C=".$c ." | Start=" . $start . " | END=". $end, 0);
+                    //$this->SendDebug("Test", json_encode($output["datasets"][$c]["backgroundColor"]), 0);
+                    //$this->SendDebug("Test", $output["datasets"][$c]["backgroundColor"][$start], 0);
+
+                    $output["datasets"][$key]["borderWidth"][] = $output["datasets"][$c]["borderWidth"][$start];
+                    $output["datasets"][$key]["backgroundColor"][] = $output["datasets"][$c]["backgroundColor"][$start];
+                    $output["datasets"][$key]["borderColor"][] = $output["datasets"][$c]["borderColor"][$start];
                 }
-                if($c >= count($output["datasets"])){
-                    //Reslichen überspringen
-                    continue;
-                }
-
-                $output["datasets"][$key]["variables"][] = null;
-                $output["datasets"][$key]["data"][] = null;
-
-                //$this->SendDebug("Count", "C=".$c ." | Start=" . $start . " | END=". $end, 0);
-                //$this->SendDebug("Test", json_encode($output["datasets"][$c]["backgroundColor"]), 0);
-                //$this->SendDebug("Test", $output["datasets"][$c]["backgroundColor"][$start], 0);
-
-                $output["datasets"][$key]["borderWidth"][] = $output["datasets"][$c]["borderWidth"][$start];
-                $output["datasets"][$key]["backgroundColor"][] = $output["datasets"][$c]["backgroundColor"][$start];
-                $output["datasets"][$key]["borderColor"][] = $output["datasets"][$c]["borderColor"][$start];
             }
         }
         return $output;

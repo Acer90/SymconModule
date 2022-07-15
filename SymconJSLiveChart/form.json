@@ -117,6 +117,57 @@
         },
         {
             "type": "ExpansionPanel",
+            "caption": "X Axes",
+            "viewlevel": 1,
+            "items": [
+                { "type": "CheckBox", "name": "xaxes_display", "caption": "Display"},
+                { "type": "CheckBox", "name": "xaxes_overrideDynamic", "caption": "override dynamic scaling", "viewlevel": 2},
+                {
+                    "type": "List",
+                    "name": "xaxes_override_list",
+                    "caption": "Override XAches",
+                    "rowCount": 8,
+                    "viewlevel": 2,
+                    "requireItem": "xaxes_overrideDynamic",
+                    "add": false,
+                    "delete": false,
+                    "edit": true,
+                    "changeOrder": false,
+                    "columns": [
+                        {
+                            "caption": "Name",
+                            "name": "Name",
+                            "width": "300px",
+                            "add": ""
+                        },
+                        {
+                            "caption": "step Size",
+                            "name": "stepSize",
+                            "width": "200px",
+                            "add": 0,
+                            "edit": {
+                                "type": "NumberSpinner",
+                                "digits": 0,
+                                "minimum": 0
+                            }
+                        },
+                        {
+                            "caption": "max Ticks Limit",
+                            "name": "maxTicksLimit",
+                            "width": "200px",
+                            "add": 0,
+                            "edit": {
+                                "type": "NumberSpinner",
+                                "digits": 0,
+                                "minimum": 0
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "ExpansionPanel",
             "caption": "Points",
             "items": [
                 { "type": "NumberSpinner", "name": "point_radius", "caption": "Size", "suffix": "px", "minimum": 0, "stepSize": 1 },
@@ -385,6 +436,9 @@
             "delete": true,
             "edit": true,
             "changeOrder": true,
+            "onAdd": " SymconJSLiveChart_ReloadFormAxes($id, $Axes, 0);",
+            "onEdit": " SymconJSLiveChart_ReloadFormAxes($id, $Axes, 1);",
+            "onDelete": " SymconJSLiveChart_ReloadFormAxes($id, $Axes, 2);",
             "columns": [
                 {
                     "caption": "Ident",
@@ -392,7 +446,8 @@
                     "width": "200px",
                     "add": "",
                     "edit": {
-                        "type": "ValidationTextBox"
+                        "type": "ValidationTextBox",
+                        "validate": "^(?=.{2,}$)([a-zA-Z][a-zA-Z0-9_-]*)$"
                     }
                 },
                 {
@@ -600,6 +655,8 @@
             "delete": true,
             "edit": true,
             "changeOrder": true,
+            "onAdd": " SymconJSLiveChart_ReloadFormDatasets($id, $Datasets, 0);",
+            "onEdit": " SymconJSLiveChart_ReloadFormDatasets($id, $Datasets, 1);",
             "columns": [
                 {
                     "caption": "Type",
@@ -949,7 +1006,7 @@
                 {
                     "type": "RowLayout",
                     "items": [
-                        { "type": "CheckBox", "name": "CreateOutput", "caption": "Create IPSView HTMLBox"},
+                        { "type": "CheckBox", "name": "CreateIPSView", "caption": "Create IPSView HTMLBox"},
                         { "type": "Label", "caption": "Works only if the Option IPSView in Gateway is enabled!"}
                     ]
                 },

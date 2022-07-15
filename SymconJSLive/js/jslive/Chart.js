@@ -1,53 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    {VIEWPORT} <!-- Dont Remove this line, it can be disabled at intstance! -->
-    <title>{TITLE_TEXT}</title>
-    {FONTS} <!-- Need for Custom font Family !-->
-</head>
-<script src="/hook/JSLive/js/jquery.min.js" ></script>
-<script src="/hook/JSLive/js/chartjs/chart.min.js" charset="utf-8"></script>
-<script src="/hook/JSLive/js/moment/2.27.0/Moment.js" charset="utf-8"></script>
-<script src="/hook/JSLive/js/chartjs/plugins/chartjs-adapter-moment.js" charset="utf-8"></script>
-<script src="/hook/JSLive/js/chartjs/plugins/chartjs-plugin-streaming.min.js" charset="utf-8"></script>
-<script src="/hook/JSLive/js/chartjs/plugins/chartjs-plugin-datalabels.min.js" charset="utf-8"></script>
-<script src="/hook/JSLive/js/util.js"></script>
+class JSLive_Chart {
+    constructor(instanceID, config_global, configuration) {
+        this.myChart;
 
-<body>
-<div id="chart-container" style="position: relative;">
-    <canvas id="myChart"></canvas>
-</div>
+        this.instanceID = instanceID;
+        this.config_global = config_global;
+        this.configuration = configuration;
 
-<script>
-    let myChart;
+        this.config_dataset = configuration["dataset"];
+        this.config_axes = configuration[""];
+        this.config_legend = configuration[""];
+        this.config_tooltips = configuration[""];
+        this.config_title = configuration[""];
+        this.config_xaxes = configuration[""];
 
-    let config_global = {GLOBAL};
+        this.update_vars = [];
+        this.update_vars_Values = [];
 
-    let config_dataset = []; //{/DATASETS};
-    let config_axes =  {};// {/AXES};
-    let config_legend = {LEGEND};
-    let config_tooltips = {TOOLTIPS};
-    let config_title = {TITLE};
-    let config_xaxes = {};//{/XAXES};
+        this.update_vars.push(configuration.ID_Period);
+        this.update_vars.push(configuration.ID_Now);
+        this.update_vars.push(configuration.ID_StartDate);
+        this.update_vars.push(configuration.ID_Relativ);
 
-    let configuration = {CONFIG};
+        this.last_update = Date.now();
+        this.offset_isSet = false;
+        this.last_reload = 0; //Damit der Chart nur einmal neugeladen wird!
+        this.isReloading = true;
+        this.pullMode = false;
+        this.pullModeStopping = false;
 
-    let update_vars = [];
-    let update_vars_Values = [];
-    update_vars.push(configuration.ID_Period);
-    update_vars.push(configuration.ID_Now);
-    update_vars.push(configuration.ID_StartDate);
-    update_vars.push(configuration.ID_Relativ);
+        this.bootUp();
+    }
 
-    let last_update = Date.now();
-    let offset_isSet = false;
-    let last_reload = 0; //Damit der Chart nur einmal neugeladen wird!
-    let isReloading = true;
-    let pullMode = false;
-    let pullModeStopping = false;
 
-    function updateChartconfig() {
+    updateChartconfig() {
         try {
             //Eneable Datalabels
             Chart.register(ChartDataLabels);
@@ -101,7 +86,7 @@
                             clip: true,
                             clamp: false,
                             formatter: function(value, context) {
-                                precision = Math.pow(10, configuration.data_precision);
+                                var precision = Math.pow(10, configuration.data_precision);
                                 var str  = Math.floor(value["y"] * precision) /  precision;
                                 if(str === 0 || str === null || str === "") return "";
 
@@ -146,13 +131,13 @@
                 }
             };
 
-            sData = checkIsStreaming();
+            var sData = checkIsStreaming();
             if(sData !== false){
                 config.options.plugins["streaming"] = sData;
             }
 
             //add function tooltip
-            t_callpack = {
+            var t_callpack = {
                 label: UpdateTooltipLabel
             };
             config.options.plugins.tooltip.callbacks = t_callpack;
@@ -165,13 +150,13 @@
         }
     }
 
-    function connect() {
-       let location = window.detectLocation();
+    connect() {
+        let location = window.detectLocation();
         var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
         ws.onopen = function() {
             // subscribe to some channels
             //ws.send(JSON.stringify({
-                //.... some message the I must send when I connect ....
+            //.... some message the I must send when I connect ....
             //}));
         };
 
@@ -206,30 +191,30 @@
         };
     }
 
-    function UpdateChart(id_val, dt_val, value){
+    UpdateChart(id_val, dt_val, value){
         try{
             //wenn nicht Now dann kein Update durchführen!
             if(!configuration.Now || isReloading) return;
 
-            isUpdated = false;
+            var isUpdated = false;
 
-            required = {Variable: id_val};
-            results = [];
+            var required = {Variable: id_val};
+            var results = [];
             results = getMatchingKeys(config_dataset, required);
 
             //console.log('Result:', results);
             //nur Updaten wenn ID in Chart exestiert
             if(results.length > 0){
-                period = configuration["Period"];
+                var period = configuration["Period"];
                 //updaten des Aktuellen Charts
                 results.forEach(function(part, index) {
                     //nur daten ohne Offset hier updaten
 
                     //check if BoolAxes
-                    isBool = false;
-                    yAxisID = myChart.data.datasets[part].yAxisID;
+                    var isBool = false;
+                    var yAxisID = myChart.data.datasets[part].yAxisID;
                     if(yAxisID in config_axes && "labels" in config_axes[yAxisID]){
-                        boolData = config_axes[yAxisID].labels;
+                        var boolData = config_axes[yAxisID].labels;
                         if(value === 1){
                             val = boolData[0];
                         }else{
@@ -239,17 +224,17 @@
                     }
 
 
-                    offset = myChart.data.datasets[part].offset;
+                    var offset = myChart.data.datasets[part].offset;
                     if(offset === 0) {
                         if(!isBool){
-                            precision = Math.pow(10, configuration.data_precision);
+                            var precision = Math.pow(10, configuration.data_precision);
 
                             val = Math.floor(value * precision) /  precision;
-                            highRes = myChart.data.datasets[part].highRes;
-                            itemDate = UpdateDate(dt_val * 1000, highRes);
+                            var highRes = myChart.data.datasets[part].highRes;
+                            var itemDate = UpdateDate(dt_val * 1000, highRes);
                         }
 
-                        counter = myChart.data.datasets[part].counter;
+                        var counter = myChart.data.datasets[part].counter;
                         if(counter && !isBool){
 
                             val = val - myChart.data.datasets[part].lastValue;
@@ -282,7 +267,7 @@
                                 }
                             }else{
                                 //neuen Datensatz anlegen
-                                dataPoint = {
+                                var dataPoint = {
                                     x: itemDate.getTime(),
                                     y: val,
                                     c: 1
@@ -291,23 +276,23 @@
                             }
                         } else {
                             //check Timestamp vorhanden
-                            required = {x: itemDate.getTime()};
-                            results = [];
+                            var required = {x: itemDate.getTime()};
+                            var results = [];
                             results = getMatchingKeys(myChart.data.datasets[part].data, required);
                             //console.log('Result:', results);
 
                             if (results.length > 0) {
                                 //ja alten updaten
                                 if(counter && !isBool) {
-                                    old = myChart.data.datasets[part].data[results[0]].y;
+                                    var old = myChart.data.datasets[part].data[results[0]].y;
                                     myChart.data.datasets[part].data[results[0]].y = old + val;
                                 }else{
                                     c = 1;
                                     if (typeof myChart.data.datasets[part].data[results[0]].c != "undefined") {
-                                        oldval = myChart.data.datasets[part].data[results[0]].y;
+                                        var oldval = myChart.data.datasets[part].data[results[0]].y;
                                         c = myChart.data.datasets[part].data[results[0]].c;
 
-                                        if(!isBool) val = Math.round(((oldval * c) + val) / (c + 1) * 100) / 100;
+                                        if(!isBool) var val = Math.round(((oldval * c) + val) / (c + 1) * 100) / 100;
                                         c++;
                                     }
 
@@ -315,7 +300,7 @@
                                     myChart.data.datasets[part].data[results[0]].c = c;
                                 }
                             } else {
-                                dataPoint = {
+                                var dataPoint = {
                                     x: itemDate.getTime(),
                                     y: val,
                                     c: 1
@@ -335,7 +320,7 @@
             console.error(error);
         }
     }
-    function ReloadChart(id_val, dt_val, val = null, fullReload = false){
+    ReloadChart(id_val, dt_val, val = null, fullReload = false){
         //deoppelten Reload verhinden!
         if(last_reload == dt_val) return;
         if(!update_vars.includes(id_val)) return;
@@ -476,7 +461,7 @@
             });
         }
     }
-    async function UpdateConfiguration() {
+    async UpdateConfiguration() {
         while (true){
             try {
                 if(!configuration.Relativ) {
@@ -495,7 +480,7 @@
         }
     }
 
-    function UpdateDate(date, highRes = 7){
+    UpdateDate(date, highRes = 7){
         var period = configuration["Period"];
         var oldDate = new Date(date);
         var newDate = new Date();
@@ -547,7 +532,7 @@
         return newDate;
     }
 
-    function GetPeriodTimespan(){
+    GetPeriodTimespan(){
         var period = configuration["Period"];
 
         switch(period){
@@ -580,13 +565,13 @@
 
     }
 
-    function RemoveOldData() {
+    RemoveOldData() {
         if (myChart.options.scales.x.type != "realtime") {
-            itemDate = myChart.options.scales.x.min;
+            var itemDate = myChart.options.scales.x.min;
 
             //löschdatum holen
             myChart.data.datasets.forEach(function (part, index) {
-                rDate = GetRemoveDate(UpdateDate(itemDate, part.highRes));
+                var rDate = GetRemoveDate(UpdateDate(itemDate, part.highRes));
                 rDate = rDate.getTime() - GetPeriodTimespan(); //letzten 30 sekunden noch vorhalten
 
                 //console.log("part" ,part);
@@ -602,28 +587,28 @@
             });
         }
     }
-    function UpdateOffsetData_Relativ() {
+    UpdateOffsetData_Relativ() {
         if (configuration.Relativ) {
-            curDate = Date.now();
+            var curDate = Date.now();
 
             myChart.data.datasets.forEach(function (part, index) {
-                offset = part.offset;
+                var offset = part.offset;
                 c = part.data.length - 1;
 
                 if (offset > 0 && c > 0) {
 
                     //mehr daten laden wenn Bar vorhanden
-                    start = Math.floor((part.data[c].x) / 1000);
-                    end = Math.floor((curDate) / 1000);
+                    var start = Math.floor((part.data[c].x) / 1000);
+                    var end = Math.floor((curDate) / 1000);
 
-                    highRes = part.highRes;
+                    var highRes = part.highRes;
                     link = "/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}&var=" + part.Variable + "&offset=" + offset + "&hires=" + highRes + "&start=" + start + "&end=" + end;
                     $.getJSON(link, function (data) {
                         //console.log("update Offset: ", data);
 
                         data[0].archiv.forEach(function (apart, aindex) {
-                            required = {x: apart.x};
-                            results = [];
+                            var required = {x: apart.x};
+                            var results = [];
                             results = getMatchingKeys(myChart.data.datasets[index].data, required);
 
                             if(results.length > 0){
@@ -639,11 +624,11 @@
             });
         }
     }
-    function RefreshChart_Absolute(curDate) {
+    RefreshChart_Absolute(curDate) {
         if (myChart.options.scales.x.type != "realtime") {
             curDate = Date.now();
             if(myChart.options.scales.x.max < curDate){
-                dateData = GetStartEndDate(curDate);
+                var dateData = GetStartEndDate(curDate);
                 myChart.options.scales.x.min = dateData.start;
                 myChart.options.scales.x.max = dateData.end;
                 myChart.update();
@@ -653,33 +638,33 @@
         }
     }
 
-    async function UpdateOffsetData_Absolute() {
+    async UpdateOffsetData_Absolute() {
         //absolute Mode
         //console.log("UpdateOffsetData_Absolute");
-        dateData = GetStartEndDate(Date.now());
+        var dateData = GetStartEndDate(Date.now());
 
         //mehr daten laden wenn Bar vorhanden
-        offsetTime = 0;
+        var offsetTime = 0;
         if(configuration.Has_Bar){
-            offsetTime = GetPeriodTimespan();
+            var offsetTime = GetPeriodTimespan();
         }
 
-        start = Math.floor(dateData.start / 1000) - offsetTime;
-        end = Math.floor(dateData.end / 1000) + offsetTime;
+        var start = Math.floor(dateData.start / 1000) - offsetTime;
+        var end = Math.floor(dateData.end / 1000) + offsetTime;
 
         myChart.data.datasets.forEach(function (part, index) {
-            offset = part.offset;
+            var offset = part.offset;
             c = part.data.length - 1;
 
             if (offset > 0 && c > 0) {
 
-                highRes = part.highRes;
+                var highRes = part.highRes;
                 $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}&var=" + part.Variable + "&offset=" + offset + "&hires=" + highRes + "&start=" + start + "&end=" + end, function (data) {
                     //console.log("update Offset: ", data);
 
                     data[0].archiv.forEach(function (apart, aindex) {
                         myChart.data.datasets[index].data.push(apart);
-                        isUpdated = true;
+                        var isUpdated = true;
                     });
                 });
             }
@@ -688,13 +673,13 @@
 
         myChart.update(0);
     }
-    async function PullNewData(refreshRate){
+    async PullNewData(refreshRate){
         pullMode = true;
         pullModeStopping = false;
         refreshRate = refreshRate * 1000;
         while (!pullModeStopping){
             try {
-                dt_val = Math.floor(Date.now() / 1000);
+                var dt_val = Math.floor(Date.now() / 1000);
                 $.getJSON("/hook/JSLive/getData?Instance={INSTANCE}&pw={PASSWORD}", function (data) {
                     data.forEach(function (part, index) {
                         UpdateChart(part.Variable, dt_val, part.Value);
@@ -719,13 +704,13 @@
         }
     }
 
-    function GetStartEndDate(date) {
-        period = configuration.Period;
-        is_relativ = configuration.Relativ;
-        oldDate = new Date(date);
+    GetStartEndDate(date) {
+        var period = configuration.Period;
+        var is_relativ = configuration.Relativ;
+        var oldDate = new Date(date);
 
-        eDate = new Date();
-        sDate = new Date();
+        var eDate = new Date();
+        var sDate = new Date();
 
         if(is_relativ){
             eDate = oldDate;
@@ -771,7 +756,7 @@
             switch(period){
                 case 0:
                     //dekade
-                    startyear = parseInt(oldDate.getFullYear() / 10) * 10;
+                    var startyear = parseInt(oldDate.getFullYear() / 10) * 10;
                     sDate = new Date(startyear, 0, 0, 0, 0, 0);
                     eDate = new Date((startyear+10), 0, 0, 0, 0, 0);
                     break;
@@ -782,7 +767,7 @@
                     break;
                 case 2:
                     //quartal
-                    starmonth = parseInt(oldDate.getMonth() / 3) * 3;
+                    var starmonth = parseInt(oldDate.getMonth() / 3) * 3;
                     sDate = new Date(oldDate.getFullYear(), starmonth, 0, 0, 0, 0);
                     eDate = new Date(oldDate.getFullYear(), (starmonth+3), 0, 0, 0, 0);
                     break;
@@ -827,11 +812,11 @@
 
         return { "start": sDate, "end": eDate};
     }
-    function GetRemoveDate(date){
-        period = configuration.Period;
-        is_relativ = configuration.Relativ;
-        oldDate = new Date(date);
-        rDate = new Date();
+    GetRemoveDate(date){
+        var period = configuration.Period;
+        var is_relativ = configuration.Relativ;
+        var oldDate = new Date(date);
+        var rDate = new Date();
 
         //console.log("mode:", is_relativ);
         //console.log("oldDate:", oldDate);
@@ -878,7 +863,7 @@
             switch(period){
                 case 0:
                     //dekade
-                    startyear = parseInt(oldDate.getFullYear() / 10) * 10;
+                    var startyear = parseInt(oldDate.getFullYear() / 10) * 10;
                     rDate = new Date(startyear, 0, 0, 0, 0, 0);
                     break;
                 case 1:
@@ -887,7 +872,7 @@
                     break;
                 case 2:
                     //quartal
-                    starmonth = parseInt(oldDate.getMonth() / 3) * 3;
+                    var starmonth = parseInt(oldDate.getMonth() / 3) * 3;
                     rDate = new Date(oldDate.getFullYear(), starmonth, 0, 0, 0, 0);
                     break;
                 case 3:
@@ -923,7 +908,7 @@
         //console.log("rDate:", rDate);
         return rDate;
     }
-    function checkIsStreaming(){
+    checkIsStreaming(){
         //return false;
         if(configuration.Relativ == false) return false;
         switch(configuration.Period){
@@ -941,17 +926,17 @@
         }
 
     }
-    function checkOffsetisSet(){
-        isSet = false
+    checkOffsetisSet(){
+        var isSet = false
         myChart.data.datasets.forEach(function(part, index) {
-            offset = part.offset;
+            var offset = part.offset;
 
             if(offset > 0) isSet = true;
         });
 
         return isSet;
     }
-    function UpdateTooltipLabel(context){
+    UpdateTooltipLabel(context){
         var dataset = context.dataset;
 
         var Suffix = "";
@@ -972,7 +957,7 @@
             blocks.push(Prefix);
         }
 
-        precision = Math.pow(10, configuration.data_precision);
+        var precision = Math.pow(10, configuration.data_precision);
         var str  = Math.floor(context.parsed.y * precision) / precision;
         blocks.push(str)
         if (Suffix !== "") {
@@ -981,7 +966,7 @@
         return blocks.join('');
     }
 
-    function bootUp(){
+    bootUp(){
         try {
             //load config after Startup
             var dt_val = Math.floor(Date.now() / 1000);
@@ -998,23 +983,5 @@
             alert("Chart | ", e.message);
         }
     }
+}
 
-    window.onload = function() {
-        bootUp();
-    }
-
-    window.addEventListener('load resize orientationchange', function () {
-        ResizeChart('resize');
-    });
-    function ResizeChart() {
-        //reload
-        var ctx = document.getElementById('chart-container');
-        ctx.style.width = Get_WindowWidth() - 20+"px";
-        ctx.style.height = Get_WindowHeight() - 20+"px";
-    }
-
-
-
-</script>
-</body>
-</html>
