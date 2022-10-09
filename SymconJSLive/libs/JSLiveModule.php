@@ -719,7 +719,7 @@ class JSLiveModule extends IPSModule
             }
 
 
-            $htmlStr = file_get_contents(__DIR__ ."/../htmlbox/HtmlBox-Chart.html");
+            //$htmlStr = file_get_contents(__DIR__ ."/../htmlbox/HtmlBox-Chart.html");
             $htmlStr = str_replace("{BOXID}", $this->InstanceID.$this->getUniqueID(), $htmlStr);
             $this->SetValue("Output", $htmlStr);
         }else{
