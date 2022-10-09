@@ -103,7 +103,6 @@ class IPSSNMP extends IPSModule {
         public function ReadSNMP($oid_array) {
 
             if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP", json_encode($oid_array), 0);
-            ini_set('display_errors', '0'); //übergangsweise zum fehler
 
             $SNMPIPAddress = $this->ReadPropertyString("SNMPIPAddress");
             $SNMPTimeout = $this->ReadPropertyInteger("SNMPTimeout");
@@ -131,23 +130,14 @@ class IPSSNMP extends IPSModule {
 
                 foreach($oids as $oid) {
                     //$this->SendDebug("ReadSNMP", "READ OID => " . $oid->getOid(), 0);
-                    try {
-                        $out[$oid->getOid()] = (string)$oid->getValue();
-                    } catch (SnmpRequestException $e) {
-                        $this->SendDebug("ERROR", $e->getMessage().PHP_EOL, 0);
-                    }
+                    $out[$oid->getOid()] = (string)$oid->getValue();
                 }
 
                 if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP", json_encode($out), 0);
             }
             else{
                 //$out = $snmp->get($SNMPIPAddress, $oid_array, $snmp_sdata);
-                try {
-                    $out[$oid_array] = @$snmp->getValue($oid_array).PHP_EOL;
-                } catch(SnmpRequestException $e) {
-                    $this->SendDebug("ERROR", $e->getMessage().PHP_EOL, 0);
-                }
-
+                $out[$oid_array] = @$snmp->getValue($oid_array).PHP_EOL;;
                 if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("ReadSNMP",$oid_array. " => ".json_encode($out), 0);
             }
 
