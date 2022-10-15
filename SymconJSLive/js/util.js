@@ -134,6 +134,26 @@ window.detectLocation = function () {
             document.write("Cannot detect protocol/host on IPSStudio Client!");
             throw 'Cannot detect protocol/host on IPSStudio Client!';
         }
+    }else if(window.location.protocol.toLowerCase() == "about:"){ //alternative für windows client
+        var url = document.baseURI;
+        var protocol = "http:";
+        var port = "";
+        var host = "127.0.0.1";
+
+        if(url.startsWith('https')) protocol = "https:";
+
+        host = url.replace(protocol+"//", "");
+        /*if(host.includes(":")){
+            host = host.split(":")[0];
+        }*/
+        if(host.includes("/")){
+            host = host.split("/")[0];
+        }
+
+        return {
+            'protocol': protocol,
+            'host': host
+        }
     } else {
         // Use the simple way for WebFront + Symcon Apps
         return {
