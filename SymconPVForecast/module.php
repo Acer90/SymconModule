@@ -246,7 +246,9 @@ class PVForecastcls{
 	function forecastChart(){
 		$id = $this->CreateVariableByName($this->instance,"PV Forecast Chart",3,"~HTMLBox");
 		$pv_max = ($this->PV["kwh"])? $this->PV["kwp"]/1000 : $this->PV["kwp"];
-		$html = "<style>
+        $html = "<html>
+                  <head>";
+ 		$html .= "<style>
 					.pv{
 						background-color: yellow;
 						margin-left: 1px;
@@ -277,7 +279,8 @@ class PVForecastcls{
 					}
 
 				</style>";
-		$html .= "<div style='width:100%; height:200px;overflow:hidden;'>";
+        $html .= "</head><body style='display: inline-block; width:100%; height:200px;'>";
+        $html .= "<div style='width:100%; height:200px;overflow:hidden;'>";
 			$cnt=0;
 			$html .= "<div class='pv' style='height: 200px; width:1px;background-color:transparent;'></div>";
 			foreach ($this->fc["hourly"] as $fc){
@@ -307,7 +310,8 @@ class PVForecastcls{
 				}
 				if($cnt >96)break;
 			}
-		$html .="</div>";		
+		$html .="</div>";
+        $html .= "</body></html>";
 		setvalue($id,$html);
 
 	}

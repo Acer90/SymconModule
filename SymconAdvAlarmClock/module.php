@@ -13,6 +13,10 @@ class SymconAlarmClock extends IPSModule
         parent::Create();
 
         $this->RegisterPropertyInteger("Interval", 10);
+        $this->RegisterPropertyInteger("ICalInstanceID", 0);
+        $this->RegisterPropertyInteger("GoogleMapsInstanceID", 0);
+        $this->RegisterPropertyInteger("AlternativVariableID", 0);
+
         $this->RegisterPropertyString("List_Actions", "");
         $this->RegisterPropertyBoolean("Debug", false);
 
@@ -26,6 +30,8 @@ class SymconAlarmClock extends IPSModule
         $this->RegisterVariableBoolean("Day_Fr", "Freitag", "~Switch",7);
         $this->RegisterVariableBoolean("Day_Sa", "Samstag", "~Switch",8);
         $this->RegisterVariableBoolean("Day_So", "Sonntag", "~Switch",9);
+
+        $this->RegisterAttributeBoolean("runNow", false);
 
         //event erstellen
         $this->RegisterTimer("CheckStatus", $this->ReadPropertyInteger("Interval"), 'SymconAlarmClock_CheckStatus($_IPS[\'TARGET\']);');
@@ -47,4 +53,6 @@ class SymconAlarmClock extends IPSModule
     {
 
     }
+
+
 }
