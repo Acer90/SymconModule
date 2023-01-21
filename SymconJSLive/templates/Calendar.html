@@ -16,7 +16,7 @@
 <body>
     <script>
         var config_global = {GLOBAL};
-        var config_dataEvents = {DATAEVENTS};
+        var config_dataEvents = {DATAEVENTS}; 
         var config_views = {VIEWS};
         var configuration = {CONFIG};
 
@@ -31,12 +31,35 @@
                     height: (Get_WindowHeight()-20),
                     eventSources: CreateEventSource(),
                     titleFormat: configuration.titleFormat,
-                    headerToolbar: configuration.header,
+                    headerToolbar: configuration.header, 
                     footerToolbar: configuration.footer,
                     weekNumbers: configuration.table_weekNumbers_display,
                     weekNumberFormat: { week: configuration.table_weekNumberFormat },
                     views: config_views,
-                    locale: 'de'
+                    locale: 'de',
+
+                    listDayFormat: function(dateData) {
+                        if(configuration.table_list_listDayFormat_display == false) return;
+
+                        var curDate = new Date(dateData.date.year, dateData.date.month, dateData.date.day);
+                        var now = new Date();
+                        var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                        var tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1);
+
+                        if(configuration.table_list_listDayFormat_overrideToday && curDate.getTime() == today.getTime()){
+                            return configuration.translation.Today
+                        }else if(configuration.table_list_listDayFormat_overrideTomorrow && curDate.getTime() == tomorrow.getTime()){
+                            return configuration.translation.Tomorrow
+                        }
+
+                        return curDate.toLocaleString(dateData.localeCodes[0], {  weekday: 'long' });
+                    },
+
+                    listDaySideFormat: function(dateData) {
+                        if(configuration.table_list_listDaySideFormat_display == false) return;
+                        var curDate = new Date(dateData.date.year, dateData.date.month, dateData.date.day);
+                        return curDate.toLocaleString(dateData.localeCodes[0], {year: "numeric", month: "long", day: "numeric"});
+                    } 
                 });
 
                 if(configuration.table_weekText_display){
