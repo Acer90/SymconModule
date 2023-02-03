@@ -874,6 +874,29 @@
                 },
                 {
                     "type": "ExpansionPanel",
+                    "caption": "List",
+                    "viewlevel": 2,
+                    "items": [
+                        {
+                            "type": "RowLayout",
+                            "items": [
+                                { "type": "Label", "caption": "Header Left:", "width": "125px" },
+                                { "type": "CheckBox", "name": "table_list_listDayFormat_display", "caption": "Display"},
+                                { "type": "CheckBox", "name": "table_list_listDayFormat_overrideToday", "caption": "Show today instead of Weekday", "requireItem": "table_list_listDayFormat_display"},
+                                { "type": "CheckBox", "name": "table_list_listDayFormat_overrideTomorrow", "caption": "Show tomorrow instead of Weekday", "requireItem": "table_list_listDayFormat_display"}
+                            ]
+                        },
+                        {
+                            "type": "RowLayout",
+                            "items": [
+                                { "type": "Label", "caption": "Header Right:", "width": "125px" },
+                                { "type": "CheckBox", "name": "table_list_listDaySideFormat_display", "caption": "Display"}
+                            ]
+                        }
+                    ] 
+                },
+                {
+                    "type": "ExpansionPanel",
                     "caption": "Weekend",
                     "viewlevel": 1,
                     "items": [

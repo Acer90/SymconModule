@@ -136,6 +136,12 @@ class SymconJSLiveCalendar extends JSLiveModule{
         $this->RegisterPropertyInteger("table_weekNumber_fontColor", 0);
         $this->RegisterPropertyString("table_weekNumber_fontFamily", "");
 
+        $this->RegisterPropertyBoolean("table_list_listDayFormat_display", True);
+        $this->RegisterPropertyBoolean("table_list_listDayFormat_overrideToday", False);
+        $this->RegisterPropertyBoolean("table_list_listDayFormat_overrideTomorrow", False);
+        $this->RegisterPropertyBoolean("table_list_listDaySideFormat_display", True);
+
+
         $this->RegisterPropertyFloat("table_events_fontSize", 0.85);
         $this->RegisterPropertyString("table_events_fontSize_unitType", "em");
         $this->RegisterPropertyString("table_events_fontFamily", "");
@@ -664,6 +670,10 @@ class SymconJSLiveCalendar extends JSLiveModule{
 
         //gen titleformat
         $output["titleFormat"] = $this->GenerateTitleFormat();
+
+        //translation
+        $output["translation"]["Today"] = $this->Translate("Today");
+        $output["translation"]["Tomorrow"] = $this->Translate("Tomorrow");
 
         //remove Dataset
         unset($output["dataEvents"]);

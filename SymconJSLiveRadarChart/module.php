@@ -178,6 +178,7 @@ class SymconJSLiveRadarChart extends JSLiveModule{
 
         return $scriptData;
     }
+
     public function GetUpdate(array $querydata){
         $updateData = array();
 
