@@ -43,22 +43,25 @@
 
                 //alert("H:"+Get_WindowHeight()+"px|W:"+Get_WindowWidth()+"px");
 
-                h_val = Get_WindowHeight() - 20;
-                w_val = Get_WindowWidth() - 20;
-                if(h_val <= w_val) w_val = h_val-1;
+                h_val = Get_WindowHeight()-20;
+                w_val = Get_WindowWidth()-20;
+
+                if(w_val > (h_val / 2)){
+                    w_val = h_val / 2;
+                }
 
                 gauge_config = {
                     renderTo: 'gauge',
                     height: h_val,
                     width: w_val,
 
-                    value: data.Value,
+                    value: convertValue(data.Value),
                     minValue: configuration.min,
                     maxValue: configuration.max,
                     valueText: number_format(data.Value, configuration.precision, ',', separator_char),
 
                     //title
-                    //title: configuration.title_text, //false deaktiviert!
+                    title: configuration.title_text, //false deaktiviert!
                     colorTitle: configuration.title_fontColor,
                     fontTitleSize: configuration.title_fontSize,
 
@@ -124,7 +127,7 @@
                     minorTicks: configuration.ticks_minorTicks,
                     strokeTicks: configuration.ticks_strokeTicks,
                     highlightsWidth: configuration.ticks_highlightsWidth,
-                    highlights: config_highlights,
+                    highlights: convertHighlight(),
                     majorTicks: config_ticks,
                     fontNumbersSize: configuration.ticks_fontSize,
                     exactTicks: configuration.ticks_exactTicks,
@@ -189,6 +192,56 @@
         };
     }
 
+    function convertValue(value){
+        if(configuration.AutoConvertValue){
+            value = ConvertValueToMajorTicks(value);
+        } 
+        return value;
+    }
+    function convertHighlight(){
+        if(configuration.AutoConvertHighlight){
+            config_highlights.forEach(function(item, index) {
+                item.from = ConvertValueToMajorTicks(item.from);
+                item.to = ConvertValueToMajorTicks(item.to);
+            });
+        }
+        return config_highlights;
+    }
+    function ConvertValueToMajorTicks(value){
+        //config_ticks
+        var min = configuration.min;
+        var max = configuration.max;
+
+        var diff = max - min;
+
+        if(value <= min) return min;
+        if(value >= max) return max;
+
+        var n = 0;
+        var sumTicks = config_ticks.length -1 ; //-1 for Steps between
+        var stepSize = diff / sumTicks;
+        var lastTick = min;
+
+        config_ticks.every((tick) => {
+            diffTick = tick - lastTick;
+            
+            if(value == tick){
+                value = n * stepSize;
+                return  false;
+            }else if(value < tick) {
+                valBetween = value - lastTick;
+                value = ((n-1) * stepSize) + (valBetween / diffTick * stepSize);
+                return  false;
+            }
+
+            n++;
+            lastTick = tick;
+            return true;
+        });
+
+        return value;
+    }
+
     function UpdateGauge(id_val, val) {
         //only if Gauge Loaded
         if (typeof gauge === 'undefined') return;
@@ -196,10 +249,7 @@
 
         //Set Max and min for val
         valText = val;
-        if (val < configuration.min) val = configuration.min;
-        if (val > configuration.max) val = configuration.max;
-
-        gauge.value = val;
+        gauge.value = convertValue(val);
 
         //update text
         gauge.update({

@@ -21,7 +21,7 @@ class SymconAlarmClock extends IPSModule
         $this->RegisterPropertyBoolean("Debug", false);
 
         $this->RegisterVariableBoolean("Aktive", "Eingeschaltet", "~Switch",1);
-        $this->RegisterVariableInteger("Time", "Weckzeit", "~UnixTimestampTime",2);
+        $this->RegisterVariableInteger("Time", "Weckzeit", "~UnixTimestampTime", 2);
 
         $this->RegisterVariableBoolean("Day_Mo", "Montag", "~Switch",3);
         $this->RegisterVariableBoolean("Day_Di", "Dienstag", "~Switch",4);
