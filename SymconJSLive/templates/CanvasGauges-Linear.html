@@ -218,11 +218,11 @@
             diffTick = tick - lastTick;
             
             if(value == tick){
-                value = n * stepSize;
+                value = min + (n * stepSize);
                 return  false;
             }else if(value < tick) {
                 valBetween = value - lastTick;
-                value = ((n-1) * stepSize) + (valBetween / diffTick * stepSize);
+                value = min + ((n-1) * stepSize) + (valBetween / diffTick * stepSize);
                 return  false;
             }
 
