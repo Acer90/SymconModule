@@ -1,0 +1,11 @@
+{
+  "id": "{39EE8DDC-C72A-CEA0-2774-CB86F244A515}",
+  "name": "SymconJSLiveConfigStore",
+  "type": 4,
+  "vendor": "Swen Babenschneider",
+  "aliases": ["JSLive-Config Store"],
+  "parentRequirements": [],
+  "childRequirements": [],
+  "implemented": [],
+  "prefix": "SymconJSLiveConfigStore"
+}

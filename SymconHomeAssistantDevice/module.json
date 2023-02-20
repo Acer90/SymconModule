@@ -1,0 +1,14 @@
+{
+    "id": "{FD2A7D53-5363-39DD-0C93-A96BAD384B80}",
+    "name": "SymconHomeAssistantDevice",
+    "type": 3,
+	"vendor": "",
+	"aliases": 
+	[
+		"Home Assistant Device"
+	],
+    "parentRequirements": ["{6AB6719E-4612-579D-EC1B-A4F0E03EECB9}"],
+    "childRequirements": [],
+    "implemented": ["{A9C72BC2-FB94-8451-6DC9-9790AEFC11B3}"],
+    "prefix": "SymconHomeAssistantDevice"
+}

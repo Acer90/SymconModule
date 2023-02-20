@@ -387,16 +387,15 @@ class SymconAlarmClock extends IPSModule
 
                     $this->SendDebug(__FUNCTION__, date("d.m.y H:i:s", $c_time) . " > " . date("d.m.y H:i:s", time()), 0);
 
+                    $lastMapsUpdate = intval($this->GetBuffer("LastMapsUpdate"));
+                    $driveTime = intval($this->GetBuffer("DriveTime"));
+                    $duration = $this->ReadPropertyInteger("IntervalMaps") * 60;
+                    $SafetyTime = $this->ReadPropertyInteger("SafetyTime") * 60;
+                    $OriginAddress = $this->ReadPropertyString("OriginAddress");
+                    $drivetime = $this->GetBuffer("DriveTime");
+
                     if($c_time > time() && ($c_time < $w_time || $w_time == 0)){
                         if (!empty($location) && $MapsID > 0 && IPS_InstanceExists($MapsID)) {
-                            $lastMapsUpdate = intval($this->GetBuffer("LastMapsUpdate"));
-                            $driveTime = intval($this->GetBuffer("DriveTime"));
-                            $duration = $this->ReadPropertyInteger("IntervalMaps") * 60;
-                            $SafetyTime = $this->ReadPropertyInteger("SafetyTime") * 60;
-                            $OriginAddress = $this->ReadPropertyString("OriginAddress");
-
-
-                            $drivetime = $this->GetBuffer("DriveTime");;
 
                             if(($lastMapsUpdate + $duration) <= time() || $driveTime == 0){
                                 $map = [];
@@ -475,16 +474,18 @@ class SymconAlarmClock extends IPSModule
                                     }else{
                                         $this->SetBuffer("DriveTime", 300);
                                     }
+                                }else{
+                                    $drivetime = 0;
                                 }
                                 $this->SetBuffer("LastMapsUpdate", time());
                                 
                             }else{
                                 $this->SendDebug(__FUNCTION__, "Nächstes Maps Update => ".date("d.m.y H:i:s", ($lastMapsUpdate + $duration))." Uhr", 0);
                             }
+                            
+                            $this->SendDebug(__FUNCTION__, "New Time: " . date("d.m.y H:i:s", $c_time) . " - (Drivetime: " . ($drivetime) . " min.) - (SaftyTime: " . (round($drivetime/60)) * ($SafetyTime/60) . " min.) - StartTimeBefore: " . ($StartTimeBefore/60) . " min."  , 0);
+                            $c_time = $c_time - ($drivetime * 60) - (round($drivetime/60) * $SafetyTime) - $StartTimeBefore;
                         }
-
-                        $this->SendDebug(__FUNCTION__, "New Time: " . date("d.m.y H:i:s", $c_time) . " - (Drivetime: " . ($drivetime) . " min.) - (SaftyTime: " . (round($drivetime/60)) * ($SafetyTime/60) . " min.) - StartTimeBefore: " . ($StartTimeBefore/60) . " min."  , 0);
-                        $c_time = $c_time - ($drivetime * 60) - (round($drivetime/60) * $SafetyTime) - $StartTimeBefore;
 
                         $w_type = "(Kalendar) ";
                         $w_time = $c_time;
