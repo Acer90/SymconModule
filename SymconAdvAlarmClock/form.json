@@ -2,45 +2,16 @@
     "elements":
     [
         { "type": "CheckBox", "name": "Debug", "caption": "Debug"},
-        {
-            "type": "ExpansionPanel",
-            "caption": "Alternative Weckerzeiten",
-            "items": [
-                { 
-                    "type": "RowLayout",
-                    "items": [
-                        { "type": "SelectInstance", "name": "ICalInstanceID", "caption": "ICal Instance" },
-                        { "type": "NumberSpinner", "name": "StartTimeBefore", "caption": "Start Time Before", "suffix": "Min.", "width": "150px"}
-                    ]
-                },
-                { 
-                    "type": "RowLayout",
-                    "items": [
-                        { "type": "SelectInstance", "name": "GoogleMapsInstanceID", "caption": "Google Maps Instance" },
-                        { "type": "NumberSpinner", "name": "IntervalMaps", "caption": "Interval Maps", "suffix": "Min.", "width": "150px"},
-                        { "type": "NumberSpinner", "name": "SafetyTime", "caption": "Safety Time pro Hour", "suffix": "Min.", "width": "150px"}
-                    ]
-                },
-                { "type": "ValidationTextBox", "name": "OriginAddress", "caption": "Origin Address" },
-                { "type": "SelectVariable", "name": "AlternativVariableID", "caption": "Alternativ Timestamp(Alexa)", "validVariableTypes": [1]}
-            ]
-        },
-        { 
-            "type": "RowLayout",
-            "items": [
-                { "type": "NumberSpinner", "name": "IntervalBefore", "caption": "Interval Before", "suffix": "Sek."},
-                { "type": "NumberSpinner", "name": "Interval", "caption": "Interval", "suffix": "Sek."}
-            ]
-        },
+        { "type": "IntervalBox", "name": "Interval", "caption": "Sek."},
         {
             "type": "List",
             "name": "List_Actions",
             "caption": "Actions",
-            "rowCount": 15,
+            "rowCount": 10,
             "add": true,
             "delete": true,
             "sort": {
-                "column": "StartAt",
+                "column": "oid",
                 "direction": "ascending"
             },
             "columns": [{
@@ -52,122 +23,29 @@
                     "type": "SelectObject"
                 }
             }, {
-                "label": "From",
-                "name": "From",
-                "width": "150px",
-                "add": "",
-                "edit": {
-                    "type": "ValidationTextBox"
-                }
-            }, {
                 "label": "Value",
-                "name": "Value",
-                "width": "150px",
+                "name": "typ",
+                "width": "70px",
                 "add": "",
                 "edit": {
                     "type": "ValidationTextBox"
                 }
             }, {
-                "label": "Duration",
-                "name": "Duration",
-                "width": "100px",
+                "label": "Time",
+                "name": "Time",
+                "width": "50px",
                 "add": 0,
                 "edit": {
                     "type": "NumberSpinner",
                     "Suffix": "Sek."
                 }
-            }, {
-                "label": "Start",
-                "name": "StartAt",
-                "width": "100px",
-                "add": 0,
-                "edit": {
-                    "type": "NumberSpinner",
-                    "Suffix": "Sek."
-                }
-            }, {
-                "label": "Active",
-                "name": "Active",
-                "width": "100px",
-                "add": true,
-                "edit": {
-                    "type": "CheckBox"
-                }
-            }, {
-                "label": "Status",
-                "name": "Status",
-                "width": "100px",
-                "add": ""
             }
             ]
         }
     ],
     "actions":
     [
-        { 
-            "type": "RowLayout",
-            "items": [
-                { "type": "Button", "label": "Update", "onClick": "SymconAlarmClock_CheckStatus($id);" },
-                { "type": "Button", "label": "Jetzt Auslösen", "onClick": "SymconAlarmClock_Test($id, $SpeedUp);" },
-                { "type": "NumberSpinner", "name": "SpeedUp", "caption": "Test SpeedUp", "suffix": "Factor", "width": "150px", "value": 10}
-            ]
-        },
-        { 
-            "type": "RowLayout",
-            "items": [
-                { "type": "Label", "name": "curTime", "caption": "Aktuelle Uhrzeit:", "width": "350px"},
-                { "type": "Label", "name": "nextTime", "caption": "Nächste Weckzeit:"}
-            ]
-        },
-        {
-            "type": "List",
-            "name": "List_Actions_Running",
-            "caption": "Actions",
-            "rowCount": 30,
-            "add": false,
-            "delete": false,
-            "sort": {
-                "column": "StartTime",
-                "direction": "ascending"
-            },
-            "columns": [{
-                "label": "Object",
-                "name": "Object",
-                "width": "auto",
-                "visible": false
-            }, {
-                "label": "Object",
-                "name": "ObjectName",
-                "width": "auto"
-            }, {
-                "label": "Current",
-                "name": "Current",
-                "width": "150px"
-            }, {
-                "label": "From",
-                "name": "From",
-                "width": "auto",
-                "visible": false
-            }, {
-                "label": "Value",
-                "name": "Value",
-                "width": "150px"
-            }, {
-                "label": "Start Time",
-                "name": "StartTime",
-                "width": "150px"
-            }, {
-                "label": "Duration",
-                "name": "Duration",
-                "width": "auto",
-                "visible": false
-            }, {
-                "label": "Running in Sek.",
-                "name": "Runningin",
-                "width": "150px"
-            }
-            ]
-        }
+        { "type": "Button", "label": "Test", "onClick": " echo 'Name: '.IPSSNMP_ReadSNMP($id, '.1.3.6.1.2.1.1.5.0')['.1.3.6.1.2.1.1.5.0'];" }
     ],
     "status":
     [

@@ -147,13 +147,12 @@
 
             return config;
         } catch (e) {
-            alert("Doughnut-Pie | "+ e);
+            alert(e);
         }
     }
 
     function connect() {
        let location = window.detectLocation();
-
         var ws = new WebSocket(location['protocol'].replace(/^http/, 'ws') + "//" + location['host'] + "/hook/JSLive/WS/" + {INSTANCE});
         ws.onopen = function() {
             // subscribe to some channels
@@ -290,7 +289,7 @@
                 connect();
             }
         }catch (e) {
-            alert("Doughnut-Pie | " + e);
+            alert("Doughnut-Pie | ", e.message);
         }
     }
 

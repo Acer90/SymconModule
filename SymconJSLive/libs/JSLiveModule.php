@@ -122,7 +122,7 @@ class JSLiveModule extends IPSModule
         $withScript = true;
 
         //$output["queryData"] = json_encode($queryData);
-        $output["ModuleID"] = IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"];
+        $output["ModulID"] = IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"];
         $output["ModuleName"] = IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleName"];
 
         $output["Config"] = json_decode(IPS_GetConfiguration($this->InstanceID), true);
@@ -162,8 +162,8 @@ class JSLiveModule extends IPSModule
         $confdata = json_decode(base64_decode($filename), true);
         //print_r($confdata);
         if(json_last_error() !== JSON_ERROR_NONE) return "Not valid json File!";
-        if(!array_key_exists("Config", $confdata) || !array_key_exists("ModuleID", $confdata) || !array_key_exists("ModuleName", $confdata)) return "Not valid json File!";
-        if($confdata["ModuleID"] != IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"]) return "Configuration only allowed for " . $confdata["ModuleName"];
+        if(!array_key_exists("Config", $confdata) || !array_key_exists("ModulID", $confdata) || !array_key_exists("ModuleName", $confdata)) return "Not valid json File!";
+        if($confdata["ModulID"] != IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"]) return "Configuration only allowed for " . $confdata["ModuleName"];
 
         //echo json_encode($confdata["Config"]);
 
@@ -719,8 +719,8 @@ class JSLiveModule extends IPSModule
             }
 
 
-            //$htmlStr = file_get_contents(__DIR__ ."/../htmlbox/HtmlBox-Chart.html");
-            //$htmlStr = str_replace("{BOXID}", $this->InstanceID.$this->getUniqueID(), $htmlStr);
+            $htmlStr = file_get_contents(__DIR__ ."/../htmlbox/HtmlBox-Chart.html");
+            $htmlStr = str_replace("{BOXID}", $this->InstanceID.$this->getUniqueID(), $htmlStr);
             $this->SetValue("Output", $htmlStr);
         }else{
             //remove old valeue
