@@ -1,0 +1,16 @@
+{
+  "translations": {
+    "de": {
+      "category for color picker devices": "Kategorie für Color Picker Geräte",
+      "category color pickera devices": "Kategorie Color Picker Geräte",
+      "Read configuration:": "Konfiguration auslesen:",
+      "Read configuration": "Konfiguration auslesen",
+      "Creating instance.": "Die Instanz wird erstellt.",
+      "interface closed.": "Verbindung geschlossen.",
+      "Please follow the instructions.": "Bitte der Anleitung folgen",
+      "no category selected.": "Keine Kategorie ausgewählt",
+      "choose category for import.": "Kategorie zum Import auswählen.",
+      "configuration valid.": "Konfigurator ist ok."
+    }
+  }
+}

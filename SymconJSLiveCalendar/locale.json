@@ -127,7 +127,6 @@
 		"Top-Space": "Abstand Oben",
 		"Table": "Tabelle",
 		"Today": "Heute",
-		"Tomorrow": "Morgen",
 		"Events": "Ereignisse (Events)",
 		"Body": "Hauptbereich",
 		"Day:": "Tag:",
@@ -173,12 +172,7 @@
 		"Inner:": "Innerer:",
 		"weeks": "Wochen",
 		"days": "Tage",
-		"months": "Monate",
-		"Header Left:": "Kopfbereich Links:",
-		"Header Right:": "Kopfbereich Rechts:",
-		"List": "Listen",
-		"Show today instead of Weekday": "Heute statt Anzeige des Wochentages",
-		"Show tomorrow instead of Weekday": "Morgen statt Anzeige des Wochentages"
+		"months": "Monate"
 	}
   }
 }
