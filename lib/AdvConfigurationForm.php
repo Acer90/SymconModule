@@ -122,7 +122,7 @@ class JSLiveModule extends IPSModule
         $withScript = true;
 
         //$output["queryData"] = json_encode($queryData);
-        $output["ModuleID"] = IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"];
+        $output["ModulID"] = IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"];
         $output["ModuleName"] = IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleName"];
 
         $output["Config"] = json_decode(IPS_GetConfiguration($this->InstanceID), true);
@@ -162,8 +162,8 @@ class JSLiveModule extends IPSModule
         $confdata = json_decode(base64_decode($filename), true);
         //print_r($confdata);
         if(json_last_error() !== JSON_ERROR_NONE) return "Not valid json File!";
-        if(!array_key_exists("Config", $confdata) || !array_key_exists("ModuleID", $confdata) || !array_key_exists("ModuleName", $confdata)) return "Not valid json File!";
-        if($confdata["ModuleID"] != IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"]) return "Configuration only allowed for " . $confdata["ModuleName"];
+        if(!array_key_exists("Config", $confdata) || !array_key_exists("ModulID", $confdata) || !array_key_exists("ModuleName", $confdata)) return "Not valid json File!";
+        if($confdata["ModulID"] != IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"]) return "Configuration only allowed for " . $confdata["ModuleName"];
 
         //echo json_encode($confdata["Config"]);
 
@@ -241,212 +241,65 @@ class JSLiveModule extends IPSModule
     }
     public function LoadConfigurationForm(){
         $formData = array();
-        $jsonPath = realpath(__DIR__ . "/../../" . get_called_class() . "/form.json");
 
+        $jsonPath = realpath(__DIR__ . "/../../" . get_called_class() . "/form.json");
         if($this->ReadPropertyBoolean("Debug")) $this->SendDebug("GetConfigurationForm", $jsonPath, 0 );
         $formData = json_decode(file_get_contents($jsonPath), true);
 
         //Remove Confoniguration for Basic => 0; Advance => 1; Expert => 2
         //$this->SendDebug("BEFOR", json_encode($formData), 0 );
 
-        $addFunctions = array();
-        $r_val = $this->RecursiveUpdateForm($formData["elements"], $addFunctions);
-        $formData["elements"] = $r_val["arr"];
-        $addFunctions = $r_val["func"];
+        $formData["elements"] = $this->RecursiveUpdateForm($formData["elements"]);
+        $formData["actions"] = $this->RecursiveUpdateForm($formData["actions"]);
 
-        $r_val = $this->RecursiveUpdateForm($formData["actions"], $addFunctions);
-        $formData["actions"] = $r_val["arr"];
-        $addFunctions = $r_val["func"];
-
-        $formData["elements"] = $this->RecursiveAddFormFunction($formData["elements"], $addFunctions);
-        $formData["actions"] = $this->RecursiveAddFormFunction($formData["actions"], $addFunctions);
-
-
-        $listVisibility = array("elements" => $formData["elements"], "actions" => $formData["actions"]);
-        $this->SetBuffer("ConfigurationBuffer", json_encode($listVisibility));
-
-        //this->SendDebug("AFTER", json_encode($formData), 0 );
+        //$this->SendDebug("AFTER", json_encode($formData), 0 );
 
         return $formData;
     }
-    private function RecursiveUpdateForm($arr, $addFunctions){
+    private function RecursiveUpdateForm($arr){
         foreach ($arr as $key => $item) {
             //$this->SendDebug("RecursiveUpdateForm", $key, 0 );
-            if(!array_key_exists("visible", $item)) $arr[$key]["visible"] = true;
 
             //items Recusive for Items
-            if (array_key_exists("items", $item)){
-                $r_val = $this->RecursiveUpdateForm($arr[$key]["items"], $addFunctions);
-                $arr[$key]["items"] = $r_val["arr"];
-                $addFunctions = $r_val["func"];
-            }
-            if (array_key_exists("options", $item)){
-                $r_val = $this->RecursiveUpdateForm($arr[$key]["options"], $addFunctions);
-                $arr[$key]["options"] = $r_val["arr"];
-                $addFunctions = $r_val["func"];
-            }
-            if (array_key_exists("columns", $item)){
-                $r_val = $this->RecursiveUpdateForm($arr[$key]["columns"], $addFunctions);
-                $arr[$key]["columns"] = $r_val["arr"];
-                $addFunctions = $r_val["func"];
-            }
+            if (array_key_exists("items", $item)) $arr[$key]["items"] = $this->RecursiveUpdateForm($arr[$key]["items"]);
+            if (array_key_exists("options", $item)) $arr[$key]["options"] = $this->RecursiveUpdateForm($arr[$key]["options"]);
+            if (array_key_exists("columns", $item)) $arr[$key]["columns"] = $this->RecursiveUpdateForm($arr[$key]["columns"]);
 
             //list options
-            if (array_key_exists("edit", $item) && is_array($item["edit"]) && array_key_exists("columns", $item["edit"])) {
-                $r_val = $this->RecursiveUpdateForm($arr[$key]["edit"]["columns"], $addFunctions);
-                $arr[$key]["edit"]["columns"] = $r_val["arr"];
-                $addFunctions = $r_val["func"];
-            }
-            if (array_key_exists("edit", $item) && is_array($item["edit"]) && array_key_exists("options", $item["edit"])){
-                $r_val = $this->RecursiveUpdateForm($arr[$key]["edit"]["options"], $addFunctions);
-                $arr[$key]["edit"]["options"] = $r_val["arr"];
-                $addFunctions = $r_val["func"];
-            }
+            if (array_key_exists("edit", $item) && is_array($item["edit"]) && array_key_exists("columns", $item["edit"])) $arr[$key]["edit"]["columns"] = $this->RecursiveUpdateForm($arr[$key]["edit"]["columns"]);
+            if (array_key_exists("edit", $item) && is_array($item["edit"]) && array_key_exists("options", $item["edit"])) $arr[$key]["edit"]["options"] = $this->RecursiveUpdateForm($arr[$key]["edit"]["options"]);
 
-            //alles bekommt einen Namen, um elemente später leiter verändern zu können!
             //ignore items without viewlevel element
-            if (array_key_exists("viewlevel", $item)) {
-                //viewLevelExactly set value
+            if (!array_key_exists("viewlevel", $item)) continue;
 
-                if(!array_key_exists("name", $item)){
-                    $arr[$key]["name"] = $this->getUniqueID();
-                    //$this->SendDebug(__FUNCTION__, $item["type"],0);
-                }
+            //viewLevelExactly set value
+            $viewLevelExactly = false;
+            if (array_key_exists("viewlevelexactly", $item)) $viewLevelExactly = $arr[$key]["viewlevelexactly"];
 
-                $viewLevelExactly = false;
-                if (array_key_exists("viewlevelexactly", $item)) $viewLevelExactly = $arr[$key]["viewlevelexactly"];
-
-                if ($viewLevelExactly == true && $arr[$key]["viewlevel"] != $this->ReadPropertyInteger("ViewLevel")) {
-                    //ausblenden wenn viewlevel nicht genau das level ist!!!
-                    //unset($arr[$key]);
-                    $arr[$key]["visible"] = false;
-                } elseif ($arr[$key]["viewlevel"] > $this->ReadPropertyInteger("ViewLevel")) {
-                    if (array_key_exists("viewdisable", $item) && $arr[$key]["viewdisable"] == true) {
-                        //diable wenn viewdisable == 1
-                        $arr[$key]["enabled"] = false;
-                    } else {
-                        //ausblenden wenn viewlevel des elements zu hoch
-                        //unset($arr[$key]);
-                        $arr[$key]["visible"] = false;
-                    }
-                } else {
-                    if (array_key_exists("caption", $item) && $arr[$key]["viewlevel"] > 0) { //$this->ReadPropertyBoolean("Debug") &&
-                        switch ($arr[$key]["viewlevel"]) {
-                            //case 0: $arr[$key]["caption"] = $this->translate($arr[$key]["caption"]) . " (Basic)";
-                            case 1:
-                                $arr[$key]["caption"] = $this->translate($arr[$key]["caption"]) . " (" . $this->translate("Advance") . ")";
-                                break;
-                            case 2:
-                                $arr[$key]["caption"] = $this->translate($arr[$key]["caption"]) . " (" . $this->translate("Expert") . ")";
-                                break;
-                            default:
-                                //do nothing
-                                break;
-                        }
-                    }
-                }
-            }
-
-            //checkbox zum ausbelden von objeckten
-            if(array_key_exists("requireItem", $item)) {
-                $propItem = $item["requireItem"];
-
-                if(!in_array($propItem, $addFunctions)){
-                    $addFunctions[] = $propItem;
-                }
-
-                if(!array_key_exists("name", $item)) {
-                    $arr[$key]["name"] = $this->getUniqueID();
-                }
-
-                if($arr[$key]["visible"] && !$this->ReadPropertyBoolean($propItem)){
-                    //ausbelden wenn noch eingeblendet, aber checkbox false
-                    $arr[$key]["visible"] = false;
-                    $arrVisibility[$key]["visible"] = false;
-                }
-            }
-
-            //add function to viewlevel
-            if(array_key_exists("name", $item) && $item["name"] == "ViewLevel"){
-                //$arr[$key]["onChange"] = " ".IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleName"]."_ReloadConfigurationForm(\$id, 'ViewLevel', \$ViewLevel);";
-                //$this->SendDebug("TEST", IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleName"]."_ReloadConfigurationForm(\$id, 'ViewLevel', \$ViewLevel);", 0);
-            }
-
-        }
-
-        return array("arr" => array_values($arr), "func" => $addFunctions);
-    }
-    private function RecursiveAddFormFunction($arr, $addFunctions){
-        foreach ($arr as $key => $item){
-            if (array_key_exists("items", $item)) $arr[$key]["items"] = $this->RecursiveAddFormFunction($arr[$key]["items"], $addFunctions);
-            if (array_key_exists("options", $item)) $arr[$key]["options"] = $this->RecursiveAddFormFunction($arr[$key]["options"], $addFunctions);
-            if (array_key_exists("columns", $item)) $arr[$key]["columns"] = $this->RecursiveAddFormFunction($arr[$key]["columns"], $addFunctions);
-
-            //list options
-            if (array_key_exists("edit", $item) && is_array($item["edit"]) && array_key_exists("columns", $item["edit"])) $arr[$key]["edit"]["columns"] = $this->RecursiveAddFormFunction($arr[$key]["edit"]["columns"], $addFunctions);
-            if (array_key_exists("edit", $item) && is_array($item["edit"]) && array_key_exists("options", $item["edit"])) $arr[$key]["edit"]["options"] = $this->RecursiveAddFormFunction($arr[$key]["edit"]["options"], $addFunctions);
-
-            if(array_key_exists("name", $item) && in_array($item["name"], $addFunctions)) {
-                $arr[$key]["onChange"] = IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleName"]."_ReloadConfigurationForm(\$id, '".$item["name"]."', \$".$item["name"].");";
-                //$this->SendDebug("##TEST##", IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleName"]."_ReloadConfigurationForm(\$id, '".$item["name"]."', \$".$item["name"].");", 0);
-            }
-        }
-        return array_values($arr);
-    }
-    public function ReloadConfigurationForm($name, $value){
-        $configData = json_decode($this->GetBuffer("ConfigurationBuffer"), true);
-
-        $this->RecursiveReloadForm($name, $value, $configData["elements"]);
-        $this->RecursiveReloadForm($name, $value, $configData["actions"]);
-    }
-    private function RecursiveReloadForm($name, $value, $arr){
-        foreach ($arr as $key => $item){
-            if (array_key_exists("items", $item)) $arr[$key]["items"] = $this->RecursiveReloadForm($name, $value, $arr[$key]["items"]);
-            if (array_key_exists("options", $item)) $arr[$key]["options"] = $this->RecursiveReloadForm($name, $value, $arr[$key]["options"]);
-            if (array_key_exists("columns", $item)) $arr[$key]["columns"] = $this->RecursiveReloadForm($name, $value, $arr[$key]["columns"]);
-
-            //list options
-            if (array_key_exists("edit", $item) && is_array($item["edit"]) && array_key_exists("columns", $item["edit"])) $arr[$key]["edit"]["columns"] = $this->RecursiveReloadForm($name, $value, $arr[$key]["edit"]["columns"]);
-            if (array_key_exists("edit", $item) && is_array($item["edit"]) && array_key_exists("options", $item["edit"])) $arr[$key]["edit"]["options"] = $this->RecursiveReloadForm($name, $value, $arr[$key]["edit"]["options"]);
-
-            if(array_key_exists("requireItem", $item)) {
-                if(!array_key_exists("name", $item)) {
-                    if(!isset($item["type"])) $item["type"] = "";
-                    $this->SendDebug(__FUNCTION__,"NO Name Set for => ". $item["type"], 0);
+            if ($viewLevelExactly == true && $arr[$key]["viewlevel"] != $this->ReadPropertyInteger("ViewLevel")) {
+                //löschen wenn viewlevel nicht genau das level ist!!!
+                unset($arr[$key]);
+            }elseif($arr[$key]["viewlevel"] > $this->ReadPropertyInteger("ViewLevel")){
+                if(array_key_exists("viewdisable", $item) && $arr[$key]["viewdisable"] == true){
+                    //diable wenn viewdisable == 1
+                    $arr[$key]["enabled"] = false;
                 }else{
-                    if($item["requireItem"] == $name){
-                        $this->UpdateFormField($item["name"], "visible", $value);
-                    }
+                    //löschen wenn viewlevel des elements zu hoch
+                    unset($arr[$key]);
+
                 }
-            }
-
-            if($name == "ViewLevel"){
-                if (array_key_exists("viewlevel", $item)) {
-                    //viewLevelExactly set value
-                    $viewLevelExactly = false;
-                    if (array_key_exists("viewlevelexactly", $item)) $viewLevelExactly = $arr[$key]["viewlevelexactly"];
-
-                    if ($viewLevelExactly == true && $arr[$key]["viewlevel"] != $value) {
-                        //ausblenden wenn viewlevel nicht genau das level ist!!!
-                        $this->UpdateFormField($item["name"], "visible", false);
-                        $this->UpdateFormField($item["name"], "enabled", true);
-                    } elseif ($arr[$key]["viewlevel"] > $value) {
-                        if (array_key_exists("viewdisable", $item) && $arr[$key]["viewdisable"] == true) {
-                            //diable wenn viewdisable == 1
-                            $this->UpdateFormField($item["name"], "visible", true);
-                            $this->UpdateFormField($item["name"], "enabled", false);
-                        } else {
-                            //ausblenden wenn viewlevel des elements zu hoch
-                            $this->UpdateFormField($item["name"], "visible", false);
-                            $this->UpdateFormField($item["name"], "enabled", true);
-                        }
-                    } else {
-                        $this->UpdateFormField($item["name"], "visible", true);
-                        $this->UpdateFormField($item["name"], "enabled", true);
+            }else{
+                if($this->ReadPropertyBoolean("Debug") && array_key_exists("caption", $item) && $arr[$key]["viewlevel"] > 0){
+                    switch($arr[$key]["viewlevel"]){
+                        case 0: $arr[$key]["caption"] = $arr[$key]["caption"] . " (Basic)";
+                        case 1: $arr[$key]["caption"] = $arr[$key]["caption"] . " (Advance)";
+                        case 2: $arr[$key]["caption"] = $arr[$key]["caption"] . " (Expert)";
                     }
                 }
             }
         }
+
+        return array_values($arr);
     }
 
     //Messagesink
@@ -646,7 +499,6 @@ class JSLiveModule extends IPSModule
 
         //HTMLBOX and Chache!
         $this->SetBuffer("Output", "");
-        $this->SetBuffer("ConfigurationBuffer", "{}");
         $this->UpdateOutput();
         $this->UpdateIframe();
 
@@ -718,13 +570,10 @@ class JSLiveModule extends IPSModule
                 $htmlStr .= '<iframe src="' . $link . '" width="100%" frameborder="0" scrolling="'.$scrolling.'" height="'.$height.'"></iframe>';
             }
 
-
-            //$htmlStr = file_get_contents(__DIR__ ."/../htmlbox/HtmlBox-Chart.html");
-            //$htmlStr = str_replace("{BOXID}", $this->InstanceID.$this->getUniqueID(), $htmlStr);
             $this->SetValue("Output", $htmlStr);
         }else{
             //remove old valeue
-            $oldID = @IPS_GetObjectIDByIdent("Output", $this->InstanceID);
+            $oldID = IPS_GetObjectIDByIdent("Output", $this->InstanceID);
 
             if($oldID !== false){
                 $this->UnregisterVariable("Output");
@@ -758,60 +607,5 @@ class JSLiveModule extends IPSModule
         $file_arr = file(IPS_GetLogDir()."logfile.log");
 
         print_r($file_arr);
-    }
-    private function getUniqueID($length=12)
-    {
-        $str='';
-        // Passwortanforderung - von allen Zeichen: [a-z], [A-Z] und [0-9] - je Eines
-        while(!(preg_match('/[a-z]/',$str)&&
-            preg_match('/[A-Z]/',$str)&&
-            preg_match('/[0-9]/',$str)))
-        {
-            srand((double)microtime()*1000000);
-            $c = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            $str = '';
-            while (strlen($str) < $length) $str .= substr($c, (rand() % (strlen($c))),1);
-        }
-
-        //$this->SendDebug(__FUNCTION__, $str, 0);
-        return $str;
-    }
-
-    protected function GET_PathList($arr, $paths = array(), $curPath = array())
-    {
-        if (array_key_exists("name", $arr)) {
-            $paths[] = array("path" => $curPath, "name" => $arr["name"]);
-        }
-        foreach ($arr as $key => $subarr)
-        {
-            $newPath = $curPath;
-            $newPath[] = $key;
-
-            //echo $key. "\r\n";
-
-            if (is_array($subarr))
-            {
-                $paths = $this->GET_PathList($subarr, $paths, $newPath);
-            }
-        }
-        return $paths;
-    }
-    protected function SET_By_KEYPATH($path, &$array=array(), $value=null)
-    {
-        $temp =& $array;
-
-        foreach ($path as $key) {
-            $temp =& $temp[$key];
-        }
-        $temp = $value;
-    }
-    protected function GET_By_KEYPATH($array, $path){
-        $temp =& $array;
-
-        foreach($path as $key) {
-            //print_r($temp[$key]);
-            $temp =& $temp[$key];
-        }
-        return $temp;
     }
 }

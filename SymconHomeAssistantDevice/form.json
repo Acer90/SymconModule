@@ -1,0 +1,13 @@
+{
+    "elements":
+    [
+        { "type": "ValidationTextBox", "name": "entity_id", "caption": "Entity-ID" }
+    ],
+    "actions":
+    [],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Status OK" }
+
+    ]
+}

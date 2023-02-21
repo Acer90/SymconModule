@@ -25,6 +25,8 @@ class SymconJSLiveGauge extends JSLiveModule{
         $this->RegisterPropertyInteger("IFrameHeight", 0);
         $this->RegisterPropertyInteger("overrideWidth", 0);
         $this->RegisterPropertyInteger("overrideHeight", 0);
+        $this->RegisterPropertyBoolean("AutoConvertValue", true);
+        $this->RegisterPropertyBoolean("AutoConvertHighlight", true);
 
         //title
         $this->RegisterPropertyString("title_text", "");

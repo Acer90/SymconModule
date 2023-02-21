@@ -1,0 +1,20 @@
+{
+    "elements":
+    [
+        { "type": "CheckBox", "name": "Active", "caption": "Active" },
+        { "type": "ValidationTextBox", "name": "IPAddress", "caption": "IPAddress" },
+        { "type": "NumberSpinner", "name": "Port", "caption": "Port" },
+        { "type": "ValidationTextBox", "name": "Token", "caption": "Token" }
+    ],
+    "actions":
+    [
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Connection Success!" },
+        { "code": 104, "icon": "active", "caption": "Connection Lost!" },
+        { "code": 105, "icon": "error", "caption": "Token nicht gesetzt!" },
+        { "code": 203, "icon": "error", "caption": "Internal Error!" }
+    ]
+}
+ 
