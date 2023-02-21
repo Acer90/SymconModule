@@ -366,7 +366,7 @@ class SymconJSLiveConfigStore extends IPSModule{
                     $pop_item[] = array("width"=> "120px", "type"=> "Button", "caption" => "Vote Up", "onClick" => "SymconJSLiveConfigStore_SetVote(\$id, ".$item["Conf_ID"].", 1);");
                     $pop_item[] = array("width"=> "120px", "type"=> "Button", "caption" => "Vote Down", "onClick" => "SymconJSLiveConfigStore_SetVote(\$id, ".$item["Conf_ID"].", -1);" );
 
-                    $p_item[] = array("width"=> "80px", "type"=> "Button", "caption" => "PopupButton", "popup" => array("caption" => "Configuration-Vote", "items" => array("type"=> "RowLayout", "items" => $pop_item)));
+                    $p_item[] = array("width"=> "80px", "type"=> "Button", "caption" => "Vote", "popup" => array("caption" => "Configuration-Vote", "items" => array("type"=> "RowLayout", "items" => $pop_item)));
                 }
                 
 
