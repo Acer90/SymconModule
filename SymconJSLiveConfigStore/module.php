@@ -336,12 +336,16 @@ class SymconJSLiveConfigStore extends IPSModule{
                     default: $level = "Simple"; break;
                 }
 
+                if(is_null($item["Vote_Points_User"])){
+                    $item["Vote_Points_User"] = "No Vote Set!";
+                }
+
                 $img = $item["Conf_PicturePreview"];
                 $p_item = array();
                 $p_item[] = array("width"=> "100px", "type"=>"Image", "image"=> $img); //img
                 $p_item[] = array("width"=> "270px", "type"=> "Label", "caption" => $item["Conf_Description"]); //Description
                 $p_item[] = array("width"=> "80px", "type"=> "Label", "caption" => $item["Admin_ForumUser"]); //ForumUser
-                $p_item[] = array("width"=> "80px", "type"=> "Label", "caption" => $item["Vote_Points"]); //vote
+                $p_item[] = array("width"=> "80px", "type"=> "Label", "caption" => round($item["Vote_Points"], 2), "name" => "avg_votePoints_".$item["Conf_ID"]); //vote
                 $p_item[] = array("width"=> "80px", "type"=> "Label", "caption" => $item["Conf_DownloadsCounter"]); //Downloads
 
                 //button mehr info und load
@@ -363,10 +367,36 @@ class SymconJSLiveConfigStore extends IPSModule{
                     }
                 }else{
                     $pop_item = array();
-                    $pop_item[] = array("width"=> "120px", "type"=> "Button", "caption" => "Vote Up", "onClick" => "SymconJSLiveConfigStore_SetVote(\$id, ".$item["Conf_ID"].", 1);");
-                    $pop_item[] = array("width"=> "120px", "type"=> "Button", "caption" => "Vote Down", "onClick" => "SymconJSLiveConfigStore_SetVote(\$id, ".$item["Conf_ID"].", -1);" );
+                    $button_item = array();
 
-                    $p_item[] = array("width"=> "80px", "type"=> "Button", "caption" => "Vote", "popup" => array("caption" => "Configuration-Vote", "items" => array("type"=> "RowLayout", "items" => $pop_item)));
+                    $pop_sitem = array();
+                    $pop_sitem[] = array("width"=> "150px", "type"=> "Label", "caption" => "Description:");
+                    $pop_sitem[] = array("width"=> "400px", "type"=> "Label", "caption" => $item["Conf_Description"]);
+                    $pop_item[] = array("type"=> "RowLayout", "items" => $pop_sitem);
+
+                    $pop_sitem = array();
+                    $pop_sitem[] = array("width"=> "150px", "type"=> "Label", "caption" => "User:");
+                    $pop_sitem[] = array("width"=> "400px", "type"=> "Label", "caption" => $item["Admin_ForumUser"]);
+                    $pop_item[] = array("type"=> "RowLayout", "items" => $pop_sitem);
+
+                    $pop_sitem = array();
+                    $pop_sitem[] = array("width"=> "150px", "type"=> "Label", "caption" => "Current Vote Level:" );
+                    $pop_sitem[] = array("width"=> "400px", "type"=> "Label", "caption" => $item["Vote_Points"], "name" => "avg_votePoints2_".$item["Conf_ID"]);
+                    $pop_item[] = array("type"=> "RowLayout", "items" => $pop_sitem);
+
+                    $pop_sitem = array();
+                    $pop_sitem[] = array("width"=> "150px", "type"=> "Label", "caption" => "Your Current Vote:");
+                    $pop_sitem[] = array("width"=> "400px", "type"=> "Label", "caption" => $item["Vote_Points_User"], "name" => "user_votePoints_".$item["Conf_ID"]);
+                    $pop_item[] = array("type"=> "RowLayout", "items" => $pop_sitem);
+
+                    $button_item[] = array("width"=> "80px", "type"=> "Button", "caption" => "1", "onClick" => "SymconJSLiveConfigStore_SetVote(\$id, ".$item["Conf_ID"].", 1);");
+                    $button_item[] = array("width"=> "80px", "type"=> "Button", "caption" => "2", "onClick" => "SymconJSLiveConfigStore_SetVote(\$id, ".$item["Conf_ID"].", 2);" );
+                    $button_item[] = array("width"=> "80px", "type"=> "Button", "caption" => "3", "onClick" => "SymconJSLiveConfigStore_SetVote(\$id, ".$item["Conf_ID"].", 3);" );
+                    $button_item[] = array("width"=> "80px", "type"=> "Button", "caption" => "4", "onClick" => "SymconJSLiveConfigStore_SetVote(\$id, ".$item["Conf_ID"].", 4);" );
+                    $button_item[] = array("width"=> "80px", "type"=> "Button", "caption" => "5", "onClick" => "SymconJSLiveConfigStore_SetVote(\$id, ".$item["Conf_ID"].", 5);" );
+                    $pop_item[] = array("type"=> "RowLayout", "items" => $button_item);
+
+                    $p_item[] = array("width"=> "80px", "type"=> "PopupButton", "caption" => "Vote", "popup" => array("caption" => "Configuration-Vote", "width"=> "400px", "items" => $pop_item));
                 }
                 
 
@@ -605,10 +635,21 @@ class SymconJSLiveConfigStore extends IPSModule{
 
     }
     public Function SetVote($conf_ID, $vote){
-        if($vote <= 0) $vote = -1;
-        if($vote > 0) $vote = 1;
+        if($vote <= 0) return "Error on Set Vote";
+        if($vote > 5) return "Error on Set Vote";
 
-        echo $conf_ID;
+        $postData = array(  'UserID'=>$this->ReadPropertyString("UserID"), 
+                            'ConfigID' => $conf_ID,
+                            'Vote' => $vote);
+
+        $url = self::APILINK . "api/Configuration.php?Type=vote";
+        $data = json_decode($this->GetWebData($url, $postData), true);
+
+        if(!$data["success"]) return $data["msg"];
+
+        $this->UpdateFormField("avg_votePoints_".$conf_ID, "caption", round($data["avg_vote"], 2));
+        $this->UpdateFormField("avg_votePoints2_".$conf_ID, "caption", round($data["avg_vote"], 2));
+        $this->UpdateFormField("user_votePoints_".$conf_ID, "caption", $data["vote"]);
     }
     private Function UpdateAccessData(){
         $postData = array('UserID'=>$this->ReadPropertyString("UserID"));

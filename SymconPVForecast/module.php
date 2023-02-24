@@ -85,6 +85,7 @@ class symconpvForecast extends IPSModule
                                 "horizon"     => $solaritem['horizon'],       // Horizont für Einfallswinkel Sonne
 
                                 // Beschattungsobjekt
+								"obj" => 		   $solaritem['obj'], 			  //beschattungsobjeckt an
                                 "obj_direction" => $solaritem['obj_direction'],   // Himmelsrichtung des Beschattungsobjektes Grad von Norden =0
                                 "obj_distance"  => $solaritem['obj_distance'],      // Abstand des Objektes in Meter
                                 "obj_height"    => $solaritem['obj_height'],      // Höhe des Objektes in Meter
@@ -407,7 +408,8 @@ class PVForecastcls{
                 $lf = 100;
 
                 // Beschattung berechnen
-                if (isset($solarItem["obj_direction"])) {
+				//print_r($solarItem);
+                if (isset($solarItem["obj_direction"]) && $solarItem["obj"]) {
                     // 2x berechnen und mittelwert bilden für volle stunde und 30min
                     for ($x = 0; $x <= 1; $x++) {
                         $time = $ts + $x * 1800;
@@ -417,6 +419,9 @@ class PVForecastcls{
                         $azimuth = $sunpos["azimuth"];
                         $shadeAngle = $azimuth - $solarItem["obj_direction"] - 90;
                         $shadeLength = round($solarItem["obj_height"] / (tan($alpha)), 2);
+
+						//print_r($sunpos);
+						//echo date("ymd-H:i", $time) . "=>". $shadeAngle."###". $shadeLength."\r\n";
 
                         if ($shadeLength < $solarItem["obj_distance"] || $shadeAngle > 0) {
                             $lf_minusShadeA[$x] = 100;
@@ -572,7 +577,15 @@ class PVForecastcls{
 	#### Sonnnenstandsberechnung  #################################################
 	private function calcSun($ts, $dLongitude, $dLatitude){
 		// Correction Timezone
-		$ts = $ts - 2*3600;
+		$now = new DateTime('now', new DateTimeZone('Europe/Berlin'));
+	    if($now->format('I') == 1){
+			//sommerzeit
+			//$ts = $ts - 2*3600;
+			$ts = $ts;
+		}else{
+			$ts = $ts;
+		}
+		
 
 		$iYear = date("Y", $ts);
 		$iMonth = date("m", $ts);
