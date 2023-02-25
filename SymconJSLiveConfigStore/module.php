@@ -255,7 +255,6 @@ class SymconJSLiveConfigStore extends IPSModule{
         $dir = $this->GetBuffer("Direction");
         $search = $this->GetBuffer("Search"); 
         $orderby = $this->GetBuffer("OrderBy"); 
-        
 
         $moduleList = $this->GetBuffer("Modulelist");
         $indexModulType = intval($this->GetBuffer("SelectInstanceType"));
@@ -321,11 +320,12 @@ class SymconJSLiveConfigStore extends IPSModule{
 
         $p_array[] = json_decode($json, true);
         $hashdata = array();
+        $ConfigID_List = array();
 
         if($data["success"] == 1){
             foreach($data["data"] as $item){
                 $hashdata[$item["Conf_ID"]] = $item["Conf_Hash"];
-
+                $ConfigID_List[] = $item["Conf_ID"];
 
                 switch($item["Conf_ViewLevel"]){
                     case 0: $level = "Simple"; break;
@@ -346,11 +346,11 @@ class SymconJSLiveConfigStore extends IPSModule{
                 $p_item[] = array("width"=> "270px", "type"=> "Label", "caption" => $item["Conf_Description"]); //Description
                 $p_item[] = array("width"=> "80px", "type"=> "Label", "caption" => $item["Admin_ForumUser"]); //ForumUser
                 $p_item[] = array("width"=> "80px", "type"=> "Label", "caption" => round($item["Vote_Points"], 2), "name" => "avg_votePoints_".$item["Conf_ID"]); //vote
-                $p_item[] = array("width"=> "80px", "type"=> "Label", "caption" => $item["Conf_DownloadsCounter"]); //Downloads
+                $p_item[] = array("width"=> "80px", "type"=> "Label", "caption" => $item["Conf_DownloadsCounter"], "name" => "downloads_".$item["Conf_ID"]); //Downloads
 
                 //button mehr info und load
                 $p_item[] = array("width"=> "80px", "type"=> "Button", "caption" => "More", "onClick" => " echo 'https://jslive.babenschneider.net/info.php?id=".$item["Conf_ID"]."';");
-                $p_item[] = array("width"=> "80px", "type"=> "Button", "caption" => "Load", "confirm"=> "Load Configuration for Selected Instancen", "onClick" => "echo SymconJSLiveConfigStore_LoadConfiguration(\$id, ".$item["Conf_ID"].", \$Instance_List);");
+                $p_item[] = array("width"=> "80px", "type"=> "Button", "caption" => "Load", "confirm"=> "Create new Instancen (no Selected)", "onClick" => "echo SymconJSLiveConfigStore_LoadConfiguration(\$id, ".$item["Conf_ID"].");", "name" => "load_".$item["Conf_ID"]);
                 
                 //button update and Remove
                 if($item["own_Module"]){
@@ -409,6 +409,7 @@ class SymconJSLiveConfigStore extends IPSModule{
             $this->SetBuffer("CurCount", $count);
         }
 
+        $this->SetBuffer("ConfigID_List", $ConfigID_List);
         $this->SetBuffer("HashData", $hashdata);
         $r_data = array("data" => $p_array, "moduleID" => $moduleID, "moduleName" => $moduleName, "count" => $count, "from" => $from, "to" => $to, "dir" => $dir);
         return $r_data;
@@ -428,14 +429,13 @@ class SymconJSLiveConfigStore extends IPSModule{
 
     public function StoreListChangeDirection(){
         $dir = $this->GetBuffer("Direction"); 
+        $this->UpdateFormField("StoreDir", "caption", $dir);
 
         if($dir == "DESC"){
             $dir = "ASC";
         }else{
             $dir = "DESC";
         }
-
-        $this->UpdateFormField("StoreDir", "caption", $dir);
 
         $this->SetBuffer("Direction", $dir); 
         $modulelist = $this->GetStoreList();
@@ -479,6 +479,8 @@ class SymconJSLiveConfigStore extends IPSModule{
         $search = strtolower($this->GetBuffer("SearchInstance"));
         $indexModulType = intval($this->GetBuffer("SelectInstanceType"));
 
+        $this->SetBuffer("Selected_Instance_List", array()); //alle selectierten Instancen entfernen
+
         if($indexModulType < 0 || $indexModulType >= count($this->GetBuffer("Modulelist"))){
             $this->SendDebug(__FUNCTION__, "Select Type (".$indexModulType.") is wrong!", 0);
         }
@@ -506,9 +508,38 @@ class SymconJSLiveConfigStore extends IPSModule{
         return $instanceList;
     }
 
+    public function ChangeInstanceList($Instance_List){
+        $Selected_Instance_List = array();
+        foreach($Instance_List as $item){
+            if($item["Select"]){
+                $Selected_Instance_List[] = $item["InstanceID"];
+            }
+        }
+
+        $this->SetBuffer("Selected_Instance_List", $Selected_Instance_List);
+        $this->UpdateLoadButtons();
+    }
+
+    private function UpdateLoadButtons(){
+        $ConfigID_List = $this->GetBuffer("ConfigID_List");
+        $Selected_Instance_List = $this->GetBuffer("Selected_Instance_List");
+        if(!is_array($ConfigID_List) || !is_array($Selected_Instance_List)) return;
+
+        $selItems = count($Selected_Instance_List);
+        $txt = "Load Configuration for ".$selItems." Selected Instancen";
+        if($selItems == 0){
+            $txt = "Create new Instancen (no Selected)";
+        }
+
+        foreach($ConfigID_List as $item){
+            $this->UpdateFormField("load_".$item, "confirm", $txt);
+        }
+    }
+
     public function SearchInstanceList($search){
         $this->SetBuffer("SearchInstance", $search);
         $this->UpdateFormField("Instance_List", "values", json_encode($this->GetInstanceList()));
+        $this->UpdateLoadButtons();
     }
 
     public function SelectInstanceType($selectType){
@@ -522,6 +553,7 @@ class SymconJSLiveConfigStore extends IPSModule{
         $this->UpdateFormField("Range", "caption", $modulelist["from"] ."-".$modulelist["to"] . " (".$modulelist["count"] .")");
         $this->UpdateFormField("StoreList", "items", json_encode($modulelist["data"]));
         $this->UpdateFormField("SearchModule", "value", "");
+        $this->UpdateLoadButtons();
     }
 
     public function GetForumUser($username){
@@ -594,10 +626,12 @@ class SymconJSLiveConfigStore extends IPSModule{
         }
     }
 
-    public Function LoadConfiguration($conf_ID, $Instance_List){
+    public Function LoadConfiguration($conf_ID){
         $output = "";
         $hash = "";
         $hashlist = $this->GetBuffer("HashData");
+        $Selected_Instance_List = $this->getBuffer("Selected_Instance_List");
+
         if(array_key_exists($conf_ID, $hashlist)){
             $hash = $hashlist[$conf_ID];
         }
@@ -612,19 +646,29 @@ class SymconJSLiveConfigStore extends IPSModule{
         if(sha1($data["data"]) != $hash) return "CRC=FALSE!";
 
         $json = json_decode($data["data"], true);
-        foreach($Instance_List as $item){
-            if($item["Select"]){
-                if(!IPS_ObjectExists($item["InstanceID"])) continue;
-                //wrong type
-                if(IPS_GetObject($item["InstanceID"])["ObjectType"] !== 1) continue;
-                //skip wrong modules
-                if(IPS_GetInstance($item["InstanceID"])["ModuleInfo"]["ModuleID"] !== $json["ModuleID"]) continue;
 
-                IPS_SetConfiguration($item["InstanceID"], json_encode($json["Config"]));
-                IPS_ApplyChanges($item["InstanceID"]);
-                $output .= "Configuration of " . IPS_GetObject($item["InstanceID"])["ObjectName"] . "(".$item["InstanceID"].") changed! \r\n";
-            }
-        }
+        if(count($Selected_Instance_List) > 0){
+            //update selectet instancen     
+            foreach($Selected_Instance_List as $selected_Instance){
+                if(!IPS_ObjectExists($selected_Instance)) continue;
+                //wrong type
+                if(IPS_GetObject($selected_Instance)["ObjectType"] !== 1) continue;
+                //skip wrong modules
+                if(IPS_GetInstance($selected_Instance)["ModuleInfo"]["ModuleID"] !== $json["ModuleID"]) continue;
+    
+                IPS_SetConfiguration($selected_Instance, json_encode($json["Config"]));
+                IPS_ApplyChanges($selected_Instance);
+                $output .= "Configuration of " . IPS_GetObject($selected_Instance)["ObjectName"] . "(".$selected_Instance.") changed! \r\n";
+            }   
+        }else{
+            //create new instance
+            $InstanceID = IPS_CreateInstance($json["ModuleID"]);
+            IPS_SetName($InstanceID, $data["description"]); // Instanz benennen
+            IPS_SetConfiguration($InstanceID, json_encode($json["Config"]));
+            IPS_ApplyChanges($InstanceID);
+            $output .= "New Instance => " . IPS_GetObject($InstanceID)["ObjectName"] . "(".$InstanceID.") created! \r\n";
+        } 
+        $this->UpdateFormField("downloads_".$conf_ID , "caption", $data["downloads"]);
 
         return $output;
     }

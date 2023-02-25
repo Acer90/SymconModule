@@ -128,6 +128,7 @@
                             "type": "List",
                             "name": "Instance_List",
                             "caption": "Select Instance-List",
+                            "onEdit" : "SymconJSLiveConfigStore_ChangeInstanceList($id, $Instance_List);",
                             "rowCount": 12,
                             "add": false,
                             "delete": false,
