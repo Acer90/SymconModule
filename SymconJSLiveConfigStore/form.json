@@ -47,7 +47,8 @@
                 { 
                     "type": "RowLayout",
                     "items": [
-                        { "type": "SelectInstance", 
+                        { 
+                            "type": "SelectInstance", 
                             "name": "PropertyInstanceID", 
                             "caption": "Target" 
                         }, { 

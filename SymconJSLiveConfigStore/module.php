@@ -87,6 +87,19 @@ class SymconJSLiveConfigStore extends IPSModule{
         return json_encode($formData);
     }
 
+    private Function GetViewlevelData(){
+        $r_arr = array();
+        $r_arr[] = array("caption" => "Simple", "value" => 0);
+        $r_arr[] = array("caption" => "Basic", "value" => 1);
+        $r_arr[] = array("caption" => "Advance", "value" => 2);
+        $r_arr[] = array("caption" => "Expert", "value" => 3);
+
+        $isDev = false;
+        if($isDev) $r_arr[] = array("caption" => "Developer", "value" => 4);
+
+        return $r_arr;
+    }
+
     private Function GetUploadForm(){
         $formdata = array();
         $modules = array();
@@ -113,26 +126,25 @@ class SymconJSLiveConfigStore extends IPSModule{
                                 "caption": "Preview",
                                 "onClick": "SymconJSLiveConfigStore_Preview($id, $ModuleInstanceID);"
                             }, { 
+                                "width": "80px",
+                                "type": "OpenObjectButton",
+                                "caption": "Open",
+                                "name": "Open_Instance"
+                            }, { 
                                 "type": "SelectInstance", 
                                 "name": "ModuleInstanceID", 
                                 "validModules" : '.json_encode($modules).',
                                 "caption": "Target (Require)" ,
-                                "onChange": "SymconJSLiveConfigStore_UpdateViewLevel($id, $ModuleInstanceID);"
+                                "onChange": "SymconJSLiveConfigStore_OnSelectInstanceChange($id, $ModuleInstanceID, \"ViewLevelRequire\", \"Open_Instance\");"
                             }, { 
                                 "type": "Select", 
                                 "name": "ViewLevelRequire", 
                                 "caption": "min. ViewLevel (Require)", 
                                 "width": "160px",
-                                "options": [
-                                    { "caption": "Simple", "value": 0 },
-                                    { "caption": "Basic", "value": 1 },
-                                    { "caption": "Advance", "value": 2 },
-                                    { "caption": "Expert", "value": 3 },
-                                    { "caption": "Developer", "value": 4 }
-                                ]
+                                "options": '.json_encode($this->GetViewlevelData()).'
                             }, {
                                 "type": "ValidationTextBox", 
-                                "width": "670px",
+                                "width": "580px",
                                 "name": "Description", 
                                 "caption": "Description  (Require)" 
                             }, { 
@@ -355,13 +367,39 @@ class SymconJSLiveConfigStore extends IPSModule{
                 //button update and Remove
                 if($item["own_Module"]){
                     if($item["allow_update"]){
-                        $p_item[] = array("width"=> "80px", "type"=> "Button", "caption" => "Update", "confirm"=> "Load Configuration", "onClick" => "SymconJSLiveConfigStore_UpdateConfiguration(\$id, ".$item["Conf_ID"].", \$ModuleInstanceID, \$ViewLevelRequire, \$Description, \$Picture);");
+                        $pop_item = array();
+
+                        $pop_sitem = array();
+                        $pop_sitem[] = array("width"=> "150px", "type"=> "Label", "caption" => "Target: ");
+                        $pop_sitem[] = array("width"=> "400px", "type"=> "SelectInstance", "value" => $item["Conf_Description"], "caption" => "Target", "name" => "update_Instance_".$item["Conf_ID"], "validModules" => array($item["Config_ModuleID"]), "onChange" => "SymconJSLiveConfigStore_OnSelectInstanceChange(\$id, \$update_Instance_".$item["Conf_ID"].", \"update_ViewLevel_".$item["Conf_ID"]."\", \"open_Instance_".$item["Conf_ID"]."\");");
+                        $pop_sitem[] = array("width"=> "80px", "type"=> "Button", "caption" => "Preview", "onClick" => "SymconJSLiveConfigStore_Preview(\$id, \$update_Instance_".$item["Conf_ID"].");");
+                        $pop_sitem[] = array("width"=> "80px", "type"=> "OpenObjectButton", "caption" => "Open", "name" => "open_Instance_".$item["Conf_ID"]);
+                        $pop_item[] = array("type"=> "RowLayout", "items" => $pop_sitem);
+
+                        $pop_sitem = array();
+                        $pop_sitem[] = array("width"=> "150px", "type"=> "Label", "caption" => "ViewLevel: ");
+                        $pop_sitem[] = array("width"=> "400px", "type"=> "Select", "value" => intVal($item["Conf_ViewLevel"]), "caption" => "ViewLevel (Min)", "name" => "update_ViewLevel_".$item["Conf_ID"], "options" => $this->GetViewlevelData());
+                        $pop_item[] = array("type"=> "RowLayout", "items" => $pop_sitem);
+
+                        $pop_sitem = array();
+                        $pop_sitem[] = array("width"=> "150px", "type"=> "Label", "caption" => "Description: ");
+                        $pop_sitem[] = array("width"=> "600px", "type"=> "ValidationTextBox", "value" => $item["Conf_Description"], "caption" => "Description", "name" => "update_Description_".$item["Conf_ID"]);
+                        $pop_item[] = array("type"=> "RowLayout", "items" => $pop_sitem);
+
+                        $pop_sitem = array();
+                        $pop_sitem[] = array("width"=> "150px", "type"=> "Label", "caption" => "Picture: ");
+                        $pop_sitem[] = array("width"=> "400px", "type"=> "SelectFile", "caption" => "Picture", "name" => "update_Picture_".$item["Conf_ID"], "extensions" => ".jpg,.gif,.txt");
+                        $pop_item[] = array("type"=> "RowLayout", "items" => $pop_sitem);
+
+                        $pop_item[] = array("width"=> "80px", "type"=> "Button", "caption" => "Update", "confirm"=> "Update Configuration", "onClick" => "SymconJSLiveConfigStore_UpdateConfiguration(\$id, ".$item["Conf_ID"].", \$update_Instance_".$item["Conf_ID"].", \$update_ViewLevel_".$item["Conf_ID"].", \$update_Description_".$item["Conf_ID"].", \$update_Picture_".$item["Conf_ID"].");");
+
+                        $p_item[] = array("width"=> "80px", "type"=> "PopupButton", "caption" => "Update", "popup" => array("caption" => "Update - " . $item["Conf_Description"], "width"=> "400px", "items" => $pop_item));
                     }else{
                         $p_item[] = array("width"=> "80px", "type"=> "Label", "caption" => "");
                     }
     
                     if($item["allow_remove"]){
-                        $p_item[] = array("width"=> "80px", "type"=> "Button", "caption" => "Delete", "confirm"=> "Load Configuration", "onClick" => "SymconJSLiveConfigStore_DeleteConfiguration(\$id, ".$item["Conf_ID"].");");
+                        $p_item[] = array("width"=> "80px", "type"=> "Button", "caption" => "Delete", "confirm"=> "Remove Configuration", "onClick" => "SymconJSLiveConfigStore_DeleteConfiguration(\$id, ".$item["Conf_ID"].");");
                     }else{
                         $p_item[] = array("width"=> "80px", "type"=> "Label", "caption" => "");
                     }
@@ -461,7 +499,7 @@ class SymconJSLiveConfigStore extends IPSModule{
         $this->UpdateFormField("UploadPending", "items", $this->GetUploadPending());
     }
 
-    public function UpdateViewLevel($ModuleInstanceID){
+    public function OnSelectInstanceChange($ModuleInstanceID, $viewlevel_name, $openButton_name){
         if(!IPS_InstanceExists($ModuleInstanceID)) {
             return;
         }
@@ -470,7 +508,9 @@ class SymconJSLiveConfigStore extends IPSModule{
         $modullist = $this->GetBuffer("Modulelist");
         if(in_array($modulID, $modullist)){
             $level = IPS_GetProperty($ModuleInstanceID, "ViewLevel");
-            $this->UpdateFormField("ViewLevelRequire", "value", $level);
+            $this->UpdateFormField($viewlevel_name, "value", $level);
+            $this->UpdateFormField($openButton_name, "objectID", $ModuleInstanceID);
+            //echo $openButton_name;
         }
     }
 
@@ -673,10 +713,67 @@ class SymconJSLiveConfigStore extends IPSModule{
         return $output;
     }
     public Function UpdateConfiguration($conf_ID, $ModuleInstanceID, $ViewLevelRequire, $Description, $Picture){
+        $postData = array();
+        $update = false;
+        if(!is_numeric($conf_ID) && $conf_ID <= 0) return;
 
+        $postData["UserID"] = $this->ReadPropertyString("UserID");
+        $postData["ConfigID"] = $conf_ID;
+        $postData["ForumUser"] = $this->ReadPropertyString("ForumUsername");
+
+        if($ModuleInstanceID > 0 && IPS_InstanceExists($ModuleInstanceID)) {
+            $function = IPS_GetInstance($ModuleInstanceID)["ModuleInfo"]["ModuleName"]."_ExportConfiguration";
+            $postData["Config"] = $function($ModuleInstanceID, array());
+            $postData["ViewLevel"] = $ViewLevelRequire;
+            $update = true;
+        }
+
+        if(!empty($Description)){
+            $postData["Description"] = $Description;
+            $update = true;
+        }
+
+        if(!empty($Picture)){
+            $postData["Pic"] = $Picture;
+            $update = true;
+        }
+
+        if(!$update){
+            return "No new Configuration(Instance), Description, or Picture set!";
+        }else{
+            $url = self::APILINK . "api/Configuration.php?Type=update";
+            $data = json_decode($this->GetWebData($url, $postData), true);
+
+            if(!$data["success"]) return $data["msg"];
+
+            $this->CheckPending();
+            if(!empty($Picture) || !empty($conf_ID)){
+                $this->UpdateFormField("ExpandUploadPending", "expanded", true);
+            }
+
+            $this->UpdateFormField("ModuleInstanceID", "value", 0);
+            $this->UpdateFormField("Description", "value", "");
+            $this->UpdateFormField("Picture", "value", "");
+
+            $modulelist = $this->GetStoreList();
+            $this->UpdateFormField("StoreList", "items", json_encode($modulelist["data"]));
+            $this->UpdateLoadButtons();
+        }
     }
     public Function DeleteConfiguration($conf_ID){
+        if(empty($conf_ID)) return "ERROR!";
 
+        $postData = array(  'UserID'=>$this->ReadPropertyString("UserID"), 
+                            'ConfigID' => $conf_ID);
+
+        $url = self::APILINK . "api/Configuration.php?Type=remove";
+        $data = json_decode($this->GetWebData($url, $postData), true);
+
+        if(!$data["success"]) return $data["msg"];
+
+        $modulelist = $this->GetStoreList();
+        $this->UpdateFormField("StoreList", "items", json_encode($modulelist["data"]));
+        $this->UpdateLoadButtons();
     }
     public Function SetVote($conf_ID, $vote){
         if($vote <= 0) return "Error on Set Vote";
