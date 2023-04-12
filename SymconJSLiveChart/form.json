@@ -6,7 +6,7 @@
             "caption": "Title",
             "items": [
                 { "type": "CheckBox", "name": "title_display", "caption": "Display"},
-                { "type": "ValidationTextBox", "name": "title_text", "caption": "Text", "requireItem": "title_display"},
+                { "type": "ValidationTextBox", "name": "title_text", "caption": "Text", "requireItem": "title_display", "ignoreExport" : true},
                 { "type": "Select", "name": "title_position", "caption": "Position",
                     "requireItem": "title_display",
                     "options": [
@@ -19,7 +19,7 @@
                 {
                     "type": "RowLayout",
                     "requireItem": "title_display",
-                    "items": [
+                    "items": [ 
                         { "type": "Label", "caption": "Font:", "width": "100px" },
                         { "type": "NumberSpinner", "name": "title_fontSize", "caption": "Size", "width": "100px", "suffix": "px", "minimum": 0, "stepSize": 1},
                         { "type": "SelectColor", "name": "title_fontColor", "caption": "Color", "width": "150px"},
@@ -682,6 +682,7 @@
                     "name": "Variable",
                     "width": "auto",
                     "requiredLogging": 1,
+                    "ignoreExport" : true,
                     "add": 0,
                     "edit": {
                         "type": "SelectVariable"
