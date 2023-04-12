@@ -192,10 +192,11 @@ class SymconJSLiveModuleSync extends IPSModule{
                                         }
                                     } 
                                 }
-                            }
-                            if($config[$key] != json_encode($json_value)){
-                                $config[$key] = json_encode($json_value);
-                                $this->SendDebug(__FUNCTION__, "Write-Single-Config " .$name . "(" . $key . ") Value => " . json_encode($config[$key]),0); 
+
+                                if($config[$key] != json_encode($json_value)){
+                                    $config[$key] = json_encode($json_value);
+                                    $this->SendDebug(__FUNCTION__, "Write-Single-Config " .$name . "(" . $key . ") Value => " . json_encode($config[$key]),0); 
+                                }
                             }
                         }else{
                             if($config[$key] != $newValue){
