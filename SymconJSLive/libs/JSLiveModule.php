@@ -114,7 +114,7 @@ class JSLiveModule extends IPSModule
 
         return $pData;
     }
-    public function ExportConfiguration(array $queryData = array()){
+    public function ExportConfiguration(bool $export_all = false, array $queryData = array()){
         $output = array();
         $withScript = false;
 
@@ -125,12 +125,47 @@ class JSLiveModule extends IPSModule
         $output["ModuleID"] = IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"];
         $output["ModuleName"] = IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleName"];
 
-        $output["Config"] = json_decode(IPS_GetConfiguration($this->InstanceID), true);
+        //$output["Config"] = json_decode(IPS_GetConfiguration($this->InstanceID), true);
+        $jsonPath = realpath(__DIR__ . "/../../" . get_called_class() . "/form.json");
+        $output["Config"] = json_decode(file_get_contents($jsonPath), true);
 
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
         if(IPS_ScriptExists($scriptID) && $withScript){
             $output["Script"] = IPS_GetScriptContent($scriptID);
             $output["ScriptName"] = IPS_GetObject($scriptID)["ObjectName"];
+        }
+
+        if(!$export_all){
+            $config = $output["Config"];
+            $formData = json_decode(IPS_GetConfigurationForm($this->InstanceID), true)["elements"];
+            $allowedItems = $this->GetAllowConfigurationExportList($formData);
+
+            foreach($config as $key => $item){
+                if(array_key_exists($key, $allowedItems) && $allowedItems[$key]["ignore"] == true){
+                    unset($config[$key]);
+                    continue;
+                }
+
+                if(!is_string($item)) continue;
+
+                $jsonData = json_decode($item, true);
+                if (json_last_error() !== JSON_ERROR_NONE) continue;
+
+                foreach($jsonData as $j_key => $j_item){
+                    foreach($j_item as $s_key => $s_item){
+                        $name = $key."_".$s_key;
+                        if(array_key_exists($name, $allowedItems) && $allowedItems[$name]["ignore"] == true){
+                            unset($jsonData[$j_key][$s_key]);
+                            continue;
+                        }
+                    }
+                }
+
+                $config[$key] = json_encode($jsonData);
+
+            }
+
+            $output["Config"] = $config;
         }
 
         if(array_key_exists("Libraries", $output["Config"]) && $withScript){
@@ -156,6 +191,38 @@ class JSLiveModule extends IPSModule
 
         return json_encode($output, JSON_PRETTY_PRINT);
     }
+    public function GetAllowConfigurationExportList(array $arr, array $r_arr = array(), string $column_name = ""){
+        foreach ($arr as $key => $item) {
+            //items Recusive for Items
+            if (array_key_exists("items", $item)){
+                $r_arr = $this->GetAllowConfigurationExportList($arr[$key]["items"], $r_arr);
+            }
+            if (array_key_exists("columns", $item)){
+                if(array_key_exists("name", $item)){
+                    $r_arr = $this->GetAllowConfigurationExportList($arr[$key]["columns"], $r_arr, $item["name"]);
+                }
+            }
+
+            if (array_key_exists("name", $item)){
+                $name = $arr[$key]["name"];
+                $is_column = false;
+                $ignore = false;
+
+                if (array_key_exists("ignoreExport", $item) && $arr[$key]["ignoreExport"] == true) {
+                    $ignore = true;
+                }
+
+                if(!empty($column_name)){
+                    $name =  $column_name . "_" . $name;
+                    $is_column = true;
+                }
+
+                $r_arr[$name] = array("is_column" => $is_column, "ignore" => $ignore);
+            } 
+        }
+
+        return $r_arr;
+    }
     public function LoadConfigurationFile(string $filename, bool $overrideScript = false){
         if(empty($filename)) return "File is Empty!";
 
@@ -166,12 +233,39 @@ class JSLiveModule extends IPSModule
         if($confdata["ModuleID"] != IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"]) return "Configuration only allowed for " . $confdata["ModuleName"];
 
         //echo json_encode($confdata["Config"]);
-
+        //$allowedItems = $this->GetAllowConfigurationExportList($formData);
         $output = json_decode(IPS_GetConfiguration($this->InstanceID), true);
+        $output["LastUploadedConfig"] = $filename;
 
         foreach ($confdata["Config"] as $key => $item){
             if(in_array($key, $output)){
-                $output[$key] = $item;
+                $i_data = $item;
+                if(is_string($item)){
+                    $jsonData = json_decode($item, true);
+                    if (json_last_error() === JSON_ERROR_NONE && is_array($jsonData)){
+                        $i_data = json_decode($output[$key], true);
+                        if (json_last_error() === JSON_ERROR_NONE && is_array($i_data)){
+                            foreach($jsonData as $l_key => $l_item){
+                                if(array_key_exists($l_key, $i_data)){
+                                    foreach($l_item as $s_key => $s_item){
+                                        $i_data[$l_key][$s_key] = $s_item;
+                                    }
+                                }else{
+                                    $i_data[$l_key] = $l_item;
+                                }
+                            } 
+                            
+                            $i_data = json_encode($i_data);
+                        }else{
+                            $i_data = json_encode($item);
+                            $this->SendDebug("LoadConfigurationFile", "JSON OPTION ERROR (" .json_last_error() . ") ".$key." => " . $item  , 0);
+                        }
+                    }else{
+                        //$this->SendDebug("LoadConfigurationFile", "JSON ERROR (" .json_last_error() . ") ".$key." => " . $item  , 0);
+                    }
+                }
+                
+                $output[$key] = $i_data;
                 $this->SendDebug("LoadConfigurationFile", "PARAMETER UPDATE ".$key." => " . $item , 0);
             }else{
                 $this->SendDebug("LoadConfigurationFile", "PARAMETER => " . $key ." SKIP", 0);
@@ -310,6 +404,7 @@ class JSLiveModule extends IPSModule
 
                 if(!array_key_exists("name", $item)){
                     $arr[$key]["name"] = $this->getUniqueID();
+                    $arr[$key]["disableExport"] = true; 
                     //$this->SendDebug(__FUNCTION__, $item["type"],0);
                 }
 
@@ -356,7 +451,8 @@ class JSLiveModule extends IPSModule
                 }
 
                 if(!array_key_exists("name", $item)) {
-                    $arr[$key]["name"] = $this->getUniqueID();
+                    $arr[$key]["name"] = $this->getUniqueID(); 
+                    $arr[$key]["disableExport"] = true;
                 }
 
                 if($arr[$key]["visible"] && !$this->ReadPropertyBoolean($propItem)){
@@ -633,6 +729,15 @@ class JSLiveModule extends IPSModule
             $this->SendDataToSocketClient($this->InstanceID, 10506, array());
             $this->UpdateIframe();
         }
+    }
+
+    public function Create() {
+        //Never delete this line!
+        parent::Create();
+
+        //Expert
+        $this->RegisterPropertyBoolean("ShowDefault", true);
+        $this->RegisterPropertyString("LastUploadedConfig", "");
     }
     public function ApplyChanges()
     {

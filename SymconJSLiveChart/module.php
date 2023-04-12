@@ -247,7 +247,7 @@ class SymconJSLiveChart extends JSLiveModule{
             }
 
             $axesKey = array_search($item["Axes"], array_column($axes, 'Ident'));
-            if(empty($item["Axes"]) || $item["Variable"] == 0 || $axesKey === false){
+            if(!isset($item["Variable"]) || empty($item["Axes"]) || $item["Variable"] == 0 || $axesKey === false){
                 $formData["elements"][$key]["values"][$row]["rowColor"] = "#ff0000";
             }
         }

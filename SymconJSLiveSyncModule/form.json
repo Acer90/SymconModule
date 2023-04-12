@@ -1,0 +1,116 @@
+{
+    "elements":
+    [   
+        {   "type": "Select", 
+            "name": "SelectType", 
+            "caption": "Select Type",
+            "width": "200px",
+            "onChange": "SymconJSLiveModuleSync_changeModule($id, $SelectType);",
+            "options": [
+                { "caption": "Gauge", "value": 0 },
+                { "caption": "Chart", "value": 1 },
+                { "caption": "Calendar", "value": 2 },
+                { "caption": "Downloads", "value": 3 }
+            ]
+        }, 
+        {
+            "type": "RowLayout",
+            "requireItem": "axes_display",
+            "items": [
+                {
+                    "type": "ExpansionPanel",
+                    "caption": "Sync Instancen",
+                    "expanded": true,
+                    "width": "700px",
+                    "items": [
+                        {
+                            "type": "List",
+                            "name": "InstanceList",
+                            "caption": "Instances",
+                            "rowCount": 15,
+                            "add": true,
+                            "delete": true,
+                            "onAdd": "SymconJSLiveModuleSync_changeInstance($id, $InstanceList);",
+                            "onEdit": "SymconJSLiveModuleSync_changeInstance($id, $InstanceList);",
+                            "sort": { 
+                                "column": "InstanceID",
+                                "direction": "ascending"
+                            },
+                            "columns": [
+                                {
+                                    "caption": "ID",
+                                    "name": "ID",
+                                    "width": "100px",
+                                    "add": ""
+                                }, {
+                                    "caption": "InstanceID",
+                                    "name": "InstanceID", 
+                                    "width": "auto", 
+                                    "add": 0,
+                                    "edit": { 
+                                        "type": "SelectInstance",
+                                        "validModules": "[]"
+                                    }
+                                }, {
+                                    "caption": "Master",
+                                    "name": "Master",
+                                    "width": "120px",
+                                    "add": false,
+                                    "edit": { "type": "CheckBox" } 
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "ExpansionPanel",
+                    "caption": "Sync Parameters",
+                    "width": "900px",
+                    "expanded": true,
+                    "items": [
+                        {
+                            "width": "900px",
+                            "type": "Tree",
+                            "name": "Parameterlist",
+                            "caption": "Parameterlist",
+                            "loadValuesFromConfiguration": false,
+                            "rowCount": 18,
+                            "add": false,
+                            "delete": false,
+                            "sort": { 
+                                "column": "name",
+                                "direction": "ascending"
+                            },
+                            "columns": [
+                                {
+                                    "caption": "Name",
+                                    "name": "name",
+                                    "width": "auto",
+                                    "save": true,
+                                    "add": ""
+                                }, {
+                                    "caption": "Sync",
+                                    "name": "sync",
+                                    "width": "80px",
+                                    "add": false,
+                                    "edit": { "type": "CheckBox" }
+                                }
+                            ],
+                            "values": [
+
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "actions":
+    [],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Status OK!" },
+        { "code": 103, "icon": "active", "caption": "Configuration Upload Success" },
+        { "code": 104, "icon": "active", "caption": "Configuration Download Success" }
+    ]
+}

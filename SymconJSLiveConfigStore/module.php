@@ -642,7 +642,7 @@ class SymconJSLiveConfigStore extends IPSModule{
         }
 
         $function = IPS_GetInstance($ModuleInstanceID)["ModuleInfo"]["ModuleName"]."_ExportConfiguration";
-        $config = $function($ModuleInstanceID, array());
+        $config = $function($ModuleInstanceID, false, array());
         $postData = array(  'UserID'=>$this->ReadPropertyString("UserID"), 
                             'ForumUsername' => $this->ReadPropertyString("ForumUsername"),
                             'Pic' => $Picture,
@@ -683,21 +683,26 @@ class SymconJSLiveConfigStore extends IPSModule{
         $data = json_decode($this->GetWebData($url, $postData), true);
 
         if(!$data["success"]) return $data["msg"];
-        if(sha1($data["data"]) != $hash) return "CRC=FALSE!";
+        if(sha1($data["data"]) != $hash) return "CRC=FALSE! (" . sha1($data["data"]). ")";
 
         $json = json_decode($data["data"], true);
+        $file = base64_encode($data["data"]);
 
         if(count($Selected_Instance_List) > 0){
-            //update selectet instancen     
+            //update selectet instancen   
+            
             foreach($Selected_Instance_List as $selected_Instance){
                 if(!IPS_ObjectExists($selected_Instance)) continue;
                 //wrong type
                 if(IPS_GetObject($selected_Instance)["ObjectType"] !== 1) continue;
                 //skip wrong modules
                 if(IPS_GetInstance($selected_Instance)["ModuleInfo"]["ModuleID"] !== $json["ModuleID"]) continue;
+
+                $function = IPS_GetInstance($selected_Instance)["ModuleInfo"]["ModuleName"]."_LoadConfigurationFile";
+                $config = $function($selected_Instance, $file, false);
     
-                IPS_SetConfiguration($selected_Instance, json_encode($json["Config"]));
-                IPS_ApplyChanges($selected_Instance);
+                //IPS_SetConfiguration($selected_Instance, json_encode($json["Config"]));
+                //IPS_ApplyChanges($selected_Instance);
                 $output .= "Configuration of " . IPS_GetObject($selected_Instance)["ObjectName"] . "(".$selected_Instance.") changed! \r\n";
             }   
         }else{

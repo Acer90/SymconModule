@@ -1,0 +1,11 @@
+{
+  "id": "{6C44628E-B623-7B92-D61D-0B3EAF4D6345}",
+  "name": "SymconJSLiveModuleSync",
+  "type": 3,
+  "vendor": "Swen Babenschneider",
+  "aliases": ["JSLive-Module Sync"],
+  "parentRequirements": [],
+  "childRequirements": [],
+  "implemented": [],
+  "prefix": "SymconJSLiveModuleSync"
+}
