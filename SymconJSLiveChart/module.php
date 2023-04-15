@@ -1554,7 +1554,7 @@ class SymconJSLiveChart extends JSLiveModule{
                 case 1:
                     //Jahr
                     $date_end->setDate($date_start->format('Y'), $date_start->format('m'), 1);
-                    $date_end->setTime(0, 0, -1);
+                    $date_end->setTime(0, 0, 0);
 
                     $date_start->setDate(($date_end->format('Y')), $date_start->format('m')-11, 1);
                     $date_start->setTime(0, 0, 0);
@@ -1564,7 +1564,7 @@ class SymconJSLiveChart extends JSLiveModule{
                 case 2:
                     //Quartal
                     $date_end->setDate($date_start->format('Y'), $date_start->format('m'), 1);
-                    $date_end->setTime(0, 0, -1);
+                    $date_end->setTime(0, 0, 0);
 
                     $date_start->setDate(($date_end->format('Y')), $date_start->format('m')-2, 1);
                     $date_start->setTime(0, 0, 0);
@@ -1574,7 +1574,7 @@ class SymconJSLiveChart extends JSLiveModule{
                 case 3:
                     //Monat
                     $date_end->setDate($date_start->format('Y'), $date_start->format('m'), $date_start->format('d'));
-                    $date_end->setTime(0, 0, -1);
+                    $date_end->setTime(0, 0, 0);
 
                     $date_start->setDate(($date_end->format('Y')), $date_start->format('m')-1, $date_start->format('d')+1);
                     $date_start->setTime(0, 0, 0);
@@ -1584,7 +1584,7 @@ class SymconJSLiveChart extends JSLiveModule{
                 case 4:
                     //Woche
                     $date_end->setDate($date_start->format('Y'), $date_start->format('m'), $date_start->format('d'));
-                    $date_end->setTime(0, 0, -1);
+                    $date_end->setTime(0, 0, 0);
 
                     $date_start->setDate(($date_end->format('Y')), $date_start->format('m'), $date_start->format('d')-6);
                     $date_start->setTime(0, 0, 0);
@@ -1594,7 +1594,7 @@ class SymconJSLiveChart extends JSLiveModule{
                 case 5:
                     //Tag
                     $date_end->setDate($date_start->format('Y'), $date_start->format('m'), $date_start->format('d'));
-                    $date_end->setTime($date_start->format('H'), 0, -1);
+                    $date_end->setTime($date_start->format('H'), 0, 0);
 
                     $date_start->setDate(($date_end->format('Y')), $date_start->format('m'), $date_start->format('d'));
                     $date_start->setTime($date_start->format('H')-23, 0, 0);
@@ -1604,7 +1604,7 @@ class SymconJSLiveChart extends JSLiveModule{
                 case 6:
                     //Stunde
                     $date_end->setDate($date_start->format('Y'), $date_start->format('m'), $date_start->format('d'));
-                    $date_end->setTime($date_start->format('H'), $date_start->format('i'), -1);
+                    $date_end->setTime($date_start->format('H'), $date_start->format('i'), 0);
 
                     $date_start->setDate(($date_end->format('Y')), $date_start->format('m'), $date_start->format('d'));
                     $date_start->setTime($date_start->format('H'), $date_start->format('i')-59, 0);
