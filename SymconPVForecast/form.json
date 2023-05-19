@@ -4,26 +4,13 @@
 		{ "type": "Label",       "caption": "Orginal Modul bei stele99: https://github.com/stele99/pvForecast" },
 		{ "type": "Label",       "caption": "" },
 
+		{ "name": "wr_kwp_max",         "type": "NumberSpinner",  "caption": "Max PV-In Wechselrichter (in Watt)" , "digits" : "0"},
+
 		{ "name": "location",    "type": "SelectLocation", "caption": "Standort der PV Anlage" },
-
-		{ "type": "Label",       "caption": "DWD-Stationsfinder: https://wettwarn.de/mosmix/mosmix.html" },
-		{ "name": "dwd_station", "type": "ValidationTextBox",  "caption": "DWD-Wetterstations ID"},
-
-		{ "name": "kwh",            "type": "CheckBox",       "caption": "kWh statt Wh" },
-		{ "name": "toArchiv",            "type": "CheckBox",       "caption": "add to Archiv" },
-		{ "name": "forecastVariables", "type": "Select",  "caption": "Anzahl Variablen für Ausgabe Forecast", "value": 3,
-			"options": [
-				{ "caption": "Keine", "value": 0 },
-				{ "caption": "1 Tag im Voraus", "value": 1 },
-				{ "caption": "2 Tage im Voraus", "value": 2 },
-				{ "caption": "3 Tage im Voraus", "value": 3 },
-				{ "caption": "4 Tage im Voraus", "value": 4 },
-				{ "caption": "5 Tage im Voraus", "value": 5 },
-				{ "caption": "6 Tage im Voraus", "value": 6 },
-				{ "caption": "7 Tage im Voraus", "value": 7 },
-				{ "caption": "8 Tage im Voraus", "value": 8 }
-			]
-		},
+		{ "name": "efficiency",  "type": "NumberSpinner",  "caption": "Effizienz (in Prozent)" , "digits" : "0", "maximum": 100, "minimum": 0},
+		{ "name": "tempkoeff",   "type": "NumberSpinner",  "caption": "Temperaturskoeffizient " , "digits" : "2", "maximum": 1, "minimum": 0},
+		{ "name": "horizon",     "type": "NumberSpinner",  "caption": "Horizont für Sonnen Einfallswinkel (in Grad)" , "digits" : "0", "maximum": 45, "minimum": 0},
+		{ "name": "kwh",            "type": "CheckBox",       "caption": "kWh statt Wh" },		
 
 		{
 			"type": "List",
@@ -69,102 +56,130 @@
 					"width": "100px",
 					"add": 30,
 					"edit": {"type": "NumberSpinner", "digits" : "0", "maximum": 90, "minimum": 0, "suffix" : "Grad"}
-				},
-				{
-					"caption": "Aufständerung",
-					"name": "type",
-					"width": "200px",
-					"add": 0,
-					"edit": {"type": "Select", "value": 0,
-						"options": [
-							{ "caption": "Standard alle gleich", "value": 0 },
-							{ "caption": "Dachständerung /\\", "value": 1 }
-						]}
-				},
-				{
-					"caption": "Effizienz",
-					"name": "efficiency",
-					"width": "100px",
-					"visible": false,
-					"add": 95,
-					"edit": {"type": "NumberSpinner", "digits" : "0", "maximum": 100, "minimum": 0, "suffix" : "%"}
-				},
-				{
-					"caption": "Auswirkung Bewölkung",
-					"name": "cloudeffect",
-					"width": "200px",
-					"visible": false,
-					"add": 65,
-					"edit": {"type": "NumberSpinner", "digits" : "0", "maximum": 100, "minimum": 0, "suffix" : "%"}
-				},
-				{
-					"caption": "Temperaturskoeffizient",
-					"name": "tempkoeff",
-					"width": "200px",
-					"visible": false,
-					"add": 0.65,
-					"edit": {"type": "NumberSpinner", "digits" : "2", "maximum": 1, "minimum": 0}
-				},
-				{
-					"caption": "Horizont für Sonnen Einfallswinkel",
-					"name": "horizon",
-					"width": "200px",
-					"visible": false,
-					"add": 0,
-					"edit": {"type": "NumberSpinner", "digits" : "0", "maximum": 45, "minimum": 0, "suffix" : "Grad"}
-				},
-				{
-					"caption": "Verschattungsobjekt",
-					"name": "obj",
-					"width": "200px",
-					"add": false,
-					"edit": {"type": "CheckBox"}
-				},
-				{
-					"caption": "Himmelsrichtung des Objektes",
-					"name": "obj_direction",
-					"width": "200px",
-					"visible": false,
-					"add": 0,
-					"edit": {"type": "NumberSpinner", "digits" : "0", "maximum": 365, "minimum": 0, "suffix" : "Grad"}
-				},
-				{
-					"caption": "Abstand des Objektes",
-					"name": "obj_distance",
-					"width": "200px",
-					"visible": false,
-					"add": 0,
-					"edit": {"type": "NumberSpinner", "digits" : "0", "maximum": 100, "minimum": 0, "suffix" : "m"}
-				},
-				{
-					"caption": "Objekthöhe",
-					"name": "obj_height",
-					"width": "200px",
-					"visible": false,
-					"add": 10,
-					"edit": {"type": "NumberSpinner", "digits" : "0", "maximum": 100, "minimum": 0, "suffix" : "m"}
-				},
-				{
-					"caption": "Abeckungsgrad PV des Objektes",
-					"name": "obj_size",
-					"width": "200px",
-					"visible": false,
-					"add": 50,
-					"edit": {"type": "NumberSpinner", "digits" : "0", "maximum": 100, "minimum": 0,"suffix" : "%"}
-				},
-				{
-					"caption": "Auswirkung der Beschattung",
-					"name": "obj_effect",
-					"width": "200px",
-					"visible": false,
-					"add": 0,
-					"edit": {"type": "NumberSpinner", "digits" : "0", "maximum": 100, "minimum": 0,"suffix" : "%"}
 				}
 			]
-		}
+		},
+
+		{
+            "type": "ExpansionPanel",
+            "caption": "Vorhersage Parameter",
+            "items": [
+				{ "type": "Label",       "caption": "2 Wetter-Vorhersagemodelle nutzbar (DWD-ICON über open-meteo.com oder DWD-MOSMIX direkt über den DWD-Server" },
+				{ "type": "Label",       "caption": "Bei ICON wird der Standort der PV Anlage genutzt, be Mosmix muss eine Station angegeben werden." },
+				
+				{ "name": "fc_type", "type": "Select",  "caption": "Vorhersagemodell", "value": "dwd-icon",
+				"options": [
+				    	{ "caption": "DWD MOSMIX", "value": "dwd-mosmix" },
+					    { "caption": "DWD ICON", "value": "dwd-icon" }
+				    ]
+			    },
+
+				{ "name": "dwd_station", "type": "ValidationTextBox",  "caption": "DWD-Wetterstations ID, nur bei MOSMIX"},
+				{ "type": "Label",       "caption": "DWD-Stationsfinder: https://wettwarn.de/mosmix/mosmix.html" },
+
+				{ "name": "forecastVariables", "type": "Select",  "caption": "Anzahl Variablen für Ausgabe Forecast", "value": 3,
+					"options": [
+						{ "caption": "Keine", "value": 0 },
+						{ "caption": "1 Tag im Voraus", "value": 1 },
+						{ "caption": "2 Tage im Voraus", "value": 2 },
+						{ "caption": "3 Tage im Voraus", "value": 3 },
+						{ "caption": "4 Tage im Voraus", "value": 4 }
+					]
+						
+				}
+		
+			]
+		},	
+		{
+            "type": "ExpansionPanel",
+            "caption": "Auto-Tune Optimierung",
+            "items": [
+					{"type": "Label",       "caption": "Bei Autotune werden Forecast-Daten mit Ist Daten der letzten 30 Tage verglichen und so einen Korrekturfaktor errechnet. Dieser wird für Vorhersagen verwendet um diese zu optimieren." },
+					{"type": "Label",       "caption": "Dazu müssen Sie eine Variable angeben, die die kumulierte Tagesleistung der PV Anlage enthält. Diese Variable sollte minium alle 15 Minuten aktualisiert werden." },
+					{ "name": "autotune",    "type": "CheckBox",       "caption": "Vorhersage optimieren durch IST-Daten" },		
+					{ "name": "pv_id",       "type": "SelectVariable",  "requiredLogging": 1,   "caption": "Kummulierte Tagesleistung der PV-Anlage (nur für Optimierung durch IST-Daten)" }	
+			]
+				},
+
+				{
+            "type": "ExpansionPanel",
+            "caption": "Verschattung",
+            "items": [
+				{
+					"type": "List",
+					"name": "objData",
+					"caption": "objData",
+					"rowCount": 5,
+					"add": true,
+					"delete": true,
+					"edit": true,
+					"changeOrder": true,
+					"columns": [
+						{
+							"caption": "Activ",
+							"name": "activ",
+							"width": "200px",
+							"add": true,
+							"edit": {"type": "CheckBox"}
+						},
+						{
+							"caption": "Name",
+							"name": "Name",
+							"width": "auto",
+							"add": "",
+							"edit": {"type": "ValidationTextBox"}
+						},
+						{
+							"caption": "Start Direction",
+							"name": "obj_direction_start",
+							"width": "120px",
+							"add": 0,
+							"edit": {"type": "NumberSpinner", "digits" : "0", "maximum": 365, "minimum": 0, "suffix": "°"}
+						},
+						{
+							"caption": "End Direction",
+							"name": "obj_direction_End",
+							"width": "120px",
+							"add": 0,
+							"edit": {"type": "NumberSpinner", "digits" : "0", "maximum": 365, "minimum": 0, "suffix": "°"}
+						},
+						{
+							"caption": "Distance",
+							"name": "obj_distance",
+							"width": "100px",
+							"add": 0,
+							"edit": {"type": "NumberSpinner", "digits" : "0", "maximum": 100, "minimum": 0, "suffix": "m"}
+						},
+						{
+							"caption": "Height",
+							"name": "obj_height",
+							"width": "100px",
+							"add": 10,
+							"edit": {"type": "NumberSpinner", "digits" : "0", "maximum": 365, "minimum": 0, "suffix": "m"}
+						},
+						{
+							"caption": "Shading",
+							"name": "obj_shading",
+							"width": "100px",
+							"add": 50,
+							"edit": {"type": "NumberSpinner", "digits" : "0", "maximum": 100, "minimum": 0, "suffix": "%"}
+						},
+						{
+							"caption": "Effect",
+							"name": "obj_effect",
+							"width": "100px",
+							"add": 50,
+							"edit": {"type": "NumberSpinner", "digits" : "0", "maximum": 100, "minimum": 0, "suffix": "%"}
+						}
+					]
+				}
+			]
+		},
+		{ "name": "enable_archiv",            "type": "CheckBox",       "caption": "Werte im Symcon-Archiv loggen" }
 	],
 	"actions":
 	[
-		{ "type": "Button", "label": "Force Update", "onClick": " pvFC_UpdateForce($id);" }
+		{ "type": "Button", "label": "Force Update", "onClick": " SpvFC_UpdateForce($id);" } 
 	]
 }
+ 

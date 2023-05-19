@@ -457,7 +457,7 @@
                     "add": "",
                     "edit": {
                         "type": "ValidationTextBox",
-                        "validate": "^(?=.{1,}$)([a-zA-Z0-9][a-zA-Z0-9_-]*)$"
+                        "validate": "^(?=.{1,}$)([a-zA-Z0-9][a-z A-Z0-9_-]*)$"
                     }
                 },
                 {

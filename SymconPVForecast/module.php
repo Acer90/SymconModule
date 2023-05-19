@@ -9,55 +9,60 @@ class symconpvForecast extends IPSModule
 	{
 		//Never delete this line!
 		parent::Create();
+		$this->RegisterPropertyString('location', '');
         $this->RegisterPropertyString('dwd_station', '');
-        $this->RegisterPropertyBoolean('kwh', false);
         $this->RegisterPropertyBoolean('toArchiv', false);
-        $this->RegisterPropertyInteger('forecastVariables', 3);
         $this->RegisterPropertyString('solarData', '[]');
-        $this->RegisterPropertyString('location', '');
+
+		$this->RegisterPropertyBoolean('enable_archiv', false);
+		$this->RegisterPropertyInteger('wr_kwp_max', 5000);
 
 		/*$this->RegisterPropertyInteger('kwp', 1000);
 		$this->RegisterPropertyInteger('azimuth', 0);
 		$this->RegisterPropertyInteger('tilt', 30);
-		$this->RegisterPropertyInteger('type', 0);
+		$this->RegisterPropertyInteger('type', 0);*/
 		$this->RegisterPropertyInteger('efficiency', 95);
-		$this->RegisterPropertyInteger('cloudeffect', 65);
+		//$this->RegisterPropertyInteger('cloudeffect', 65);
 		$this->RegisterPropertyFloat('tempkoeff', 0.65);
 		$this->RegisterPropertyInteger('horizon', 0);
-
+		
+		$this->RegisterPropertyBoolean('autotune', false);
+		$this->RegisterPropertyInteger('pv_id', 0);
+		$this->RegisterPropertyBoolean('kwh', false);
+		$this->RegisterPropertyString('fc_type', 'dwd-icon');
 
 		$this->RegisterPropertyBoolean('obj', false);
 		$this->RegisterPropertyInteger('obj_direction', 0);
 		$this->RegisterPropertyInteger('obj_distance', 0);
 		$this->RegisterPropertyInteger('obj_height', 10);
 		$this->RegisterPropertyInteger('obj_size', 50);
-		$this->RegisterPropertyInteger('obj_effect', 50);*/
+		$this->RegisterPropertyInteger('obj_effect', 50);
+		$this->RegisterPropertyInteger('forecastVariables', 3);
+		$this->RegisterPropertyString('objData', '[]');
 
 
-		$this->RegisterTimer('Update', 1000*60*60, 'pvFC_Update($_IPS[\'TARGET\']);');
+		$this->RegisterTimer('Update', 1000*60*15, 'SpvFC_Update($_IPS[\'TARGET\']);');
 
 	}
 
 	public function ApplyChanges() {
         //Never delete this line!
 		parent::ApplyChanges();
-        $this->SetStatus(102);
-		$name = IPS_GetName($_IPS["TARGET"]);
-		if(strpos($name,"nnamed") === false){
-			if(empty($this->ReadPropertyString("dwd_station")) ||
+        $name = IPS_GetName(@$_IPS["TARGET"]);
+		if(strpos($name,"nnamed") === false && !empty($name)){
+			if((empty($this->ReadPropertyString("dwd_station")) && $this->ReadPropertyString("fc_type") == "dwd-mosmix")||
 				empty($this->ReadPropertyString("location"))){
 				echo "Achtung: Location und DWD Station eintragen!";
 				return;
 			}
 		}
-	    
-		//$this->Update(true);
-        $this->UpdateForce();
-
+		
+	    $this->SetTimerInterval("Update", 1000*10*15); // Alle 15 Minuten.
+		$this->UpdateForce(true);
     }
 
 	private function initfc(){
-		$station =  $this->ReadPropertyString("dwd_station");
+		
 		if(!empty($this->ReadPropertyString("location"))){
 			$latlon  = json_decode($this->ReadPropertyString("location"),true);
 		} else {
@@ -65,46 +70,53 @@ class symconpvForecast extends IPSModule
 			$latlon["latitude"] = 0;
 		}
 
-        $pvitem = array();
-        $peekAll = 0;
-        if(!empty($this->ReadPropertyString("solarData")) && $this->ReadPropertyString("solarData") != "[]"){
-            $solardata  = json_decode($this->ReadPropertyString("solarData"),true);
 
-            foreach ($solardata as $solaritem){
-                $pvtype = ( $solaritem['kwp'] == 1 )? "D" : "";
-                $peekAll += $solaritem['kwp'];
+		$model =    $this->ReadPropertyString('fc_type');
+		$station =  $this->ReadPropertyString("dwd_station");
+		if($model == "dwd-icon"){
+			$station = $latlon;
+		}
 
-                $pvitem[] = [   "activ"       =>  $solaritem['activ'],
-                                "kwp"         =>  $solaritem['kwp'],
-                                "azimuth"     =>  $solaritem['azimuth'],      // eigentlich sind es 30 aber soll ist vergleich zeigt leichte verschiebung vom abend - also mehr nach rechts drehen
-                                "tilt"        =>  $solaritem['tilt'],
-                                "pvtype"      => $pvtype,                                         // D= Dachform geständert, Ausrichtung der offenen seite = azimuth
-                                "efficiency"  =>  $solaritem['efficiency'],
-                                "cloudeffect" =>  $solaritem['cloudeffect'],  // Effekt für Leistungsreduktion bei Bewölkung in Prozent
-                                "tempkoeff"   => $solaritem['tempkoeff'],       // Temperaturkoeffizient lt. Datenblatt
-                                "horizon"     => $solaritem['horizon'],       // Horizont für Einfallswinkel Sonne
+		//$pvtype = ( $this->ReadPropertyInteger('type') == 1 )? "D" : "";
+		$solardata = json_decode($this->ReadPropertyString('solarData'), true);
+		$objdata = json_decode($this->ReadPropertyString('objData'), true);
+		$kwp_max = 0;
+		foreach($solardata as $solaritem){
+			if(!$solaritem["activ"]) continue;
+			$kwp_max += $solaritem["kwp"];
+		}
 
-                                // Beschattungsobjekt
-								"obj" => 		   $solaritem['obj'], 			  //beschattungsobjeckt an
-                                "obj_direction" => $solaritem['obj_direction'],   // Himmelsrichtung des Beschattungsobjektes Grad von Norden =0
-                                "obj_distance"  => $solaritem['obj_distance'],      // Abstand des Objektes in Meter
-                                "obj_height"    => $solaritem['obj_height'],      // Höhe des Objektes in Meter
-                                "obj_size"      => $solaritem['obj_size'],    // Prozentualer Abdeckungsanteil der PV Anlage durch Objekt (Mittelwert)
-                                "obj_effect"    => $solaritem['obj_effect']/100    // Azuswirkung der Beschattung auf Ertrag (kwp mit gemessenem Ertrag bei Beschattung (grob))
-                            ];
-            }
-        }
+		$PV      =[     #"kwp"         =>  $this->ReadPropertyInteger('kwp'), 
+						"kwp"         =>  $kwp_max, 								//Summe aller aktiven Solaranalgen
+						"wr_kwp_max"  =>  $this->ReadPropertyInteger('wr_kwp_max'), //Maximaler Imput Weselrichter
+						#"azimuth"     =>  $this->ReadPropertyInteger('azimuth'),   	// eigentlich sind es 30 aber soll ist vergleich zeigt leichte verschiebung vom abend - also mehr nach rechts drehen
+						#"tilt"        =>  $this->ReadPropertyInteger('tilt'),
+                        #"pvtype"      => $pvtype,                                         // D= Dachform geständert, Ausrichtung der offenen seite = azimuth
+						"solarData"   => $solardata,
+						"efficiency"  =>  $this->ReadPropertyInteger('efficiency'),
+						#"cloudeffect" =>  $this->ReadPropertyInteger('cloudeffect'),  // Effekt für Leistungsreduktion bei Bewölkung in Prozent
+						"lon"         => $latlon["longitude"],
+						"lat"         => $latlon["latitude"],
+						"tempkoeff"   => $this->ReadPropertyFLoat('tempkoeff'),    // Temperaturkoeffizient lt. Datenblatt
+						"horizon"     => $this->ReadPropertyInteger('horizon'),    // Horizont für Einfallswinkel Sonne
+						"autotune"    => $this->ReadPropertyBoolean('autotune'),   // Automatisch optimieren.
+						"pv_id"       => $this->ReadPropertyInteger('pv_id'),      // Automatisch optimieren id Tagesaktuellen Bedarf
+						"kwh"         => $this->ReadPropertyBoolean('kwh'),        // ausgabe in KWH statt wh
 
-		$PV      =  [   "lon"         => $latlon["longitude"],
-                        "lat"         => $latlon["latitude"],
-                        "kwh"         => $this->ReadPropertyBoolean('kwh'),         // ausgabe in KWH statt wh
-                        "kwp"         => $peekAll,
-                        "toArchiv"    => $this->ReadPropertyBoolean("toArchiv"),
-                        "forecast"    => $this->ReadPropertyInteger("forecastVariables"),
-                        "data"        => $pvitem
-                    ];
+                        // Beschattungsobjekt
+						#"obj" 			=> $this->ReadPropertyBoolean('obj'),
+						#"obj_direction" => $this->ReadPropertyInteger('obj_direction'),   // Himmelsrichtung des Beschattungsobjektes Grad von Norden =0
+						#"obj_distance"  => $this->ReadPropertyInteger('obj_distance'),      // Abstand des Objektes in Meter
+						#"obj_height"    => $this->ReadPropertyInteger('obj_height'),      // Höhe des Objektes in Meter
+						#"obj_size"      => $this->ReadPropertyInteger('obj_size'),    // Prozentualer Abdeckungsanteil der PV Anlage durch Objekt (Mittelwert)
+						#"obj_effect"    => $this->ReadPropertyInteger('obj_effect')/100,    // Azuswirkung der Beschattung auf Ertrag (kwp mit gemessenem Ertrag bei Beschattung (grob))
+						"objData"   => $objdata,
+
+						"forecast"    	=> $this->ReadPropertyInteger("forecastVariables"),
+						"enable_archiv" => $this->ReadPropertyBoolean("enable_archiv"),
+					];
 		$this->fc = false;
-		if(!empty($station))$this->fc = new PVForecastcls($station, $PV, $this->InstanceID);
+		if(!empty($station))$this->fc = new PVForecastcls($model ,$station, $PV, $this->InstanceID);
 	}
 
 	public function UpdateForce(){
@@ -115,16 +127,16 @@ class symconpvForecast extends IPSModule
 
 	public function Update(){
 		$this->initfc();
-        //print_r($this);
 		if($this->fc){
 			if($this->force)$this->fc->loadForecast(true);
 			$this->fc->CreateFCVariables($this->ReadPropertyInteger("forecastVariables"));
 			$this->fc->forecastChart();
-            $this->fc->UpdateArchiv();
+			$this->fc->autotune();
+			$this->fc->UpdateArchiv();
 		}else{
 			return false;
-		}
 
+		}
 	}
 
     public function updateArchivData(){
@@ -158,11 +170,26 @@ class symconpvForecast extends IPSModule
 		}			
 	}
 
+	/* Abweichungen des Forecasts ermitteln */
+	public function autotuneGetDeviationHour($h, $radi=0){
+		$this->initfc();
+		return $this->fc->getDeviationHour($h, $radi);
+	}
+
+	public function autotunePrintInfo(){
+		$this->initfc();
+		$this->fc->autotunePrint();
+	}
+
+
 	
 }
 
 class PVForecastcls{
 	private $fc;
+	private $fc_info;
+	private $fc_model;
+
 	private $PV;
 	private $dwd_fca;
 	private $dwd_station;
@@ -171,13 +198,19 @@ class PVForecastcls{
 
 	const CACHE_AGE = 3600*3;       // Maximales ALter der Berechung und Wettervorhersage
 
-	function __construct($station, $PV, $instance){
+	/* model = dwd-mosmix, dwd-icon
+	   model_info: Array ( lat / lon ) oder StationID
+	   PV : PV-Anlagen INfo
+	   $instance = ID der Instanz 
+	*/
+	function __construct($model, $model_info, $PV, $instance ){
 		$this->instance = $instance;
 		// Wetterdaten laden (DWD)
 		$this->PV = $PV;
-		$this->dwd_station = $station;
+		$this->fc_info = $model_info;
+		$this->fc_model = $model;
+		
 		$this->loadForecast();
-		#$this->checkEvent(); // Event über Moduleklasse
 	}
 
 	#### Tageswert Zurckgeben #####################################################
@@ -185,7 +218,7 @@ class PVForecastcls{
 	
 		foreach($this->fc["daily"] as $fc){
 			if(date("Ymd", $fc["ts"]) == date("Ymd", $ts)){
-				return $fc["pv_estimate"];
+				return @$fc["pv_estimate"];
 			}
 		}
 		return false;
@@ -225,17 +258,16 @@ class PVForecastcls{
 
 		$cnt = 0;
 		$varprof = ($this->PV["kwh"])? "pvFC_kwh" : "pvFC_wh";
+		if(!isset($this->fc["daily"])){
+			return false;
+		}
 		foreach($this->fc["daily"] as $fc){
 			$varName = ($cnt == 0)? 'Vorhersage Heute' : "Vorhersage Heute + $cnt";
 			$id = $this->CreateVariableByName($this->instance,$varName,2, $varprof);
 			IPS_SetVariableCustomProfile($id, $varprof);
 			
-			if($cnt == 0 && date("G")<10 || $cnt > 0) setValue($id, $fc["pv_estimate"]);
-
-            if($cnt == 0 && $this->PV["toArchiv"]){
-                $archivID = IPS_GetInstanceListByModuleID('{43192F0B-135B-4CE7-A0A7-1475603F3060}')[0];
-                AC_SetLoggingStatus($archivID, $id, true);
-            }
+			#if($cnt == 0 && date("G")<10 || $cnt > 0) setValue($id, $fc["pv_estimate"]); // Früher nur vor 10 Uhr - heute aktualsiieren wir alles, da alle Daten im FC drin sind.
+			setValue($id, $fc["pv_estimate"]);
 
 			if($cnt >= $days)break;
 			$cnt++;
@@ -247,9 +279,8 @@ class PVForecastcls{
 	function forecastChart(){
 		$id = $this->CreateVariableByName($this->instance,"PV Forecast Chart",3,"~HTMLBox");
 		$pv_max = ($this->PV["kwh"])? $this->PV["kwp"]/1000 : $this->PV["kwp"];
-        $html = "<html>
-                  <head>";
- 		$html .= "<style>
+		$pv_max = $pv_max*1.4;
+		$html = "<style>
 					.pv{
 						background-color: yellow;
 						margin-left: 1px;
@@ -280,10 +311,12 @@ class PVForecastcls{
 					}
 
 				</style>";
-        $html .= "</head><body style='display: inline-block; width:100%; height:200px;'>";
         $html .= "<div style='width:100%; height:200px;overflow:hidden;'>";
 			$cnt=0;
 			$html .= "<div class='pv' style='height: 200px; width:1px;background-color:transparent;'></div>";
+			if(!isset($this->fc["hourly"])){
+				return false;
+			}
 			foreach ($this->fc["hourly"] as $fc){
 				
 				if($fc["hour"] > 6 && $fc["hour"] < 22 ){
@@ -301,7 +334,7 @@ class PVForecastcls{
 				if($fc["hour"] > 6 && $fc["hour"] < 22 ){
 					$cnt++;
 					$height = round($fc["pv_estimate"]/$pv_max*100*2,0);
-					$html .= "<div class='pv_txt' style='height:20px'>".($fc["hour"]+1)."h</div>";
+					$html .= "<div class='pv_txt' style='height:20px'>".($fc["hour"])."h</div>";
 					if($fc["hour"]==12){
 						$dayfc = $this->getDayForecast($fc["ts"]);
 						$dayfc = ($this->PV["kwh"])? $dayfc : $dayfc/1000;
@@ -312,12 +345,13 @@ class PVForecastcls{
 				if($cnt >96)break;
 			}
 		$html .="</div>";
-        $html .= "</body></html>";
 		setvalue($id,$html);
 
 	}
 
     public function UpdateArchiv(){
+		if(!$this->PV["enable_archiv"]) return; //function nur ausführen wenn werte geloggt werden sollen
+
         $archivID = IPS_GetInstanceListByModuleID('{43192F0B-135B-4CE7-A0A7-1475603F3060}')[0];
         $varName = 'Vorhersage Heute';
         $id = $this->CreateVariableByName($this->instance,$varName,2);
@@ -332,16 +366,20 @@ class PVForecastcls{
         $start->modify( '-'.$this->PV["forecast"].' day' );
         //echo "START=> ". $start->format('Y-m-d H:i:s')."\n\r";
         AC_DeleteVariableData($archivID, $id, $start->getTimestamp(), 0);
+
+		$dateTimeZone = new DateTimeZone("Europe/Berlin");
+		$dateTime = new DateTime("now", $dateTimeZone);
+		$timeOffset = $dateTimeZone->getOffset($dateTime);
+
         foreach ($this->fc["hourly"] as $fitem){
             //print_r($fitem);
-            $d = new DateTime($fitem["tiso"]); //, new DateTimeZone('UTC')
-            //$d->setTimestamp($fitem["ts"]);
-            //$d->setTimezone(new DateTimeZone('Europe/Berlin'));
+            $d = new DateTime(); //, new DateTimeZone('UTC')
+            $d->setTimestamp($fitem["ts"]);
             $d->modify( '-'.$this->PV["forecast"].' day' );
 
             if($d->getTimestamp() > $now->getTimestamp())break;
 
-            //echo $d->format('Y-m-d H:i:s') . " => " . $fitem["pv_estimate"] . "\n\r";
+            //echo "Uhrzeit=".gmdate("d.m.Y H:i", $d->getTimestamp())." Value=" .$fitem["pv_estimate"]. "Watt\r\n";
             AC_AddLoggedValues($archivID, $id, [
                 [
                     'TimeStamp' => $d->getTimestamp(),
@@ -357,7 +395,17 @@ class PVForecastcls{
 		$id = $this->CreateVariableByName($this->instance, "PVForecast",3);
 		$vdata = IPS_GetVariable($id);
 		if($vdata["VariableChanged"] + PVForecastcls::CACHE_AGE < time() || $force){            
-			$this->getWeatherForecast($this->dwd_station);
+
+			// Prüfen welches Wettermodell verwendet wird und dann Forecast laden.
+			switch($this->fc_model){
+				case "dwd-mosmix":
+									$this->dwd_loadXML($this->fc_info);
+									break;
+				
+				case "dwd-icon":	$this->open_meteo_icon($this->fc_info);
+									break;
+			}
+			
 			$this->pvForecast($this->PV);
 			$this->SaveToCache();
 		}else{
@@ -371,163 +419,151 @@ class PVForecastcls{
 		setValue($id, json_encode($this->fc));
 	}
 
-
-	#### Wetterdaten laden  ######################################################
-	private function getWeatherForecast($station){
-		$this->dwd_loadXML($station);
-	}
-
 	#### PV Berechnen ############################################################
 	private function pvForecast($PV){
 		$lat      = $PV["lat"];
 		$lon      = $PV["lon"];
-		$this->fc = $this->dwd_fca;
 
-        //durchlauf für jede ausrichtung
-        foreach ($PV["data"] as $solarItem) {
+		if(!isset($this->fc["hourly"])){
+			return false;
+		}
 
-            foreach ($this->fc["hourly"] as $k => $fc) {
-                //estemite setzen auf 0 wenn noch nicht angelegt
+		foreach($PV["solarData"] as $solarItem){
+			//durchlauf für jede ausrichtung
+			if(!$solarItem["activ"]) continue; //alle deaktivierten überspringen
+			foreach($this->fc["hourly"] as $k => $fc){         
+				$ts       = $fc["ts"];
+				$clouds   = $fc["clouds"];
+				$temp     =  $fc["temp"];
+	
+				// Sonnenposition ermitteln
+				$ret            = $this->calcSun($ts, $lon, $lat);
+				$sun_azimuth    = $ret["azimuth"];
+				$sun_elevation  = $ret["elevation"];            
+	
+				// Leistungsfaktor festlegen
+				$lf = 100;
 
-                if(!isset($this->fc["hourly"][$k]["pv_estimate"])){
-                    $this->fc["hourly"][$k]["pv_estimate"] = 0;
-                }
+				// Beschattung berechnen
+				foreach($PV["objData"] as $objitem){
+					if(!$objitem["activ"]) continue;
 
-                if($solarItem["activ"] == false) continue;
+					// 2x berechnen und mittelwert bilden für volle stunde und 30min
+					for($x=0; $x <=3; $x++){
+						$time = $ts + $x * 900;
+	
+						$sunpos = $this->calcSun($time, $lon, $lat);
+						$alpha   = deg2rad($sunpos["elevation"]);
+						$azimuth = $sunpos["azimuth"];
 
-                $ts = $fc["ts"];
-                $clouds = $fc["clouds"];
-                $temp = $fc["temp"];
+						if($azimuth >= $objitem["obj_direction_start"] && $objitem["obj_direction_End"] >= $azimuth){
+							//$shadeAngle  = $azimuth - $objitem["obj_direction"] - 90;
+							//echo "Uhrzeit=".gmdate("d.m.Y H:i", $time)."\r\n";
+							$shadeLength = round($objitem["obj_height"] / (tan($alpha) ) ,2);
+							//echo "Schattenlaenge=".$shadeLength."m\r\n";
+							if($shadeLength < $objitem["obj_distance"]){
+								$lf_minusShadeA[$x] = 100;
+							}else{
+								$verschattungswert = $objitem["obj_shading"];
+								$verschattungseffect = $objitem["obj_effect"];
+								//echo "Uhrzeit=".gmdate("d.m.Y H:i", $time)."\r\n";
+								$lf_minusShadeA[$x] = ($lf-$verschattungswert) + ($verschattungswert * ($verschattungseffect/100));
+							}
+						}else{
+							$lf_minusShadeA[$x] = 100;
+						}
+					}
+					$lf_minusShade = ($lf_minusShadeA[0] + $lf_minusShadeA[1]+$lf_minusShadeA[2] + $lf_minusShadeA[3]) / 4;
+		
+					if($lf > $lf_minusShade) $lf = $lf_minusShade;
+					//echo "Abzug=".$lf."\r\n";
+				}
+	
+				/* ------------ Kalkulation des Ertrages
+				Daten von https://echtsolar.de/wp-content/uploads/2021/02/Ausrichtungstabelle-Photovoltaik-in-Deutschland-768x705.png
+				Formel über Newton Polynom: https://de.planetcalc.com/9023/
+				*/
+				$az_abw = round(abs($sun_azimuth - 180 - $solarItem["azimuth"]),1);
+				if($az_abw > 180){
+						$lf_minusA = 100;
+				}else{
+					$lf_minusA = (-0.00000000147) * pow( $az_abw, 5) + (0.00000057668) * pow ($az_abw, 4) + (-0.00008107497) * pow ($az_abw, 3) + (0.00559429998 * pow ($az_abw, 2)) + (0.05160253657 * $az_abw);
+					}
+					$lf = $lf - $lf_minusA;
 
-                // SOnnenposition ermitteln
-                $ret = $this->calcSun($ts, $lon, $lat);
-                $sun_azimuth = $ret["azimuth"];
-                $sun_elevation = $ret["elevation"];
+				// Neigungswikel und Sonne
+				$elev_abw = 90 - $sun_elevation  - $solarItem["tilt"];
+				$x = $elev_abw;
+				$lf_minusE   = (1/100) * pow ($x, 2); // Neue Formel anhand Tabellen und Werten 
 
-                // Leistungsfaktor festlegen
-                $lf = 100;
-
-                // Beschattung berechnen
-				//print_r($solarItem);
-                if (isset($solarItem["obj_direction"]) && $solarItem["obj"]) {
-                    // 2x berechnen und mittelwert bilden für volle stunde und 30min
-                    for ($x = 0; $x <= 1; $x++) {
-                        $time = $ts + $x * 1800;
-
-                        $sunpos = $this->calcSun($time, $lon, $lat);
-                        $alpha = deg2rad($sunpos["elevation"]);
-                        $azimuth = $sunpos["azimuth"];
-                        $shadeAngle = $azimuth - $solarItem["obj_direction"] - 90;
-                        $shadeLength = round($solarItem["obj_height"] / (tan($alpha)), 2);
-
-						//print_r($sunpos);
-						//echo date("ymd-H:i", $time) . "=>". $shadeAngle."###". $shadeLength."\r\n";
-
-                        if ($shadeLength < $solarItem["obj_distance"] || $shadeAngle > 0) {
-                            $lf_minusShadeA[$x] = 100;
-                        } else {
-                            $lf_minusShadeA[$x] = $lf * ($solarItem["obj_size"] / 100) * $solarItem["obj_effect"] + $lf * (1 - ($solarItem["obj_size"] / 100));
-                        }
-                    }
-                    $lf_minusShade = ($lf_minusShadeA[0] + $lf_minusShadeA[1]) / 2;
-                    $lf = $lf_minusShade;
-                } // Objekt
-
-                /* ------------ Kalkulation des Ertrages
-                Daten von https://echtsolar.de/wp-content/uploads/2021/02/Ausrichtungstabelle-Photovoltaik-in-Deutschland-768x705.png
-                Formel über Newton Polynom: https://de.planetcalc.com/9023/
-                */
-                if ($solarItem["pvtype"] == "D") {
-                    // Dachständerung /\/\/\
-                    /* 1/2 der Leistung muss um 90 grad nach ost und 90 grad nach west gedreht werden*/
-                    $lfA = $lf_minusShade;
-                    $lfB = $lf_minusShade;
-
-                    $az_abwA = round(abs($sun_azimuth - 180 + 90 - $solarItem["azimuth"]), 1);
-                    $az_abwB = round(abs($sun_azimuth - 180 - 90 - $solarItem["azimuth"]), 1);
-                    if ($az_abwA > 180) {
-                        $lf_minusAA = 90;
-                    } else {
-                        $lf_minusAA = sin((1 / 58) * $az_abwA + 155.5) * 26 + 26;
-                    }
-                    if ($az_abwB > 180) {
-                        $lf_minusBA = 90;
-                    } else {
-                        $lf_minusBA = sin((1 / 58) * $az_abwB + 155.5) * 26 + 26; // Mit Daten aus Tabelle und näherung über probieren der Sinus-Funktion
-                    }
-
-                    $lfA = $lfA - $lf_minusAA * 0.90; // fällt schwächer ins gewicht
-                    $lfB = $lfB - $lf_minusBA * 0.90; // fällt schwächer ins gewicht
-
-                    // Neigungswikel und Sonne
-                    $elev_abw = 90 - $sun_elevation - $solarItem["tilt"];
-                    $x = $elev_abw;
-                    $lf_minusE = (1 / 100) * pow($x, 2); // Neue Formel anhand Tabellen und Werten
-
-                    if ($sun_elevation < @$solarItem["horizon"] + 5) $lf_minusE = 50; // Sonnenuntergang
-                    if ($sun_elevation < @$solarItem["horizon"]) $lf_minusE = 100; // Sonnenuntergang
-                    $lf_minusE = round($lf_minusE, 1);
-                    $lfA = $lfA - $lf_minusE; // fällt schwächer ins gewicht;
-                    $lfB = $lfB - $lf_minusE; // fällt schwächer ins gewicht;
-
-                    // Bewölkung hängt von der Wolkendicke und von dem Einstrahlungswinkel ab.
-                    $lf_cloud_dec = (100 - (pow($clouds, 2.4) / 600) * $solarItem["cloudeffect"] / 100) / 100;
-
-                    $lfA = $lfA * $lf_cloud_dec;
-                    $lfB = $lfB * $lf_cloud_dec;
-                    $lfA = ($lfA < 0) ? 0 : $lfA;
-                    $lfB = ($lfB < 0) ? 0 : $lfB;
-
-                    $pv_estimate = ($solarItem["kwp"] / 2) * ($lfA / 100) * $solarItem["efficiency"] / 100;
-                    $pv_estimate += ($solarItem["kwp"] / 2) * ($lfB / 100) * $solarItem["efficiency"] / 100;
-
-                    $pv_estimate = $pv_estimate * PVForecastcls::TYPE_D_CORRECTION;
-
-                } else { // NOrmale Anlage keine /\ Ständerung
-
-                    $az_abw = round(abs($sun_azimuth - 180 - $solarItem["azimuth"]), 1);
-                    if ($az_abw > 180) {
-                        $lf_minusA = 100;
-                    } else {
-                        $lf_minusA = (-0.00000000147) * pow($az_abw, 5) + (0.00000057668) * pow($az_abw, 4) + (-0.00008107497) * pow($az_abw, 3) + (0.00559429998 * pow($az_abw, 2)) + (0.05160253657 * $az_abw);
-                    }
-                    $lf = $lf - $lf_minusA;
-
-                    // Neigungswikel und Sonne
-                    $elev_abw = 90 - $sun_elevation - $solarItem["tilt"];
-                    $x = $elev_abw;
-                    $lf_minusE = (1 / 100) * pow($x, 2); // Neue Formel anhand Tabellen und Werten
-
-                    if ($sun_elevation < @$solarItem["horizon"] + 5) $lf_minusE = 50; // Sonnenuntergang
-                    if ($sun_elevation < @$solarItem["horizon"]) $lf_minusE = 100; // Sonnenuntergang
-                    $lf_minusE = round($lf_minusE, 1);
-                    $lf = $lf - $lf_minusE;
+				if($sun_elevation < @$PV["horizon"] + 5) $lf_minusE = 50; // Sonnenuntergang            
+				if($sun_elevation < @$PV["horizon"] ) $lf_minusE = 100; // Sonnenuntergang
+				$lf_minusE = round($lf_minusE,1);
+				$lf = $lf - $lf_minusE;
 
 
-                    // Bewölkung hängt von der Wolkendicke und von dem Einstrahlungswinkel ab.
-                    $lf_cloud_dec = (100 - (pow($clouds, 2.4) / 600) * $solarItem["cloudeffect"] / 100) / 100;
+				// Bewölkung hängt von der Wolkendicke und von dem Einstrahlungswinkel ab.
+				/* Wir rechnen ab sofort mit Globalstrahlung
+					$lf_cloud_dec = (100 - (pow($clouds,2.4)/600) * $PV["cloudeffect"]/100) /100;
+					$lf = $lf * $lf_cloud_dec;
+				*/
 
-                    $lf = $lf * $lf_cloud_dec;
-                    $lf = ($lf < 0) ? 0 : $lf;
-                    $pv_estimate = $solarItem["kwp"] * ($lf / 100) * $solarItem["efficiency"] / 100;
-                } // Staenderung
+				$lf = ($lf < 0 )? 0 : $lf;     
+				$radiation  = $fc["rad_total"];
+				$base_Watts = $radiation * $solarItem["kwp"]/1000 * $PV["efficiency"]/100;    
+				
+				$pv_estimate = $base_Watts * ($lf / 100);			
+	
+				// Temperaturverlust
+				if($temp > 18){
+					$tempDelta = $temp - 18;
+					// Annahme MaxTemp = 50 bei 5 Grad Unterschied und keine Wolken
+					$tempMinus = $PV["tempkoeff"] * (( (2.917 * $temp) - 27.5) - 25 ) * (100 - $clouds) / 100;               
+					$pv_estimate = $pv_estimate * (100-$tempMinus)/100;
+				}
+		
+				if($PV["autotune"]){
+					$pv_estimate_orig = $pv_estimate;
+					$pv_estimate = $pv_estimate * $this->getDeviationHour(date("G",$ts), $radiation);
+					if($pv_estimate > $solarItem["kwp"]*1.2) $pv_estimate= $solarItem["kwp"]*1.2;
+				}else{
+					$pv_estimate_orig = $pv_estimate;
+				}
+		
+				if($PV["kwh"]){
+					$pv_estimate = round($pv_estimate/1000,1);
+					$pv_estimate_orig = round($pv_estimate_orig/1000,1);
+				}else{
+					$pv_estimate = round($pv_estimate/10)*10;
+					$pv_estimate_orig = round($pv_estimate_orig/10)*10;
+				}
 
-                // Temperaturverlust
-                if ($temp > 18) {
-                    $tempDelta = $temp - 18;
-                    // Annahme MaxTemp = 50 bei 5 Grad Unterschied und keine Wolken
-                    $tempMinus = $solarItem["tempkoeff"] * (((2.917 * $temp) - 27.5) - 25) * (100 - $clouds) / 100;
-                    $pv_estimate = $pv_estimate * (100 - $tempMinus) / 100;
-                }
-                if ($PV["kwh"]) {
-                    $pv_estimate = round($pv_estimate / 1000, 1);
-                } else {
-                    $pv_estimate = round($pv_estimate / 10) * 10;
-                }
+				if(!array_key_exists("pv_estimate", $this->fc["hourly"][$k])){
+					$this->fc["hourly"][$k]["pv_estimate"] = $pv_estimate;
+				}else{
+					$this->fc["hourly"][$k]["pv_estimate"] += $pv_estimate;
+				}
 
-                //wert zu pv_estimate hinzufügen
-                $this->fc["hourly"][$k]["pv_estimate"] += $pv_estimate;
-            }
+				if(!array_key_exists("pv_estimate_orig", $this->fc["hourly"][$k])){
+					$this->fc["hourly"][$k]["pv_estimate_orig"] = $pv_estimate_orig;
+				}else{
+					$this->fc["hourly"][$k]["pv_estimate_orig"] += $pv_estimate_orig;
+				}
+
+				if($this->fc["hourly"][$k]["pv_estimate"] > $PV["wr_kwp_max"])$this->fc["hourly"][$k]["pv_estimate"] = $PV["wr_kwp_max"];
+			} // foreach FC
+		}
+		
+		$id_prev = false;
+		foreach($this->fc["hourly"] as $id => $fcE){
+			if($id_prev){
+				$this->fc["hourly"][$id_prev]["pv_estimate"] = $fcE["pv_estimate"];
+				$this->fc["hourly"][$id_prev]["pv_estimate_orig"] = $fcE["pv_estimate_orig"];
+				if(isset($fcE["rad"])) $this->fc["hourly"][$id_prev]["rad"] = $fcE["rad"];
+				if(isset($fcE["rad_intensity"])) $this->fc["hourly"][$id_prev]["rad_intensity"] = $fcE["rad_intensity"];
+				$this->fc["hourly"][$id_prev]["rad_total"] = $fcE["rad_total"];
+			}
+			$id_prev = $id;
         }
 
 		// Tagesforecast
@@ -577,15 +613,7 @@ class PVForecastcls{
 	#### Sonnnenstandsberechnung  #################################################
 	private function calcSun($ts, $dLongitude, $dLatitude){
 		// Correction Timezone
-		$now = new DateTime('now', new DateTimeZone('Europe/Berlin'));
-	    if($now->format('I') == 1){
-			//sommerzeit
-			//$ts = $ts - 2*3600;
-			$ts = $ts;
-		}else{
-			$ts = $ts;
-		}
-		
+		$ts = $ts - 2*3600;
 
 		$iYear = date("Y", $ts);
 		$iMonth = date("m", $ts);
@@ -680,21 +708,105 @@ class PVForecastcls{
 	}
 
 	#################################################################################
+	### open-meteo abfrage - API - DWD ICON-D2  #####################################
+	#################################################################################
+	private function open_meteo_icon($latlon){
+		$lat = trim($latlon["latitude"]);
+		$lon = trim($latlon["longitude"]);
+		$lat = round($lat, 3);
+		$lon = round($lon, 3);
+		$url = "https://api.open-meteo.com/v1/dwd-icon?latitude=$lat&longitude=$lon&hourly=temperature_2m,precipitation,rain,showers,snowfall,snow_depth,weathercode,cloudcover,windspeed_10m,diffuse_radiation,direct_normal_irradiance&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,rain_sum,showers_sum,snowfall_sum,windspeed_10m_max&timeformat=unixtime&timezone=Europe%2FBerlin";
+
+		if(! is_dir(dirname(__FILE__) . "/cache")){
+			mkdir(dirname(__FILE__) . "/cache");    
+		}
+
+		date_default_timezone_set("Europe/Berlin");
+		$ret = @file_get_contents($url);
+		
+		if(empty($ret)){
+			echo "Fehler Wetterdaten können nciht geladen werden!";
+			return false;
+		}
+		$ret = json_decode($ret, true);
+		$fca["info"]["model"]="open-meteo:iconD2";
+		$fca["info"]["generation_time"]=time();
+
+		foreach($ret["hourly"]["time"] as $id => $val){
+			$fca["hourly"][$id]["ts"]    = $val;
+			$fca["hourly"][$id]["tiso"]  = gmdate('Y-m-d\TH:i:s',$val);
+			$fca["hourly"][$id]["day"]   = date("z") - date("z", $val);
+			$fca["hourly"][$id]["hour"]  = date("G", $val);
+			$fca["hourly"][$id]["wmo_code"]  =  $ret["hourly"]["weathercode"][$id];
+			$fca["hourly"][$id]["clouds"]    =  $ret["hourly"]["cloudcover"][$id];
+			$fca["hourly"][$id]["prec"]      =  $ret["hourly"]["precipitation"][$id];
+			$fca["hourly"][$id]["rain"]      =  $ret["hourly"]["rain"][$id];
+			$fca["hourly"][$id]["snow"]      =  $ret["hourly"]["snowfall"][$id];
+			$fca["hourly"][$id]["snowdepth"] =  $ret["hourly"]["snow_depth"][$id];
+			$fca["hourly"][$id]["temp"]      =  $ret["hourly"]["temperature_2m"][$id];
+			$fca["hourly"][$id]["wind"]      =  $ret["hourly"]["windspeed_10m"][$id];
+			$fca["hourly"][$id]["rad_diff"]  =  $ret["hourly"]["diffuse_radiation"][$id];
+			$fca["hourly"][$id]["rad_dni"]   =  $ret["hourly"]["direct_normal_irradiance"][$id];
+			$fca["hourly"][$id]["rad_total"] =  intval($ret["hourly"]["direct_normal_irradiance"][$id])+intval($ret["hourly"]["diffuse_radiation"][$id]);
+		}
+
+		/* FORECAST FÜLLEN
+		   manchmal liefert der Forecast nur die Daten ab aktueller Uhrzeit - für dei Forecast Charts / Ausgaben, sollten jedoch alle
+		   werte berücksichtigt werden. Deshalb holen wir aus dem alten Forecast, bei fehlenden Daten diese zurück*/
+		for($ih=6;$ih<16;$ih++){
+		#	echo "\n".$ih."->";
+			$found = false;
+			foreach($fca["hourly"] as $id => $fc){
+				if($fc["day"] == 0 && $fc["hour"] == $ih) $found = true;
+			}
+		#	echo $found;
+			if(!$found){
+				foreach($this->fc["hourly"] as $fo){
+					if($fo["day"]== 0 && $fo["hour"] == $ih){
+						$fca["hourly"][] = $fo;
+					}
+				}
+			}
+		}
+		usort($fca["hourly"], function($a, $b) {
+			return strcmp($a['ts'], $b['ts']);
+		});
+
+		foreach($ret["daily"]["time"] as $id => $val){
+			$fca["daily"][$id]["ts"] = $val;
+			$fca["daily"][$id]["tiso"] = gmdate('Y-m-d\TH:i:s',$val);
+			$fca["daily"][$id]["day"] = date("z") - date("z", $val);
+			$fca["daily"][$id]["wmo_code"] =  $ret["daily"]["weathercode"][$id];
+			$fca["daily"][$id]["temp_max"] =  $ret["daily"]["temperature_2m_max"][$id];
+			$fca["daily"][$id]["temp_min"] =  $ret["daily"]["temperature_2m_min"][$id];
+			$fca["daily"][$id]["prec"]   =  $ret["daily"]["precipitation_sum"][$id];
+			$fca["daily"][$id]["rain"]   =  $ret["daily"]["rain_sum"][$id];
+			$fca["daily"][$id]["snow"]   =  $ret["daily"]["snowfall_sum"][$id];
+		}
+		
+		$this->fc = $fca;
+	}
+
+	#################################################################################
 	#### DWD WETTERDATEN ############################################################
 	#################################################################################
-
-
 	private function dwd_loadXML($station){
 		//cache verzeichnis anlegen, wenn noch nicht da:
 		if(! is_dir(dirname(__FILE__) . "/cache")){
 			mkdir(dirname(__FILE__) . "/cache");    
 		}
+		$station = trim($station);
 		$url       = "http://opendata.dwd.de/weather/local_forecasts/mos/MOSMIX_L/single_stations/" . $station . "/kml/MOSMIX_L_LATEST_" . $station . ".kmz";
 		$fn_cache  = dirname(__FILE__) . "/cache/".$this->instance."-".$station.".cache";
 		$fn_xml    = dirname(__FILE__) . "/cache/".$this->instance."-".$station.".xml";
 
+
 		date_default_timezone_set("Europe/Berlin");
-		$response = file_get_contents($url);
+		$response = @file_get_contents($url);
+		if(empty($response)){
+			echo "Wetterstation ungültig. kann MOSMIX KML nicht laden ($url)";
+			return false;
+		}
 		file_put_contents($fn_cache, $response); 
 		$zip = new ZipArchive;
 		$res = $zip->open($fn_cache);
@@ -723,8 +835,9 @@ class PVForecastcls{
 		$xml = simplexml_load_string($xmlstr);
 		$ts = $xml->Document->ExtendedData->ProductDefinition->ForecastTimeSteps->TimeStep;
 
-		$this->dwd_fca["info"]["model"]=$xml->Document->ExtendedData->ProductDefinition->ProductID->__toString();
-		$this->dwd_fca["info"]["generation_time"]=$xml->Document->ExtendedData->ProductDefinition->IssueTime->__toString();
+		unset($this->fc);
+		$this->fc["info"]["model"]=$xml->Document->ExtendedData->ProductDefinition->ProductID->__toString();
+		$this->fc["info"]["generation_time"]=$xml->Document->ExtendedData->ProductDefinition->IssueTime->__toString();
 
 
 		foreach ($ts as $t) {
@@ -732,18 +845,24 @@ class PVForecastcls{
 				"tiso" => $t->__toString(), 
 				"day"  =>  date("z", strtotime($t)) - date("z"),
 				"hour"  => date("G", strtotime($t))];
-			$this->dwd_fca["hourly"][] = $fc;
+			$this->fc["hourly"][] = $fc;
 		}
 		//################## DATEN AUS XML EXTRAHIEREN / FLEXIBEL ERWEITERBAR ###########################################
 		// Daten aus XML lesen (siehe oben verlinktes excel), 1 Parameter Wertekennung von DWD, 2. Parameter name im Json.
-		$this->dwd_getData("Rad1h", "radiation", $xml);
-		$this->dwd_getData("RRad1", "radiation_intensity", $xml);
+		
+		$this->dwd_getData("Rad1h", "rad", $xml);
+		$this->dwd_getData("RRad1", "rad_intensity", $xml);
 		$this->dwd_getData("Neff", "clouds", $xml);
 		$this->dwd_getData("RRL1c", "prec", $xml);
 		$this->dwd_getData("RRS1c", "snow", $xml);
 		$this->dwd_getData("SunD1", "sun", $xml);
 		$this->dwd_getData("T5cm", "temp", $xml);        
 
+		foreach($this->fc["hourly"] as $id => $e){
+			$this->fc["hourly"][$id]["rad_total"] = round($e["rad"] * $e["rad_intensity"]/100);
+		}
+
+	
 		// Tageswerte berechnen
 		$dayOld = 0;
 		$t_min = 999;
@@ -754,32 +873,32 @@ class PVForecastcls{
 		$prec = 0;
 		$snow = 0;
 		$sun = 0;
-		foreach($this->dwd_fca["hourly"] as $fc){
+		foreach($this->fc["hourly"] as $fc){
 			$day = date("z", $fc["ts"]) - date("z");
 			
 			if($day != $dayOld){
-			$this->dwd_fca["daily"][$dayOld]["ts"] = $ts_old;
-			$this->dwd_fca["daily"][$dayOld]["txtx"] = date("D d.m.Y", $this->dwd_fca["daily"][$dayOld]["ts"]);
+			$this->fc["daily"][$dayOld]["ts"] = $ts_old;
+			$this->fc["daily"][$dayOld]["txtx"] = date("D d.m.Y", $this->fc["daily"][$dayOld]["ts"]);
 
-			$this->dwd_fca["daily"][$dayOld]["temp_max"] = $t_max;
+			$this->fc["daily"][$dayOld]["temp_max"] = $t_max;
 			$t_max = -999;
 
-			$this->dwd_fca["daily"][$dayOld]["temp_min"] = $t_min;
+			$this->fc["daily"][$dayOld]["temp_min"] = $t_min;
 			$t_min = 999;
 			
-			$this->dwd_fca["daily"][$dayOld]["temp_avg"] = round($t_avg / $cnt,1);
+			$this->fc["daily"][$dayOld]["temp_avg"] = round($t_avg / $cnt,1);
 			$t_avg = 0;
 
-			$this->dwd_fca["daily"][$dayOld]["cloud_avg"] = round($cloud_avg / $cnt);
+			$this->fc["daily"][$dayOld]["cloud_avg"] = round($cloud_avg / $cnt);
 			$cloud_avg = 0;
 
-			$this->dwd_fca["daily"][$dayOld]["prec"] = $prec;
+			$this->fc["daily"][$dayOld]["prec"] = $prec;
 			$prec=0;
 
-			$this->dwd_fca["daily"][$dayOld]["snow"] = $snow;
+			$this->fc["daily"][$dayOld]["snow"] = $snow;
 			$snow=0;
 
-			$this->dwd_fca["daily"][$dayOld]["sun"] = round($sun / 60);
+			$this->fc["daily"][$dayOld]["sun"] = round($sun / 60);
 			$sun=0;
 
 			$cnt = 0;      
@@ -805,26 +924,229 @@ class PVForecastcls{
 	private function dwd_getData($idstr, $idtxt, &$xml){
 		
 		$gs = $xml->Document->Placemark->ExtendedData;
+		$found = false;
 		foreach ($gs->Forecast as $g) {
 			$id = $g->attributes()["elementName"][0]->__toString();
 			if ($id == $idstr) {
 			$val = $g->value->__toString();
 			$valA = str_split($val, 11);
+				$found = true;
 			}
 		}
-		foreach($this->dwd_fca["hourly"] as $k => $fc){
+		if(!$found){
+			echo "Attribute $idstr not found in Forecast XML";
+			return false;
+		}
+		//prüfen ob nur - im Array ist.
+		$valChk = implode("",$valA);
+		if (preg_match('/^[ -]*$/', $valChk)){
+			echo "$idstr not available in forecast Data.\n";
+			return;
+		}
+
+		foreach($this->fc["hourly"] as $k => $fc){
 			$setval = trim(@$valA[$k]);
-			
 			// ############ Aufbereitung der Daten je nach Daten aus XML ################
 			$setval = (trim($setval == '-'))? 0 : $setval;
 			if($idstr == "SunD1") $setval = $setval / 60;
 			if($idstr == "RRad1") $setval = floatval($setval);
 			if($idstr == "T5cm")  $setval = $setval - 273;
 
-			$this->dwd_fca["hourly"][$k][$idtxt] = $setval;
+			$this->fc["hourly"][$k][$idtxt] = $setval;
 			
 		}
 	}// dwd_getData;
+
+
+    #### AUTOTUNE ###### ##########################################################
+	public function autotune(){
+		if($this->PV["autotune"]){
+			$fn = dirname(__FILE__)."/".$this->instance.".autotune.json";
+			$hist = json_decode(@file_get_contents($fn),true);
+			$hour = date("G");
+			$day  = date("j");
+			$fc = $this->fc;
+			
+			//Aktuellen Tag leeren
+			if($hour > 1 && $hour < 4){
+				unset ($hist["data"][$day]);
+			}
+
+			// Forecast am Morgen befüllen, wenn noch nicht geschehen.
+			if(!isset($hist["data"][$day]) && $hour > 6){
+				foreach($fc["hourly"] as $f){
+					if($f["day"] == 0 && $f["hour"] > 5 && $f["hour"] < 22){                
+						$hist["data"][$day][$f["hour"]]["fc"] =   $f["pv_estimate"];
+						$hist["data"][$day][$f["hour"]]["fc_orig"] =   $f["pv_estimate_orig"];
+						$hist["data"][$day][$f["hour"]]["radi"] = $f["rad_total"];
+					}
+				}
+			}	 // forecast füllen.
+
+			// Ist-Daten dazu laden 
+			if($hour > 5 && $hour < 23){
+				// Stundendaten erfassen
+				$ACID = IPS_GetInstanceListByModuleID('{43192F0B-135B-4CE7-A0A7-1475603F3060}')[0];
+				$ts 					= mktime($hour - 1,  0,  0, date("m"), date("d"), date("Y"));
+				$te					    = mktime($hour - 1 , 59, 59, date("m"), date("d"), date("Y"));
+
+				$aDat = AC_GetLoggedValues ($ACID, $this->PV["pv_id"], $ts, $te, 60);
+				if(isset($aDat[0])){
+					$setHour = $hour -1; // Werte der letzten Stunde protokollieren.
+					$hist["data"][$day][$setHour]["ist_sum"] = round($aDat[0]["Value"],2);
+					$hist["data"][$day][$setHour]["ist"]     = round($aDat[0]["Value"] - @$hist["data"][$day][$setHour-1]["ist_sum"],2);            
+				}
+			}
+			file_put_contents($fn,json_encode($hist));			
+		}
+	}
+
+	#### AUTOTUNE - PRINT #######################################################
+	public function autotunePrint(){
+		$fn = dirname(__FILE__)."/".$this->instance.".autotune.json";
+        $hist = json_decode(@file_get_contents($fn),true);
+        $dat = $hist["data"];
+        krsort($dat);
+        echo "<pre>";
+        echo "DAY    HOUR   FC_ORIG   FC   IST     ABW   ZÄHLER  RADIATION\n";
+        echo "------------------------------------------------------------\n";
+        
+        $dayIST = 0;
+        $dayFC  = 0;
+		$dayFC_orig = 0;
+        $dayold = 0;
+        $day = 0;
+        foreach($dat as $d => $hs){
+            ksort($hs);
+            $dayIST = 0;
+            $dayFC = 0; 
+			$dayFC_orig = 0;           
+            foreach($hs as $h => $e){
+                if($day != $dayold){
+                    echo "-------------------------------------------------------------\n";
+                    echo str_pad(round($dayFC_orig,1),18, " ", STR_PAD_LEFT);
+					echo str_pad(round($dayFC,1),7, " ", STR_PAD_LEFT);
+                    echo str_pad(round($dayIST,1),7, " ", STR_PAD_LEFT);
+                    $fce = ($dayFC == 0)? 0.1: $dayFC;
+                    echo str_pad(round( ($dayIST - $fce) / $fce * 100 ), 7, " ", STR_PAD_LEFT)."%";                    
+                    echo "\n";
+                    echo "=============================================================\n";
+                    $dayIST = 0;
+                    $dayFC = 0;
+					$dayFC_orig = 0;
+                }
+
+                echo str_pad($d, 3, " ", STR_PAD_LEFT); 
+                echo "    ".str_pad($h,4, " ", STR_PAD_LEFT);    
+				echo str_pad(round(@$e["fc_orig"],1),7, " ", STR_PAD_LEFT);            
+				echo str_pad(round(@$e["fc"],1),7, " ", STR_PAD_LEFT);
+                echo str_pad(round(@$e["ist"],1),7, " ", STR_PAD_LEFT);
+                
+                if(@$e["fc"] > 0){
+                    $fcab = (@$e["ist"] - $e["fc"]) / $e["fc"] * 100;
+                    echo str_pad(round($fcab), 7, " ", STR_PAD_LEFT)."%";
+                }elseif(@round($e["ist"],1) > 0){
+                    echo str_pad("100", 7, " ", STR_PAD_LEFT)."%";
+                }else{
+                    echo str_pad("-  ", 7, " ", STR_PAD_LEFT)." ";
+                }
+                
+                echo str_pad(round(@$e["ist_sum"],1), 8, " ", STR_PAD_LEFT);
+                echo str_pad(round(@$e["radi"]),10, " ", STR_PAD_LEFT);
+                echo "\n";
+                $dayIST += @$e["ist"];
+                $dayFC  += @$e["fc"];
+				$dayFC_orig += @$e["fc_orig"];
+                $day_old = $day;
+            }
+
+            echo "---------------------------------------------------------------\n";
+            
+			echo str_pad(round($dayFC_orig,1),18, " ", STR_PAD_LEFT);
+			echo str_pad(round($dayFC,1),7, " ", STR_PAD_LEFT);
+            echo str_pad(round($dayIST,1),7, " ", STR_PAD_LEFT);
+            $fce = ($dayFC == 0)? 0.1: $dayFC;
+            echo str_pad(round( ($dayIST - $fce) / $fce * 100 ), 7, " ", STR_PAD_LEFT)."%";                                
+            echo "\n";
+            echo "===============================================================\n";
+        }
+        echo "</pre>\n";
+		echo "FN: $fn";
+	}
+	
+
+	#### AUTOTUNE - getHour ########################################################
+	public function getDeviationHour($hour, $radi){
+		static $abw;
+		if(empty($abw))$abw = $this->autotuneCalc();
+
+		$h = intval($hour);
+		if($radi < 300){
+			$dev = @$abw[$h]["low"]["deviation"];
+		}elseif($radi >= 300 && $radi < 800){
+			$dev = @$abw[$h]["medium"]["deviation"];
+		}elseif($radi > 800){
+			$dev = @$abw[$h]["high"]["deviation"];
+		}
+		$dev = ($dev == 0)? 1 : $dev;		
+		return $dev;
+	}
+
+	#### AUTOTUNE - calc ##########################################################
+	private function autotuneCalc(){
+		$fn = dirname(__FILE__)."/".$this->instance.".autotune.json";
+		$hist = json_decode(@file_get_contents($fn),true);
+		$dat = $hist["data"];
+		$istK = 0;
+		$fcK  = 0;
+		ksort($dat);
+	
+		// Matrix für Abweichungen aufbauen ---------------------------------------------------------------------
+		$low    = 300;
+		$high   = 800;
+		foreach($dat as $d => $de){
+			foreach($de as $h => $e){
+				if(@$e["fc_orig"] > 0 && @$e["ist"] > 0){
+					if($e["radi"] < $low){
+						$key = "low";
+					}
+					if($e["radi"] >= $low && $e["radi"] < $high){
+						$key = "medium";
+					}
+					if($e["radi"] > $high){
+						$key = "high";
+					}        
+					#echo  $h.": ".  $e["ist_sum"]. "  -->  ".$e["fc_orig"]."\n";
+					@$cArr[$h][$key]["cnt"]++;
+					@$cArr[$h][$key]["ist"] += $e["ist"];
+					@$cArr[$h][$key]["fc_orig"] += $e["fc_orig"];
+				} // if wert vorhanden
+			}
+		}
+		ksort($cArr);
+		// deviation berechnen  -----------------------------------------------------------------------------
+		foreach($cArr as $h => $e){
+			if(isset($cArr[$h]["low"]["ist"])){
+				$cArr[$h]["low"]["deviation"]       = round($e["low"]["ist"] / $e["low"]["fc_orig"],2);
+			}else{
+				$cArr[$h]["low"]["deviation"] = 1;
+			}
+			
+			if(isset($cArr[$h]["medium"]["ist"])){
+				$cArr[$h]["medium"]["deviation"] = round($e["medium"]["ist"] / $e["medium"]["fc_orig"],2);
+			}else{
+				$cArr[$h]["medium"]["deviation"] = 1;
+			}
+			
+			if(isset($cArr[$h]["high"]["ist"])){
+				$cArr[$h]["high"]["deviation"]     = round($e["high"]["ist"] / $e["high"]["fc_orig"],2);
+			}else{
+				$cArr[$h]["high"]["deviation"] = 1;
+			} 
+		}	
+		return $cArr;		
+	}
+
 
 }
 
