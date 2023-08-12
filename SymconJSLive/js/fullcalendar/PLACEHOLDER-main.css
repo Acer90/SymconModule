@@ -1361,8 +1361,8 @@ A VERTICAL event
 .fc .fc-list-sticky .fc-list-day > * { /* the cells */
       position: sticky;
       top: 0;
-      background: #fff;
-      background: var(--fc-page-bg-color, #fff); /* for when headers are styled to be transparent and sticky */
+      /*background: #fff;*/
+      /*background: var(--fc-page-bg-color, #fff); *//* for when headers are styled to be transparent and sticky */
     }
 .fc {
 

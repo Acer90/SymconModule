@@ -1,27 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <!--{VIEWPORT}
-    <title>{TITLE_TEXT}</title> -->
-</head>
-<script src="/hook/JSLive/js/jquery.min.js" ></script>
-<script src="/hook/JSLive/js/util.js"></script>
-
-<script src="/hook/JSLive/js/chartjs/chart.min.js" charset="utf-8"></script>
-<script src="/hook/JSLive/js/moment/2.27.0/Moment.js" charset="utf-8"></script>
-<script src="/hook/JSLive/js/chartjs/plugins/chartjs-adapter-moment.js" charset="utf-8"></script>
-<script src="/hook/JSLive/js/chartjs/plugins/chartjs-plugin-streaming.min.js" charset="utf-8"></script>
-<script src="/hook/JSLive/js/chartjs/plugins/chartjs-plugin-datalabels.min.js" charset="utf-8"></script>
-
-<body>
-<div style="position: absolute; width: 300px; visibility: hidden;">
-    <p>
-        test<br>
-        jsdjds
-    </p>
-
-</div>
 <div id="loader-{BOXID}" style="width: 100%">
     <div style="text-align: center; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%); width: 200px; height: 100px;">
         <svg id="symcon_logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 199.16 31.53" fill="green">
@@ -34,24 +10,14 @@
                 <path class="cls-sym" d="M146,31.38h15.76V20.16L163.61,22l3.57-3.57L148.78,0h0l-18.4,18.41L134,22l1.81-1.82V31.38h5.07l0-16.27,8-8,8,8V26.33h-5.5V21H146Z"></path>
             </g>
         </svg>
-        <p id="loaderText-{BOXID}">loading xyz</p>
+        <p id="loaderText-{BOXID}"></p>
+        <p id="loaderError-{BOXID}" style="color: red;"></p> 
     </div>
 </div>
 <div id="chart-container-{BOXID}" style="position: relative;">
     <canvas id="myChart-{BOXID}"></canvas>
 </div>
 
-<script>
-   if (typeof load_Inctance !== 'function'){
-        var script = document.createElement('script');
-        script.onload = function () {
-            new load_Inctance(48111, "{BOXID}");
-        };
-        script.src = "/hook/JSLive/js/loader.js";
-        document.head.appendChild(script);
-   }else{
-       new load_Inctance(48111, "123456");
-   }
-</script>
-</body>
-</html>
+<script src="/hook/JSLive/js/jquery.min.js" ></script>
+<script src="/hook/JSLive/js/util.js"></script>
+<script src="/hook/JSLive/js/init.js?boxid={BOXID}&intid={INSTANCEID}&pw={PW}&link={LINK}"></script>

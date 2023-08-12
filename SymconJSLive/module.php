@@ -71,7 +71,6 @@ class SymconJSLive extends WebHookModule {
                 return;
             }
 
-
             header("HTTP/1.1 200 X");
             header('Access-Control-Allow-Origin: *');
             header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
@@ -80,6 +79,31 @@ class SymconJSLive extends WebHookModule {
             $path_parts = pathinfo($path);
             $mimeType = $this->GetMimeType($path_parts["extension"]);
             header("Content-Type: ".$mimeType);
+
+
+            if($subpath == "js/init.js"){
+                $queryData = array();
+                foreach (explode("&", $_SERVER['QUERY_STRING']) as $item) {
+                    $pos2 = strpos($item, '=');
+                    if ($pos2 !== false) {
+                        $p_arr = explode("=", $item);
+                        if (count($p_arr) > 2) continue;
+                        $queryData[strtolower($p_arr[0])] = $p_arr[1];
+                    }
+                }
+
+                $this->SendDebug('WebHook', json_encode($queryData), 0);
+
+                $contend = file_get_contents($path);
+                $contend = str_replace("{INSTANCEID}", $queryData["intid"], $contend);
+                $contend = str_replace("{BOXID}", $queryData["boxid"], $contend);
+                $contend = str_replace("{PW}", $queryData["pw"], $contend);
+                $contend = str_replace("{LINK}", $queryData["link"], $contend);
+
+                header("Content-Length: " .  strlen($contend));
+                echo $contend;
+                return;
+            }
 
             if ($this->ReadPropertyBoolean("enableCache")) {
                 //Add caching support
@@ -126,11 +150,6 @@ class SymconJSLive extends WebHookModule {
                 }
             }
 
-            if (!key_exists("instance", $queryData)) {
-                $this->SendDebug('WebHook', 'INSTANCE NOT SET!', 0);
-                return ""; //wenn instance Parameter nicht gefunden
-            }
-
             //password prüfen!
             $passwordIsSet = $this->ReadPropertyString("Password");
             if(!empty($passwordIsSet )){
@@ -149,6 +168,16 @@ class SymconJSLive extends WebHookModule {
                 }
             }
 
+            //abrufen der Globalen Config
+            if (strtolower($Type) == "getglobalconfig"){
+                echo IPS_GetConfiguration($this->InstanceID);
+                return ;
+            }
+
+            if (!key_exists("instance", $queryData)) {
+                $this->SendDebug('WebHook', 'INSTANCE NOT SET!', 0);
+                return ""; //wenn instance Parameter nicht gefunden
+            }
 
             //$this->SendDebug('WebHook', 'INSTANCE:'. $queryData["instance"], 0);
             //$this->SendDebug('WebHook', 'Array QUERY_STRING: ' . print_r($queryData, true), 0);
@@ -358,6 +387,9 @@ class SymconJSLive extends WebHookModule {
                 }else{
                     return $link . "/hook/JSLive/exportConfiguration?Instance=".$intId."&pw=".urlencode($pw);
                 }
+            case "GetGlobalConfiguartion":
+                return IPS_GetConfiguration($this->InstanceID);
+                break;
         }
     }
 

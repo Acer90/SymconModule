@@ -7,7 +7,7 @@
     {FONTS} <!-- Need for Custom font Family !-->
 </head>
 <script src="/hook/JSLive/js/jquery.min.js" ></script>
-<script src="/hook/JSLive/js/chartjs/chart.min.js" charset="utf-8"></script>
+<script src="/hook/JSLive/js/chartjs/chart.js" charset="utf-8"></script>
 <script src="/hook/JSLive/js/moment/2.27.0/Moment.js" charset="utf-8"></script>
 <script src="/hook/JSLive/js/chartjs/plugins/chartjs-adapter-moment.js" charset="utf-8"></script>
 <script src="/hook/JSLive/js/chartjs/plugins/chartjs-plugin-streaming.min.js" charset="utf-8"></script>
@@ -209,7 +209,7 @@
     function UpdateChart(id_val, dt_val, value){
         try{
             //wenn nicht Now dann kein Update durchführen!
-            if(!configuration.Now || isReloading) return;
+            if(!configuration.Now || isReloading || typeof myChart === 'undefined'|| typeof myChart.data === 'undefined') return;
 
             isUpdated = false;
 
@@ -331,8 +331,8 @@
                     preservation: true
                 });
             }
-        } catch (error) {
-            console.error(error);
+        } catch (e) {
+            console.error(e);
         }
     }
     function ReloadChart(id_val, dt_val, val = null, fullReload = false){
@@ -398,7 +398,7 @@
                             //Object.assign(config_axes, data.AXES);
 
                             console.log("Async Dataset " + Variable + " loaded");
-                            console.log("Dataset: ", JSON.stringify(data));
+                            //console.log("Dataset: ", JSON.stringify(data));
 
                             if(first){
                                 first = false

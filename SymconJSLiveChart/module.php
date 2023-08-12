@@ -425,6 +425,7 @@ class SymconJSLiveChart extends JSLiveModule{
         $this->SetBuffer("AxesBuffer", json_encode($axes));
 
         $this->ReloadFormDatasets(array(), 3);
+
     }
 
     /**
@@ -516,6 +517,14 @@ class SymconJSLiveChart extends JSLiveModule{
         //$this->SendDebug("ReceiveData", $jsonData['Buffer']. " =>" . $this->InstanceID, 0);
 
         switch($buffer['cmd']) {
+            case "getConfiguration":
+                $conf = json_decode(IPS_GetConfiguration($this->InstanceID), true);
+                $mid = IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"];
+                return json_encode(array("Config" => $conf, "ModuleID" => $mid));
+            case "getLanguage":
+                    return json_encode(array("Config" => $conf, "ModuleID" => $mid));
+            case "getFonts":
+                return json_encode($this->GetFonts());
             case "exportConfiguration":
                 return $this->ExportConfiguration();
             case "getContend":

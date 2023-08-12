@@ -436,9 +436,9 @@
             "delete": true,
             "edit": true,
             "changeOrder": true,
-            "onAdd": " SymconJSLiveChart_ReloadFormAxes($id, $Axes, 0);",
-            "onEdit": " SymconJSLiveChart_ReloadFormAxes($id, $Axes, 1);",
-            "onDelete": " SymconJSLiveChart_ReloadFormAxes($id, $Axes, 2);",
+            "onAdd": "SymconJSLiveChart_ReloadFormAxes($id, $Axes, 0);",
+            "onEdit": "SymconJSLiveChart_ReloadFormAxes($id, $Axes, 1);",
+            "onDelete": "SymconJSLiveChart_ReloadFormAxes($id, $Axes, 2);",
             "columns": [
                 {
                     "caption": "Ident",

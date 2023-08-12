@@ -379,13 +379,19 @@ class SymconAlarmClock extends IPSModule
                 if($this->GetValue("UseCalendar") && $calendarID > 0 && IPS_InstanceExists($calendarID)){
                     $nextCalendarEvent = json_decode(ICCR_GetNotifierPresenceReason($calendarID, "NOTIFIER1"), true);
                     $StartTimeBefore = $this->ReadPropertyInteger("StartTimeBefore") * 60;
-                    //$this->SendDebug(__FUNCTION__, $nextCalendarEvent, 0);
+                    
+                    if(!is_array($nextCalendarEvent) || count($nextCalendarEvent) == 0){
+                        $location = "";
+                        $c_time = 0;
+                    }else{
+                        $order   = array('\r\n', '\n', '\r');
+                        $location = str_replace($order, " ", $nextCalendarEvent["Location"]);
+                        $c_time = $nextCalendarEvent["From"];
 
-                    $order   = array('\r\n', '\n', '\r');
-                    $location = str_replace($order, " ", $nextCalendarEvent["Location"]);
-                    $c_time = $nextCalendarEvent["From"];
+                        $this->SendDebug(__FUNCTION__, date("d.m.y H:i:s", $c_time) . " > " . date("d.m.y H:i:s", time()), 0);
+                    }
 
-                    $this->SendDebug(__FUNCTION__, date("d.m.y H:i:s", $c_time) . " > " . date("d.m.y H:i:s", time()), 0);
+                    
 
                     $lastMapsUpdate = intval($this->GetBuffer("LastMapsUpdate"));
                     $driveTime = intval($this->GetBuffer("DriveTime"));

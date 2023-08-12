@@ -2,10 +2,8 @@
 
 class JSLiveModule extends IPSModule
 {
-    protected function LoadFonts(){
+    protected function GetFonts(){
         $font_list = array();
-        $html_str = "";
-
         //alle fonts settings finden
         $conf_Data = json_decode(IPS_GetConfiguration($this->InstanceID), true);
         foreach ($conf_Data as $conf_key => $conf_item){
@@ -17,8 +15,14 @@ class JSLiveModule extends IPSModule
                     $this->SendDebug("LoadFonts", "New font found => " . $conf_item, 0);
             }
         }
-
+        return $font_list;
+    }
+    
+    protected function LoadFonts(){
+        $font_list = $this->GetFonts();
+        
         //htmlTag erstellen
+        $html_str = "";
         $start = true;
         foreach ($font_list as $font){
             if($start){
@@ -228,8 +232,8 @@ class JSLiveModule extends IPSModule
 
         $confdata = json_decode(base64_decode($filename), true);
         //print_r($confdata);
-        if(json_last_error() !== JSON_ERROR_NONE) return "Not valid json File!";
-        if(!array_key_exists("Config", $confdata) || !array_key_exists("ModuleID", $confdata) || !array_key_exists("ModuleName", $confdata)) return "Not valid json File!";
+        if(json_last_error() !== JSON_ERROR_NONE) return "Not valid json File!(1)";
+        if(!array_key_exists("Config", $confdata) || !array_key_exists("ModuleID", $confdata) || !array_key_exists("ModuleName", $confdata)) return "Not valid json File!(2)";
         if($confdata["ModuleID"] != IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"]) return "Configuration only allowed for " . $confdata["ModuleName"];
 
         //echo json_encode($confdata["Config"]);
@@ -327,6 +331,15 @@ class JSLiveModule extends IPSModule
         if($withScript) $pData .= "&scripts=1";
 
         return $pData;
+    }
+    public function GetGlobalConfiguration(){
+        $sendData = array("InstanceID" => $this->InstanceID, "Type" => "GetGlobalConfiguartion");
+        $pData = $this->SendDataToParent(json_encode([
+            'DataID' => "{751AABD7-E31D-024C-5CC0-82AC15B84095}",
+            'Buffer' => utf8_encode(json_encode($sendData)),
+        ]));
+
+        return json_decode($pData, true);
     }
 
     //Dynamic Configuration form
@@ -823,10 +836,15 @@ class JSLiveModule extends IPSModule
                 $htmlStr .= '<iframe src="' . $link . '" width="100%" frameborder="0" scrolling="'.$scrolling.'" height="'.$height.'"></iframe>';
             }
 
+            $this->SetValue("Output", $htmlStr); 
 
-            //$htmlStr = file_get_contents(__DIR__ ."/../htmlbox/HtmlBox-Chart.html");
-            //$htmlStr = str_replace("{BOXID}", $this->InstanceID.$this->getUniqueID(), $htmlStr);
-            $this->SetValue("Output", $htmlStr);
+            /*$g_config = $this->GetGlobalConfiguration();
+            $htmlStr = file_get_contents(__DIR__ ."/../htmlbox/HtmlBox-Chart.html");
+            $htmlStr = str_replace("{INSTANCEID}", $this->InstanceID, $htmlStr);
+            $htmlStr = str_replace("{BOXID}", $this->InstanceID.$this->getUniqueID(), $htmlStr);
+            $htmlStr = str_replace("{PW}", $g_config["Password"], $htmlStr);
+            $htmlStr = str_replace("{LINK}", $g_config["Address"]."/hook/JSLive", $htmlStr);
+            $this->SetValue("Output", $htmlStr);  */
         }else{
             //remove old valeue
             $oldID = @IPS_GetObjectIDByIdent("Output", $this->InstanceID);
