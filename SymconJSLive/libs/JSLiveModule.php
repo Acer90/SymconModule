@@ -129,9 +129,9 @@ class JSLiveModule extends IPSModule
         $output["ModuleID"] = IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleID"];
         $output["ModuleName"] = IPS_GetInstance($this->InstanceID)["ModuleInfo"]["ModuleName"];
 
-        //$output["Config"] = json_decode(IPS_GetConfiguration($this->InstanceID), true);
-        $jsonPath = realpath(__DIR__ . "/../../" . get_called_class() . "/form.json");
-        $output["Config"] = json_decode(file_get_contents($jsonPath), true);
+        $output["Config"] = json_decode(IPS_GetConfiguration($this->InstanceID), true);
+        //$jsonPath = realpath(__DIR__ . "/../../" . get_called_class() . "/form.json");
+        //$output["Config"] = json_decode(file_get_contents($jsonPath), true);
 
         $scriptID = $this->ReadPropertyInteger("TemplateScriptID");
         if(IPS_ScriptExists($scriptID) && $withScript){
@@ -143,6 +143,7 @@ class JSLiveModule extends IPSModule
             $config = $output["Config"];
             $formData = json_decode(IPS_GetConfigurationForm($this->InstanceID), true)["elements"];
             $allowedItems = $this->GetAllowConfigurationExportList($formData);
+
 
             foreach($config as $key => $item){
                 if(array_key_exists($key, $allowedItems) && $allowedItems[$key]["ignore"] == true){
@@ -164,18 +165,19 @@ class JSLiveModule extends IPSModule
                         }
                     }
                 }
-
-                $config[$key] = json_encode($jsonData);
-
             }
 
             $output["Config"] = $config;
         }
 
+        
+
         if(array_key_exists("Libraries", $output["Config"]) && $withScript){
             //export libery scripts
             $libs = array();
             $lib_data = json_decode($output["Config"]["Libraries"],true);
+
+            $this->SendDebug("test", json_encode($output["Config"]), 0);
 
             foreach ($lib_data as $item){
                 if(IPS_ScriptExists($item["Script"])){
@@ -270,7 +272,7 @@ class JSLiveModule extends IPSModule
                 }
                 
                 $output[$key] = $i_data;
-                $this->SendDebug("LoadConfigurationFile", "PARAMETER UPDATE ".$key." => " . $item , 0);
+                //$this->SendDebug("LoadConfigurationFile", "PARAMETER UPDATE ".$key." => " . $item , 0);
             }else{
                 $this->SendDebug("LoadConfigurationFile", "PARAMETER => " . $key ." SKIP", 0);
             }
@@ -317,6 +319,8 @@ class JSLiveModule extends IPSModule
             }
         }
 
+        unset($output["actions"]);
+        unset($output["elements"]);
         IPS_SetConfiguration($this->InstanceID, json_encode($output));
         IPS_ApplyChanges($this->InstanceID);
 
@@ -831,7 +835,7 @@ class JSLiveModule extends IPSModule
 
             if($height == 0){
                 //$link="https://wiki.selfhtml.org/extensions/Selfhtml/frickl.php/Beispiel:JS-window-abmessungen.html#view_result";
-                $htmlStr .= '<iframe src="' . $link . '" frameborder="0" scrolling="'.$scrolling.'"></iframe>';
+                $htmlStr .= '<iframe src="' . $link . '" frameborder="0" scrolling="'.$scrolling.'" style="width:100%;height:100%;"></iframe>';
             }else{
                 $htmlStr .= '<iframe src="' . $link . '" width="100%" frameborder="0" scrolling="'.$scrolling.'" height="'.$height.'"></iframe>';
             }

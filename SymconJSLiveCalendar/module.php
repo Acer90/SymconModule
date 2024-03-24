@@ -141,7 +141,6 @@ class SymconJSLiveCalendar extends JSLiveModule{
         $this->RegisterPropertyBoolean("table_list_listDayFormat_overrideTomorrow", False);
         $this->RegisterPropertyBoolean("table_list_listDaySideFormat_display", True);
 
-
         $this->RegisterPropertyFloat("table_events_fontSize", 0.85);
         $this->RegisterPropertyString("table_events_fontSize_unitType", "em");
         $this->RegisterPropertyString("table_events_fontFamily", "");
@@ -150,13 +149,15 @@ class SymconJSLiveCalendar extends JSLiveModule{
         $this->RegisterPropertyString("dataEvents", "[]");
         $this->RegisterPropertyString("customViews", "[]");
 
+        $this->RegisterPropertyInteger("CheckUpdate_Interval", 60);
     }
     public function ApplyChanges() {
         //Never delete this line!
         parent::ApplyChanges();
 
         $this->SetBuffer("OutputCSS", "");
-        
+
+        $this->SetStatus(102);
     }
 
     public function GetConfigurationForm() {

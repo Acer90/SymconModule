@@ -58,14 +58,19 @@
             ctx.style.height = Get_WindowHeight() - 20+"px";
 
             //modify dataset
-            config_dataset.forEach(function (part, index) {
+            /*config_dataset.forEach(function (part, index) {
                 if (config_dataset[index]["type"] == 'line') {
                     //config_dataset[index]["lineTension"] = 0;
                 }
-            });
+            });*/
+
+            var type = "bar";
+            /*if(config_dataset.length > 0 && config_dataset[0].type !== undefined){
+                type = config_dataset[0].type;
+            }*/
 
             var config = {
-                type: 'line',
+                type: type,
                 data: {
                     datasets: config_dataset
                 },
@@ -999,9 +1004,9 @@
         }
     }
 
-    window.onload = function() {
+    $(document).ready(function() {
         bootUp();
-    }
+    });
 
     window.addEventListener('load resize orientationchange', function () {
         ResizeChart('resize');

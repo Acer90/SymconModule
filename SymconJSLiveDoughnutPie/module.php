@@ -275,7 +275,7 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
         $output["suffix"] = array();
         $output["prefix"] = array();
         $i = 0;
-        $datasets = json_decode($this->ReadPropertyString("Datasets"),true);
+        $datasets = json_decode($this->ReadPropertyString("Datasets"), true);
 
         //sortieren aufsteigend nach order
         $arr_order = array_column($datasets, 'Order');
@@ -287,6 +287,32 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
             return "{}";
         }
         foreach($datasets as $item){
+            if(is_string($item["Variables"])) {
+                $item["Variables"] = str_replace("\\\\" , "", $item["Variables"]);
+                $len = strlen($item["Variables"]);
+                $n = 1;
+                while(true){
+                    $first = substr($item["Variables"], 0, 1);
+                    if($first == "\"" || $first == "\\") {
+                        $item["Variables"] = substr($item["Variables"], 1); 
+                    }
+
+                    $last = substr($item["Variables"], -1);
+                    if($last == "\"" || $last == "\\") $item["Variables"] = substr($item["Variables"], 0, -1); 
+
+                    //echo $item["Variables"]. "\r\n";
+
+                    if(($last != "\"" && $first != "\"") || $n >= $len) break;
+                    $n++;
+                }
+                
+                $item["Variables"] = stripslashes($item["Variables"]);
+                $variablesFix = json_decode($item["Variables"], true, JSON_UNESCAPED_SLASHES);
+                if(json_last_error() === JSON_ERROR_NONE) $item["Variables"] = $variablesFix;
+            }
+            
+            //print_r($item);
+
             if(count($item["Variables"]) == 0){
                 $this->SendDebug("GenerateDataSet", "No Variables set! Jump to next Dataset!", 0);
                 continue;
@@ -460,6 +486,60 @@ class SymconJSLiveDoughnutPie extends JSLiveModule{
             }
         }
         return $output;
+    }
+
+    public function GetConfigurationForm()
+    {
+        //update Items for InstanceSelectList!
+        $formData = $this->LoadConfigurationForm();
+
+        foreach ($formData["elements"] as $keyNr => $element) {
+            if (array_key_exists("name", $element) && $element["name"] === "Datasets") {
+                $key = $keyNr;
+                break;
+            }
+        }
+
+        $datasets = json_decode($this->ReadPropertyString("Datasets"),true);
+        foreach ($datasets as $row => $item) {
+            if(is_string($item["Variables"])) {
+                $item["Variables"] = str_replace("\\\\" , "", $item["Variables"]);
+                $len = strlen($item["Variables"]);
+                $n = 1;
+                while(true){
+                    $first = substr($item["Variables"], 0, 1);
+                    if($first == "\"" || $first == "\\") {
+                        $item["Variables"] = substr($item["Variables"], 1); 
+                    }
+
+                    $last = substr($item["Variables"], -1);
+                    if($last == "\"" || $last == "\\") $item["Variables"] = substr($item["Variables"], 0, -1); 
+
+                    //echo $item["Variables"]. "\r\n";
+
+                    if(($last != "\"" && $first != "\"") || $n >= $len) break;
+                    $n++;
+                }
+                
+                $item["Variables"] = stripslashes($item["Variables"]);
+                $variablesFix = json_decode($item["Variables"], true, JSON_UNESCAPED_SLASHES);
+                if(json_last_error() === JSON_ERROR_NONE) $item["Variables"] = $variablesFix;
+
+                
+            }
+
+            $item["Variables"] = json_encode($item["Variables"]);
+
+            $formData["elements"][$key]["values"][$row] = $item;
+            //$formData["elements"][$key]["values"][$row]["Variables"] = $item;
+            $formData["elements"][$key]["values"][$row]["rowColor"] = "#FFC0C0";
+
+            //Print_r($formData["elements"][$key]["values"][$row]["Variables"]);
+        }
+
+        //return "TEST:". $this->ReadPropertyString("Datasets");
+
+        return json_encode($formData);
     }
 
     private function GetConfigurationData(){

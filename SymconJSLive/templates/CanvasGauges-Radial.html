@@ -144,7 +144,7 @@
                 gauge.draw();
             });
         } catch (e) {
-            //alert(e);
+            alert(e.message + "\r\n"+ e.stack);
         }
     }
 
@@ -267,11 +267,11 @@
         }
     }
 
-    window.onload = function () {
+    $(document).ready(function() {
         try {
             LoadGauge();
 
-            if(fontLoaded){
+            if(fontLoaded && gauge !== undefined && gauge.update !== undefined){
                 //update if font is loaded
                 gauge.update();
             }
@@ -284,12 +284,12 @@
                 connect();
             }
         } catch (e) {
-            //alert("Gauge Radial | ", e);
+            alert("Radial:" + e.message + "\r\n"+ e.stack);
         }
-    }
+    });
 
     document.fonts.ready.then(function () {
-        if(typeof gauge !== 'undefined'){
+        if(gauge !== undefined && gauge.update !== undefined){
             gauge.update();
         }
         fontLoaded = true;

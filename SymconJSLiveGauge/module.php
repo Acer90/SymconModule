@@ -294,7 +294,7 @@ class SymconJSLiveGauge extends JSLiveModule{
 
             //bestimmte aktuelle einstellungen beibehalten
             $confData["title_text"] = $this->ReadPropertyString("title_text");
-            $confData["Datasets"]= $this->ReadPropertyString("Datasets");
+            //$confData["Datasets"]= $this->ReadPropertyString("Datasets");
 
             IPS_SetConfiguration($this->InstanceID, json_encode($confData));
             IPS_ApplyChanges($this->InstanceID);

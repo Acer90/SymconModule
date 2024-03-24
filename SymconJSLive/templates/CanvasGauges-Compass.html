@@ -124,7 +124,7 @@
                 UpdateGauge(data.Variable, data.Value);
             });
         }catch (e) {
-            alert(e);
+            alert(e.message + "\r\n"+ e.stack);
         }
     }
 
@@ -185,17 +185,17 @@
 
                 //Control Variables
             }catch (e) {
-                console.log("PullNewData => ", e);
+                console.log("PullNewData => ", e.message + "\r\n"+ e.stack);
             }
             await sleep(refreshRate);
         }
     }
 
-    window.onload = function() {
+    $(document).ready(function() {
         try {
             LoadGauge();
 
-            if(fontLoaded){
+            if(fontLoaded && gauge !== undefined && gauge.update !== undefined){
                 //update if font is loaded
                 gauge.update();
             }
@@ -207,14 +207,13 @@
             } else {
                 connect();
             }
-        }catch (e) {
-            alert(e);
+        } catch (e) {
+            alert("Compass:" + e.message + "\r\n"+ e.stack);
         }
-    }
+    });
 
     document.fonts.ready.then(function () {
-        //if font is load then here Start load guage
-        if(typeof gauge !== 'undefined'){
+        if(gauge !== undefined && gauge.update !== undefined){
             gauge.update();
         }
         fontLoaded = true;

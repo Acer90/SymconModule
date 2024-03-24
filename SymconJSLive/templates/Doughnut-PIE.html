@@ -294,10 +294,10 @@
         }
     }
 
-    window.onload = function() {
+    $(document).ready(function() {
         ResizeChart();
         bootUp();
-    }
+    });
 
     window.addEventListener('resize', ResizeChart);
     window.addEventListener('orientationchange', ResizeChart);

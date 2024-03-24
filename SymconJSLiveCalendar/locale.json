@@ -178,7 +178,8 @@
 		"Header Right:": "Kopfbereich Rechts:",
 		"List": "Listen",
 		"Show today instead of Weekday": "Heute statt Anzeige des Wochentages",
-		"Show tomorrow instead of Weekday": "Morgen statt Anzeige des Wochentages"
+		"Show tomorrow instead of Weekday": "Morgen statt Anzeige des Wochentages",
+		"Refresh Events (Sec.)": "Aktualisierung von Events (Sec.)"
 	}
   }
 }

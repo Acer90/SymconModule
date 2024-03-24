@@ -1140,6 +1140,7 @@
                 }
             ]
         },
+        { "type": "NumberSpinner", "name": "CheckUpdate_Interval", "caption": "Refresh Events (Sec.)", "viewlevel": 1 },
         {
             "type": "List",
             "name": "dataEvents",

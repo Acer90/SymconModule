@@ -19,6 +19,7 @@
         var config_dataEvents = {DATAEVENTS}; 
         var config_views = {VIEWS};
         var configuration = {CONFIG};
+        var calendar;
 
         running = false;
         last_update = Date.now();
@@ -26,9 +27,9 @@
         function Load(){
             try {
                 var calendarEl = document.getElementById('calendar');
-                var calendar = new FullCalendar.Calendar(calendarEl, {
+                calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: configuration.initialView,
-                    height: (Get_WindowHeight()-20),
+                    height: (Get_WindowHeight()),
                     eventSources: CreateEventSource(),
                     titleFormat: configuration.titleFormat,
                     headerToolbar: configuration.header, 
@@ -62,6 +63,10 @@
                     } 
                 });
 
+                setInterval(function(){
+                    calendar.refetchEvents();
+                }, (configuration.CheckUpdate_Interval*1000));
+
                 if(configuration.table_weekText_display){
                     //calendar.setOption('locale', 'fr');
                 }
@@ -87,30 +92,25 @@
 
                 config_dataEvents[index]["failure"] = function () {
                     $('#script-warning').show();
-                    alert('there was an error while fetching events!');
                 }
             });
 
             return config_dataEvents;
         }
 
-        function updateValue(e) {
-            value = this.value;
-            if(!running) UpdateWorker();
-        }
-
         async function UpdateWorker(){
-            running = true;
             last_update = Date.now();
             while (running){
-                await sleep(1);
+                await sleep(1000);
                 try {
-                    if((last_update + configuration.DataUpdateRate) <= Date.now()){
+                    if((last_update + (configuration.CheckUpdate_Interval*1000)) <= Date.now()){
                         last_update = Date.now();
 
                         console.log(Date.now() + " >> UpdateWorker | Update => " + value);
-                        var response = await fetch("/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&val="+value);
-                        console.log(Date.now() + " >> UpdateWorker Response => " + response.statusText + " (" + response.status + ")");
+
+                        calendar.fullCalendar("refresh");
+                        //var response = await fetch("/hook/JSLive/setData?Instance={INSTANCE}&pw={PASSWORD}&val="+value);
+                        //console.log(Date.now() + " >> UpdateWorker Response => " + response.statusText + " (" + response.status + ")");
 
                         console.log(Date.now() + " >> UpdateWorker => CLOSE");
                         running = false;
@@ -191,14 +191,17 @@
                 if (config_global.LocalAddress == "" && config_global.LocalDataMode == 0) {
                     //pullup Mode local
                     refreshRate = config_global.LocalRefreshTime;
-                    PullNewData(refreshRate);
+                    //PullNewData(refreshRate);
                 } else if (config_global.RemoteAddress == "" && config_global.RemoteDataMode == 0) {
                     //pullup Mode remote
                     refreshRate = config_global.RefreshTime;
-                    PullNewData(refreshRate);
-                } else {
+                    //PullNewData(refreshRate);
+                } else { 
                     connect();
                 }
+
+
+
             }catch (e) {
                 alert(e);
             }

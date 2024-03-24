@@ -1334,8 +1334,8 @@ A VERTICAL event
 
 }
 .fc .fc-list-empty {
-    background-color: rgba(208, 208, 208, 0.3);
-    background-color: var(--fc-neutral-bg-color, rgba(208, 208, 208, 0.3));
+    /*background-color: rgba(208, 208, 208, 0.3);
+    background-color: var(--fc-neutral-bg-color, rgba(208, 208, 208, 0.3));*/
     height: 100%;
     display: flex;
     justify-content: center;
@@ -1359,8 +1359,8 @@ A VERTICAL event
     border-right: 0;
   }
 .fc .fc-list-sticky .fc-list-day > * { /* the cells */
-      position: sticky;
-      top: 0;
+      /*position: sticky;
+      top: 0;*/
       /*background: #fff;*/
       /*background: var(--fc-page-bg-color, #fff); *//* for when headers are styled to be transparent and sticky */
     }
