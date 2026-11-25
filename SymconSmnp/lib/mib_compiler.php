@@ -215,7 +215,7 @@
       {
         if($in_quote)
         {
-          if($text{$i} == '"')
+          if($text[$i] == '"')
           {
             $in_quote = false;
             if($token != '')
@@ -225,19 +225,19 @@
             }
           }
           else
-            $token .= $text{$i};
+            $token .= $text[$i];
         }
         elseif($in_comment)
         {
-          if($text{$i} == "\n" || $text{$i} == "\r")
+          if($text[$i] == "\n" || $text[$i] == "\r")
             $in_comment = false;
         }
         else
         {
-          switch($text{$i})
+          switch($text[$i])
           {
             case ':':
-              if($text{$i+1} == ':' && $text{$i+2} == '=')
+              if($text[$i+1] == ':' && $text[$i+2] == '=')
               {
                 if($token != '')
                 {
@@ -248,10 +248,10 @@
                 $i += 2;
               }
               else
-                $token .= $text{$i};
+                $token .= $text[$i];
               break;
             case '.':
-              if($text{$i+1} == '.')
+              if($text[$i+1] == '.')
               {
                 if($token != '')
                 {
@@ -262,7 +262,7 @@
                 $i++;
               }
               else
-                $token .= $text{$i};
+                $token .= $text[$i];
               break;
             case ',':
             case ';':
@@ -276,7 +276,7 @@
                 $tokens[] = $token;
                 $token = '';
               }
-              $tokens[] = $text{$i};
+              $tokens[] = $text[$i];
               break;
             case ' ':
             case "\t":
@@ -289,16 +289,16 @@
               }
               break;
             case '-':
-              if($text{$i+1} == '-')
+              if($text[$i+1] == '-')
                 $in_comment = true;
               else
-                $token .= $text{$i};
+                $token .= $text[$i];
               break;
-            case '"';
+            case '"':
               $in_quote = true;
               break;
             default:
-              $token .= $text{$i};
+              $token .= $text[$i];
           }
         }
       }

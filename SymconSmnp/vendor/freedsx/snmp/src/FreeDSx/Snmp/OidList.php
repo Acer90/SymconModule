@@ -132,7 +132,7 @@ class OidList implements \IteratorAggregate, \Countable, ProtocolElementInterfac
     /**
      * @return \ArrayIterator|\Traversable
      */
-    public function getIterator()
+    public function getIterator() : \Traversable
     {
         return new \ArrayIterator($this->oids);
     }
@@ -140,7 +140,7 @@ class OidList implements \IteratorAggregate, \Countable, ProtocolElementInterfac
     /**
      * @return int
      */
-    public function count()
+    public function count() : int
     {
         return \count($this->oids);
     }

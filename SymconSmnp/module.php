@@ -1,5 +1,5 @@
 <?php
-    require_once('lib/snmp.php');
+    require_once(__DIR__ . '/lib/snmp.php');
     require(__DIR__ . '/vendor/autoload.php');
     use FreeDSx\Snmp\SnmpClient;
     use FreeDSx\Snmp\Exception\SnmpRequestException;
@@ -178,23 +178,23 @@ class IPSSNMP extends IPSModule {
             if($this->ReadPropertyBoolean("Debug"))$this->SendDebug("WalkSNMP","Use SNMPVersion => ".$SNMPVersion, 0);
 
             switch($SNMPVersion){
-                case "1";
+                case "1":
                     $snmp->version = SNMP_VERSION_1;
                     $snmp_sdata = ['community' => $SNMPCommunity];
                     break;
-                case "2";
+                case "2":
                     $snmp->version = SNMP_VERSION_2;
                     $snmp_sdata = ['community' => $SNMPCommunity];
                     break;
-                case "2c";
+                case "2c":
                     $snmp->version = SNMP_VERSION_2C;
                     $snmp_sdata = ['community' => $SNMPCommunity];
                     break;
-                case "2u";
+                case "2u":
                     $snmp->version = SNMP_VERSION_2U;
                     $snmp_sdata = ['community' => $SNMPCommunity];
                     break;
-                case "3";
+                case "3":
                     $snmp->version = SNMP_VERSION_3;
                     $snmp_sdata = ['v3_flags'=> SNMP_AUTH_PRIV, 'v3_user'=>$SNMPSecurityName,'v3_auth'=>$SNMPAuthenticationPassword, 'v3_priv'=>$SNMPPrivacyPassword, 'v3_hash'=>$SNMPAuthenticationProtocol, 'v3_crypt_algorithm'=>$SNMPPrivacyProtocol, 'v3_engine_id'=>$SNMPEngineID, 'v3_context_engine_id'=>$SNMPContextEngine, 'v3_context_name'=>$SNMPContextName];
                     break;
