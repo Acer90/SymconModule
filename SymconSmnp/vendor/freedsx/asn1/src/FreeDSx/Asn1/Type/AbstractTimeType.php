@@ -79,7 +79,7 @@ class AbstractTimeType extends AbstractType
      * @param string $dateFormat Represents the furthest datetime element to represent in the datetime object.
      * @param string $tzFormat Represents the format of the timezone.
      */
-    public function __construct(?\DateTime $dateTime = null, string $dateFormat, string $tzFormat)
+    public function __construct(?\DateTime $dateTime, string $dateFormat, string $tzFormat)
     {
         $this->setDateTimeFormat($dateFormat);
         $this->setTimeZoneFormat($tzFormat);
@@ -166,7 +166,7 @@ class AbstractTimeType extends AbstractType
      * @param string $tzFormat
      * @return AbstractTimeType
      */
-    public static function withTag($tagNumber, int $class, bool $isConstructed, ?\DateTime $dateTime = null, string $dateFormat, string $tzFormat)
+    public static function withTag($tagNumber, int $class, bool $isConstructed, ?\DateTime $dateTime, string $dateFormat, string $tzFormat)
     {
         $type = new static($dateTime, $dateFormat, $tzFormat);
         $type->tagNumber = $tagNumber;
